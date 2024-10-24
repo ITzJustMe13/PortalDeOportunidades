@@ -1,4 +1,4 @@
-﻿namespace testLDS.Enums
+﻿namespace BackEnd.Enums
 {
     public enum Location
     {
@@ -21,6 +21,6 @@
         BEJA,
         FARO,
         MADEIRA,
-        AÇORES
+        ACORES
     }
 }
