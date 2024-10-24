@@ -43,5 +43,9 @@ namespace BackEnd.Models.BackEndModels
         public string Token { get; set; }
 
         public DateTime? TokenExpDate { get; set; }
+
+        public ICollection<ReservationModel> Reservations { get; set; }
+
+        public ICollection<OpportunityModel> Opportunities { get; set; }
     }
 }
