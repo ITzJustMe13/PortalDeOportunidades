@@ -47,5 +47,9 @@ namespace BackEnd.Models.BackEndModels
         public ICollection<ReservationModel> Reservations { get; set; }
 
         public ICollection<OpportunityModel> Opportunities { get; set; }
+
+        public ICollection<ImpulseModel> Impulsemodels { get; set; }
+
+        public ICollection<FavoritesModel> Favorites { get; set; }
     }
 }
