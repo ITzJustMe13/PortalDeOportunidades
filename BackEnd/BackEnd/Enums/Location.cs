@@ -21,6 +21,6 @@
         BEJA,
         FARO,
         MADEIRA,
-        AÇORES
+        ACORES
     }
 }
