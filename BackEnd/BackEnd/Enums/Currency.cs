@@ -1,4 +1,4 @@
-﻿namespace testLDS.Enums
+﻿namespace BackEnd.Enums
 {
     public enum Currency
     {
