@@ -48,7 +48,7 @@ namespace BackEnd.Models.BackEndModels
 
         public ICollection<OpportunityModel> Opportunities { get; set; }
 
-        public ICollection<ImpulseModel> Impulsemodels { get; set; }
+        public ICollection<ImpulseModel> Impulses { get; set; }
 
         public ICollection<FavoritesModel> Favorites { get; set; }
     }

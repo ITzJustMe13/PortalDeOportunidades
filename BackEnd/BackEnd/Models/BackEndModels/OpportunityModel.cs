@@ -1,5 +1,6 @@
 ﻿using BackEnd.Enums;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BackEnd.Models.BackEndModels
 {
@@ -17,7 +18,7 @@ namespace BackEnd.Models.BackEndModels
         public string? Description { get; set; }
 
         [Required]
-        [RegularExpression(@"^\d{1,6}(.\d{2})?$", ErrorMessage = "O preço deve ter no máximo 6 números antes do ponto e exatamente 2 depois.")]
+        [Column(TypeName = "decimal(6,2)")]
         public decimal Price { get; set; }
 
         [Required]
@@ -42,5 +43,8 @@ namespace BackEnd.Models.BackEndModels
         [Required]
         public bool IsImpulsed { get; set; }
 
+        public ICollection<ImpulseModel> Impulses { get; set; }
+
+        public ICollection<FavoritesModel> Favorites { get; set; }
     }
 }
