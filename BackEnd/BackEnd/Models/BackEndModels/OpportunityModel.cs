@@ -17,8 +17,8 @@ namespace BackEnd.Models.BackEndModels
         public string? Description { get; set; }
 
         [Required]
-        [Range(2,6)]
-        public float Price { get; set; }
+        [RegularExpression(@"^\d{1,6}(.\d{2})?$", ErrorMessage = "O preço deve ter no máximo 6 números antes do ponto e exatamente 2 depois.")]
+        public decimal Price { get; set; }
 
         [Required]
         public int Vacancies { get; set; }
