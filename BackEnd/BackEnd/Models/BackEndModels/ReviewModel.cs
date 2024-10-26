@@ -9,12 +9,13 @@ namespace BackEnd.Models.BackEndModels
         [ForeignKey("ReservationModel")]
         public int ReservationId { get; set; }
 
+        public virtual ReservationModel Reservation { get; set; }
+
         [Required]
         public float Rating {  get; set; }
 
         [StringLength(1000)]
         public string? Desc { get; set; }
 
-        public ICollection<ReservationModel> Reservations { get; set; }
     }
 }

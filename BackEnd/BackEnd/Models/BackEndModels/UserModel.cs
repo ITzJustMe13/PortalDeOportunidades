@@ -11,7 +11,7 @@ namespace BackEnd.Models.BackEndModels
         public int UserId { get; set; }
 
         [MaxLength(200)]
-        public string HashedPassword { get; set; }
+        public string? HashedPassword { get; set; }
 
         public int? ExternalId { get; set; }
 
