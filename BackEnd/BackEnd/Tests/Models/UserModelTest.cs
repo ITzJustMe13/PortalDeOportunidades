@@ -33,21 +33,20 @@ namespace BackEnd.Tests.Models
         }
 
         // Example data seeding method (foi a maneira mais simples de fzr)
-        private UserModel CreateSampleUser()
+        private UserModel CreateSampleUser(string HashedPassword, int? ExternalId, string FirstName, string LastName, string Email, int CellPhoneNum, DateTime BirthDate, Gender Gender, string Token, DateTime? TokenExpDate)
         {
             return new UserModel
             {
-                HashedPassword = "sampleHash",
-                ExternalId = 12345,
-                FirstName = "John",
-                LastName = "Doe",
-                Email = "john.doe@example.com",
-                CellPhoneNum = "1234567890",
-                RegistrationDate = DateTime.UtcNow,
-                BirthDate = new DateTime(1990, 1, 1),
-                Gender = Gender.MASCULINO,
-                Token = "sampleToken",
-                TokenExpDate = DateTime.UtcNow.AddDays(1)
+                HashedPassword = HashedPassword,
+                ExternalId = ExternalId,
+                FirstName = FirstName,
+                LastName = LastName,
+                Email = Email,
+                CellPhoneNum = CellPhoneNum,
+                BirthDate = BirthDate,
+                Gender = Gender,
+                Token = Token,
+                TokenExpDate = TokenExpDate
             };
         }
 
@@ -55,7 +54,7 @@ namespace BackEnd.Tests.Models
         public async Task AddUser_ShouldAddUserToDatabase()
         {
             // Arrange
-            var user = CreateSampleUser();
+            var user = CreateSampleUser("samplehashedpassword",null,"John","Doe","johnDoe@gmail.com",911632142,new DateTime(1990, 1, 1),Gender.MASCULINO,"sampleToken",DateTime.Today.AddDays(1));
 
             // Act
             await _context.Users.AddAsync(user);
@@ -72,7 +71,7 @@ namespace BackEnd.Tests.Models
         public async Task GetUserById_ShouldReturnUser()
         {
             // Arrange
-            var user = CreateSampleUser();
+            var user = CreateSampleUser("samplehashedpassword", null, "John", "Doe", "johnDoe@gmail.com", 911632142, new DateTime(1990, 1, 1), Gender.MASCULINO, "sampleToken", DateTime.Today.AddDays(1));
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
 
@@ -88,7 +87,7 @@ namespace BackEnd.Tests.Models
         public async Task UpdateUser_ShouldModifyUserDetails()
         {
             // Arrange
-            var user = CreateSampleUser();
+            var user = CreateSampleUser("samplehashedpassword", null, "John", "Doe", "johnDoe@gmail.com", 911632142, new DateTime(1990, 1, 1), Gender.MASCULINO, "sampleToken", DateTime.Today.AddDays(1));
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
 
@@ -108,7 +107,7 @@ namespace BackEnd.Tests.Models
         public async Task DeleteUser_ShouldRemoveUserFromDatabase()
         {
             // Arrange
-            var user = CreateSampleUser();
+            var user = CreateSampleUser("samplehashedpassword", null, "John", "Doe", "johnDoe@gmail.com", 911632142, new DateTime(1990, 1, 1), Gender.MASCULINO, "sampleToken", DateTime.Today.AddDays(1));
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
 
