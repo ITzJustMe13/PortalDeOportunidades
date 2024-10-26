@@ -81,7 +81,7 @@ namespace BackEnd.Tests.Models
         }
 
         [Test]
-        public async Task AddUser_ShouldAddUserToDatabase()
+        public async Task AddReservation_ShouldAddReservationToDatabase()
         {
             // Arrange
             var opportunity = CreateSampleOpportunity(
@@ -132,7 +132,7 @@ namespace BackEnd.Tests.Models
         }
 
         [Test]
-        public async Task GetUserById_ShouldReturnUser()
+        public async Task GetReservationById_ShouldReturnReservation()
         {
             // Arrange
             var opportunity = CreateSampleOpportunity(
@@ -184,7 +184,7 @@ namespace BackEnd.Tests.Models
         }
 
         [Test]
-        public async Task UpdateUser_ShouldModifyUserDetails()
+        public async Task UpdateReservation_ShouldModifyReservationDetails()
         {
             // Arrange
             var opportunity = CreateSampleOpportunity(
@@ -240,7 +240,7 @@ namespace BackEnd.Tests.Models
         }
 
         [Test]
-        public async Task DeleteUser_ShouldRemoveUserFromDatabase()
+        public async Task DeleteReservation_ShouldRemoveReservationFromDatabase()
         {
             // Arrange
             var opportunity = CreateSampleOpportunity(
