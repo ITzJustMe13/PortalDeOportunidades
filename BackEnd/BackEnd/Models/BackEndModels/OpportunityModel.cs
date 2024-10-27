@@ -44,8 +44,5 @@ namespace BackEnd.Models.BackEndModels
         [Required]
         public bool IsImpulsed { get; set; }
 
-        public ICollection<ImpulseModel> Impulses { get; set; }
-
-        public ICollection<FavoritesModel> Favorites { get; set; }
     }
 }
