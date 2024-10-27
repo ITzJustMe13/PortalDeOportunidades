@@ -2,6 +2,7 @@
 {
     public class Reservation
     {
+        public int ReservationId { get; set; }
 
         public Opportunity Opportunity { get; set; }
 
