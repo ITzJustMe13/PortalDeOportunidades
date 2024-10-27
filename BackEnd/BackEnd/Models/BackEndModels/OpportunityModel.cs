@@ -10,6 +10,10 @@ namespace BackEnd.Models.BackEndModels
         [Key]
         public int OpportunityId { get; set; }
 
+        [ForeignKey("UserModel")]
+        public int userID { get; set; }
+        public virtual UserModel User { get; set; }
+
         [Required]
         [StringLength(100)]
         public string Name { get; set; }
@@ -44,8 +48,14 @@ namespace BackEnd.Models.BackEndModels
         [Required]
         public bool IsImpulsed { get; set; }
 
-        public ICollection<ImpulseModel> Impulses { get; set; }
+        [Required]
+        public DateTime date { get; set; }
 
-        public ICollection<FavoritesModel> Favorites { get; set; }
+        public virtual ImpulseModel Impulse { get; set; }
+
+        public virtual ICollection<FavoritesModel> Favorites { get; set; }
+
+        public virtual ICollection<ReservationModel> Reservations { get; set; }
+
     }
 }

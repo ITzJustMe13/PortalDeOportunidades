@@ -30,5 +30,7 @@ namespace BackEnd.Models.BackEndModels
         [Required]
         public bool isActive  { get; set; }
 
+        public virtual ReviewModel review { get; set; }
+
     }
 }

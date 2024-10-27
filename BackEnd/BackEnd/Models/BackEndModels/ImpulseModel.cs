@@ -18,5 +18,12 @@ namespace BackEnd.Models.BackEndModels
 
         public virtual required OpportunityModel Opportunity { get; set; }
 
+        [Required]
+        [Range(0.01, double.MaxValue, ErrorMessage = "Price must be a positive value.")]
+        public decimal Price { get; set; }
+
+        [Required]
+        public DateTime ExpireDate { get; set; }
+
     }
 }
