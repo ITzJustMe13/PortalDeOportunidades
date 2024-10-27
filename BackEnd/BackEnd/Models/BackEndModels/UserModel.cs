@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using BackEnd.Enums;
+using Microsoft.EntityFrameworkCore;
 
 namespace BackEnd.Models.BackEndModels
 {
@@ -27,10 +28,11 @@ namespace BackEnd.Models.BackEndModels
         public string Email { get; set; }
 
         [Required]
-        [MaxLength(15)]
-        public string CellPhoneNum { get; set; }
+        [MaxLength(9, ErrorMessage = "Cellphone Number should be 9 digits"),MinLength(9, ErrorMessage = "Cellphone Number should be 9 digits")]
+        public int CellPhoneNum { get; set; }
 
         [Required]
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime RegistrationDate { get; set; }
 
         [Required]

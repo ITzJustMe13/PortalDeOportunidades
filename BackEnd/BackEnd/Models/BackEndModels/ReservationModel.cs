@@ -13,11 +13,12 @@ namespace BackEnd.Models.BackEndModels
         public int opportunityID { get; set; }
         public virtual OpportunityModel Opportunity { get; set; }
 
-        [ForeignKey("User")]
+        [ForeignKey("UserModel")]
         public int userID { get; set; }
         public virtual UserModel User { get; set; }
 
         [Required]
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime reservationDate { get; set; }
 
         [Required]

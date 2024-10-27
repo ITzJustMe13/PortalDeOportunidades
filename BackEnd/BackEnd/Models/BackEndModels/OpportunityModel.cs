@@ -22,6 +22,7 @@ namespace BackEnd.Models.BackEndModels
         public decimal Price { get; set; }
 
         [Required]
+        [MaxLength(30)]
         public int Vacancies { get; set; }
 
         [Required]
