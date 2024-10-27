@@ -7,7 +7,7 @@ namespace BackEnd.Models.FrontEndModels
         public int opportunityId { get; set; }
         public string name { get; set;}
 
-        public float price { get; set;}
+        public decimal price { get; set;}
 
         public int vacancies { get; set;}
 
