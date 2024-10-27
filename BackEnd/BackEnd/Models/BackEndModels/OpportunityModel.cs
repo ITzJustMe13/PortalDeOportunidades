@@ -49,7 +49,13 @@ namespace BackEnd.Models.BackEndModels
         public bool IsImpulsed { get; set; }
 
         [Required]
-        public DateTime date {  get; set; }
+        public DateTime date { get; set; }
+
+        public virtual ImpulseModel Impulse { get; set; }
+
+        public virtual ICollection<FavoritesModel> Favorites { get; set; }
+
+        public virtual ICollection<ReservationModel> Reservations { get; set; }
 
     }
 }

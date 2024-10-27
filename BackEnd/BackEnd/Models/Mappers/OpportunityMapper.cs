@@ -39,7 +39,7 @@ namespace BackEnd.Models.Mappers
             }
 
             return new OpportunityModel
-            { 
+            {
                 OpportunityId = opportunity.opportunityId,
                 Name = opportunity.name,
                 Price = opportunity.price,
