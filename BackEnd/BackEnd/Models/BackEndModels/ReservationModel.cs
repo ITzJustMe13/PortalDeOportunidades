@@ -30,6 +30,9 @@ namespace BackEnd.Models.BackEndModels
         [Required]
         public bool isActive  { get; set; }
 
+        [Required]
+        public float fixedPrice { get; set; }
+
         public virtual ReviewModel review { get; set; }
 
     }

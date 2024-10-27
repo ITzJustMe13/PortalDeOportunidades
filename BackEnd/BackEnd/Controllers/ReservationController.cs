@@ -1,6 +1,6 @@
 ﻿using BackEnd.Controllers.Data;
-using BackEnd.Models.BackEndModels;
 using BackEnd.Models.FrontEndModels;
+using BackEnd.Models.Mappers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,44 +23,46 @@ namespace BackEnd.Controllers
 
             if (reservation == null)
                 return NotFound();
-            return Ok(reservation);
+            var reservationDto = ReservationMapper.MapToDo(reservation); 
+            return Ok(reservationDto);
         }
 
         [HttpPost]
-        public ActionResult<ReservationModel> CreateNewReservation(ReservationModel reservation)
+        public ActionResult<Reservation> CreateNewReservation(Reservation reservation)
         {
             // Validação
             if (reservation == null ||
-                reservation.opportunityID == 0 ||
-                reservation.userID == 0 ||
+                reservation.oppportunity == null ||
+                reservation.user == null ||
                !ModelState.IsValid)
             {
                 return BadRequest("Some required fields are missing or invalid.");
             }
 
             // Verifica se a oportunidade e usuário existem
-            if (!dbContext.Opportunities.Any(o => o.OpportunityId == reservation.opportunityID))
+            if (!dbContext.Opportunities.Any(o => o.OpportunityId == reservation.oppportunity.opportunityId))
             {
                 return NotFound("Opportunity not found.");
             }
-            if (!dbContext.Users.Any(u => u.UserId == reservation.userID))
+            if (!dbContext.Users.Any(u => u.UserId == reservation.user.userId))
             {
                 return NotFound("User not found.");
             }
 
+            var reservationModel = ReservationMapper.MapToModel(reservation);
             // Adiciona a reserva
-            dbContext.Reservations.Add(reservation);
+            dbContext.Reservations.Add(reservationModel);
             dbContext.SaveChanges();
 
             // Retorna a resposta com o novo ID
-            return CreatedAtAction(nameof(CreateNewReservation), new { id = reservation.reservationID }, reservation);
+            return CreatedAtAction(nameof(CreateNewReservation), new { id = reservation.reservationId }, reservation);
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateReservation(int id, ReservationModel reservation)
+        public IActionResult UpdateReservation(int id, Reservation reservation)
         {
             // Validação de consistência do ID
-            if (reservation.reservationID != id)
+            if (reservation.reservationId != id)
                 return BadRequest("ID na rota não coincide com o ID do modelo.");
 
             // Busca a reserva para atualizar
