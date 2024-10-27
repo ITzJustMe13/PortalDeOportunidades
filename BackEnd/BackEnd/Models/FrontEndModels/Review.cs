@@ -2,10 +2,10 @@
 {
     public class Review
     {
-        public Reservation Reservation { get; set; }
+        public Reservation reservation { get; set; }
 
-        public float Rating { get; set; }
+        public float rating { get; set; }
 
-        public string Desc { get; set; }
+        public string desc { get; set; }
     }
 }

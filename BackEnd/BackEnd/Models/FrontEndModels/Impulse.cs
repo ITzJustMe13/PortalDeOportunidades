@@ -3,13 +3,13 @@
     public class Impulse
     {
 
-        public User User { get; set; }
+        public User user { get; set; }
 
-        public Opportunity Opportunity { get; set; }
+        public Opportunity opportunity { get; set; }
 
-        public float Value { get; set; }
+        public float value { get; set; }
 
-        public DateTime ExpireDate { get; set; }
+        public DateTime expireDate { get; set; }
 
 
     }

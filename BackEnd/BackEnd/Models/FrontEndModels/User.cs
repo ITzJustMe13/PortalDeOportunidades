@@ -4,19 +4,19 @@ namespace BackEnd.Models.FrontEndModels
 {
     public class User
     {
-        public int UserId { get; set; }
-        public string FirstName { get; set; }
+        public int userId { get; set; }
+        public string firstName { get; set; }
 
-        public string LastName { get; set; }
+        public string lastName { get; set; }
 
-        public string Email { get; set; }
+        public string email { get; set; }
 
-        public int CellphoneNumber { get; set; }
+        public int cellPhoneNumber { get; set; }
 
-        public DateTime RegsitrationDate { get; set; }
+        public DateTime regsitrationDate { get; set; }
 
-        public DateTime BirthDate { get; set; }
+        public DateTime birthDate { get; set; }
 
-        public Gender Gender { get; set; }
+        public Gender gender { get; set; }
     }
 }
