@@ -55,5 +55,51 @@ namespace BackEnd.Controllers
             // Retorna a resposta com o novo ID
             return CreatedAtAction(nameof(CreateNewReservation), new { id = reservation.reservationID }, reservation);
         }
+
+        [HttpPut("{id}")]
+        public IActionResult UpdateReservation(int id, ReservationModel reservation)
+        {
+            // Validação de consistência do ID
+            if (reservation.reservationID != id)
+                return BadRequest("ID na rota não coincide com o ID do modelo.");
+
+            // Busca a reserva para atualizar
+            var existingReservation = dbContext.Reservations.Find(id);
+
+            if (existingReservation == null)
+                return NotFound("Reserva não encontrada.");
+
+            // Atualiza as propriedades (exceto as que não devem ser alteradas, como IDs e datas de criação)
+            existingReservation.checkInDate = reservation.checkInDate;
+            existingReservation.numOfPeople = reservation.numOfPeople;
+            existingReservation.isActive = reservation.isActive;
+
+            // Validação de regras de negócio (exemplo, verifiqua se a data de check-in não é anterior à data atual)
+            if (reservation.checkInDate < DateTime.Now)
+                return BadRequest("Data de check-in não pode ser anterior à data atual.");
+
+            // Atualiza o estado da entidade
+            dbContext.Entry(existingReservation).State = EntityState.Modified;
+            dbContext.SaveChanges();
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteReservation(int id)
+        {
+            // Verifica se o contexto não é nulo (embora isso seja improvável aqui, mantém a consistência com o exemplo)
+            if (dbContext.Reservations == null)
+                return NotFound("Nenhuma reserva encontrada.");
+
+            var reservationToDelete = dbContext.Reservations.Find(id);
+
+            if (reservationToDelete == null)
+                return NotFound("Reserva não encontrada.");
+
+            // Remove a reserva
+            dbContext.Reservations.Remove(reservationToDelete);
+            dbContext.SaveChanges();
+            return NoContent();
+        }
     }
 }
