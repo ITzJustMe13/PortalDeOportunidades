@@ -80,7 +80,7 @@ namespace BackEnd.Tests.Models
 
             // Assert
             Assert.That(retrievedUser, Is.Not.Null);
-            Assert.That(retrievedUser.Email, Is.EqualTo("johnDoe@example.com"));
+            Assert.That(retrievedUser.Email, Is.EqualTo("johnDoe@gmail.com"));
         }
 
         [Test]
