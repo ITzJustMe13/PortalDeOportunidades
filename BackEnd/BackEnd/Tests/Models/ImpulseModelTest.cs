@@ -71,6 +71,7 @@ namespace BackEnd.Tests.Models
         }
 
         [Test]
+        [Category("UnitTest")]
         public async Task CreateImpulseModel_ShouldCreateSuccessfully()
         {
             // Arrange
@@ -88,6 +89,7 @@ namespace BackEnd.Tests.Models
         }
 
         [Test]
+        [Category("UnitTest")]
         public async Task GetImpulseById_ShouldReturnImpulse()
         {
             // Arrange
@@ -106,6 +108,7 @@ namespace BackEnd.Tests.Models
         }
 
         [Test]
+        [Category("UnitTest")]
         public async Task EditImpulseById_ShouldEditPriceFromImpulse()
         {
             // Arrange
@@ -124,6 +127,7 @@ namespace BackEnd.Tests.Models
         }
 
         [Test]
+        [Category("UnitTest")]
         public async Task DeleteImpulseById_ShouldDeleteImpulseFromDatabase()
         {
             // Arrange

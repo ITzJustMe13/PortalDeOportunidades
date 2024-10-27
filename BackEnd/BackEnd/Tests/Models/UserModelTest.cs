@@ -51,6 +51,7 @@ namespace BackEnd.Tests.Models
         }
 
         [Test]
+        [Category("UnitTest")]
         public async Task AddUser_ShouldAddUserToDatabase()
         {
             // Arrange
@@ -68,6 +69,7 @@ namespace BackEnd.Tests.Models
         }
 
         [Test]
+        [Category("UnitTest")]
         public async Task GetUserById_ShouldReturnUser()
         {
             // Arrange
@@ -84,6 +86,7 @@ namespace BackEnd.Tests.Models
         }
 
         [Test]
+        [Category("UnitTest")]
         public async Task UpdateUser_ShouldModifyUserDetails()
         {
             // Arrange
@@ -104,6 +107,7 @@ namespace BackEnd.Tests.Models
         }
 
         [Test]
+        [Category("UnitTest")]
         public async Task DeleteUser_ShouldRemoveUserFromDatabase()
         {
             // Arrange

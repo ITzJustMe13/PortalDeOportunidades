@@ -66,6 +66,7 @@ namespace BackEnd.Tests.Models
         }
 
         [Test]
+        [Category("UnitTest")]
         public async Task AddOpp_ShouldNotAddOppToDatabase()
         {
             // Arrange
@@ -82,6 +83,7 @@ namespace BackEnd.Tests.Models
         }
 
         [Test]
+        [Category("UnitTest")]
         public async Task AddOpp_ShouldAddOppToDatabase()
         {
             // Arrange
@@ -99,6 +101,7 @@ namespace BackEnd.Tests.Models
         }
 
         [Test]
+        [Category("UnitTest")]
         public async Task GetOppById_ShouldReturnOpp()
         {
             // Arrange
@@ -114,6 +117,7 @@ namespace BackEnd.Tests.Models
         }
 
         [Test]
+        [Category("UnitTest")]
         public async Task UpdateOpp_ShouldModifyOppDetails()
         {
             // Arrange
@@ -132,6 +136,7 @@ namespace BackEnd.Tests.Models
         }
 
         [Test]
+        [Category("UnitTest")]
         public async Task DeleteOpp_ShouldRemoveOppFromDatabase()
         {
             // Arrange

@@ -43,6 +43,7 @@ namespace BackEnd.Tests.Models
         }
 
         [Test]
+        [Category("UnitTest")]
         public async Task CreateReviewModel_ShouldCreateSuccessfully()
         {
             // Arrange
@@ -60,6 +61,7 @@ namespace BackEnd.Tests.Models
         }
 
         [Test]
+        [Category("UnitTest")]
         public async Task GetReviewById_ShouldReturnReview()
         {
             // Arrange
@@ -77,6 +79,7 @@ namespace BackEnd.Tests.Models
         }
 
         [Test]
+        [Category("UnitTest")]
         public async Task EditReviewById_ShouldEditRatingFromReview()
         {
             // Arrange
@@ -95,6 +98,7 @@ namespace BackEnd.Tests.Models
         }
 
         [Test]
+        [Category("UnitTest")]
         public async Task DeleteReviewById_ShouldDeleteReviewFromDatabase()
         {
             // Arrange
