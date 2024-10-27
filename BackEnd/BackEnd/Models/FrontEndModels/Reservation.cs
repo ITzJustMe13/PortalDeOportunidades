@@ -4,7 +4,7 @@
     {
         public int reservationId { get; set; }
 
-        public Opportunity ppportunity { get; set; }
+        public Opportunity oppportunity { get; set; }
 
         public User user { get; set; }
 
