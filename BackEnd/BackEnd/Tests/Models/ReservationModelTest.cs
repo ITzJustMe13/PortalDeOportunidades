@@ -81,6 +81,7 @@ namespace BackEnd.Tests.Models
         }
 
         [Test]
+        [Category("UnitTest")]
         public async Task AddReservation_ShouldAddReservationToDatabase()
         {
             // Arrange
@@ -132,6 +133,7 @@ namespace BackEnd.Tests.Models
         }
 
         [Test]
+        [Category("UnitTest")]
         public async Task GetReservationById_ShouldReturnReservation()
         {
             // Arrange
@@ -184,6 +186,7 @@ namespace BackEnd.Tests.Models
         }
 
         [Test]
+        [Category("UnitTest")]
         public async Task UpdateReservation_ShouldModifyReservationDetails()
         {
             // Arrange
@@ -240,6 +243,7 @@ namespace BackEnd.Tests.Models
         }
 
         [Test]
+        [Category("UnitTest")]
         public async Task DeleteReservation_ShouldRemoveReservationFromDatabase()
         {
             // Arrange
