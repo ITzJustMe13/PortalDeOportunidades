@@ -46,4 +46,4 @@ jobs:
         env:
           
           CONNECTION_STRING: "Server=localhost,1433;Database=testdb;User Id=sa;Password=${{ secrets.SA_PASSWORD }};"
-        run: dotnet test --filter "Category=IntegrationTest"
+        run: dotnet test BackEnd/BackEnd.sln --filter "Category=IntegrationTest"
