@@ -12,8 +12,8 @@ namespace BackEnd.Models.Mappers
             return new Reservation
             {
                 reservationId = reservationModel.reservationID,
-                oppportunity = OpportunityMapper.MapToDto(reservationModel.Opportunity),
-                user = UserMapper.MapToDto(reservationModel.User),
+                oppportunityId = reservationModel.opportunityID,
+                userId = reservationModel.userID,
                 reservationDate = reservationModel.reservationDate,
                 checkInDate = reservationModel.checkInDate,
                 numOfPeople = reservationModel.numOfPeople,
@@ -29,8 +29,8 @@ namespace BackEnd.Models.Mappers
             return new ReservationModel
             {
                 reservationID = reservation.reservationId,
-                Opportunity = OpportunityMapper.MapToModel(reservation.oppportunity),
-                User = UserMapper.MapToModel(reservation.user),
+                opportunityID = reservation.oppportunityId,
+                userID = reservation.userId,
                 reservationDate = reservation.reservationDate,
                 checkInDate = reservation.checkInDate,
                 numOfPeople = reservation.numOfPeople,

@@ -4,9 +4,9 @@
     {
         public int reservationId { get; set; }
 
-        public Opportunity oppportunity { get; set; }
+        public int oppportunityId { get; set; }
 
-        public User user { get; set; }
+        public int userId { get; set; }
 
         public DateTime reservationDate { get; set; }
 

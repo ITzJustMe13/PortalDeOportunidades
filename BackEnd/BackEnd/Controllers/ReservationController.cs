@@ -32,19 +32,19 @@ namespace BackEnd.Controllers
         {
             // Validação
             if (reservation == null ||
-                reservation.oppportunity == null ||
-                reservation.user == null ||
+                reservation.oppportunityId == 0 ||
+                reservation.userId == 0 ||
                !ModelState.IsValid)
             {
                 return BadRequest("Some required fields are missing or invalid.");
             }
 
             // Verifica se a oportunidade e usuário existem
-            if (!dbContext.Opportunities.Any(o => o.OpportunityId == reservation.oppportunity.opportunityId))
+            if (!dbContext.Opportunities.Any(o => o.OpportunityId == reservation.oppportunityId))
             {
                 return NotFound("Opportunity not found.");
             }
-            if (!dbContext.Users.Any(u => u.UserId == reservation.user.userId))
+            if (!dbContext.Users.Any(u => u.UserId == reservation.userId))
             {
                 return NotFound("User not found.");
             }
