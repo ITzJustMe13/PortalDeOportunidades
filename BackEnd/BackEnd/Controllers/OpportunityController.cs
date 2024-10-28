@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.IdentityModel.Tokens;
+using System.ComponentModel.DataAnnotations;
+using System.Security;
 
 namespace BackEnd.Controllers
 {
@@ -28,8 +30,16 @@ namespace BackEnd.Controllers
             {
                 return NotFound("No Opportunities were found.");
             }
-            var opportunityDtos = opportunityModels.Select(OpportunityMapper.MapToDto).ToList();
-            return Ok(opportunityDtos);
+            try 
+            { 
+                var opportunityDtos = opportunityModels.Select(OpportunityMapper.MapToDto).ToList();
+                return Ok(opportunityDtos);
+            } 
+            catch (ValidationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
         }
 
         //GET api/Opportunity/Impulsed
@@ -44,9 +54,15 @@ namespace BackEnd.Controllers
             {
                 return NotFound("No Opportunities were found.");
             }
-
-            var opportunitiesDto = opportunityModels.Select(OpportunityMapper.MapToDto).ToList();
-            return Ok(opportunitiesDto);
+            try
+            {
+                var opportunityDtos = opportunityModels.Select(OpportunityMapper.MapToDto).ToList();
+                return Ok(opportunityDtos);
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         //GET api/Opportunity/1
@@ -58,8 +74,15 @@ namespace BackEnd.Controllers
             {
                 return NotFound($"Opportunity with id {id} not found.");
             }
-            var opportunityDto = OpportunityMapper.MapToDto(opportunity);
-            return Ok(opportunityDto);
+            try
+            {
+                var opportunityDto = OpportunityMapper.MapToDto(opportunity);
+                return Ok(opportunityDto);
+            } catch (ValidationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
 
         }
 
@@ -74,8 +97,15 @@ namespace BackEnd.Controllers
             {
                 return NotFound($"Opportunity with userId {userId} not found.");
             }
-            var opportunityDtos = opportunities.Select(OpportunityMapper.MapToDto).ToList();
-            return Ok(opportunityDtos);
+            try
+            {
+                var opportunityDtos = opportunities.Select(OpportunityMapper.MapToDto).ToList();
+                return Ok(opportunityDtos);
+            } catch (ValidationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
         }
 
         //GET api/Opportunity/Search?keyword=event&vacancies=5&minPrice=10&maxPrice=100&category=conference&location=VilaReal
@@ -100,37 +130,79 @@ namespace BackEnd.Controllers
             //Vacancies
             if (vacancies.HasValue)
             {
-                query = query.Where(o => o.Vacancies >= vacancies.Value);
+                if(vacancies > 0)
+                {
+                    query = query.Where(o => o.Vacancies >= vacancies.Value);
+                } else
+                {
+                    return BadRequest("Vacancies must be greater than zero.");
+                }
+                
             }
 
             //MinPrice
             if (minPrice.HasValue)
             {
-                query = query.Where(o => o.Price >= minPrice.Value);
+                if(minPrice > 0.00M)
+                {
+                    query = query.Where(o => o.Price <= maxPrice.Value);
+                } else
+                {
+                    return BadRequest("MinPrice should be bigger than 0");
+                }
             }
 
             //MaxPrice
             if (maxPrice.HasValue)
             {
-                query = query.Where(o => o.Price <= maxPrice.Value);
+                if(maxPrice > 0.00M)
+                {
+                    query = query.Where(o => o.Price <= maxPrice.Value);
+                } else
+                {
+                    return BadRequest("MaxPrice should be bigger than 0");
+                }
+                
             }
 
             //Category
-            if (category.HasValue)
+            if (category.HasValue )
             {
-                query = query.Where(o => o.Category == category);
+                if(Enum.IsDefined(typeof(Category), category.Value))
+                {
+                    query = query.Where(o => o.Category == category);
+                } else
+                {
+                    return BadRequest("Invalid category specified.");
+                }
+                
             }
 
             //Location
             if (location.HasValue)
             {
-                query = query.Where(o => o.Location == location);
+                if (Enum.IsDefined(typeof(Location), location.Value))
+                {
+                    query = query.Where(o => o.Location == location);
+                } else
+                {
+                    return BadRequest("Invalid category specified.");
+                }
+                
             }
 
             var opportunitiesModels = await query.ToListAsync();
-            var opportunityDtos = opportunitiesModels.Select(OpportunityMapper.MapToDto).ToList();
+            try
+            {
+                var opportunityDtos = opportunitiesModels.Select(OpportunityMapper.MapToDto).ToList();
+                return Ok(opportunityDtos);
+            } catch (ValidationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
 
-            return Ok(opportunityDtos);
+            
         }
 
         //POST api/Opportunity/
@@ -146,12 +218,31 @@ namespace BackEnd.Controllers
             {
                 return BadRequest("Invalid User Id.");
             }
-            var opportunityModel = OpportunityMapper.MapToModel(opportunity);
-            await _context.Opportunities.AddAsync(opportunityModel);
-            await _context.SaveChangesAsync();
-
-            var createdOpportunityDto = OpportunityMapper.MapToDto(opportunityModel);
-            return CreatedAtAction(nameof(GetOpportunityById), new { id = createdOpportunityDto.opportunityId }, createdOpportunityDto);
+            if (opportunity.price <= 0.00M)
+            {
+                return BadRequest("Price should be bigger than 0");
+            }
+            if(opportunity.userId < 0)
+            {
+                return BadRequest("Invalid userId.");
+            }
+            if (opportunity.vacancies <= 0)
+            {
+                return BadRequest("Vacancies must be greater than zero.");
+            }
+            try
+            {
+                opportunity.reviewScore = 0.0F;
+                var opportunityModel = OpportunityMapper.MapToModel(opportunity);
+                await _context.Opportunities.AddAsync(opportunityModel);
+                await _context.SaveChangesAsync();
+                var createdOpportunityDto = OpportunityMapper.MapToDto(opportunityModel);
+                return CreatedAtAction(nameof(GetOpportunityById), new { id = createdOpportunityDto.opportunityId }, createdOpportunityDto);
+            } catch (ValidationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
         }
 
         //DELETE api/Opportunity/
@@ -321,13 +412,25 @@ namespace BackEnd.Controllers
             }
 
             //Date
-            opportunityModel.date = date;
+            if(date > DateTime.Today)
+            {
+                opportunityModel.date = date;
+            } else
+            {
+                return BadRequest("Opportunity Date must be in the Future");
+            }
+            
 
             await _context.SaveChangesAsync();
-
-            var opportunityDto = OpportunityMapper.MapToDto(opportunityModel);
-            return Ok(opportunityDto);
-
+            try
+            {
+                var opportunityDto = OpportunityMapper.MapToDto(opportunityModel);
+                return Ok(opportunityDto);
+            } catch (ValidationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+     
         }
 
     }
