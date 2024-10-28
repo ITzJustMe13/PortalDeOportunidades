@@ -236,7 +236,7 @@ namespace BackEnd.Migrations
                     b.HasOne("BackEnd.Models.BackEndModels.UserModel", "User")
                         .WithMany("Favorites")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Opportunity");
@@ -255,7 +255,7 @@ namespace BackEnd.Migrations
                     b.HasOne("BackEnd.Models.BackEndModels.UserModel", "User")
                         .WithMany("Impulses")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Opportunity");
@@ -285,7 +285,7 @@ namespace BackEnd.Migrations
                     b.HasOne("BackEnd.Models.BackEndModels.UserModel", "User")
                         .WithMany("Reservations")
                         .HasForeignKey("userID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Opportunity");
