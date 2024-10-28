@@ -22,7 +22,7 @@ namespace BackEnd.Models.Mappers
                 description = opportunityModel.Description,
                 location = opportunityModel.Location,
                 address = opportunityModel.Address,
-                user = UserMapper.MapToDto(opportunityModel.User),
+                userId = opportunityModel.userID,
                 reviewScore = opportunityModel.Score,
                 date = opportunityModel.date,
                 isImpulsed = opportunityModel.IsImpulsed
@@ -49,7 +49,7 @@ namespace BackEnd.Models.Mappers
                 Description = opportunity.description,
                 Location = opportunity.location,
                 Address = opportunity.address,
-                User = UserMapper.MapToModel(opportunity.user),
+                userID = opportunity.userId,
                 Score = opportunity.reviewScore,
                 date = opportunity.date,
                 IsImpulsed = opportunity.isImpulsed
