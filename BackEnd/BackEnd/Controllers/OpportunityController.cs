@@ -3,6 +3,7 @@ using BackEnd.Enums;
 using BackEnd.Models.BackEndModels;
 using BackEnd.Models.FrontEndModels;
 using BackEnd.Models.Mappers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -134,13 +135,14 @@ namespace BackEnd.Controllers
 
         //POST api/Opportunity/
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Opportunity>> CreateOpportunity(Opportunity opportunity)
         {
             if(opportunity == null)
             {
                 return BadRequest("Opportunity Data is Required.");
             }
-            if(opportunity.user.userId == null || opportunity.user.userId < 0)
+            if(opportunity.userId == null || opportunity.userId < 0)
             {
                 return BadRequest("Invalid User Id.");
             }
@@ -154,6 +156,7 @@ namespace BackEnd.Controllers
 
         //DELETE api/Opportunity/
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<ActionResult<Opportunity>> DeleteOpportunityById(int id)
         {
             var opportunityModel = await _context.Opportunities.FindAsync(id);
@@ -181,6 +184,7 @@ namespace BackEnd.Controllers
 
         //PUT api/Opportunity/1/activate
         [HttpPut("{id}/activate")]
+        [Authorize]
         public async Task<ActionResult<Opportunity>> ActivateOpportunityById(int id)
         {
             var opportunityModel = await _context.Opportunities.FindAsync(id);
@@ -203,6 +207,7 @@ namespace BackEnd.Controllers
 
         //PUT api/Opportunity/1/deactivate
         [HttpPut("{id}/deactivate")]
+        [Authorize]
         public async Task<ActionResult<Opportunity>>DeactivateOpportunityById(int id)
         {
             var opportunityModel = await _context.Opportunities.FindAsync(id);
@@ -225,6 +230,7 @@ namespace BackEnd.Controllers
 
         //PUT api/Opportunity/1/Impulse?days=30
         [HttpPut("{id}/Impulse")]
+        [Authorize]
         public async Task<ActionResult<Opportunity>> ActivateImpulseById(int id, [FromQuery]int days)
         {
             var opportunityModel = await _context.Opportunities.FindAsync(id);
@@ -253,6 +259,7 @@ namespace BackEnd.Controllers
 
         //PUT api/Opportunity/1/Edit?name=event&description=description&price=10&vacancies=2&category=agricultura&location=VilaReal&address=RuaTeste&date=10/02/2025
         [HttpPut("{id}/Edit")]
+        [Authorize]
         public async Task<ActionResult<Opportunity>> EditOpportunityById (
             int id,
             [FromQuery] string? name,
