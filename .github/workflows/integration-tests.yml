@@ -37,13 +37,13 @@ jobs:
           dotnet-version: '8.x'
 
       - name: Restore Dependencies
-        run: dotnet restore
+        run: dotnet restore BackEnd/BackEnd.sln
 
       - name: Build Solution
-        run: dotnet build --no-restore
+        run: dotnet build BackEnd/BackEnd.sln --no-restore
 
       - name: Run Integration Tests
         env:
           
           CONNECTION_STRING: "Server=localhost,1433;Database=testdb;User Id=sa;Password=${{ secrets.SA_PASSWORD }};"
-        run: dotnet test --filter "Category=IntegrationTest"
+        run: dotnet test BackEnd/BackEnd.sln --filter "Category=IntegrationTest"

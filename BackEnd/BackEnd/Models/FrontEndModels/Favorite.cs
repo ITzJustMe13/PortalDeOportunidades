@@ -2,8 +2,8 @@
 {
     public class Favorite
     {
-        public User user { get; set; }
+        public int userId { get; set; }
 
-        public Opportunity opportunity { get; set; }
+        public int opportunityId { get; set; }
     }
 }

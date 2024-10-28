@@ -31,8 +31,8 @@ namespace BackEnd.Models.BackEndModels
         [MaxLength(9, ErrorMessage = "Cellphone Number should be 9 digits"),MinLength(9, ErrorMessage = "Cellphone Number should be 9 digits")]
         public int CellPhoneNum { get; set; }
 
+        
         [Required]
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime RegistrationDate { get; set; }
 
         [Required]

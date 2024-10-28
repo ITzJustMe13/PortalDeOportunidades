@@ -2,7 +2,7 @@
 {
     public class Review
     {
-        public Reservation reservation { get; set; }
+        public int reservationId { get; set; }
 
         public float rating { get; set; }
 
