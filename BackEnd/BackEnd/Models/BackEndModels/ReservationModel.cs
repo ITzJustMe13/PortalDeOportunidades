@@ -18,7 +18,6 @@ namespace BackEnd.Models.BackEndModels
         public virtual UserModel User { get; set; }
 
         [Required]
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime reservationDate { get; set; }
 
         [Required]

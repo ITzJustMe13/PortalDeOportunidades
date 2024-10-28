@@ -127,6 +127,9 @@ namespace BackEnd.Migrations
                     b.Property<DateTime>("checkInDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<float>("fixedPrice")
+                        .HasColumnType("real");
+
                     b.Property<bool>("isActive")
                         .HasColumnType("bit");
 
@@ -137,7 +140,6 @@ namespace BackEnd.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("reservationDate")
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2");
 
                     b.Property<int>("userID")
@@ -236,7 +238,7 @@ namespace BackEnd.Migrations
                     b.HasOne("BackEnd.Models.BackEndModels.UserModel", "User")
                         .WithMany("Favorites")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Opportunity");
@@ -255,7 +257,7 @@ namespace BackEnd.Migrations
                     b.HasOne("BackEnd.Models.BackEndModels.UserModel", "User")
                         .WithMany("Impulses")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Opportunity");
@@ -285,7 +287,7 @@ namespace BackEnd.Migrations
                     b.HasOne("BackEnd.Models.BackEndModels.UserModel", "User")
                         .WithMany("Reservations")
                         .HasForeignKey("userID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Opportunity");

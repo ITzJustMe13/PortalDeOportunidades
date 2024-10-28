@@ -66,20 +66,22 @@ namespace BackEnd.Controllers
                 return BadRequest("ID na rota não coincide com o ID do modelo.");
 
             // Busca a reserva para atualizar
+            var reservationModel = ReservationMapper.MapToModel(reservation);
             var existingReservation = dbContext.Reservations.Find(id);
-
+            
             if (existingReservation == null)
                 return NotFound("Reserva não encontrada.");
 
             // Atualiza as propriedades (exceto as que não devem ser alteradas, como IDs e datas de criação)
-            existingReservation.checkInDate = reservation.checkInDate;
-            existingReservation.numOfPeople = reservation.numOfPeople;
-            existingReservation.isActive = reservation.isActive;
+            existingReservation.checkInDate = reservationModel.checkInDate;
+            existingReservation.numOfPeople = reservationModel.numOfPeople;
+            existingReservation.isActive = reservationModel.isActive;
 
             // Validação de regras de negócio (exemplo, verifiqua se a data de check-in não é anterior à data atual)
-            if (reservation.checkInDate < DateTime.Now)
+            if (reservationModel.checkInDate < DateTime.Now)
                 return BadRequest("Data de check-in não pode ser anterior à data atual.");
 
+            
             // Atualiza o estado da entidade
             dbContext.Entry(existingReservation).State = EntityState.Modified;
             dbContext.SaveChanges();
