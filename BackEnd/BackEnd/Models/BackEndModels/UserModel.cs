@@ -28,12 +28,11 @@ namespace BackEnd.Models.BackEndModels
         public string Email { get; set; }
 
         [Required]
-        [MaxLength(9, ErrorMessage = "Cellphone Number should be 9 digits"),MinLength(9, ErrorMessage = "Cellphone Number should be 9 digits")]
+        [Range(000000000,999999999)]
         public int CellPhoneNum { get; set; }
 
         [Required]
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public DateTime RegistrationDate { get; set; }
+        public DateTime RegistrationDate { get; set; } = DateTime.UtcNow;
 
         [Required]
         public DateTime BirthDate { get; set; }
