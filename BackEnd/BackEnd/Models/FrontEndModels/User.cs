@@ -13,7 +13,7 @@ namespace BackEnd.Models.FrontEndModels
 
         public int cellPhoneNumber { get; set; }
 
-        public DateTime regsitrationDate { get; set; }
+        public DateTime registrationDate { get; set; }
 
         public DateTime birthDate { get; set; }
 
