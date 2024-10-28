@@ -31,20 +31,39 @@ namespace BackEnd.Tests.Models
             _context.Dispose();
         }
 
-        private OpportunityModel CreateTrueSampleOpp()
+        private OpportunityModel CreateSampleOpportunity(UserModel User,int userID,string Name, string Description, decimal Price, int Vacancies, bool IsActive, Category Category, Location Location, string Address, float Score, bool IsImpulsed)
         {
             return new OpportunityModel
             {
-                Name = "TestOportunidade",
-                Description = "Uma oportunidade de teste",
-                Price = (decimal)23.12,
-                Vacancies = 30,
-                IsActive = true,
-                Category = Category.AGRICULTURA,
-                Location = Location.LISBOA,
-                Address = "Uma rua de lisboa nº890",
-                Score = 3.3F,
-                IsImpulsed = true
+                userID = userID,
+                User = User,
+                Name = Name,
+                Description = Description,
+                Price = Price,
+                Vacancies = Vacancies,
+                IsActive = IsActive,
+                Category = Category,
+                Location = Location,
+                Address = Address,
+                Score = Score,
+                IsImpulsed = IsImpulsed
+            };
+        }
+
+        private UserModel CreateSampleUser()
+        {
+            return new UserModel
+            {
+                HashedPassword = "exampleHas",
+                FirstName = "toni",
+                LastName = "naotoni",
+                Email = "toninaotoni@gmail.com",
+                CellPhoneNum = 919191999,
+                RegistrationDate = DateTime.Now,
+                BirthDate = new DateTime(1998,11,12),
+                Gender = Gender.MASCULINO,
+                Token = "Token",
+                TokenExpDate = DateTime.Now.AddDays(1),
             };
         }
 
@@ -87,9 +106,11 @@ namespace BackEnd.Tests.Models
         public async Task AddOpp_ShouldAddOppToDatabase()
         {
             // Arrange
-            var opp = CreateTrueSampleOpp();
+            var user = CreateSampleUser();
+            var opp = CreateSampleOpportunity(user, user.UserId, "TestOportunidade", "Uma oportunidade de teste", (decimal)21.32, 30, true, Category.ARTESANATO, Location.FARO, "um sitio em faro", 3.2F, true);
 
             // Act
+            await _context.Users.AddAsync(user);
             await _context.Opportunities.AddAsync(opp);
             await _context.SaveChangesAsync();
 
@@ -105,7 +126,10 @@ namespace BackEnd.Tests.Models
         public async Task GetOppById_ShouldReturnOpp()
         {
             // Arrange
-            var opp = CreateTrueSampleOpp();
+            
+            var user = CreateSampleUser();
+            var opp = CreateSampleOpportunity(user, user.UserId, "TestOportunidade", "Uma oportunidade de teste", (decimal)21.32, 30, true, Category.ARTESANATO, Location.FARO, "um sitio em faro", 3.2F, true);
+            await _context.Users.AddAsync(user);
             await _context.Opportunities.AddAsync(opp);
             await _context.SaveChangesAsync();
 
@@ -121,7 +145,9 @@ namespace BackEnd.Tests.Models
         public async Task UpdateOpp_ShouldModifyOppDetails()
         {
             // Arrange
-            var opp = CreateTrueSampleOpp();
+            var user = CreateSampleUser();
+            var opp = CreateSampleOpportunity(user, user.UserId, "TestOportunidade", "Uma oportunidade de teste", (decimal)21.32, 30, true, Category.ARTESANATO, Location.FARO, "um sitio em faro", 3.2F, true);
+            await _context.Users.AddAsync(user);
             await _context.Opportunities.AddAsync(opp);
             await _context.SaveChangesAsync();
 
@@ -140,7 +166,9 @@ namespace BackEnd.Tests.Models
         public async Task DeleteOpp_ShouldRemoveOppFromDatabase()
         {
             // Arrange
-            var opp = CreateTrueSampleOpp();
+            var user = CreateSampleUser();
+            var opp = CreateSampleOpportunity(user, user.UserId, "TestOportunidade", "Uma oportunidade de teste", (decimal)21.32, 30, true, Category.ARTESANATO, Location.FARO, "um sitio em faro", 3.2F, true);
+            await _context.Users.AddAsync(user);
             await _context.Opportunities.AddAsync(opp);
             await _context.SaveChangesAsync();
 
