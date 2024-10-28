@@ -8,6 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="Controllers\Data\" />
+    <Folder Include="Migrations\" />
     <Folder Include="Views\" />
   </ItemGroup>
 

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BackEnd.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241025212405_FixedFavoritesAndImpulsesV2")]
-    partial class FixedFavoritesAndImpulsesV2
+    [Migration("20241028180527_InitialDBSchema")]
+    partial class InitialDBSchema
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -48,9 +48,16 @@ namespace BackEnd.Migrations
                     b.Property<int>("OpportunityId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("ExpireDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(6,2)");
+
                     b.HasKey("UserId", "OpportunityId");
 
-                    b.HasIndex("OpportunityId");
+                    b.HasIndex("OpportunityId")
+                        .IsUnique();
 
                     b.ToTable("Impulses");
                 });
@@ -95,15 +102,19 @@ namespace BackEnd.Migrations
                     b.Property<float>("Score")
                         .HasColumnType("real");
 
-                    b.Property<int?>("UserModelUserId")
+                    b.Property<int>("Vacancies")
+                        .HasMaxLength(30)
                         .HasColumnType("int");
 
-                    b.Property<int>("Vacancies")
+                    b.Property<DateTime>("date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("userID")
                         .HasColumnType("int");
 
                     b.HasKey("OpportunityId");
 
-                    b.HasIndex("UserModelUserId");
+                    b.HasIndex("userID");
 
                     b.ToTable("Opportunities");
                 });
@@ -115,9 +126,6 @@ namespace BackEnd.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("reservationID"));
-
-                    b.Property<int?>("ReviewModelReservationId")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("checkInDate")
                         .HasColumnType("datetime2");
@@ -132,14 +140,13 @@ namespace BackEnd.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("reservationDate")
+                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2");
 
                     b.Property<int>("userID")
                         .HasColumnType("int");
 
                     b.HasKey("reservationID");
-
-                    b.HasIndex("ReviewModelReservationId");
 
                     b.HasIndex("opportunityID");
 
@@ -151,17 +158,14 @@ namespace BackEnd.Migrations
             modelBuilder.Entity("BackEnd.Models.BackEndModels.ReviewModel", b =>
                 {
                     b.Property<int>("ReservationId")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReservationId"));
 
                     b.Property<string>("Desc")
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
-                    b.Property<int>("Rating")
-                        .HasColumnType("int");
+                    b.Property<float>("Rating")
+                        .HasColumnType("real");
 
                     b.HasKey("ReservationId");
 
@@ -179,10 +183,9 @@ namespace BackEnd.Migrations
                     b.Property<DateTime>("BirthDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CellPhoneNum")
-                        .IsRequired()
-                        .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
+                    b.Property<int>("CellPhoneNum")
+                        .HasMaxLength(9)
+                        .HasColumnType("int");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -201,7 +204,6 @@ namespace BackEnd.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("HashedPassword")
-                        .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
@@ -237,7 +239,7 @@ namespace BackEnd.Migrations
                     b.HasOne("BackEnd.Models.BackEndModels.UserModel", "User")
                         .WithMany("Favorites")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Opportunity");
@@ -248,15 +250,15 @@ namespace BackEnd.Migrations
             modelBuilder.Entity("BackEnd.Models.BackEndModels.ImpulseModel", b =>
                 {
                     b.HasOne("BackEnd.Models.BackEndModels.OpportunityModel", "Opportunity")
-                        .WithMany("Impulses")
-                        .HasForeignKey("OpportunityId")
+                        .WithOne("Impulse")
+                        .HasForeignKey("BackEnd.Models.BackEndModels.ImpulseModel", "OpportunityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("BackEnd.Models.BackEndModels.UserModel", "User")
                         .WithMany("Impulses")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Opportunity");
@@ -266,19 +268,19 @@ namespace BackEnd.Migrations
 
             modelBuilder.Entity("BackEnd.Models.BackEndModels.OpportunityModel", b =>
                 {
-                    b.HasOne("BackEnd.Models.BackEndModels.UserModel", null)
+                    b.HasOne("BackEnd.Models.BackEndModels.UserModel", "User")
                         .WithMany("Opportunities")
-                        .HasForeignKey("UserModelUserId");
+                        .HasForeignKey("userID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("BackEnd.Models.BackEndModels.ReservationModel", b =>
                 {
-                    b.HasOne("BackEnd.Models.BackEndModels.ReviewModel", null)
-                        .WithMany("Reservations")
-                        .HasForeignKey("ReviewModelReservationId");
-
                     b.HasOne("BackEnd.Models.BackEndModels.OpportunityModel", "Opportunity")
-                        .WithMany()
+                        .WithMany("Reservations")
                         .HasForeignKey("opportunityID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -286,7 +288,7 @@ namespace BackEnd.Migrations
                     b.HasOne("BackEnd.Models.BackEndModels.UserModel", "User")
                         .WithMany("Reservations")
                         .HasForeignKey("userID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Opportunity");
@@ -294,16 +296,31 @@ namespace BackEnd.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("BackEnd.Models.BackEndModels.ReviewModel", b =>
+                {
+                    b.HasOne("BackEnd.Models.BackEndModels.ReservationModel", "Reservation")
+                        .WithOne("review")
+                        .HasForeignKey("BackEnd.Models.BackEndModels.ReviewModel", "ReservationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Reservation");
+                });
+
             modelBuilder.Entity("BackEnd.Models.BackEndModels.OpportunityModel", b =>
                 {
                     b.Navigation("Favorites");
 
-                    b.Navigation("Impulses");
+                    b.Navigation("Impulse")
+                        .IsRequired();
+
+                    b.Navigation("Reservations");
                 });
 
-            modelBuilder.Entity("BackEnd.Models.BackEndModels.ReviewModel", b =>
+            modelBuilder.Entity("BackEnd.Models.BackEndModels.ReservationModel", b =>
                 {
-                    b.Navigation("Reservations");
+                    b.Navigation("review")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("BackEnd.Models.BackEndModels.UserModel", b =>
