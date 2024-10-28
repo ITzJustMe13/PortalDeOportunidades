@@ -21,7 +21,7 @@ namespace BackEnd.Models.FrontEndModels
 
         public string address { get; set;}
 
-        public User user { get; set;}
+        public int userId { get; set;}
 
         public float reviewScore { get; set;}
 
