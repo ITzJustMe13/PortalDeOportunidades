@@ -25,12 +25,12 @@ namespace BackEnd.Controllers
             if (dbContext.Users == null)
                 return NotFound();
 
-            var user = dbContext.Users.SingleOrDefault(u=>u.UserId == id);
+            var user = dbContext.Users.SingleOrDefault(u => u.UserId == id);
 
-            if (user == null) 
+            if (user == null)
                 return NotFound();
 
-            var u=UserMapper.MapToDto(user);
+            var u = UserMapper.MapToDto(user);
 
             return Ok(u);
         }
@@ -40,13 +40,13 @@ namespace BackEnd.Controllers
         public ActionResult<User> CreateNewUser(User user)
         {
 
-            if (user.birthDate == default) 
+            if (user.birthDate == default)
             {
                 return BadRequest("O campo 'birthDate' é obrigatório.");
             }
 
             // validar se o user tem pelo menos 18 anos
-            if((DateTime.Now.Year - user.birthDate.Year ) < 18)
+            if ((DateTime.Now.Year - user.birthDate.Year) < 18)
             {
                 return BadRequest("O utilizador deve ter pelo menos 18 anos");
             }
@@ -55,30 +55,29 @@ namespace BackEnd.Controllers
             {
                 var u = UserMapper.MapToModel(user);
                 dbContext.Users.Add(u);
+                dbContext.SaveChanges();
+
+                user = UserMapper.MapToDto(u);
+
+                return CreatedAtAction(nameof(CreateNewUser), new { user.userId }, user);
             }
             catch (ValidationException ex)
             {
                 return BadRequest(ex.Message);
 
             }
-               
-            dbContext.SaveChanges();
-
-            
-
-            return CreatedAtAction(nameof(CreateNewUser), new { id = user.userId }, user);
         }
 
         //DELETE: api/users/2
         [HttpDelete("{id}")]
         public ActionResult DeleteUser(int id)
         {
-            if(dbContext==null)
+            if (dbContext == null)
                 return NotFound();
 
-            var user =dbContext.Users.SingleOrDefault(s=>s.UserId == id);
+            var user = dbContext.Users.SingleOrDefault(s => s.UserId == id);
 
-            if (user==null)
+            if (user == null)
                 return NotFound();
 
             dbContext.Users.Remove(user);
@@ -97,7 +96,7 @@ namespace BackEnd.Controllers
 
             dbContext.Favorites.Add(f);
             dbContext.SaveChanges();
-            return CreatedAtAction(nameof(AddFavorite), new { favorite.userId ,favorite.opportunityId}, favorite);
+            return CreatedAtAction(nameof(AddFavorite), new { favorite.userId, favorite.opportunityId }, favorite);
         }
 
         // POST: api/impulses

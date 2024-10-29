@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BackEnd.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241028155804_FixedUserModel")]
-    partial class FixedUserModel
+    [Migration("20241029001024_fix2")]
+    partial class fix2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -52,7 +52,7 @@ namespace BackEnd.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(6,2)");
 
                     b.HasKey("UserId", "OpportunityId");
 
@@ -188,8 +188,7 @@ namespace BackEnd.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("ExternalId")
                         .HasColumnType("int");
@@ -215,7 +214,6 @@ namespace BackEnd.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Token")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
@@ -238,7 +236,7 @@ namespace BackEnd.Migrations
                     b.HasOne("BackEnd.Models.BackEndModels.UserModel", "User")
                         .WithMany("Favorites")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Opportunity");
@@ -257,7 +255,7 @@ namespace BackEnd.Migrations
                     b.HasOne("BackEnd.Models.BackEndModels.UserModel", "User")
                         .WithMany("Impulses")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Opportunity");
@@ -287,7 +285,7 @@ namespace BackEnd.Migrations
                     b.HasOne("BackEnd.Models.BackEndModels.UserModel", "User")
                         .WithMany("Reservations")
                         .HasForeignKey("userID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Opportunity");
