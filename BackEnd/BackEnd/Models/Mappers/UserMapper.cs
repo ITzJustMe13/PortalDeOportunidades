@@ -10,7 +10,7 @@ namespace BackEnd.Models.Mappers
     public class UserMapper
     {
         // Método para mapear UserModel para User (Dto), com validação e preenchimento automático de campos
-        public static User MapToDto(UserModel userModel)
+        public static User? MapToDto(UserModel userModel)
         {
             if (userModel == null)
             {
@@ -28,6 +28,7 @@ namespace BackEnd.Models.Mappers
                 userId = userModel.UserId,
                 firstName = userModel.FirstName,
                 lastName = userModel.LastName,
+                password = userModel.HashedPassword,
                 email = userModel.Email,
                 cellPhoneNumber = userModel.CellPhoneNum,
                 registrationDate = registrationDate,
@@ -37,7 +38,7 @@ namespace BackEnd.Models.Mappers
         }
 
         // Método para mapear User (Dto) para UserModel, incluindo preenchimento de campos automáticos
-        public static UserModel MapToModel(User user)
+        public static UserModel? MapToModel(User user)
         {
             if (user == null)
             {
@@ -51,16 +52,17 @@ namespace BackEnd.Models.Mappers
             }
 
 
-            var userModel= new UserModel
+            var userModel = new UserModel
             {
                 UserId = user.userId,
-                FirstName = user.firstName,
-                LastName = user.lastName,
-                Email = user.email,
-                CellPhoneNum = user.cellPhoneNumber,
+                FirstName = user.firstName!,
+                LastName = user.lastName!,
+                HashedPassword = user.password,
+                Email = user.email!,
+                CellPhoneNum = (int)user.cellPhoneNumber!,
                 RegistrationDate = user.registrationDate,
-                BirthDate = user.birthDate,
-                Gender = user.gender,
+                BirthDate = (DateTime)user.birthDate!,
+                Gender = (Enums.Gender)user.gender!,
             };
 
             ValidateModel(userModel);

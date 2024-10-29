@@ -1,22 +1,33 @@
 ﻿using BackEnd.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace BackEnd.Models.FrontEndModels
 {
     public class User
     {
         public int userId { get; set; }
-        public string firstName { get; set; }
 
-        public string lastName { get; set; }
+        [Required]
+        public string? password { get; set; }
 
-        public string email { get; set; }
+        [Required]
+        public string? firstName { get; set; }
 
-        public int cellPhoneNumber { get; set; }
+        [Required]
+        public string? lastName { get; set; }
+
+        [Required]
+        public string? email { get; set; }
+
+        [Required]
+        public int? cellPhoneNumber { get; set; }
 
         public DateTime registrationDate { get; set; }
 
-        public DateTime birthDate { get; set; }
+        [Required]
+        public DateTime? birthDate { get; set; }
 
-        public Gender gender { get; set; }
+        [Required]
+        public Gender? gender { get; set; }
     }
 }

@@ -3,6 +3,10 @@ using BackEnd.Models;
 using BackEnd.Models.BackEndModels;
 using BackEnd.Models.FrontEndModels;
 using BackEnd.Models.Mappers;
+using BackEnd.Services;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
@@ -19,6 +23,7 @@ namespace BackEnd.Controllers
         public UserController(ApplicationDbContext dbContext) => this.dbContext = dbContext;
 
         // GET: api/user/{id}
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUserByID(int id)
         {
@@ -39,6 +44,12 @@ namespace BackEnd.Controllers
         [HttpPost]
         public async Task<ActionResult<User>> CreateNewUser(User user)
         {
+            // Check if the model state is valid
+            if (!ModelState.IsValid)
+            {
+                // Return the validation errors
+                return BadRequest(ModelState);
+            }
 
             if (user.birthDate == default)
             {
@@ -46,17 +57,27 @@ namespace BackEnd.Controllers
             }
 
             // validar se o user tem pelo menos 18 anos
-            if ((DateTime.Now.Year - user.birthDate.Year) < 18)
+            if ((DateTime.Now.Year - user.birthDate?.Year) < 18)
             {
                 return BadRequest("O utilizador deve ter pelo menos 18 anos");
             }
 
+            string passwordHash = BCrypt.Net.BCrypt.EnhancedHashPassword(user.password, 13);
+
             try
             {
                 var u = UserMapper.MapToModel(user);
+                if (u == null)
+                    return Problem("Erro ao mapear o Model do user");
+
+                u.HashedPassword = passwordHash;
+
                 await dbContext.Users.AddAsync(u);
                 await dbContext.SaveChangesAsync();
                 var createdUserDTO = UserMapper.MapToDto(u);
+
+                if (createdUserDTO == null)
+                    return Problem("Erro na criação do DTO");
 
 
                 return CreatedAtAction(nameof(GetUserByID), new { createdUserDTO.userId }, createdUserDTO);
@@ -94,7 +115,7 @@ namespace BackEnd.Controllers
 
         //PUT: api/user/1/Edit?cellphoneNumber=919199233&firstName=Antonio&LastName=Carvalho  POR ALTERAR
         [HttpPut("{id}/Edit")]
-        public async Task<ActionResult<User>> PutUser(int id,int? cellPhoneNumber, string? email)
+        public async Task<ActionResult<User>> PutUser(int id, int? cellPhoneNumber, string? email)
         {
             if (dbContext == null)
                 return NotFound();
@@ -116,7 +137,7 @@ namespace BackEnd.Controllers
         public async Task<ActionResult<Favorite>> AddFavorite(Favorite favorite)
         {
 
-            if(favorite.userId == null || favorite.opportunityId == null)
+            if (favorite.userId == 0 || favorite.opportunityId == 0)
             {
                 return BadRequest("Invalid user or opportunity ID");
             }
@@ -131,21 +152,21 @@ namespace BackEnd.Controllers
 
             await dbContext.Favorites.AddAsync(f);
             await dbContext.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetFavoriteById), new { favorite.userId ,favorite.opportunityId}, favorite);
+            return CreatedAtAction(nameof(GetFavoriteById), new { favorite.userId, favorite.opportunityId }, favorite);
         }
 
         // GET: api/user/{userId}/{opportunityId}
         [HttpGet("{userId}/{opportunityId}")]
         public async Task<ActionResult<Favorite>> GetFavoriteById(int userId, int opportunityId)
         {
-            if (userId == null || opportunityId == null)
+            if (userId == 0 || opportunityId == 0)
             {
                 return BadRequest("Invalid user or opportunity ID");
             }
 
-            var favorite = await dbContext.Favorites.FindAsync(userId,opportunityId);
+            var favorite = await dbContext.Favorites.FindAsync(userId, opportunityId);
 
-            if(favorite == null)
+            if (favorite == null)
             {
                 return NotFound();
             }
@@ -166,7 +187,7 @@ namespace BackEnd.Controllers
                 opportunityId = f.OpportunityId,
             }).ToArray();
 
-            if(favoriteDTOs.Length == 0)
+            if (favoriteDTOs.Length == 0)
             {
                 return NotFound("No favorites found!");
             }
@@ -184,6 +205,41 @@ namespace BackEnd.Controllers
             dbContext.Impulses.Add(i);
             dbContext.SaveChanges();
             return CreatedAtAction(nameof(AddImpulse), new { impulse.userId, impulse.opportunityId }, impulse);
+        }
+
+        [HttpPost("/login")]
+        public async Task<IActionResult> Login(string email, string password)
+        {
+            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
+                return BadRequest(new { message = "Username or password is incorrect" });
+
+            var user = await dbContext.Users.FirstOrDefaultAsync(f => f.Email == email);
+
+            if (user == null)
+                return NotFound("Nenhum utilizador encontrado");
+
+            if (!BCrypt.Net.BCrypt.EnhancedVerify(password, user.HashedPassword))
+            {
+                return Unauthorized("A autenticação falhou, por favor verifique as suas informações.");
+            }
+
+            try
+            {
+                var authenticatedUserDTO = UserMapper.MapToDto(user);
+
+                if (authenticatedUserDTO == null)
+                    return Problem("Erro ao mapear o UserDTO");
+
+                var token = AuthService.GenerateToken(authenticatedUserDTO);
+
+                return Ok(new { token, authenticatedUserDTO });
+
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+
+            }
         }
     }
 }
