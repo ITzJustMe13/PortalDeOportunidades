@@ -55,18 +55,18 @@ namespace BackEnd.Controllers
             {
                 var u = UserMapper.MapToModel(user);
                 await dbContext.Users.AddAsync(u);
+                await dbContext.SaveChangesAsync();
+                var createdUserDTO = UserMapper.MapToDto(u);
+
+
+                return CreatedAtAction(nameof(GetUserByID), new { createdUserDTO.userId }, createdUserDTO);
+
             }
             catch (ValidationException ex)
             {
                 return BadRequest(ex.Message);
 
             }
-               
-            await dbContext.SaveChangesAsync();
-
-            
-
-            return CreatedAtAction(nameof(GetUserByID), new { id = user.userId }, user);
         }
 
         //DELETE: api/users/2
