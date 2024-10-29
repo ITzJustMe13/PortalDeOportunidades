@@ -62,7 +62,7 @@ namespace BackEnd.Models.Mappers
             return opportunityModel;
         }
 
-        // Método para validar o modelo usando DataAnnotations
+        // Método para validar o modelo através das DataAnnotations
         private static void ValidateModel(object model)
         {
             var context = new ValidationContext(model);

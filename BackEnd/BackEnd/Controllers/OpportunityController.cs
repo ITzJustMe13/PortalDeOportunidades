@@ -93,6 +93,7 @@ namespace BackEnd.Controllers
             var opportunities = await _context.Opportunities
                 .Where(e => e.User.UserId == userId)
                 .ToListAsync();
+
             if (opportunities == null || !opportunities.Any())
             {
                 return NotFound($"Opportunity with userId {userId} not found.");
@@ -128,67 +129,54 @@ namespace BackEnd.Controllers
             }
 
             //Vacancies
-            if (vacancies.HasValue)
+            
+            if(vacancies.HasValue && vacancies > 0)
             {
-                if(vacancies > 0)
-                {
-                    query = query.Where(o => o.Vacancies >= vacancies.Value);
-                } else
-                {
-                    return BadRequest("Vacancies must be greater than zero.");
-                }
-                
+                query = query.Where(o => o.Vacancies >= vacancies.Value);
+            } else
+            {
+                return BadRequest("Vacancies must have a value greater than zero.");
             }
+                
+            
 
             //MinPrice
-            if (minPrice.HasValue)
+            if(minPrice.HasValue && minPrice > 0.00M)
             {
-                if(minPrice > 0.00M)
-                {
-                    query = query.Where(o => o.Price <= maxPrice.Value);
-                } else
-                {
-                    return BadRequest("MinPrice should be bigger than 0");
-                }
+                query = query.Where(o => o.Price <= maxPrice.Value);
+            } else
+            {
+                return BadRequest("MinPrice should have a min. Value of 0.01");
             }
+            
 
             //MaxPrice
-            if (maxPrice.HasValue)
+            if(maxPrice.HasValue && maxPrice > 0.00M)
             {
-                if(maxPrice > 0.00M)
-                {
-                    query = query.Where(o => o.Price <= maxPrice.Value);
-                } else
-                {
-                    return BadRequest("MaxPrice should be bigger than 0");
-                }
-                
+                query = query.Where(o => o.Price <= maxPrice.Value);
+            } else
+            {
+                return BadRequest("MaxPrice should have a max. value bigger than 0.01");
             }
+            
 
             //Category
-            if (category.HasValue )
+            if(category.HasValue && Enum.IsDefined(typeof(Category), category.Value))
             {
-                if(Enum.IsDefined(typeof(Category), category.Value))
-                {
-                    query = query.Where(o => o.Category == category);
-                } else
-                {
-                    return BadRequest("Invalid category specified.");
-                }
-                
+                query = query.Where(o => o.Category == category);
+            } else
+            {
+                return BadRequest("Invalid category specified.");
             }
 
+
             //Location
-            if (location.HasValue)
+            if (location.HasValue && Enum.IsDefined(typeof(Location), location.Value))
             {
-                if (Enum.IsDefined(typeof(Location), location.Value))
-                {
-                    query = query.Where(o => o.Location == location);
-                } else
-                {
-                    return BadRequest("Invalid category specified.");
-                }
-                
+                query = query.Where(o => o.Location == location);
+            } else
+            {
+                return BadRequest("Invalid category specified.");
             }
 
             var opportunitiesModels = await query.ToListAsync();
@@ -370,49 +358,71 @@ namespace BackEnd.Controllers
             }
 
             //Name
-            if (!string.IsNullOrEmpty(name))
+            if (!string.IsNullOrEmpty(name) && name.Length <= 100)
             {
                 opportunityModel.Name = name;
+            } else
+            {
+                return BadRequest("Opportunity name is not valid.");
             }
 
             //Description
-            if (!string.IsNullOrEmpty(description))
+            if (!string.IsNullOrEmpty(description) && description.Length <= 1000)
             {
                 opportunityModel.Description = description;
+            } else
+            {
+                return BadRequest("Opportunity description is not valid");
             }
 
             //Price
-            if (price != null)
+            if (price != null && price > 0.00M)
             {
                 opportunityModel.Price = (decimal)price;
+            } else
+            {
+                return BadRequest("Price should be at least 0.01.");
             }
 
             //Vacancies
-            if(vacancies != null)
+            if(vacancies != null && vacancies > 0)
             {
                 opportunityModel.Vacancies = (int)vacancies;
+            } else
+            {
+                return BadRequest("Vacancies should be at least one.");
             }
 
             //Category
-            if(category != null)
+            if(category != null && Enum.IsDefined(typeof(Category), category.Value))
             {
                 opportunityModel.Category = (Category)category;
+            } else
+            {
+                return BadRequest("Category is not valid.");
             }
 
             //Location
-            if(location != null) 
+            if(location != null && Enum.IsDefined(typeof(Location), location.Value)) 
             {
                 opportunityModel.Location = (Location)location;
+            } else
+            {
+                return BadRequest("Location is not valid");
             }
 
             //Address
-            if(!string.IsNullOrEmpty(address))
+            if(!string.IsNullOrEmpty(address) && address.Length <= 200)
             { 
                 opportunityModel.Address = address;
             }
+            else
+            {
+                return BadRequest("Address is not valid");
+            }
 
             //Date
-            if(date > DateTime.Today)
+            if(date > DateTime.Today && date != null)
             {
                 opportunityModel.date = date;
             } else
