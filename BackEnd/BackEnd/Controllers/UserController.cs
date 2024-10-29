@@ -27,10 +27,10 @@ namespace BackEnd.Controllers
 
             var user = await dbContext.Users.FindAsync(id);
 
-            if (user == null) 
+            if (user == null)
                 return NotFound();
 
-            var u=UserMapper.MapToDto(user);
+            var u = UserMapper.MapToDto(user);
 
             return Ok(u);
         }
@@ -40,13 +40,13 @@ namespace BackEnd.Controllers
         public async Task<ActionResult<User>> CreateNewUser(User user)
         {
 
-            if (user.birthDate == default) 
+            if (user.birthDate == default)
             {
                 return BadRequest("O campo 'birthDate' é obrigatório.");
             }
 
             // validar se o user tem pelo menos 18 anos
-            if((DateTime.Now.Year - user.birthDate.Year ) < 18)
+            if ((DateTime.Now.Year - user.birthDate.Year) < 18)
             {
                 return BadRequest("O utilizador deve ter pelo menos 18 anos");
             }
@@ -73,7 +73,7 @@ namespace BackEnd.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteUser(int id)
         {
-            if(dbContext==null)
+            if (dbContext == null)
                 return NotFound();
 
             var user = await dbContext.Users.FindAsync(id);
@@ -81,7 +81,7 @@ namespace BackEnd.Controllers
             var oportunidades = await dbContext.Opportunities.Where(o => o.userID == id).ToListAsync();
             var impulses = await dbContext.Impulses.Where(i => i.UserId == id).ToListAsync();
 
-            if (user==null)
+            if (user == null)
                 return NotFound();
 
             dbContext.Users.Remove(user);
