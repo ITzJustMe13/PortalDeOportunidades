@@ -28,7 +28,7 @@ namespace BackEnd.Models.Mappers
                 userId = userModel.UserId,
                 firstName = userModel.FirstName,
                 lastName = userModel.LastName,
-                password = userModel.HashedPassword,
+                password = null,
                 email = userModel.Email,
                 cellPhoneNumber = userModel.CellPhoneNum,
                 registrationDate = registrationDate,

@@ -40,8 +40,10 @@ namespace BackEnd.Models.BackEndModels
         [Required(ErrorMessage = "O campo 'Gender' é obrigatório.")]
         public Gender Gender { get; set; }
 
-        [MaxLength(100, ErrorMessage = "O campo 'Token' deve ter no máximo 100 caracteres.")]
+        [MaxLength(350, ErrorMessage = "O campo 'Token' deve ter no máximo 350 caracteres.")]
         public string? Token { get; set; }
+
+        public bool? isActive { get; set; }
 
         public DateTime? TokenExpDate { get; set; }
 

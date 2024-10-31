@@ -1,5 +1,4 @@
 ﻿using BackEnd.Enums;
-using System.ComponentModel.DataAnnotations;
 
 namespace BackEnd.Models.FrontEndModels
 {
@@ -7,27 +6,20 @@ namespace BackEnd.Models.FrontEndModels
     {
         public int userId { get; set; }
 
-        [Required]
-        public string? password { get; set; }
+        public required string? password { get; set; }
 
-        [Required]
-        public string? firstName { get; set; }
+        public required string firstName { get; set; }
 
-        [Required]
-        public string? lastName { get; set; }
+        public required string lastName { get; set; }
 
-        [Required]
-        public string? email { get; set; }
+        public required string email { get; set; }
 
-        [Required]
-        public int? cellPhoneNumber { get; set; }
+        public required int cellPhoneNumber { get; set; }
 
         public DateTime registrationDate { get; set; }
 
-        [Required]
-        public DateTime? birthDate { get; set; }
+        public required DateTime birthDate { get; set; }
 
-        [Required]
-        public Gender? gender { get; set; }
+        public required Gender gender { get; set; }
     }
 }
