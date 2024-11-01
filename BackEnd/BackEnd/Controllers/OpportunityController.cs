@@ -25,7 +25,10 @@ namespace BackEnd.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Opportunity>>> GetAllOpportunities()
         {
-            var opportunityModels = await _context.Opportunities.ToListAsync();
+            var opportunityModels = await _context.Opportunities
+                .Include(o => o.OpportunityImgs) // Include images
+                .ToListAsync();
+
             if (!opportunityModels.Any())
             {
                 return NotFound("No Opportunities were found.");
@@ -48,6 +51,7 @@ namespace BackEnd.Controllers
         {
             var opportunityModels = await _context.Opportunities
                 .Where(o => o.IsImpulsed == true)
+                .Include(o => o.OpportunityImgs)
                 .ToListAsync();
 
             if (!opportunityModels.Any())
@@ -69,7 +73,10 @@ namespace BackEnd.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Opportunity>> GetOpportunityById(int id)
         {
-            var opportunity = await _context.Opportunities.FindAsync(id);
+            var opportunity = await _context.Opportunities
+                .Include(o => o.OpportunityImgs)
+                .FirstOrDefaultAsync(o => o.OpportunityId == id);
+
             if (opportunity == null)
             {
                 return NotFound($"Opportunity with id {id} not found.");
@@ -92,6 +99,7 @@ namespace BackEnd.Controllers
         {
             var opportunities = await _context.Opportunities
                 .Where(e => e.User.UserId == userId)
+                .Include(o => o.OpportunityImgs)
                 .ToListAsync();
 
             if (opportunities == null || !opportunities.Any())
@@ -109,7 +117,7 @@ namespace BackEnd.Controllers
             
         }
 
-        //GET api/Opportunity/Search?keyword=event&vacancies=5&minPrice=10&maxPrice=100&category=conference&location=VilaReal
+        // GET api/Opportunity/Search?keyword=event&vacancies=5&minPrice=10&maxPrice=100&category=conference&location=VilaReal
         [HttpGet("Search")]
         public async Task<ActionResult<IEnumerable<Opportunity>>> SearchOpportunities(
             [FromQuery] string? keyword,
@@ -118,79 +126,48 @@ namespace BackEnd.Controllers
             [FromQuery] decimal? maxPrice,
             [FromQuery] Category? category,
             [FromQuery] Location? location
-            )
+        )
         {
+            var errors = ValidateSearchParameters(vacancies, minPrice, maxPrice, category, location);
+            if (errors.Any())
+            {
+                return BadRequest(string.Join("; ", errors));
+            }
+
             var query = _context.Opportunities.AsQueryable();
 
-            //Keyword
+            // Apply filters based on provided parameters
             if (!string.IsNullOrEmpty(keyword))
-            {
                 query = query.Where(o => o.Name.Contains(keyword) || o.Description.Contains(keyword));
-            }
 
-            //Vacancies
-            
-            if(vacancies.HasValue && vacancies > 0)
-            {
+            if (vacancies.HasValue)
                 query = query.Where(o => o.Vacancies >= vacancies.Value);
-            } else
-            {
-                return BadRequest("Vacancies must have a value greater than zero.");
-            }
-                
-            
 
-            //MinPrice
-            if(minPrice.HasValue && minPrice > 0.00M)
-            {
+            if (minPrice.HasValue)
+                query = query.Where(o => o.Price >= minPrice.Value);
+
+            if (maxPrice.HasValue)
                 query = query.Where(o => o.Price <= maxPrice.Value);
-            } else
-            {
-                return BadRequest("MinPrice should have a min. Value of 0.01");
-            }
-            
 
-            //MaxPrice
-            if(maxPrice.HasValue && maxPrice > 0.00M)
-            {
-                query = query.Where(o => o.Price <= maxPrice.Value);
-            } else
-            {
-                return BadRequest("MaxPrice should have a max. value bigger than 0.01");
-            }
-            
+            if (category.HasValue)
+                query = query.Where(o => o.Category == category.Value);
 
-            //Category
-            if(category.HasValue && Enum.IsDefined(typeof(Category), category.Value))
-            {
-                query = query.Where(o => o.Category == category);
-            } else
-            {
-                return BadRequest("Invalid category specified.");
-            }
+            if (location.HasValue)
+                query = query.Where(o => o.Location == location.Value);
 
-
-            //Location
-            if (location.HasValue && Enum.IsDefined(typeof(Location), location.Value))
-            {
-                query = query.Where(o => o.Location == location);
-            } else
-            {
-                return BadRequest("Invalid category specified.");
-            }
-
-            var opportunitiesModels = await query.ToListAsync();
+            // Execute the query and return the results
+            var opportunitiesModels = await query
+                .Include(o => o.OpportunityImgs)
+                .ToListAsync();
             try
             {
                 var opportunityDtos = opportunitiesModels.Select(OpportunityMapper.MapToDto).ToList();
                 return Ok(opportunityDtos);
-            } catch (ValidationException ex)
+            }
+            catch (ValidationException ex)
             {
                 return BadRequest(ex.Message);
             }
-            
-
-            
         }
 
         //POST api/Opportunity/
@@ -336,10 +313,10 @@ namespace BackEnd.Controllers
 
         }
 
-        //PUT api/Opportunity/1/Edit?name=event&description=description&price=10&vacancies=2&category=agricultura&location=VilaReal&address=RuaTeste&date=10/02/2025
+        // PUT api/Opportunity/1/Edit?name=event&description=description&price=10&vacancies=2&category=agricultura&location=VilaReal&address=RuaTeste&date=10/02/2025
         [HttpPut("{id}/Edit")]
         [Authorize]
-        public async Task<ActionResult<Opportunity>> EditOpportunityById (
+        public async Task<ActionResult<Opportunity>> EditOpportunityById(
             int id,
             [FromQuery] string? name,
             [FromQuery] string? description,
@@ -348,8 +325,8 @@ namespace BackEnd.Controllers
             [FromQuery] Category? category,
             [FromQuery] Location? location,
             [FromQuery] string? address,
-            [FromQuery] DateTime date
-            )
+            [FromQuery] DateTime? date
+        )
         {
             var opportunityModel = await _context.Opportunities.FindAsync(id);
             if (opportunityModel == null)
@@ -357,90 +334,98 @@ namespace BackEnd.Controllers
                 return BadRequest($"Opportunity with id {id} not found.");
             }
 
-            //Name
-            if (!string.IsNullOrEmpty(name) && name.Length <= 100)
+            // Validate all parameters and collect errors
+            var errors = ValidateEditParameters(name, description, price, vacancies, category, location, address, date);
+            if (errors.Any())
             {
-                opportunityModel.Name = name;
-            } else
-            {
-                return BadRequest("Opportunity name is not valid.");
+                return BadRequest(string.Join("; ", errors));
             }
 
-            //Description
-            if (!string.IsNullOrEmpty(description) && description.Length <= 1000)
-            {
-                opportunityModel.Description = description;
-            } else
-            {
-                return BadRequest("Opportunity description is not valid");
-            }
-
-            //Price
-            if (price != null && price > 0.00M)
-            {
-                opportunityModel.Price = (decimal)price;
-            } else
-            {
-                return BadRequest("Price should be at least 0.01.");
-            }
-
-            //Vacancies
-            if(vacancies != null && vacancies > 0)
-            {
-                opportunityModel.Vacancies = (int)vacancies;
-            } else
-            {
-                return BadRequest("Vacancies should be at least one.");
-            }
-
-            //Category
-            if(category != null && Enum.IsDefined(typeof(Category), category.Value))
-            {
-                opportunityModel.Category = (Category)category;
-            } else
-            {
-                return BadRequest("Category is not valid.");
-            }
-
-            //Location
-            if(location != null && Enum.IsDefined(typeof(Location), location.Value)) 
-            {
-                opportunityModel.Location = (Location)location;
-            } else
-            {
-                return BadRequest("Location is not valid");
-            }
-
-            //Address
-            if(!string.IsNullOrEmpty(address) && address.Length <= 200)
-            { 
-                opportunityModel.Address = address;
-            }
-            else
-            {
-                return BadRequest("Address is not valid");
-            }
-
-            //Date
-            if(date > DateTime.Today && date != null)
-            {
-                opportunityModel.date = date;
-            } else
-            {
-                return BadRequest("Opportunity Date must be in the Future");
-            }
-            
+            // Update fields only if they have valid values
+            if (!string.IsNullOrEmpty(name)) opportunityModel.Name = name;
+            if (!string.IsNullOrEmpty(description)) opportunityModel.Description = description;
+            if (price.HasValue) opportunityModel.Price = price.Value;
+            if (vacancies.HasValue) opportunityModel.Vacancies = vacancies.Value;
+            if (category.HasValue) opportunityModel.Category = category.Value;
+            if (location.HasValue) opportunityModel.Location = location.Value;
+            if (!string.IsNullOrEmpty(address)) opportunityModel.Address = address;
+            if (date.HasValue) opportunityModel.date = date.Value;
 
             await _context.SaveChangesAsync();
             try
             {
                 var opportunityDto = OpportunityMapper.MapToDto(opportunityModel);
                 return Ok(opportunityDto);
-            } catch (ValidationException ex)
+            }
+            catch (ValidationException ex)
             {
                 return BadRequest(ex.Message);
             }
-     
+        }
+
+        // Modified validation method to allow optional fields
+        private List<string> ValidateEditParameters(
+            string? name,
+            string? description,
+            decimal? price,
+            int? vacancies,
+            Category? category,
+            Location? location,
+            string? address,
+            DateTime? date
+        )
+        {
+            var errors = new List<string>();
+
+            if (!string.IsNullOrEmpty(name) && name.Length > 100)
+                errors.Add("Name should be 100 characters or less.");
+
+            if (!string.IsNullOrEmpty(description) && description.Length > 1000)
+                errors.Add("Description should be 1000 characters or less.");
+
+            if (price.HasValue && price <= 0.00M)
+                errors.Add("Price should be at least 0.01.");
+
+            if (vacancies.HasValue && vacancies <= 0)
+                errors.Add("Vacancies should be at least one.");
+
+            if (category.HasValue && !Enum.IsDefined(typeof(Category), category.Value))
+                errors.Add("Category is not valid.");
+
+            if (location.HasValue && !Enum.IsDefined(typeof(Location), location.Value))
+                errors.Add("Location is not valid.");
+
+            if (!string.IsNullOrEmpty(address) && address.Length > 200)
+                errors.Add("Address should be 200 characters or less.");
+
+            if (date.HasValue && date <= DateTime.Today)
+                errors.Add("Date must be in the future.");
+
+            return errors;
+        }
+
+
+        // Helper method for validating parameters
+        private List<string> ValidateSearchParameters(int? vacancies, decimal? minPrice, decimal? maxPrice, Category? category, Location? location)
+        {
+            var errors = new List<string>();
+
+            if (vacancies.HasValue && vacancies <= 0)
+                errors.Add("Vacancies must be greater than zero.");
+
+            if (minPrice.HasValue && minPrice <= 0.00M)
+                errors.Add("MinPrice should be greater than 0.01.");
+
+            if (maxPrice.HasValue && maxPrice <= 0.00M)
+                errors.Add("MaxPrice should be greater than 0.01.");
+
+            if (category.HasValue && !Enum.IsDefined(typeof(Category), category.Value))
+                errors.Add("Invalid category specified.");
+
+            if (location.HasValue && !Enum.IsDefined(typeof(Location), location.Value))
+                errors.Add("Invalid location specified.");
+
+            return errors;
         }
 
     }

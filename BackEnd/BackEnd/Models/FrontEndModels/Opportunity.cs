@@ -28,5 +28,7 @@ namespace BackEnd.Models.FrontEndModels
         public required DateTime date { get; set;}
 
         public required bool isImpulsed { get; set;}
+
+        public required ICollection<OpportunityImg> OpportunityImgs { get; set; }
     }
 }

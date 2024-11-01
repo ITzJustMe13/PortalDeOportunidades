@@ -29,7 +29,11 @@ namespace BackEnd.Models.Mappers
                 userId = opportunityModel.userID,
                 reviewScore = opportunityModel.Score,
                 date = opportunityModel.date,
-                isImpulsed = opportunityModel.IsImpulsed
+                isImpulsed = opportunityModel.IsImpulsed,
+
+                OpportunityImgs = opportunityModel.OpportunityImgs?
+                    .Select(OpportunityImgMapper.MapToDto)
+                    .ToList()
 
             };
         }
