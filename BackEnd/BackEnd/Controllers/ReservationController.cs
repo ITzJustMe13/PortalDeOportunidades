@@ -1,6 +1,7 @@
 ﻿using BackEnd.Controllers.Data;
 using BackEnd.Models.FrontEndModels;
 using BackEnd.Models.Mappers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
@@ -92,6 +93,7 @@ namespace BackEnd.Controllers
 
         //POST para criar uma nova Reserva
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Reservation>> CreateNewReservation(Reservation reservation)
         {
             // Validação
@@ -117,17 +119,17 @@ namespace BackEnd.Controllers
             // Validações adicionais
             if (reservation.reservationDate.Date != DateTime.Now.Date)
             {
-                return BadRequest("A data de reserva deve ser a de hoje.");
+                return BadRequest("The 'reservationDate' must be today");
             }
 
             if (reservation.checkInDate <= DateTime.Now.Date)
             {
-                return BadRequest("A data de check-in deve ser depois do dia de hoje!");
+                return BadRequest("'CheckInDate' must be after today!");
             }
 
             if (reservation.fixedPrice != (float)(opportunity.Price * reservation.numOfPeople))
             {
-                return BadRequest("O fixedPrice não bate certo com o valor total.");
+                return BadRequest("The 'fixedPrice' does not match the total value.");
             }
 
             try
@@ -146,8 +148,33 @@ namespace BackEnd.Controllers
             }
         }
 
+        //PUT api/Opportunity/1/deactivate
+        [HttpPut("{id}/deactivate")]
+        [Authorize]
+        public async Task<ActionResult<Reservation>> DeactivateReservationById(int id)
+        {
+            var reservationModel = await dbContext.Reservations.FindAsync(id);
+            if (reservationModel == null)
+            {
+                return NotFound($"Reservation with id {id} not found.");
+            }
+            if (reservationModel.checkInDate < DateTime.Now)
+            {
+                reservationModel.isActive = false;
+                await dbContext.SaveChangesAsync();
+                return NoContent();
+
+            }
+            else
+            {
+                return BadRequest("Reservation is impossible to deactivate");
+            }
+
+        }
+
         //PUT para atualizar uma reserva
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> UpdateReservation(int id, Reservation reservation)
         {
             // Busca a reserva e a oportunidade associada
@@ -156,18 +183,18 @@ namespace BackEnd.Controllers
 
             if (existingReservation == null)
             {
-                return NotFound("Reserva não encontrada.");
+                return NotFound("Reservation Not Found");
             }
 
             // Validações
             if (reservation.checkInDate <= DateTime.Now.Date)
             {
-                return BadRequest("A data de check-in deve ser depois do dia de hoje!");
+                return BadRequest("'CheckInDate' must be after today!");
             }
 
             if (reservation.fixedPrice != (float)(opportunity.Price * reservation.numOfPeople))
             {
-                return BadRequest("O fixedPrice não bate certo com o valor total.");
+                return BadRequest("The 'fixedPrice' does not match the total value.");
             }
 
             // Atualiza as propriedades da reserva
@@ -185,13 +212,14 @@ namespace BackEnd.Controllers
 
         //DELETE para apagar uma reserva
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteReservation(int id)
         {
             var reservationToDelete = await dbContext.Reservations.FindAsync(id);
 
             if (reservationToDelete == null)
             {
-                return NotFound("Reserva não encontrada.");
+                return NotFound("Reservation Not Found!");
             }
 
             dbContext.Reservations.Remove(reservationToDelete);
