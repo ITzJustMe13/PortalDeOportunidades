@@ -388,9 +388,9 @@ namespace BackEnd.Controllers
 
         private void SendActivationEmail(UserModel user)
         {
-            var fromPassword = "Kafka123";//Environment.GetEnvironmentVariable("GMAIL_APP_PASSWORD");
+            var fromPassword = Environment.GetEnvironmentVariable("GMAIL_APP_PASSWORD");
             var activationLink = $"https://localhost:7235/api/User/activate?token={user.Token}";
-            var fromAddress = new MailAddress("portaldeoportunidades2024@gmail.com", "Portal De Oportunidades");
+            var fromAddress = new MailAddress("portaldeoportunidades2024@gmail.com", "Mail");
             var toAddress = new MailAddress(user.Email);
             const string subject = "Activate Your Account";
             string body = $"Hello {user.FirstName} {user.LastName},\n\nPlease click the link below to activate your account:\n{activationLink}\n\nThank you!";
