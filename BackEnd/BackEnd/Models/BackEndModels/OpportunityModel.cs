@@ -57,5 +57,7 @@ namespace BackEnd.Models.BackEndModels
 
         public virtual ICollection<ReservationModel> Reservations { get; set; }
 
+        public virtual ICollection<OpportunityImgModel> OpportunityImgs { get; set; }
+
     }
 }
