@@ -9,7 +9,7 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
-
+DotNetEnv.Env.Load();
 builder.Services
     .AddAuthentication(x =>
     {
