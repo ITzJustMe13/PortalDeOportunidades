@@ -2,10 +2,10 @@
 {
     public class Review
     {
-        public int reservationId { get; set; }
+        public required int reservationId { get; set; }
 
-        public float rating { get; set; }
+        public required float rating { get; set; }
 
-        public string desc { get; set; }
+        public required string? desc { get; set; }
     }
 }

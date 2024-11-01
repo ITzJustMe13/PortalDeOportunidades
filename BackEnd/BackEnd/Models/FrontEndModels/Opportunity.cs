@@ -4,29 +4,29 @@ namespace BackEnd.Models.FrontEndModels
 {
     public class Opportunity
     {
-        public int opportunityId { get; set; }
-        public string name { get; set;}
+        public required int opportunityId { get; set; }
+        public required string name { get; set;}
 
-        public decimal price { get; set;}
+        public required decimal price { get; set;}
 
-        public int vacancies { get; set;}
+        public required int vacancies { get; set;}
 
-        public bool isActive { get; set;}
+        public required bool isActive { get; set;}
 
-        public Category category { get; set;}
+        public required Category category { get; set;}
 
-        public string description { get; set;}
+        public required string description { get; set;}
 
-        public Location location { get; set;}
+        public required Location location { get; set;}
 
-        public string address { get; set;}
+        public required string address { get; set;}
 
-        public int userId { get; set;}
+        public required int userId { get; set;}
 
-        public float reviewScore { get; set;}
+        public required float reviewScore { get; set;}
 
-        public DateTime date { get; set;}
+        public required DateTime date { get; set;}
 
-        public bool isImpulsed { get; set;}
+        public required bool isImpulsed { get; set;}
     }
 }
