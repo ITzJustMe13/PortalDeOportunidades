@@ -33,7 +33,8 @@ namespace BackEnd.Models.Mappers
                 cellPhoneNumber = userModel.CellPhoneNum,
                 registrationDate = registrationDate,
                 birthDate = userModel.BirthDate,
-                gender = userModel.Gender
+                gender = userModel.Gender,
+                image = userModel.Image,
             };
         }
 
@@ -63,6 +64,7 @@ namespace BackEnd.Models.Mappers
                 RegistrationDate = user.registrationDate,
                 BirthDate = (DateTime)user.birthDate!,
                 Gender = (Enums.Gender)user.gender!,
+                Image = user.image
             };
 
             ValidateModel(userModel);

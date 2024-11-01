@@ -1,7 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using BackEnd.Enums;
-using Microsoft.EntityFrameworkCore;
 
 namespace BackEnd.Models.BackEndModels
 {
@@ -10,40 +8,44 @@ namespace BackEnd.Models.BackEndModels
         [Key]
         public int UserId { get; set; }
 
-        [MaxLength(200, ErrorMessage = "O campo 'HashedPassword' deve ter no máximo 200 caracteres.")]
+        [MaxLength(200, ErrorMessage = "The field 'HashedPassword' has to be less than 200 characters.")]
         public string? HashedPassword { get; set; }
 
         public int? ExternalId { get; set; }
 
-        [Required(ErrorMessage = "O campo 'FirstName' é obrigatório.")]
-        [MaxLength(100, ErrorMessage = "O campo 'FirstName' deve ter no máximo 100 caracteres.")]
+        [Required(ErrorMessage = "The field 'FirstName' is required.")]
+        [MaxLength(100, ErrorMessage = "The field 'FirstName' has to be less than 100 characters.")]
         public string FirstName { get; set; }
 
-        [Required(ErrorMessage = "O campo 'LastName' é obrigatório.")]
-        [MaxLength(100, ErrorMessage = "O campo 'LastName' deve ter no máximo 100 caracteres.")]
+        [Required(ErrorMessage = "The field 'LastName' is required.")]
+        [MaxLength(100, ErrorMessage = "The field 'LastName' has to be less than 100 characters.")]
         public string LastName { get; set; }
 
-        [Required(ErrorMessage = "O campo 'Email' é obrigatório.")]
-        [EmailAddress(ErrorMessage ="O email tem um formato inválido.")]
+        [Required(ErrorMessage = "The campo 'Email' is required.")]
+        [EmailAddress(ErrorMessage ="The email has an invalid format.")]
         public string Email { get; set; }
 
-        [Required(ErrorMessage = "O campo 'CellPhoneNum' é obrigatório.")]
-        [Range(100000000, 999999999, ErrorMessage = "O 'CellPhoneNum' deve ter 9 dígitos.")]
+        [Required(ErrorMessage = "The field 'CellPhoneNum' is required.")]
+        [Range(100000000, 999999999, ErrorMessage = "The field 'CellPhoneNum' has to be 9 digits.")]
         public int CellPhoneNum { get; set; }
 
-        [Required(ErrorMessage = "O campo 'RegistrationDate' é obrigatório.")]
+        [Required(ErrorMessage = "The field 'RegistrationDate' is required.")]
         public DateTime RegistrationDate { get; set; }
 
-        [Required(ErrorMessage = "O campo 'BirthDate' é obrigatório.")]
+        [Required(ErrorMessage = "The field 'BirthDate' is required.")]
         public DateTime BirthDate { get; set; }
 
-        [Required(ErrorMessage = "O campo 'Gender' é obrigatório.")]
+        [Required(ErrorMessage = "The field 'Gender' is required.")]
         public Gender Gender { get; set; }
 
-        [MaxLength(350, ErrorMessage = "O campo 'Token' deve ter no máximo 350 caracteres.")]
+        [MaxLength(350, ErrorMessage = "The field 'Token' has to be less than 350 characters.")]
         public string? Token { get; set; }
 
+        [Required( ErrorMessage = "The field 'isActive' is required.")]
         public bool isActive { get; set; }
+
+        [Required(ErrorMessage = "The field 'image' is required.")]
+        public byte[] Image { get; set; }
 
         public DateTime? TokenExpDate { get; set; }
 

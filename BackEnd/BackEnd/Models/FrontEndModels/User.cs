@@ -21,5 +21,7 @@ namespace BackEnd.Models.FrontEndModels
         public required DateTime birthDate { get; set; }
 
         public required Gender gender { get; set; }
+
+        public required byte[] image { get; set; }
     }
 }

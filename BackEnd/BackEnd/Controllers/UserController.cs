@@ -1,23 +1,16 @@
-using BackEnd.Controllers.Data;
+ï»¿using BackEnd.Controllers.Data;
 using BackEnd.Enums;
-using BackEnd.Models;
 using BackEnd.Models.BackEndModels;
 using BackEnd.Models.FrontEndModels;
 using BackEnd.Models.Mappers;
 using BackEnd.Services;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json.Linq;
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
 using System.Net.Mail;
 using System.Net;
-using SendGrid.Helpers.Mail;
-using SendGrid;
 
 namespace BackEnd.Controllers
 {
@@ -40,7 +33,7 @@ namespace BackEnd.Controllers
             var user = await dbContext.Users.FindAsync(id);
 
             if (user == null)
-                return NotFound("O utilizador não foi encontrado");
+                return NotFound("User was not found!");
 
             var u = UserMapper.MapToDto(user);
 
@@ -53,10 +46,10 @@ namespace BackEnd.Controllers
         {
             if (dbContext == null)
             {
-                return NotFound("Database context is not available.");
+                return NotFound("DB context missing");
             }
 
-            // Verifica se o dto é valido
+            // Verifica se o dto Ã© valido
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -64,25 +57,24 @@ namespace BackEnd.Controllers
 
             if (!await IsEmailAvailable(user.email))
             {
-                return BadRequest("O 'email' já está a ser utilizado");
+                return BadRequest("Email is already in use");
             }
 
-            // validar se o gender posto existe
+            // validar se o gender existe
             if (!Enum.IsDefined(typeof(Gender), user.gender))
             {
-                return BadRequest("O campo 'gender' tem um valor inválido'");
+                return BadRequest("Gender has an invalid value");
             }
 
-            // validar se o utilizador criou conta ou fez registo por meios externos
             if (user.password == null)
             {
-                return BadRequest("O campo 'password' é necessário ao efetuar registo pelo sistema'");
+                return BadRequest("Password is required");
             }
 
             // validar se o utilizador tem pelo menos 18 anos
             if ((DateTime.Now.Year - user.birthDate.Year) < 18)
             {
-                return BadRequest("O utilizador deve ter pelo menos 18 anos");
+                return BadRequest("You must be at least 18 years old");
             }
 
             // encripta a password do utilizador
@@ -93,7 +85,7 @@ namespace BackEnd.Controllers
                 var u = UserMapper.MapToModel(user);
 
                 if (u == null)
-                    return Problem("Erro ao mapear o Model do user");
+                    return Problem("Error converting to Model");
 
                 u.HashedPassword = passwordHash;
                 u.isActive = false;
@@ -110,7 +102,7 @@ namespace BackEnd.Controllers
 
 
                 if (createdUserDTO == null)
-                    return Problem("Erro na criação do DTO");
+                    return Problem("Error converting to DTO");
 
                 return CreatedAtAction(nameof(GetUserByID), new { createdUserDTO.userId }, createdUserDTO);
             }
@@ -126,12 +118,12 @@ namespace BackEnd.Controllers
         public async Task<ActionResult> DeleteUser(int id)
         {
             if (dbContext == null)
-                return NotFound("O contexto da BD não foi encontrado");
+                return NotFound("DB Context missing!");
 
             var user = await dbContext.Users.FindAsync(id);
 
             if (user == null)
-                return NotFound("O utilizador não foi encontrado");
+                return NotFound("The user was not Found!");
 
             // encontra e elimina as reservas, oportunidades e impulsos do utilizador
             var reservas = await dbContext.Reservations.Where(r => r.userID == id).ToListAsync();
@@ -147,42 +139,49 @@ namespace BackEnd.Controllers
             return NoContent();
         }
 
+
+
         //PUT: api/User/1
+        [Authorize]
         [HttpPut("{id}")]
-        public async Task<ActionResult> EditUser(int id, [FromBody] User updatedUser)
+        public async Task<ActionResult<User>> EditUser(int id, User updatedUser)
         {
             if (dbContext == null)
-                return NotFound("Database context is not available.");
+                return NotFound("DB Context missing!");
 
             // Find the existing user by ID
             var existingUser = await dbContext.Users.FindAsync(id);
             if (existingUser == null)
-                return NotFound("Utilizador não encontrado.");
+                return NotFound("User Not Found!");
 
-            if (!await IsEmailAvailable(updatedUser.email))
+            if (!existingUser.Email.Equals(updatedUser.email))
             {
-                return BadRequest("O 'email' já está a ser utilizado");
+                if (!await IsEmailAvailable(updatedUser.email))
+                {
+                    return BadRequest("The email is already used");
+                }
             }
 
             // validar se o gender posto existe
             if (!Enum.IsDefined(typeof(Gender), updatedUser.gender))
             {
-                return BadRequest("O campo 'gender' tem um valor inválido'");
+                return BadRequest("The gender is invalid");
             }
 
             // validar se o utilizador tem pelo menos 18 anos
             if ((DateTime.Now.Year - updatedUser.birthDate.Year) < 18)
             {
-                return BadRequest("O utilizador deve ter pelo menos 18 anos");
+                return BadRequest("You must be atleast 18");
             }
 
-            // Atualizar as informações do utilizador existente com as novas informações
+            // Atualizar as informaï¿½ï¿½es do utilizador existente com as novas informaï¿½ï¿½es
             existingUser.FirstName = updatedUser.firstName;
             existingUser.LastName = updatedUser.lastName;
             existingUser.Email = updatedUser.email;
             existingUser.CellPhoneNum = updatedUser.cellPhoneNumber;
             existingUser.BirthDate = updatedUser.birthDate;
             existingUser.Gender = updatedUser.gender;
+            existingUser.Image = updatedUser.image;
 
             if (!String.IsNullOrEmpty(updatedUser.password))
             {
@@ -192,18 +191,26 @@ namespace BackEnd.Controllers
 
             try
             {
+                dbContext.Users.Update(existingUser);
                 await dbContext.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"An error occurred while updating the user: {ex.Message}");
-            }
 
-            return NoContent();
+                var userDTO = UserMapper.MapToDto(existingUser);
+
+                if (userDTO == null)
+                {
+                    return Problem("The conversion to DTO failed");
+                }
+
+                return Ok(userDTO);
+            }
+            catch (ValidationException ve)
+            {
+                return BadRequest(ve.Message);
+            }
         }
 
-
         // POST: api/user/add-favorite
+        [Authorize]
         [HttpPost("favorite")]
         public async Task<ActionResult<Favorite>> AddFavorite(Favorite favorite)
         {
@@ -227,6 +234,7 @@ namespace BackEnd.Controllers
         }
 
         // GET: api/user/{userId}/{opportunityId}
+        [Authorize]
         [HttpGet("favorite/{userId}/{opportunityId}")]
         public async Task<ActionResult<Favorite>> GetFavoriteById(int userId, int opportunityId)
         {
@@ -246,6 +254,7 @@ namespace BackEnd.Controllers
         }
 
         // GET: api/user/{id}/favorites
+        [Authorize]
         [HttpGet("favorites/{userId}")]
         public async Task<ActionResult<Favorite[]>> GetFavorites(int userId)
         {
@@ -267,6 +276,7 @@ namespace BackEnd.Controllers
         }
 
         // POST: api/user/add-impulse
+        [Authorize]
         [HttpPost("impulse")]
         public ActionResult<Impulse> ImpulseOportunity(Impulse impulse)
         {
@@ -279,6 +289,7 @@ namespace BackEnd.Controllers
         }
 
         // GET: api/User/created-opportunities/{id}
+        [Authorize]
         [HttpGet("created-opportunities/{userId}")]
         public async Task<ActionResult<Favorite[]>> GetCreatedOpportunities(int userId)
         {
@@ -293,7 +304,7 @@ namespace BackEnd.Controllers
 
             if (opportunitiesDTOs.Length == 0)
             {
-                return NotFound("Nenhuma oportunidade criada encontrada!");
+                return NotFound("You have no created Opportunities!");
             }
 
             return Ok(opportunitiesDTOs);
@@ -305,19 +316,19 @@ namespace BackEnd.Controllers
             if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password))
                 return BadRequest("Username or password is incorrect");
 
-            var user = await dbContext.Users.SingleOrDefaultAsync(f => f.Email == request.Email);
+            var user = await dbContext.Users.SingleOrDefaultAsync(u => u.Email == request.Email);
 
             if (user == null)
-                return Unauthorized("A autenticação falhou, por favor verifique as suas informações.");
+                return Unauthorized("The autentication failed! Please check your credentials.");
 
             if (!user.isActive)
             {
-                return BadRequest("Account is not activated. Please check your email for the activation link.");
+                return BadRequest("Account is dectivated. Please check your email for the activation link.");
             }
 
             if (!BCrypt.Net.BCrypt.EnhancedVerify(request.Password, user.HashedPassword))
             {
-                return Unauthorized("A autenticação falhou, por favor verifique as suas informações.");
+                return Unauthorized("The autentication failed! Please check your credentials.");
             }
 
             try
@@ -357,7 +368,7 @@ namespace BackEnd.Controllers
         [HttpPost("activate")]
         public async Task<IActionResult> ActivateAccount([FromQuery] string token)
         {
-            // Find the user by the token
+            // Encontrar o utilizador pelo Token
             var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Token == token);
 
             if (user == null || user.TokenExpDate < DateTime.UtcNow)
@@ -365,20 +376,20 @@ namespace BackEnd.Controllers
                 return BadRequest("Invalid or expired activation token.");
             }
 
-            // Activate user account
+            // Ativar a conta do utilizador
             user.isActive = true;
-            user.Token = null; // clear the token once used
-            user.TokenExpDate = DateTime.MinValue;
+            user.Token = null;
+            user.TokenExpDate = null;
 
             await dbContext.SaveChangesAsync();
 
             return Ok("Account activated successfully.");
         }
 
-        public void SendActivationEmail(UserModel user)
+        private void SendActivationEmail(UserModel user)
         {
-            var fromPassword = Environment.GetEnvironmentVariable("GMAIL_APP_PASSWORD");
-            var activationLink = $"https://yourdomain.com/activate?token={user.Token}";
+            var fromPassword = "Kafka123";//Environment.GetEnvironmentVariable("GMAIL_APP_PASSWORD");
+            var activationLink = $"https://localhost:7235/api/User/activate?token={user.Token}";
             var fromAddress = new MailAddress("portaldeoportunidades2024@gmail.com", "Portal De Oportunidades");
             var toAddress = new MailAddress(user.Email);
             const string subject = "Activate Your Account";
