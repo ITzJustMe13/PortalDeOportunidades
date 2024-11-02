@@ -6,6 +6,6 @@
 
         public required float rating { get; set; }
 
-        public required string? desc { get; set; }
+        public string? desc { get; set; }
     }
 }

@@ -4,7 +4,7 @@ namespace BackEnd.Models.FrontEndModels
 {
     public class Opportunity
     {
-        public required int opportunityId { get; set; }
+        public int opportunityId { get; set; }
         public required string name { get; set;}
 
         public required decimal price { get; set;}

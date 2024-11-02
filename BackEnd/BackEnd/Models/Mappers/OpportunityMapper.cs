@@ -31,7 +31,7 @@ namespace BackEnd.Models.Mappers
                 date = opportunityModel.date,
                 isImpulsed = opportunityModel.IsImpulsed,
 
-                OpportunityImgs = opportunityModel.OpportunityImgs?
+               OpportunityImgs = opportunityModel.OpportunityImgs?
                     .Select(OpportunityImgMapper.MapToDto)
                     .ToList()
 
@@ -60,7 +60,11 @@ namespace BackEnd.Models.Mappers
                 userID = opportunity.userId,
                 Score = opportunity.reviewScore,
                 date = opportunity.date,
-                IsImpulsed = opportunity.isImpulsed
+                IsImpulsed = opportunity.isImpulsed,
+                OpportunityImgs = opportunity.OpportunityImgs?
+                    .Select(OpportunityImgMapper.MapToModel)
+                    .ToList()
+
             };
              ValidateModel(opportunityModel);
             return opportunityModel;

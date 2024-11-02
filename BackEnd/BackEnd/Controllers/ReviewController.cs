@@ -48,6 +48,10 @@ namespace BackEnd.Controllers
             {
                 return BadRequest("Invalid Review id");
             }
+            if (review.rating < 0)
+            {
+                return BadRequest("Rating must be 0 or above.");
+            } 
 
             try
             {
@@ -78,7 +82,7 @@ namespace BackEnd.Controllers
 
 
                 var createdReviewDto = ReviewMapper.MapToDto(reviewModel);
-                return CreatedAtAction(nameof(GetReviewById), new {id = createdReviewDto.reservationId}, createdReviewDto)
+                return CreatedAtAction(nameof(GetReviewById), new { id = createdReviewDto.reservationId }, createdReviewDto);
             }
             catch (ValidationException ex) 
             {
@@ -105,7 +109,7 @@ namespace BackEnd.Controllers
 
         //PUT api/Review/1/Edit?score=2.5&desc=teste123
         [HttpPut("{id}/Edit")]
-        public async Task<ActionResult<Review>> EditResultById(int id, [FromQuery]float score, [FromQuery]string desc)
+        public async Task<ActionResult<Review>> EditResultById(int id, [FromQuery]float score, [FromQuery]string? desc)
         {
             var reviewModel = await _context.Reviews.FindAsync(id);
 
@@ -118,7 +122,7 @@ namespace BackEnd.Controllers
             {
                 reviewModel.Desc = desc;
             }
-            if (score > -0.5) 
+            if (score >= 0) 
             {
                 reviewModel.Rating = score;
             }

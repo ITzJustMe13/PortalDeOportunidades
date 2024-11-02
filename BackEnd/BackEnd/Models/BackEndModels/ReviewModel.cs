@@ -12,6 +12,7 @@ namespace BackEnd.Models.BackEndModels
         public virtual ReservationModel Reservation { get; set; }
 
         [Required]
+        [Range(0, double.MaxValue, ErrorMessage = "Rating must be 0 or higher.")]
         public float Rating {  get; set; }
 
         [StringLength(1000)]

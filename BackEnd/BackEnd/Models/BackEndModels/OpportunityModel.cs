@@ -26,7 +26,7 @@ namespace BackEnd.Models.BackEndModels
         public decimal Price { get; set; }
 
         [Required]
-        [MaxLength(30)]
+        [Range(1, 30, ErrorMessage = "Vacancies must be between 1 and 30.")]
         public int Vacancies { get; set; }
 
         [Required]
