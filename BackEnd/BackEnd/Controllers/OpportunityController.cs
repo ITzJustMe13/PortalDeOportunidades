@@ -196,6 +196,12 @@ namespace BackEnd.Controllers
                 return BadRequest(string.Join("; ", errors));
             }
 
+            var userExists = await _context.Users.AnyAsync(u => u.UserId == opportunity.userId);
+            if (!userExists)
+            {
+                return BadRequest("Invalid User ID. User does not exist.");
+            }
+
             try
             {
                 // Initialize the review score

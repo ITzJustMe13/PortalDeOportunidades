@@ -16,9 +16,9 @@ namespace BackEnd.Models.Mappers
 
             return new OpportunityImg
             {
-                ImgId = opportunityImgModel.ImgId,
-                OpportunityId = opportunityImgModel.OpportunityId,
-                Image = opportunityImgModel.Image
+                imgId = opportunityImgModel.ImgId,
+                opportunityId = opportunityImgModel.OpportunityId,
+                image = opportunityImgModel.Image
 
             };
         }
@@ -33,9 +33,9 @@ namespace BackEnd.Models.Mappers
 
             var opportunityImgModel = new OpportunityImgModel
             {
-                ImgId = opportunityImg.ImgId,
-                OpportunityId = opportunityImg.OpportunityId,
-                Image = opportunityImg.Image
+                ImgId = opportunityImg.imgId,
+                OpportunityId = opportunityImg.opportunityId,
+                Image = opportunityImg.image
             };
             ValidateModel(opportunityImgModel);
             return opportunityImgModel;

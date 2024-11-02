@@ -51,7 +51,18 @@ namespace BackEnd.Controllers
             if (review.rating < 0)
             {
                 return BadRequest("Rating must be 0 or above.");
-            } 
+            }
+            var reservationExists = await _context.Reservations.AnyAsync(r => r.reservationID == review.reservationId);
+            if (!reservationExists)
+            {
+                return BadRequest("Invalid Reservation ID. User does not exist.");
+            }
+
+            var reviewExists = await _context.Reviews.AnyAsync(r => r.ReservationId == review.reservationId);
+            if (reviewExists)
+            {
+                return BadRequest("A Review already exists to this reservation id alter or delete the old one");
+            }
 
             try
             {
@@ -109,7 +120,7 @@ namespace BackEnd.Controllers
 
         //PUT api/Review/1/Edit?score=2.5&desc=teste123
         [HttpPut("{id}/Edit")]
-        public async Task<ActionResult<Review>> EditResultById(int id, [FromQuery]float score, [FromQuery]string? desc)
+        public async Task<ActionResult<Review>> EditReviewById(int id, [FromQuery]float score, [FromQuery]string? desc)
         {
             var reviewModel = await _context.Reviews.FindAsync(id);
 
@@ -118,7 +129,7 @@ namespace BackEnd.Controllers
                 return BadRequest($"Review with id {id} not found.");
             }
 
-            if (!string.IsNullOrEmpty(desc))
+            if (!string.IsNullOrWhiteSpace(desc))
             {
                 reviewModel.Desc = desc;
             }
