@@ -7,10 +7,8 @@
 
         public int opportunityId { get; set; }
 
-        public float value { get; set; }
+        public required float value { get; set; }
 
-        public DateTime expireDate { get; set; }
-
-
+        public required DateTime expireDate { get; set; }
     }
 }
