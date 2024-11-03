@@ -162,7 +162,7 @@ namespace BackEnd.Controllers
             {
                 reservationModel.isActive = false;
                 await dbContext.SaveChangesAsync();
-                return NoContent();
+                return Ok();
 
             }
             else
