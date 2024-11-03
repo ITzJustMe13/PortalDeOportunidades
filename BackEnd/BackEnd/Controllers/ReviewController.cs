@@ -48,20 +48,20 @@ namespace BackEnd.Controllers
             {
                 return BadRequest("Invalid Review id");
             }
-            if (review.rating < 0)
+            if (review.rating < 0 || review.rating > 5)
             {
-                return BadRequest("Rating must be 0 or above.");
+                return BadRequest("Rating can't be below 0 or bigger than 5");
             }
             var reservationExists = await _context.Reservations.AnyAsync(r => r.reservationID == review.reservationId);
             if (!reservationExists)
             {
-                return BadRequest("Invalid Reservation ID. User does not exist.");
+                return BadRequest("Invalid Reservation ID. Reservation does not exist.");
             }
 
             var reviewExists = await _context.Reviews.AnyAsync(r => r.ReservationId == review.reservationId);
             if (reviewExists)
             {
-                return BadRequest("A Review already exists to this reservation id alter or delete the old one");
+                return BadRequest("A review for this reservation already exists.");
             }
 
             try
@@ -133,9 +133,12 @@ namespace BackEnd.Controllers
             {
                 reviewModel.Desc = desc;
             }
-            if (score >= 0) 
+            if (score >= 0 || score > 5) 
             {
                 reviewModel.Rating = score;
+            } else
+            {
+                return BadRequest("Rating can't be below 0 or bigger than 5");
             }
 
             await _context.SaveChangesAsync();
