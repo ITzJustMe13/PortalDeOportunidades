@@ -142,7 +142,7 @@ namespace BackEnd.Controllers
 
 
         //PUT: api/User/1
-        [Authorize]
+        //[Authorize]
         [HttpPut("{id}")]
         public async Task<ActionResult<User>> EditUser(int id, User updatedUser)
         {
@@ -275,17 +275,55 @@ namespace BackEnd.Controllers
             return Ok(favoriteDTOs);
         }
 
-        // POST: api/user/add-impulse
+        // POST: api/user/impulse
         [Authorize]
         [HttpPost("impulse")]
         public ActionResult<Impulse> ImpulseOportunity(Impulse impulse)
         {
+            if (dbContext == null)
+            {
+                return NotFound("DB context missing");
+            }
 
-            var i = ImpulseMapper.MapToModel(impulse);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-            dbContext.Impulses.Add(i);
-            dbContext.SaveChanges();
-            return CreatedAtAction(nameof(ImpulseOportunity), new { impulse.userId, impulse.opportunityId }, impulse);
+            try
+            {
+                var i = ImpulseMapper.MapToModel(impulse);
+
+                if (i == null)
+                {
+                    return Problem("The conversion to model failed.");
+                }
+
+                if (impulse.value <= 0)
+                {
+                    return BadRequest("The value has to be more than 0.");
+                }
+
+                if (DateTime.Now.CompareTo(impulse.expireDate) >= 0) {
+                    return BadRequest("The impulse expire date has to be in  the future.");
+                }
+
+                dbContext.Impulses.Add(i);
+                dbContext.SaveChanges();
+
+                var impulseDTO = ImpulseMapper.MapToDto(i);
+
+                if (impulseDTO == null)
+                {
+                    return Problem("The conversion to DTO failed.");
+                }
+
+                return CreatedAtAction(nameof(ImpulseOportunity), new { impulseDTO.userId, impulseDTO.opportunityId }, impulseDTO);
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // GET: api/User/created-opportunities/{id}
@@ -365,9 +403,14 @@ namespace BackEnd.Controllers
             return Ok(new { isAvailable = emailAvailable });
         }
 
+<<<<<<< HEAD
         
         [HttpGet("activate")]
         public async Task<IActionResult> ActivateAccount([FromQuery]string token)
+=======
+        [HttpPut("activate")]
+        public async Task<IActionResult> ActivateAccount([FromQuery] string token)
+>>>>>>> f3014fa19fbeebd07b9eb741459892623655de9d
         {
             // Encontrar o utilizador pelo Token
             var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Token == token);
@@ -381,6 +424,8 @@ namespace BackEnd.Controllers
             user.isActive = true;
             user.Token = null;
             user.TokenExpDate = null;
+
+            dbContext.Users.Update(user);
 
             await dbContext.SaveChangesAsync();
 
