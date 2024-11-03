@@ -23,7 +23,7 @@ namespace BackEnd.Controllers
         public UserController(ApplicationDbContext dbContext) => this.dbContext = dbContext;
 
         // GET: api/User/{id}
-        [Authorize]
+        
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUserByID(int id)
         {
@@ -113,7 +113,7 @@ namespace BackEnd.Controllers
         }
 
         //DELETE: api/User/2
-        [Authorize]
+        
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteUser(int id)
         {
@@ -365,8 +365,9 @@ namespace BackEnd.Controllers
             return Ok(new { isAvailable = emailAvailable });
         }
 
-        [HttpPost("activate")]
-        public async Task<IActionResult> ActivateAccount([FromQuery] string token)
+        
+        [HttpGet("activate")]
+        public async Task<IActionResult> ActivateAccount([FromQuery]string token)
         {
             // Encontrar o utilizador pelo Token
             var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Token == token);
