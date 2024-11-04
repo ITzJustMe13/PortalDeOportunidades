@@ -48,22 +48,18 @@ namespace BackEnd.Tests
             var result = await _controller.GetAllActiveReservationsByUserId(userId);
 
             // Assert
-            Assert.IsInstanceOf<NotFoundObjectResult>(result.Result);
+            Assert.That(result.Result, Is.TypeOf<NotFoundObjectResult>());
             var notFoundResult = result.Result as NotFoundObjectResult;
-            Assert.AreEqual("No active reservations found for the specified user.", notFoundResult.Value);
+            Assert.Equals("No active reservations found for the specified user.", notFoundResult.Value);
         }
 
         [Test]
         public async Task CreateNewReservation_ReturnsCreated_WhenReservationIsValid()
         {
             // Arrange
-<<<<<<< HEAD
+
             var opportunity = new OpportunityModel { OpportunityId = 1, Price = 100, Address= "um sitio", Category= Enums.Category.AGRICULTURA, userID= 1,Name="name", Description="a description", date= DateTime.Now.AddDays(30),Vacancies=2,IsActive=true,Location= Enums.Location.LISBOA,Score= 0, IsImpulsed=false };
             var user = new UserModel { UserId = 1, FirstName = "John", LastName="Doe", BirthDate = DateTime.Now.AddYears(-30), CellPhoneNum = 919919919, Email= "example@email.com", Gender=Enums.Gender.MASCULINO };
-=======
-            var opportunity = new OpportunityModel { OpportunityId = 1, Price = 100 };
-            var user = new UserModel { UserId = 1, FirstName = "John", LastName="Doe", BirthDate = DateTime.Now.AddYears(-30), CellPhoneNum = 919919919, Email= "example@email.com", Gender=Enums.Gender.MASCULINO,  };
->>>>>>> 080dbb3faf4ff9f8b858a767df0465ec16985d10
             _dbContext.Opportunities.Add(opportunity);
             _dbContext.Users.Add(user);
             await _dbContext.SaveChangesAsync();
@@ -83,10 +79,10 @@ namespace BackEnd.Tests
             var result = await _controller.CreateNewReservation(reservation);
 
             // Assert
-            Assert.IsInstanceOf<CreatedAtActionResult>(result.Result);
+            Assert.That(result.Result, Is.TypeOf<CreatedAtActionResult>());
             var createdResult = result.Result as CreatedAtActionResult;
-            Assert.AreEqual(201, createdResult.StatusCode);
-            Assert.AreEqual(reservation, createdResult.Value);
+            Assert.Equals(201, createdResult.StatusCode);
+            Assert.Equals(reservation, createdResult.Value);
         }
 
         [Test]
@@ -110,8 +106,8 @@ namespace BackEnd.Tests
             var result = await _controller.DeleteReservation(reservation.reservationID);
 
             // Assert
-            Assert.IsInstanceOf<NoContentResult>(result);
-            Assert.IsNull(await _dbContext.Reservations.FindAsync(reservation.reservationID));
+            Assert.That(result, Is.TypeOf<NoContentResult>());
+            Assert.That(await _dbContext.Reservations.FindAsync(reservation.reservationID), Is.Null);
         }
 
         // Additional tests can be added here to cover more methods and edge cases.
