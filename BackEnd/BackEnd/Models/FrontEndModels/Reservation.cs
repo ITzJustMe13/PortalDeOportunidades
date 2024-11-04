@@ -12,13 +12,13 @@ namespace BackEnd.Models.FrontEndModels
 
         public DateTime? reservationDate { get; set; }
 
-        public required DateTime checkInDate { get; set; }
+        public DateTime? checkInDate { get; set; }
 
         public required int numOfPeople { get; set; }
 
         public bool? isActive { get; set; }
 
-        public required float fixedPrice { get; set; }
+        public float? fixedPrice { get; set; }
 
     }
 }

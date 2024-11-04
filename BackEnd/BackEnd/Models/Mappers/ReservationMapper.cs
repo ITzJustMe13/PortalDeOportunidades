@@ -42,10 +42,10 @@ namespace BackEnd.Models.Mappers
                 opportunityID = reservation.opportunityId,
                 userID = reservation.userId,
                 reservationDate = (DateTime)reservation.reservationDate!,
-                checkInDate = reservation.checkInDate,
+                checkInDate = (DateTime)reservation.checkInDate!,
                 numOfPeople = reservation.numOfPeople,
                 isActive = (bool)reservation.isActive!,
-                fixedPrice = reservation.fixedPrice
+                fixedPrice = (float)reservation.fixedPrice!
             };
 
             ValidateModel(reservationModel);
