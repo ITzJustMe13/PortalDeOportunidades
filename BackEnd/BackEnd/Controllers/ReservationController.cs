@@ -93,7 +93,7 @@ namespace BackEnd.Controllers
 
         //POST para criar uma nova Reserva
         [HttpPost]
-        [Authorize]
+        //[Authorize]
         public async Task<ActionResult<Reservation>> CreateNewReservation(Reservation reservation)
         {
             // Validação
@@ -116,18 +116,21 @@ namespace BackEnd.Controllers
                 return NotFound("User not found.");
             }
 
-            if (reservation.checkInDate <= DateTime.Now.Date)
+            if(reservation.numOfPeople < 0)
             {
-                return BadRequest("'CheckInDate' must be after today!");
+                return NotFound("The value must be valid");
             }
 
-            if (reservation.fixedPrice != (float)(opportunity.Price * reservation.numOfPeople))
+            if (reservation.numOfPeople > opportunity.Vacancies)
             {
-                return BadRequest("The 'fixedPrice' does not match the total value.");
+                return NotFound("The numberOfPeople is bigger than number of vacancies");
             }
+
 
             reservation.reservationDate = DateTime.Now;
+            reservation.checkInDate = opportunity.date;
             reservation.isActive = true;
+            reservation.fixedPrice = ((float?)(reservation.numOfPeople * opportunity.Price));
 
             try
             {
@@ -147,7 +150,7 @@ namespace BackEnd.Controllers
 
         //PUT api/Opportunity/1/deactivate
         [HttpPut("{id}/deactivate")]
-        [Authorize]
+        //[Authorize]
         public async Task<ActionResult<Reservation>> DeactivateReservationById(int id)
         {
             var reservationModel = await dbContext.Reservations.FindAsync(id);
@@ -171,7 +174,7 @@ namespace BackEnd.Controllers
 
         //PUT para atualizar uma reserva
         [HttpPut("{id}")]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> UpdateReservation(int id, Reservation reservation)
         {
             // Busca a reserva e a oportunidade associada
@@ -183,21 +186,20 @@ namespace BackEnd.Controllers
                 return NotFound("Reservation Not Found");
             }
 
-            // Validações
-            if (reservation.checkInDate <= DateTime.Now.Date)
+            if (reservation.numOfPeople < 0)
             {
-                return BadRequest("'CheckInDate' must be after today!");
+                return NotFound("The value must be valid");
             }
 
-            if (reservation.fixedPrice != (float)(opportunity.Price * reservation.numOfPeople))
+            if (reservation.numOfPeople > opportunity.Vacancies)
             {
-                return BadRequest("The 'fixedPrice' does not match the total value.");
+                return NotFound("The numberOfPeople is bigger than number of vacancies");
             }
+
 
             // Atualiza as propriedades da reserva
-            existingReservation.checkInDate = reservation.checkInDate;
             existingReservation.numOfPeople = reservation.numOfPeople;
-            existingReservation.fixedPrice = reservation.fixedPrice;
+            existingReservation.fixedPrice = ((float)(reservation.numOfPeople * opportunity.Price));
 
             dbContext.Entry(existingReservation).State = EntityState.Modified;
 
@@ -208,7 +210,7 @@ namespace BackEnd.Controllers
 
         //DELETE para apagar uma reserva
         [HttpDelete("{id}")]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> DeleteReservation(int id)
         {
             var reservationToDelete = await dbContext.Reservations.FindAsync(id);
