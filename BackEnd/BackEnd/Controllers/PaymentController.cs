@@ -21,6 +21,7 @@ namespace BackEnd.Controllers
             _context = context;
         }
 
+        /*
         // POST api/payment/Checkout-Reservation
         [HttpPost("Checkout-Reservation")]
         public async Task<IActionResult> CreateReservationCheckoutSession([FromBody] Reservation reservation)
@@ -90,6 +91,7 @@ namespace BackEnd.Controllers
 
             return Ok(new { sessionId = session.Id });
         }
+        */
 
         // POST api/payment/Checkout-Impulse
         [HttpPost("Checkout-Impulse")]
