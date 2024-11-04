@@ -25,6 +25,7 @@ namespace BackEnd.Controllers
         // GET: api/User/{id}
         
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<User>> GetUserByID(int id)
         {
             if (dbContext.Users == null)
@@ -115,6 +116,7 @@ namespace BackEnd.Controllers
         //DELETE: api/User/2
         
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<ActionResult> DeleteUser(int id)
         {
             if (dbContext == null)
@@ -142,7 +144,7 @@ namespace BackEnd.Controllers
 
 
         //PUT: api/User/1
-        //[Authorize]
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<ActionResult<User>> EditUser(int id, User updatedUser)
         {
