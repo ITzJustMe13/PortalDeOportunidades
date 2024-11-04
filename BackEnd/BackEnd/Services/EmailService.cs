@@ -1,4 +1,6 @@
 ﻿using BackEnd.Models.BackEndModels;
+using System.Net.Mail;
+using System.Net;
 
 namespace BackEnd.Services
 {
@@ -6,10 +8,31 @@ namespace BackEnd.Services
     {
         public void SendActivationEmail(UserModel user)
         {
-           
+            var fromPassword = Environment.GetEnvironmentVariable("GMAIL_APP_PASSWORD");
+            var activationLink = $"https://localhost:7235/api/User/activate?token={user.Token}";
+            var fromAddress = new MailAddress("portaldeoportunidades2024@gmail.com", "Mail");
+            var toAddress = new MailAddress(user.Email);
+            const string subject = "Activate Your Account";
+            string body = $"Hello {user.FirstName} {user.LastName},\n\nPlease click the link below to activate your account:\n{activationLink}\n\nThank you!";
 
-            var activationLink = $"https://yourdomain.com/activate?token={user.Token}";
-            // Send email logic here using SMTP or email service like SendGrid, etc.
+            var smtp = new SmtpClient
+            {
+                Host = "smtp.gmail.com",
+                Port = 587,
+                EnableSsl = true,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                UseDefaultCredentials = false,
+                Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
+            };
+
+            using (var message = new MailMessage(fromAddress, toAddress)
+            {
+                Subject = subject,
+                Body = body
+            })
+            {
+                smtp.Send(message);
+            }
         }
     }
 }
