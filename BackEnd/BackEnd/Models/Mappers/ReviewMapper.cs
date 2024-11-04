@@ -4,41 +4,41 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BackEnd.Models.Mappers
 {
-    public class OpportunityImgMapper
+    public class ReviewMapper
     {
-        // Method to map OpportunityImgModel to OpportunityImg(Dto)
-        public static OpportunityImg MapToDto(OpportunityImgModel opportunityImgModel)
+        // Method to map ReviewModel to Review(Dto)
+        public static Review MapToDto(ReviewModel reviewModel)
         {
-            if (opportunityImgModel == null)
+            if (reviewModel == null)
                 return null;
 
-            ValidateModel(opportunityImgModel);
+            ValidateModel(reviewModel);
 
-            return new OpportunityImg
+            return new Review
             {
-                imgId = opportunityImgModel.ImgId,
-                opportunityId = opportunityImgModel.OpportunityId,
-                image = opportunityImgModel.Image
+                reservationId = reviewModel.ReservationId,
+                rating = reviewModel.Rating,
+                desc = reviewModel.Desc
 
             };
         }
 
-        // Method to map OpportunityImg(Dto) to OpportunityImgModel
-        public static OpportunityImgModel MapToModel(OpportunityImg opportunityImg)
+        // Method to map Review(Dto) to ReviewModel
+        public static ReviewModel MapToModel(Review review)
         {
-            if (opportunityImg == null)
+            if (review == null)
             {
                 return null;
             }
 
-            var opportunityImgModel = new OpportunityImgModel
+            var reviewModel = new ReviewModel
             {
-                ImgId = opportunityImg.imgId,
-                OpportunityId = opportunityImg.opportunityId,
-                Image = opportunityImg.image
+                ReservationId = review.reservationId,
+                Rating = review.rating,
+                Desc = review.desc
             };
-            ValidateModel(opportunityImgModel);
-            return opportunityImgModel;
+            ValidateModel(reviewModel);
+            return reviewModel;
         }
 
         // Método para validar o modelo através das DataAnnotations
@@ -56,4 +56,3 @@ namespace BackEnd.Models.Mappers
         }
     }
 }
-
