@@ -1,5 +1,6 @@
 appsettings.json
 appsettings.Development.json
+.env
 
 [Bb]in/
 obj/Debug/
