@@ -116,12 +116,6 @@ namespace BackEnd.Controllers
                 return NotFound("User not found.");
             }
 
-            // Validações adicionais
-            if (reservation.reservationDate.Date != DateTime.Now.Date)
-            {
-                return BadRequest("The 'reservationDate' must be today");
-            }
-
             if (reservation.checkInDate <= DateTime.Now.Date)
             {
                 return BadRequest("'CheckInDate' must be after today!");
@@ -131,6 +125,9 @@ namespace BackEnd.Controllers
             {
                 return BadRequest("The 'fixedPrice' does not match the total value.");
             }
+
+            reservation.reservationDate = DateTime.Now;
+            reservation.isActive = true;
 
             try
             {
@@ -200,7 +197,6 @@ namespace BackEnd.Controllers
             // Atualiza as propriedades da reserva
             existingReservation.checkInDate = reservation.checkInDate;
             existingReservation.numOfPeople = reservation.numOfPeople;
-            existingReservation.isActive = reservation.isActive;
             existingReservation.fixedPrice = reservation.fixedPrice;
 
             dbContext.Entry(existingReservation).State = EntityState.Modified;
