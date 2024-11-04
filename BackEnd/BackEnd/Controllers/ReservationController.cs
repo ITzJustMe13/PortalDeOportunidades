@@ -17,6 +17,7 @@ namespace BackEnd.Controllers
         public ReservationController(ApplicationDbContext reservationContext) => this.dbContext = reservationContext;
 
         //GET para obter todas as reservas ativas do user
+        [Authorize]
         [HttpGet("{userId}/AllActiveReservations")]
         public async Task<ActionResult<IEnumerable<Reservation>>> GetAllActiveReservationsByUserId(int userId)
         {
@@ -42,6 +43,7 @@ namespace BackEnd.Controllers
 
         // Método para obter todas as reservas de um usuário
         [HttpGet("{userId}/AllReservations")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Reservation>>> GetAllReservationByUserId(int userId)
         {
             var reservations = await dbContext.Reservations
@@ -67,6 +69,7 @@ namespace BackEnd.Controllers
 
         //GET para obter uma reserva pelo ID
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<Reservation>> GetReservationById(int id)
         {
             // Busca a reserva pelo ID fornecido
@@ -93,7 +96,7 @@ namespace BackEnd.Controllers
 
         //POST para criar uma nova Reserva
         [HttpPost]
-        //[Authorize]
+        [Authorize]
         public async Task<ActionResult<Reservation>> CreateNewReservation(Reservation reservation)
         {
             // Validação
@@ -150,7 +153,7 @@ namespace BackEnd.Controllers
 
         //PUT api/Opportunity/1/deactivate
         [HttpPut("{id}/deactivate")]
-        //[Authorize]
+        [Authorize]
         public async Task<ActionResult<Reservation>> DeactivateReservationById(int id)
         {
             var reservationModel = await dbContext.Reservations.FindAsync(id);
@@ -174,7 +177,7 @@ namespace BackEnd.Controllers
 
         //PUT para atualizar uma reserva
         [HttpPut("{id}")]
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> UpdateReservation(int id, Reservation reservation)
         {
             // Busca a reserva e a oportunidade associada
@@ -210,7 +213,7 @@ namespace BackEnd.Controllers
 
         //DELETE para apagar uma reserva
         [HttpDelete("{id}")]
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> DeleteReservation(int id)
         {
             var reservationToDelete = await dbContext.Reservations.FindAsync(id);
