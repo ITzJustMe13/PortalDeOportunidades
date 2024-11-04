@@ -4,6 +4,7 @@ using BackEnd.Controllers.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BackEnd.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241028180527_InitialDBSchema")]
+    partial class InitialDBSchema
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -127,10 +130,6 @@ namespace BackEnd.Migrations
                     b.Property<DateTime>("checkInDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<float?>("fixedPrice")
-                        .IsRequired()
-                        .HasColumnType("real");
-
                     b.Property<bool>("isActive")
                         .HasColumnType("bit");
 
@@ -141,6 +140,7 @@ namespace BackEnd.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("reservationDate")
+                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2");
 
                     b.Property<int>("userID")
@@ -184,11 +184,13 @@ namespace BackEnd.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int>("CellPhoneNum")
+                        .HasMaxLength(9)
                         .HasColumnType("int");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<int?>("ExternalId")
                         .HasColumnType("int");
@@ -205,10 +207,6 @@ namespace BackEnd.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<byte[]>("Image")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)");
-
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -218,14 +216,12 @@ namespace BackEnd.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Token")
-                        .HasMaxLength(350)
-                        .HasColumnType("nvarchar(350)");
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("TokenExpDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<bool>("isActive")
-                        .HasColumnType("bit");
 
                     b.HasKey("UserId");
 

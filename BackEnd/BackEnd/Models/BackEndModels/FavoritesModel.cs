@@ -8,10 +8,10 @@ namespace BackEnd.Models.BackEndModels
     public class FavoritesModel
     {
         public int UserId { get; set; }
-        public virtual required UserModel User { get; set; }
+        public  UserModel? User { get; set; }
 
         public int OpportunityId { get; set; }
 
-        public virtual required OpportunityModel Opportunity { get; set; }
+        public OpportunityModel? Opportunity { get; set; }
     }
 }
