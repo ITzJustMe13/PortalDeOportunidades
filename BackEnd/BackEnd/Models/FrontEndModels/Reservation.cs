@@ -1,4 +1,6 @@
-﻿namespace BackEnd.Models.FrontEndModels
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace BackEnd.Models.FrontEndModels
 {
     public class Reservation
     {

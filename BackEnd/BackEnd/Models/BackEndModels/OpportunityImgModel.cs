@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BackEnd.Models.BackEndModels
 {
@@ -8,6 +9,7 @@ namespace BackEnd.Models.BackEndModels
         public int ImgId { get; set; }
 
         [Required]
+        [ForeignKey("OpportunityModel")]
         public int OpportunityId { get; set; }
 
         [Required]

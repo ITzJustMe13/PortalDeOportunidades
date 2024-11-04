@@ -4,41 +4,41 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BackEnd.Models.Mappers
 {
-    public class UserImgMapper
+    public class ReviewMapper
     {
-        // Method to map UserImgModel to UserImg(Dto)
-        public static UserImg MapToDto(UserImgModel userImgModel)
+        // Method to map ReviewModel to Review(Dto)
+        public static Review MapToDto(ReviewModel reviewModel)
         {
-            if (userImgModel == null)
+            if (reviewModel == null)
                 return null;
 
-            ValidateModel(userImgModel);
+            ValidateModel(reviewModel);
 
-            return new UserImg
+            return new Review
             {
-                ImgId = userImgModel.ImgId,
-                UserId = userImgModel.UserId,
-                Image = userImgModel.Image
+                reservationId = reviewModel.ReservationId,
+                rating = reviewModel.Rating,
+                desc = reviewModel.Desc
 
             };
         }
 
-        // Method to map UserImg(Dto) to UserImgModel
-        public static UserImgModel MapToModel(UserImg userImg)
+        // Method to map Review(Dto) to ReviewModel
+        public static ReviewModel MapToModel(Review review)
         {
-            if (userImg == null)
+            if (review == null)
             {
                 return null;
             }
 
-            var userImgModel = new UserImgModel
+            var reviewModel = new ReviewModel
             {
-                ImgId = userImg.ImgId,
-                UserId = userImg.UserId,
-                Image = userImg.Image
+                ReservationId = review.reservationId,
+                Rating = review.rating,
+                Desc = review.desc
             };
-            ValidateModel(userImgModel);
-            return userImgModel;
+            ValidateModel(reviewModel);
+            return reviewModel;
         }
 
         // Método para validar o modelo através das DataAnnotations
@@ -56,4 +56,3 @@ namespace BackEnd.Models.Mappers
         }
     }
 }
-

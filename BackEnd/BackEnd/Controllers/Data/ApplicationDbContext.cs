@@ -20,6 +20,8 @@ namespace BackEnd.Controllers.Data
 
         public DbSet<UserModel> Users { get; set; }
 
+        public DbSet<OpportunityImgModel> OpportunityImgs { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Configuração do relacionamento de Users com Favorites
