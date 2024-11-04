@@ -1,5 +1,7 @@
 ﻿using BackEnd.Models.BackEndModels;
 using BackEnd.Models.FrontEndModels;
+using System.ComponentModel.DataAnnotations;
+
 
 namespace BackEnd.Models.Mappers
 {
@@ -10,6 +12,8 @@ namespace BackEnd.Models.Mappers
         {
             if (opportunityModel == null)
                 return null;
+
+            ValidateModel(opportunityModel);
 
             return new Opportunity
             {
@@ -25,7 +29,11 @@ namespace BackEnd.Models.Mappers
                 userId = opportunityModel.userID,
                 reviewScore = opportunityModel.Score,
                 date = opportunityModel.date,
-                isImpulsed = opportunityModel.IsImpulsed
+                isImpulsed = opportunityModel.IsImpulsed,
+
+               OpportunityImgs = opportunityModel.OpportunityImgs?
+                    .Select(OpportunityImgMapper.MapToDto)
+                    .ToList()
 
             };
         }
@@ -38,7 +46,7 @@ namespace BackEnd.Models.Mappers
                 return null;
             }
 
-            return new OpportunityModel
+            var opportunityModel = new OpportunityModel
             {
                 OpportunityId = opportunity.opportunityId,
                 Name = opportunity.name,
@@ -52,8 +60,28 @@ namespace BackEnd.Models.Mappers
                 userID = opportunity.userId,
                 Score = opportunity.reviewScore,
                 date = opportunity.date,
-                IsImpulsed = opportunity.isImpulsed
+                IsImpulsed = opportunity.isImpulsed,
+                OpportunityImgs = opportunity.OpportunityImgs?
+                    .Select(OpportunityImgMapper.MapToModel)
+                    .ToList()
+
             };
+             ValidateModel(opportunityModel);
+            return opportunityModel;
+        }
+
+        // Método para validar o modelo através das DataAnnotations
+        private static void ValidateModel(object model)
+        {
+            var context = new ValidationContext(model);
+            var results = new List<ValidationResult>();
+
+            if (!Validator.TryValidateObject(model, context, results, validateAllProperties: true))
+            {
+                // Se houver erros, lança uma exceção com detalhes
+                var errorMessages = results.Select(r => r.ErrorMessage);
+                throw new ValidationException("Erros de validação: " + string.Join("; ", errorMessages));
+            }
         }
     }
 }
