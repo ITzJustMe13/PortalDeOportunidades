@@ -40,7 +40,7 @@ namespace BackEnd.Tests
 
         [Test]
         [Category("UnitTest")]
-        public async Task GetReviewById_ReturnsReviewDto_ForValidId()
+        public async Task GetReviewById_ReturnsOKWithReviewDto_ForValidId()
         {
             // Arrange
             var reviewId = 1;

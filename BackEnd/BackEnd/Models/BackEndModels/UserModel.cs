@@ -44,7 +44,6 @@ namespace BackEnd.Models.BackEndModels
         [Required( ErrorMessage = "The field 'isActive' is required.")]
         public bool isActive { get; set; }
 
-        [Required(ErrorMessage = "The field 'image' is required.")]
         public byte[] Image { get; set; }
 
         public DateTime? TokenExpDate { get; set; }
