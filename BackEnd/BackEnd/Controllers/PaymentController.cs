@@ -21,6 +21,66 @@ namespace BackEnd.Controllers
             _context = context;
         }
 
+        // POST api/payment/Reserve
+        [HttpPost("Reserve")]
+        public async Task<IActionResult> CreateReservationPayment([FromBody] Reservation reservation)
+        {
+            // Validate reservation data
+            if (reservation == null || reservation.fixedPrice <= 0)
+            {
+                return BadRequest("Invalid reservation data.");
+            }
+
+            // Retrieve user and service provider
+            var user = await _context.Users.FindAsync(reservation.userId);
+            var opportunity = await _context.Opportunities.FindAsync(reservation.opportunityId);
+            var serviceProvider = await _context.Users.FindAsync(opportunity.userID);
+
+            // Validate entities
+            if (user == null || opportunity == null || serviceProvider == null || string.IsNullOrEmpty(serviceProvider.StripeAccountId))
+            {
+                return NotFound("User or opportunity not found, or service provider is not registered for payments.");
+            }
+
+            // Set up payment details
+            var totalAmount = (long)(reservation.fixedPrice * 100); // Total in cents
+            var applicationFeeAmount = 500; // €5 in cents
+
+            var paymentIntentOptions = new PaymentIntentCreateOptions
+            {
+                Amount = totalAmount,
+                Currency = "eur",
+                TransferData = new PaymentIntentTransferDataOptions
+                {
+                    Destination = serviceProvider.StripeAccountId,
+                },
+                ApplicationFeeAmount = applicationFeeAmount,
+            };
+
+            // Create payment intent
+            var paymentIntentService = new PaymentIntentService();
+            PaymentIntent paymentIntent;
+
+            try
+            {
+                paymentIntent = await paymentIntentService.CreateAsync(paymentIntentOptions);
+            }
+            catch (StripeException ex)
+            {
+                return BadRequest($"Stripe error: {ex.Message}");
+            }
+
+            // Return the client secret and payment details to the frontend
+            return Ok(new
+            {
+                clientSecret = paymentIntent.ClientSecret,
+                totalAmount,
+                applicationFeeAmount,
+                serviceProviderShare = totalAmount - applicationFeeAmount // Amount to service provider
+            });
+        }
+
+
         /*
         // POST api/payment/Checkout-Reservation
         [HttpPost("Checkout-Reservation")]

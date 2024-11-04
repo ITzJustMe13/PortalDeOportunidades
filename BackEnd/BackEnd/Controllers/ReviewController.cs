@@ -109,7 +109,7 @@ namespace BackEnd.Controllers
 
             if(reviewModel == null)
             {
-                return BadRequest($"Review with id {id} not found.");
+                return NotFound($"Review with id {id} not found.");
             }
 
             _context.Reviews.Remove(reviewModel);
