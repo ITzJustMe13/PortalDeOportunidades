@@ -5,18 +5,23 @@ namespace BackEnd.Models.FrontEndModels
     public class User
     {
         public int userId { get; set; }
-        public string firstName { get; set; }
 
-        public string lastName { get; set; }
+        public required string? password { get; set; }
 
-        public string email { get; set; }
+        public required string firstName { get; set; }
 
-        public int cellPhoneNumber { get; set; }
+        public required string lastName { get; set; }
 
-        public DateTime regsitrationDate { get; set; }
+        public required string email { get; set; }
 
-        public DateTime birthDate { get; set; }
+        public required int cellPhoneNumber { get; set; }
 
-        public Gender gender { get; set; }
+        public DateTime registrationDate { get; set; }
+
+        public required DateTime birthDate { get; set; }
+
+        public required Gender gender { get; set; }
+
+        public required byte[] image { get; set; }
     }
 }

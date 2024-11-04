@@ -4,6 +4,7 @@ using BackEnd.Controllers.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BackEnd.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241031204247_FixedUserTokenSize")]
+    partial class FixedUserTokenSize
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -57,28 +60,6 @@ namespace BackEnd.Migrations
                         .IsUnique();
 
                     b.ToTable("Impulses");
-                });
-
-            modelBuilder.Entity("BackEnd.Models.BackEndModels.OpportunityImgModel", b =>
-                {
-                    b.Property<int>("ImgId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ImgId"));
-
-                    b.Property<byte[]>("Image")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)");
-
-                    b.Property<int>("OpportunityId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ImgId");
-
-                    b.HasIndex("OpportunityId");
-
-                    b.ToTable("OpportunityImgs");
                 });
 
             modelBuilder.Entity("BackEnd.Models.BackEndModels.OpportunityModel", b =>
@@ -149,10 +130,6 @@ namespace BackEnd.Migrations
                     b.Property<DateTime>("checkInDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<float?>("fixedPrice")
-                        .IsRequired()
-                        .HasColumnType("real");
-
                     b.Property<bool>("isActive")
                         .HasColumnType("bit");
 
@@ -163,6 +140,7 @@ namespace BackEnd.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("reservationDate")
+                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2");
 
                     b.Property<int>("userID")
@@ -192,28 +170,6 @@ namespace BackEnd.Migrations
                     b.HasKey("ReservationId");
 
                     b.ToTable("Reviews");
-                });
-
-            modelBuilder.Entity("BackEnd.Models.BackEndModels.UserImgModel", b =>
-                {
-                    b.Property<int>("ImgId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ImgId"));
-
-                    b.Property<byte[]>("Image")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ImgId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserImgs");
                 });
 
             modelBuilder.Entity("BackEnd.Models.BackEndModels.UserModel", b =>
@@ -249,10 +205,6 @@ namespace BackEnd.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<byte[]>("Image")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)");
-
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -268,7 +220,7 @@ namespace BackEnd.Migrations
                     b.Property<DateTime?>("TokenExpDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("isActive")
+                    b.Property<bool?>("isActive")
                         .HasColumnType("bit");
 
                     b.HasKey("UserId");
@@ -314,17 +266,6 @@ namespace BackEnd.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("BackEnd.Models.BackEndModels.OpportunityImgModel", b =>
-                {
-                    b.HasOne("BackEnd.Models.BackEndModels.OpportunityModel", "Opportunity")
-                        .WithMany("OpportunityImgs")
-                        .HasForeignKey("OpportunityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Opportunity");
-                });
-
             modelBuilder.Entity("BackEnd.Models.BackEndModels.OpportunityModel", b =>
                 {
                     b.HasOne("BackEnd.Models.BackEndModels.UserModel", "User")
@@ -366,25 +307,12 @@ namespace BackEnd.Migrations
                     b.Navigation("Reservation");
                 });
 
-            modelBuilder.Entity("BackEnd.Models.BackEndModels.UserImgModel", b =>
-                {
-                    b.HasOne("BackEnd.Models.BackEndModels.UserModel", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("BackEnd.Models.BackEndModels.OpportunityModel", b =>
                 {
                     b.Navigation("Favorites");
 
                     b.Navigation("Impulse")
                         .IsRequired();
-
-                    b.Navigation("OpportunityImgs");
 
                     b.Navigation("Reservations");
                 });
