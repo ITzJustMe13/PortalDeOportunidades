@@ -42,7 +42,6 @@ namespace BackEnd.Controllers
             {
                 return BadRequest(ex.Message);
             }
-            
         }
 
         //GET api/Opportunity/Impulsed
