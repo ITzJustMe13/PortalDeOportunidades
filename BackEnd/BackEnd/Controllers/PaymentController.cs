@@ -21,9 +21,9 @@ namespace BackEnd.Controllers
             _context = context;
         }
 
-        // POST api/payment/Reserve
-        [HttpPost("Reserve")]
-        public async Task<IActionResult> CreateReservationPayment([FromBody] Reservation reservation)
+        // POST api/payment/Checkout-Reservation
+        [HttpPost("Checkout-Reservation")]
+        public async Task<IActionResult> CreateReservationCheckoutSession([FromBody] Reservation reservation)
         {
             // Validate reservation data
             if (reservation == null || reservation.fixedPrice <= 0)
@@ -31,83 +31,22 @@ namespace BackEnd.Controllers
                 return BadRequest("Invalid reservation data.");
             }
 
-            // Retrieve user and service provider
-            var user = await _context.Users.FindAsync(reservation.userId);
-            var opportunity = await _context.Opportunities.FindAsync(reservation.opportunityId);
-            var serviceProvider = await _context.Users.FindAsync(opportunity.userID);
-
-            // Validate entities
-            if (user == null || opportunity == null || serviceProvider == null || string.IsNullOrEmpty(serviceProvider.StripeAccountId))
-            {
-                return NotFound("User or opportunity not found, or service provider is not registered for payments.");
-            }
-
-            // Set up payment details
-            var totalAmount = (long)(reservation.fixedPrice * 100); // Total in cents
-            var applicationFeeAmount = 500; // €5 in cents
-
-            var paymentIntentOptions = new PaymentIntentCreateOptions
-            {
-                Amount = totalAmount,
-                Currency = "eur",
-                TransferData = new PaymentIntentTransferDataOptions
-                {
-                    Destination = serviceProvider.StripeAccountId,
-                },
-                ApplicationFeeAmount = applicationFeeAmount,
-            };
-
-            // Create payment intent
-            var paymentIntentService = new PaymentIntentService();
-            PaymentIntent paymentIntent;
-
-            try
-            {
-                paymentIntent = await paymentIntentService.CreateAsync(paymentIntentOptions);
-            }
-            catch (StripeException ex)
-            {
-                return BadRequest($"Stripe error: {ex.Message}");
-            }
-
-            // Return the client secret and payment details to the frontend
-            return Ok(new
-            {
-                clientSecret = paymentIntent.ClientSecret,
-                totalAmount,
-                applicationFeeAmount,
-                serviceProviderShare = totalAmount - applicationFeeAmount // Amount to service provider
-            });
-        }
-
-
-        /*
-        // POST api/payment/Checkout-Reservation
-        [HttpPost("Checkout-Reservation")]
-        public async Task<IActionResult> CreateReservationCheckoutSession([FromBody] Reservation reservation)
-        {
-            if (reservation == null || reservation.fixedPrice <= 0)
-            {
-                return BadRequest("Invalid reservation data.");
-            }
-
+            // Retrieve user information
             var user = await _context.Users.FindAsync(reservation.userId);
             if (user == null)
             {
                 return NotFound("User not found.");
             }
 
+            // Retrieve opportunity information
             var opportunity = await _context.Opportunities.FindAsync(reservation.opportunityId);
             if (opportunity == null)
             {
                 return NotFound("Opportunity not found.");
             }
 
-            var serviceProvider = await _context.Users.FindAsync(opportunity.userID);
-            if (serviceProvider == null || string.IsNullOrEmpty(serviceProvider.StripeAccountId))
-            {
-                return BadRequest("Service provider is not registered for payments.");
-            }
+            // Calculate the total reservation amount in cents (for Stripe)
+            var totalAmount = (long)(reservation.fixedPrice * reservation.numOfPeople * 100);
 
             var options = new SessionCreateOptions
             {
@@ -120,9 +59,9 @@ namespace BackEnd.Controllers
                 {
                     ProductData = new SessionLineItemPriceDataProductDataOptions
                     {
-                        Name = $"Reservation for {reservation.numOfPeople} people for {opportunity.Name}",
+                        Name = $"Reserva para {reservation.numOfPeople} pessoas para {opportunity.Name} ({opportunity.OpportunityId})",
                     },
-                    UnitAmount = (long)(reservation.fixedPrice * 100), // Convert to cents
+                    UnitAmount = (long)(reservation.fixedPrice * 100), // Price per person in cents
                     Currency = "eur",
                 },
                 Quantity = reservation.numOfPeople,
@@ -130,19 +69,15 @@ namespace BackEnd.Controllers
         },
                 Mode = "payment",
                 CustomerEmail = user.Email,
-                SuccessUrl = "https://your-website.com/success",
-                CancelUrl = "https://your-website.com/cancel",
+                SuccessUrl = "http://localhost:7235/success",
+                CancelUrl = "http://localhost:7235/cancel",
             };
 
-            // Pass the service provider's Stripe account for the payment
             var service = new SessionService();
             Session session;
             try
             {
-                session = await service.CreateAsync(options, new RequestOptions
-                {
-                    StripeAccount = serviceProvider.StripeAccountId
-                });
+                session = await service.CreateAsync(options); // No StripeAccount specified, funds go to main account
             }
             catch (StripeException ex)
             {
@@ -151,7 +86,8 @@ namespace BackEnd.Controllers
 
             return Ok(new { sessionId = session.Id });
         }
-        */
+
+
 
         // POST api/payment/Checkout-Impulse
         [HttpPost("Checkout-Impulse")]
@@ -189,7 +125,7 @@ namespace BackEnd.Controllers
                 {
                     ProductData = new SessionLineItemPriceDataProductDataOptions
                     {
-                        Name = $"Impulse for {opportunity.Name} for {days} days visibility boost",
+                        Name = $"Impulso para a visibiliade de {opportunity.Name} durante {days} dias.",
                     },
                     UnitAmount = (long)(impulse.value * 100), // Convert to cents
                     Currency = "eur",
@@ -198,8 +134,8 @@ namespace BackEnd.Controllers
             },
         },
                 Mode = "payment",
-                SuccessUrl = "https://your-website.com/success",  // Update with your frontend success page
-                CancelUrl = "https://your-website.com/cancel",    // Update with your frontend cancel page
+                SuccessUrl = "http://localhost:7235/success",  // Update with your frontend success page
+                CancelUrl = "http://localhost:7235/cancel",    // Update with your frontend cancel page
                 CustomerEmail = user.Email, // Send receipt to the user
             };
 
