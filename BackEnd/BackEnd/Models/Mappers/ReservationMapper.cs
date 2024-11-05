@@ -6,12 +6,12 @@ namespace BackEnd.Models.Mappers
 {
         public class ReservationMapper
         {
-            public static Reservation MapToDto(ReservationModel reservationModel) 
+            public static Reservation? MapToDto(ReservationModel reservationModel) 
             {
-                if (reservationModel == null)
-                    throw new ArgumentNullException(nameof(reservationModel));
+            if (reservationModel == null)
+                return null;
 
-                ValidateModel(reservationModel);
+            ValidateModel(reservationModel);
 
             var registrationDate = reservationModel.reservationDate == default ? DateTime.Now : reservationModel.reservationDate;
 
@@ -28,25 +28,26 @@ namespace BackEnd.Models.Mappers
                 };
             }
 
-            public static ReservationModel MapToModel(Reservation reservation)
+            public static ReservationModel? MapToModel(Reservation reservation)
             {
                 if (reservation == null)
-                    throw new ArgumentNullException(nameof(reservation));
+                    return null;
 
             if (reservation.reservationDate == default)
                 reservation.reservationDate = DateTime.Now;
             
-                var reservationModel = new ReservationModel
-                {
-                    reservationID = reservation.reservationId,
-                    opportunityID = reservation.opportunityId,
-                    userID = reservation.userId,
-                    reservationDate = reservation.reservationDate,
-                    checkInDate = reservation.checkInDate,
-                    numOfPeople = reservation.numOfPeople,
-                    isActive = reservation.isActive,
-                    fixedPrice = reservation.fixedPrice
-                };
+            var reservationModel = new ReservationModel
+            {
+                reservationID = reservation.reservationId,
+                opportunityID = reservation.opportunityId,
+                userID = reservation.userId,
+                reservationDate = (DateTime)reservation.reservationDate!,
+                checkInDate = (DateTime)reservation.checkInDate!,
+                numOfPeople = reservation.numOfPeople,
+                isActive = (bool)reservation.isActive!,
+                fixedPrice = (float)reservation.fixedPrice!
+            };
+
             ValidateModel(reservationModel);
             return reservationModel;
             }

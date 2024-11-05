@@ -10,15 +10,15 @@ namespace BackEnd.Models.FrontEndModels
 
         public int userId { get; set; }
 
-        public required DateTime reservationDate { get; set; }
+        public DateTime? reservationDate { get; set; }
 
-        public required DateTime checkInDate { get; set; }
+        public DateTime? checkInDate { get; set; }
 
         public required int numOfPeople { get; set; }
 
-        public required bool isActive { get; set; }
+        public bool? isActive { get; set; }
 
-        public required float fixedPrice { get; set; }
+        public float? fixedPrice { get; set; }
 
     }
 }

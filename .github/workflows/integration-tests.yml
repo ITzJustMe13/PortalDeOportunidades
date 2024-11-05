@@ -37,10 +37,10 @@ jobs:
           dotnet-version: '8.x'
 
       - name: Restore Dependencies
-        run: dotnet restore BackEnd/BackEnd.sln
+        run: dotnet restore BackEnd/BackEnd.Test/BackEnd.Test.csproj
 
       - name: Build Solution
-        run: dotnet build BackEnd/BackEnd.sln --no-restore
+        run: dotnet build BackEnd/BackEnd.Test/BackEnd.Test.csproj --no-restore
 
       - name: Run Integration Tests
         env:

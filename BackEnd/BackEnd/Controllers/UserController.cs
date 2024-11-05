@@ -12,6 +12,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Net.Mail;
 using System.Net;
 
+
 namespace BackEnd.Controllers
 {
     [Route("api/[controller]")]
@@ -22,9 +23,12 @@ namespace BackEnd.Controllers
         private readonly ApplicationDbContext dbContext;
         public UserController(ApplicationDbContext dbContext) => this.dbContext = dbContext;
 
+        private EmailService emailService;
+
         // GET: api/User/{id}
         
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<User>> GetUserByID(int id)
         {
             if (dbContext.Users == null)
@@ -94,7 +98,7 @@ namespace BackEnd.Controllers
                 u.Token = activationToken;
                 u.TokenExpDate = DateTime.UtcNow.AddHours(24);
                 await dbContext.SaveChangesAsync();
-                SendActivationEmail(u);
+                emailService.SendActivationEmail(u);
 
                 await dbContext.Users.AddAsync(u);
                 await dbContext.SaveChangesAsync();
@@ -115,6 +119,7 @@ namespace BackEnd.Controllers
         //DELETE: api/User/2
         
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<ActionResult> DeleteUser(int id)
         {
             if (dbContext == null)
@@ -142,7 +147,7 @@ namespace BackEnd.Controllers
 
 
         //PUT: api/User/1
-        //[Authorize]
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<ActionResult<User>> EditUser(int id, User updatedUser)
         {
@@ -405,7 +410,6 @@ namespace BackEnd.Controllers
         
         [HttpGet("activate")]
         public async Task<IActionResult> ActivateAccount([FromQuery]string token)
-
         {
             // Encontrar o utilizador pelo Token
             var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Token == token);
@@ -426,36 +430,6 @@ namespace BackEnd.Controllers
 
             return Ok("Account activated successfully.");
         }
-
-        private void SendActivationEmail(UserModel user)
-        {
-            var fromPassword = Environment.GetEnvironmentVariable("GMAIL_APP_PASSWORD");
-            var activationLink = $"https://localhost:7235/api/User/activate?token={user.Token}";
-            var fromAddress = new MailAddress("portaldeoportunidades2024@gmail.com", "Mail");
-            var toAddress = new MailAddress(user.Email);
-            const string subject = "Activate Your Account";
-            string body = $"Hello {user.FirstName} {user.LastName},\n\nPlease click the link below to activate your account:\n{activationLink}\n\nThank you!";
-
-            var smtp = new SmtpClient
-            {
-                Host = "smtp.gmail.com",
-                Port = 587,
-                EnableSsl = true,
-                DeliveryMethod = SmtpDeliveryMethod.Network,
-                UseDefaultCredentials = false,
-                Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
-            };
-
-            using (var message = new MailMessage(fromAddress, toAddress)
-            {
-                Subject = subject,
-                Body = body
-            })
-            {
-                smtp.Send(message);
-            }
-        }
-
 
     }
 }

@@ -21,6 +21,6 @@ jobs:
         with:
           dotnet-version: '8.x'
       - name: Restore Dependencies
-        run: dotnet restore BackEnd/BackEnd.sln
+        run: dotnet restore BackEnd/BackEnd.Test/BackEnd.Test.csproj
       - name: Run Unit Tests
-        run: dotnet test BackEnd/BackEnd.sln --filter Category=UnitTest
+        run: dotnet test BackEnd/BackEnd.Test/BackEnd.Test.csproj --filter Category=UnitTest

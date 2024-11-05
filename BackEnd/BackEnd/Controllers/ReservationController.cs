@@ -17,6 +17,7 @@ namespace BackEnd.Controllers
         public ReservationController(ApplicationDbContext reservationContext) => this.dbContext = reservationContext;
 
         //GET para obter todas as reservas ativas do user
+        [Authorize]
         [HttpGet("{userId}/AllActiveReservations")]
         public async Task<ActionResult<IEnumerable<Reservation>>> GetAllActiveReservationsByUserId(int userId)
         {
@@ -42,6 +43,7 @@ namespace BackEnd.Controllers
 
         // Método para obter todas as reservas de um usuário
         [HttpGet("{userId}/AllReservations")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Reservation>>> GetAllReservationByUserId(int userId)
         {
             var reservations = await dbContext.Reservations
@@ -67,6 +69,7 @@ namespace BackEnd.Controllers
 
         //GET para obter uma reserva pelo ID
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<Reservation>> GetReservationById(int id)
         {
             // Busca a reserva pelo ID fornecido
@@ -116,21 +119,21 @@ namespace BackEnd.Controllers
                 return NotFound("User not found.");
             }
 
-            // Validações adicionais
-            if (reservation.reservationDate.Date != DateTime.Now.Date)
+            if(reservation.numOfPeople < 0)
             {
-                return BadRequest("The 'reservationDate' must be today");
+                return NotFound("The value must be valid");
             }
 
-            if (reservation.checkInDate <= DateTime.Now.Date)
+            if (reservation.numOfPeople > opportunity.Vacancies)
             {
-                return BadRequest("'CheckInDate' must be after today!");
+                return NotFound("The numberOfPeople is bigger than number of vacancies");
             }
 
-            if (reservation.fixedPrice != (float)(opportunity.Price * reservation.numOfPeople))
-            {
-                return BadRequest("The 'fixedPrice' does not match the total value.");
-            }
+
+            reservation.reservationDate = DateTime.Now;
+            reservation.checkInDate = opportunity.date;
+            reservation.isActive = true;
+            reservation.fixedPrice = ((float?)(reservation.numOfPeople * opportunity.Price));
 
             try
             {
@@ -186,22 +189,20 @@ namespace BackEnd.Controllers
                 return NotFound("Reservation Not Found");
             }
 
-            // Validações
-            if (reservation.checkInDate <= DateTime.Now.Date)
+            if (reservation.numOfPeople < 0)
             {
-                return BadRequest("'CheckInDate' must be after today!");
+                return NotFound("The value must be valid");
             }
 
-            if (reservation.fixedPrice != (float)(opportunity.Price * reservation.numOfPeople))
+            if (reservation.numOfPeople > opportunity.Vacancies)
             {
-                return BadRequest("The 'fixedPrice' does not match the total value.");
+                return NotFound("The numberOfPeople is bigger than number of vacancies");
             }
+
 
             // Atualiza as propriedades da reserva
-            existingReservation.checkInDate = reservation.checkInDate;
             existingReservation.numOfPeople = reservation.numOfPeople;
-            existingReservation.isActive = reservation.isActive;
-            existingReservation.fixedPrice = reservation.fixedPrice;
+            existingReservation.fixedPrice = ((float)(reservation.numOfPeople * opportunity.Price));
 
             dbContext.Entry(existingReservation).State = EntityState.Modified;
 
