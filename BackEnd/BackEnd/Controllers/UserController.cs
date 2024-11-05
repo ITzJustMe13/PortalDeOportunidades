@@ -403,14 +403,11 @@ namespace BackEnd.Controllers
             return Ok(new { isAvailable = emailAvailable });
         }
 
-<<<<<<< HEAD
+
         
         [HttpGet("activate")]
         public async Task<IActionResult> ActivateAccount([FromQuery]string token)
-=======
-        [HttpPut("activate")]
-        public async Task<IActionResult> ActivateAccount([FromQuery] string token)
->>>>>>> f3014fa19fbeebd07b9eb741459892623655de9d
+
         {
             // Encontrar o utilizador pelo Token
             var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Token == token);

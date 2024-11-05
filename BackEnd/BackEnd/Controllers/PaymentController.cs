@@ -21,32 +21,31 @@ namespace BackEnd.Controllers
             _context = context;
         }
 
-        // POST api/payment/Checkout-Reservation
+
         [HttpPost("Checkout-Reservation")]
         public async Task<IActionResult> CreateReservationCheckoutSession([FromBody] Reservation reservation)
         {
-            // Validate reservation data
+
             if (reservation == null || reservation.fixedPrice <= 0)
             {
                 return BadRequest("Invalid reservation data.");
             }
 
-            // Retrieve user information
+
+            // User information
             var user = await _context.Users.FindAsync(reservation.userId);
             if (user == null)
             {
                 return NotFound("User not found.");
             }
 
-            // Retrieve opportunity information
+            // Opportunity information
             var opportunity = await _context.Opportunities.FindAsync(reservation.opportunityId);
             if (opportunity == null)
             {
                 return NotFound("Opportunity not found.");
             }
 
-            // Calculate the total reservation amount in cents (for Stripe)
-            var totalAmount = (long)(reservation.fixedPrice * reservation.numOfPeople * 100);
 
             var options = new SessionCreateOptions
             {
@@ -61,23 +60,23 @@ namespace BackEnd.Controllers
                     {
                         Name = $"Reserva para {reservation.numOfPeople} pessoas para {opportunity.Name} ({opportunity.OpportunityId})",
                     },
-                    UnitAmount = (long)(reservation.fixedPrice * 100), // Price per person in cents
+                    UnitAmount = (long)(reservation.fixedPrice * 100), // Price of the reservation in cents for stripe
                     Currency = "eur",
                 },
                 Quantity = reservation.numOfPeople,
             },
         },
                 Mode = "payment",
-                CustomerEmail = user.Email,
-                SuccessUrl = "http://localhost:7235/success",
-                CancelUrl = "http://localhost:7235/cancel",
+                SuccessUrl = "https://localhost:7235/success", // UPDATE WITH FRONTEND
+                CancelUrl = "https://localhost:7235/cancel", // UPDATE WITH FRONTEND
+                CustomerEmail = user.Email, // For sending the receipt to the user
             };
 
             var service = new SessionService();
             Session session;
             try
             {
-                session = await service.CreateAsync(options); // No StripeAccount specified, funds go to main account
+                session = await service.CreateAsync(options);
             }
             catch (StripeException ex)
             {
@@ -89,12 +88,12 @@ namespace BackEnd.Controllers
 
 
 
+
         // POST api/payment/Checkout-Impulse
         [HttpPost("Checkout-Impulse")]
-        public async Task<IActionResult> CreateImpulseCheckoutSession([FromBody] Impulse impulse, int days)
+        public async Task<IActionResult> CreateImpulseCheckoutSession([FromBody] Impulse impulse)
         {
-            // Validate Impulse Data
-            if (impulse == null || impulse.value <= 0 || impulse.expireDate < DateTime.Today)
+            if (impulse == null || impulse.value <= 0 || impulse.expireDate <= DateTime.Today)
             {
                 return BadRequest("Invalid impulse data.");
             }
@@ -113,7 +112,6 @@ namespace BackEnd.Controllers
                 return NotFound("Opportunity not found.");
             }
 
-            // Set up Session Options for Stripe
             var options = new SessionCreateOptions
             {
                 PaymentMethodTypes = new List<string> { "card" },
@@ -125,18 +123,18 @@ namespace BackEnd.Controllers
                 {
                     ProductData = new SessionLineItemPriceDataProductDataOptions
                     {
-                        Name = $"Impulso para a visibiliade de {opportunity.Name} durante {days} dias.",
+                        Name = $"Impulso para a visibiliade de {opportunity.Name} até ao dia {impulse.expireDate} .",
                     },
-                    UnitAmount = (long)(impulse.value * 100), // Convert to cents
+                    UnitAmount = (long)(impulse.value * 100), // Convert to cents for stripe
                     Currency = "eur",
                 },
                 Quantity = 1,
             },
         },
                 Mode = "payment",
-                SuccessUrl = "http://localhost:7235/success",  // Update with your frontend success page
-                CancelUrl = "http://localhost:7235/cancel",    // Update with your frontend cancel page
-                CustomerEmail = user.Email, // Send receipt to the user
+                SuccessUrl = "https://localhost:7235/success",  // UPDATE WITH FRONTEND
+                CancelUrl = "https://localhost:7235/cancel",    // UPDATE WITH FRONTEND
+                CustomerEmail = user.Email, // For sending the receipt to the user
             };
 
             var service = new SessionService();
@@ -144,7 +142,7 @@ namespace BackEnd.Controllers
 
             try
             {
-                session = await service.CreateAsync(options); // Create the session
+                session = await service.CreateAsync(options); // Create the session for checkout
             }
             catch (StripeException ex)
             {

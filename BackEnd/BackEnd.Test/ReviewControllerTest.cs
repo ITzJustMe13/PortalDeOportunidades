@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using Stripe;
 
-namespace BackEnd.Tests
+namespace BackEnd.Test
 {
     [TestFixture]
     public class ReviewControllerTests

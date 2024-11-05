@@ -15,7 +15,9 @@ namespace BackEnd.Models.Mappers
             return new Impulse
             {
                 userId = favoriteModel.UserId,
-                opportunityId = favoriteModel.OpportunityId
+                opportunityId = favoriteModel.OpportunityId,
+                value = (float)favoriteModel.Price,
+                expireDate = favoriteModel.ExpireDate
             };
         }
 
@@ -29,7 +31,9 @@ namespace BackEnd.Models.Mappers
             return new ImpulseModel
             {
                 UserId = favorite.userId,
-                OpportunityId = favorite.opportunityId
+                OpportunityId = favorite.opportunityId,
+                Price = (decimal)favorite.value,
+                ExpireDate = favorite.expireDate
             };
         }
 
