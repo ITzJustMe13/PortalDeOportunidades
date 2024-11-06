@@ -23,7 +23,7 @@ builder.Services
         x.SaveToken = true;
         x.TokenValidationParameters = new TokenValidationParameters
         {
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(AuthSettings.PrivateKey)),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Environment.GetEnvironmentVariable("JWT_SECRET"))),
             ValidateIssuer = false,
             ValidateAudience = false
         };

@@ -161,6 +161,7 @@ namespace BackEnd.Controllers
             {
                 return NotFound($"Reservation with id {id} not found.");
             }
+
             if (reservationModel.checkInDate > DateTime.Now && reservationModel.isActive)
             {
                 reservationModel.isActive = false;
