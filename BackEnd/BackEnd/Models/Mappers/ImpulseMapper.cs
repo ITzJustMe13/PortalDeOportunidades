@@ -1,4 +1,4 @@
-﻿using BackEnd.Models.BackEndModels;
+using BackEnd.Models.BackEndModels;
 using BackEnd.Models.FrontEndModels;
 using System.ComponentModel.DataAnnotations;
 
@@ -20,7 +20,7 @@ namespace BackEnd.Models.Mappers
                 userId = favoriteModel.UserId,
                 opportunityId = favoriteModel.OpportunityId,
                 value = (float)favoriteModel.Price,
-                expireDate = favoriteModel.ExpireDate,
+                expireDate = favoriteModel.ExpireDate
             };
         }
 
@@ -33,10 +33,10 @@ namespace BackEnd.Models.Mappers
             }
             var impulseModel = new ImpulseModel
             {
-                UserId = impulse.userId,
-                OpportunityId = impulse.opportunityId,
-                Price = (decimal)impulse.value,
-                ExpireDate = impulse.expireDate,
+                UserId = favorite.userId,
+                OpportunityId = favorite.opportunityId,
+                Price = (decimal)favorite.value,
+                ExpireDate = favorite.expireDate
             };
 
             ValidateModel(impulseModel);

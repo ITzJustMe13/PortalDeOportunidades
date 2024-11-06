@@ -1,4 +1,4 @@
-﻿using BackEnd.Controllers.Data;
+using BackEnd.Controllers.Data;
 using BackEnd.Enums;
 using BackEnd.Models.BackEndModels;
 using BackEnd.Models.FrontEndModels;
@@ -408,8 +408,8 @@ namespace BackEnd.Controllers
             return Ok(new { isAvailable = emailAvailable });
         }
 
-        [HttpPut("activate")]
-        public async Task<IActionResult> ActivateAccount([FromQuery] string token)
+        [HttpGet("activate")]
+        public async Task<IActionResult> ActivateAccount([FromQuery]string token)
         {
             // Encontrar o utilizador pelo Token
             var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Token == token);

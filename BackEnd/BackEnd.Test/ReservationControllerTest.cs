@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 using BackEnd.Models.BackEndModels;
 
 
-namespace BackEnd.Tests
+namespace BackEnd.Test
 {
     public class ReservationControllerTests
     {
