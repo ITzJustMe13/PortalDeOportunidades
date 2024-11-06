@@ -152,32 +152,5 @@ namespace BackEnd.Controllers
             return Ok(new { sessionId = session.Id }); // Return sessionId for frontend redirection to Stripe
         }
 
-
-        [HttpPost("stripe-webhook")]
-        public async Task<IActionResult> StripeWebhook([FromServices] IConfiguration config)
-        {
-            var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
-            var webhookSecret = config["STRIPE_WEBHOOK_SECRET"]; // Access from env
-
-            Event stripeEvent;
-            try
-            {
-                stripeEvent = EventUtility.ConstructEvent(json, Request.Headers["Stripe-Signature"], webhookSecret);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"Webhook Error: {ex.Message}");
-            }
-
-            if (stripeEvent.Type == "checkout.session.completed")
-            {
-                var session = stripeEvent.Data.Object as Session;
-
-                // Process the session, update reservation status, etc.
-            }
-
-            return Ok();
-        }
-
     }
 }
