@@ -44,7 +44,7 @@ namespace BackEnd.Controllers
             {
                 return BadRequest("Review data is required.");
             }
-            if(review.reservationId == null)
+            if(review.reservationId == null || review.reservationId <= 0)
             {
                 return BadRequest("Invalid Review id");
             }
