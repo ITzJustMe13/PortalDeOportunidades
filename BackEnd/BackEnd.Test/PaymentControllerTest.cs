@@ -228,7 +228,7 @@ namespace BackEnd.Test
 
         [Test]
         [Category("UnitTest")]
-        public async Task CreateReservationCheckoutSession_ReturnsNotFound_ForReservationOpportunityNotFound()
+        public async Task CreateReservationCheckoutSession_ReturnsNotFound_ForReservationOpportunityIdNotFound()
         {
             // Arrange
             byte[] userImg = new byte[]
