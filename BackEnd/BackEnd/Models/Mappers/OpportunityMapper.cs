@@ -26,9 +26,9 @@ namespace BackEnd.Models.Mappers
                 description = opportunityModel.Description,
                 location = opportunityModel.Location,
                 address = opportunityModel.Address,
-                userId = opportunityModel.userID,
+                userId = opportunityModel.UserID,
                 reviewScore = opportunityModel.Score,
-                date = opportunityModel.date,
+                date = opportunityModel.Date,
                 isImpulsed = opportunityModel.IsImpulsed,
 
                OpportunityImgs = opportunityModel.OpportunityImgs?
@@ -57,9 +57,9 @@ namespace BackEnd.Models.Mappers
                 Description = opportunity.description,
                 Location = opportunity.location,
                 Address = opportunity.address,
-                userID = opportunity.userId,
+                UserID = opportunity.userId,
                 Score = opportunity.reviewScore,
-                date = opportunity.date,
+                Date = opportunity.date,
                 IsImpulsed = opportunity.isImpulsed,
                 OpportunityImgs = opportunity.OpportunityImgs?
                     .Select(OpportunityImgMapper.MapToModel)

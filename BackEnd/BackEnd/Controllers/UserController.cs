@@ -98,7 +98,7 @@ namespace BackEnd.Controllers
                 u.Token = activationToken;
                 u.TokenExpDate = DateTime.UtcNow.AddHours(24);
                 await dbContext.SaveChangesAsync();
-                emailService.SendActivationEmail(u);
+                EmailService.SendActivationEmail(u);
 
                 await dbContext.Users.AddAsync(u);
                 await dbContext.SaveChangesAsync();
@@ -132,7 +132,7 @@ namespace BackEnd.Controllers
 
             // encontra e elimina as reservas, oportunidades e impulsos do utilizador
             var reservas = await dbContext.Reservations.Where(r => r.userID == id).ToListAsync();
-            var oportunidades = await dbContext.Opportunities.Where(o => o.userID == id).ToListAsync();
+            var oportunidades = await dbContext.Opportunities.Where(o => o.UserID == id).ToListAsync();
             var impulses = await dbContext.Impulses.Where(i => i.UserId == id).ToListAsync();
 
             dbContext.Users.Remove(user);
@@ -220,7 +220,7 @@ namespace BackEnd.Controllers
         public async Task<ActionResult<Favorite>> AddFavorite(Favorite favorite)
         {
 
-            if (favorite.userId == 0 || favorite.opportunityId == 0)
+            if (favorite.userId <= 0 || favorite.opportunityId == 0)
             {
                 return BadRequest("Invalid user or opportunity ID");
             }
@@ -243,7 +243,7 @@ namespace BackEnd.Controllers
         [HttpGet("favorite/{userId}/{opportunityId}")]
         public async Task<ActionResult<Favorite>> GetFavoriteById(int userId, int opportunityId)
         {
-            if (userId == 0 || opportunityId == 0)
+            if (userId <= 0 || opportunityId <= 0)
             {
                 return BadRequest("Invalid user or opportunity ID");
             }
@@ -263,6 +263,10 @@ namespace BackEnd.Controllers
         [HttpGet("favorites/{userId}")]
         public async Task<ActionResult<Favorite[]>> GetFavorites(int userId)
         {
+            if (userId <= 0)
+            {
+                return BadRequest("Invalid userId");
+            }
 
             var favorites = await dbContext.Favorites.Where(f => f.UserId == userId).ToListAsync();
 
@@ -295,14 +299,23 @@ namespace BackEnd.Controllers
                 return BadRequest(ModelState);
             }
 
+            var i= null as ImpulseModel;
+
             try
             {
-                var i = ImpulseMapper.MapToModel(impulse);
+                 i = ImpulseMapper.MapToModel(impulse);
 
                 if (i == null)
                 {
                     return Problem("The conversion to model failed.");
                 }
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+       
 
                 if (impulse.value <= 0)
                 {
@@ -310,7 +323,7 @@ namespace BackEnd.Controllers
                 }
 
                 if (DateTime.Now.CompareTo(impulse.expireDate) >= 0) {
-                    return BadRequest("The impulse expire date has to be in  the future.");
+                    return BadRequest("The impulse expire date has to be in the future.");
                 }
 
                 dbContext.Impulses.Add(i);
@@ -324,11 +337,7 @@ namespace BackEnd.Controllers
                 }
 
                 return CreatedAtAction(nameof(ImpulseOportunity), new { impulseDTO.userId, impulseDTO.opportunityId }, impulseDTO);
-            }
-            catch (ValidationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+        
         }
 
         // GET: api/User/created-opportunities/{id}
@@ -336,12 +345,16 @@ namespace BackEnd.Controllers
         [HttpGet("created-opportunities/{userId}")]
         public async Task<ActionResult<Favorite[]>> GetCreatedOpportunities(int userId)
         {
+            if(userId <= 0) 
+            {
+                return BadRequest("Invalid userId");
+            }
 
-            var opportunities = await dbContext.Opportunities.Where(o => o.userID == userId).ToListAsync();
+            var opportunities = await dbContext.Opportunities.Where(o => o.UserID == userId).ToListAsync();
 
             var opportunitiesDTOs = opportunities.Select(o => new Favorite
             {
-                userId = o.userID,
+                userId = o.UserID,
                 opportunityId = o.OpportunityId,
             }).ToArray();
 
@@ -405,7 +418,7 @@ namespace BackEnd.Controllers
         {
             var emailAvailable = await IsEmailAvailable(email);
 
-            return Ok(new { isAvailable = emailAvailable });
+            return Ok( emailAvailable );
         }
 
         [HttpGet("activate")]
@@ -430,6 +443,8 @@ namespace BackEnd.Controllers
 
             return Ok("Account activated successfully.");
         }
+
+
 
     }
 }

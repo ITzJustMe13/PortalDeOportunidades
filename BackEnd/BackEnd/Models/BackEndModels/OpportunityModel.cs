@@ -11,7 +11,7 @@ namespace BackEnd.Models.BackEndModels
         public int OpportunityId { get; set; }
 
         [ForeignKey("UserModel")]
-        public int userID { get; set; }
+        public int UserID { get; set; }
         public virtual UserModel User { get; set; }
 
         [Required]
@@ -49,7 +49,7 @@ namespace BackEnd.Models.BackEndModels
         public bool IsImpulsed { get; set; }
 
         [Required]
-        public DateTime date { get; set; }
+        public DateTime Date { get; set; }
 
         public virtual ImpulseModel Impulse { get; set; }
 

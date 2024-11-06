@@ -131,7 +131,7 @@ namespace BackEnd.Controllers
 
 
             reservation.reservationDate = DateTime.Now;
-            reservation.checkInDate = opportunity.date;
+            reservation.checkInDate = opportunity.Date;
             reservation.isActive = true;
             reservation.fixedPrice = ((float)(reservation.numOfPeople * opportunity.Price));
 
@@ -161,6 +161,7 @@ namespace BackEnd.Controllers
             {
                 return NotFound($"Reservation with id {id} not found.");
             }
+
             if (reservationModel.checkInDate > DateTime.Now && reservationModel.isActive)
             {
                 reservationModel.isActive = false;

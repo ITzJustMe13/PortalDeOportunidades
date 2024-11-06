@@ -6,7 +6,7 @@ namespace BackEnd.Services
 {
     public class EmailService
     {
-        public void SendActivationEmail(UserModel user)
+        public static void SendActivationEmail(UserModel user)
         {
             var fromPassword = Environment.GetEnvironmentVariable("GMAIL_APP_PASSWORD");
             var activationLink = $"https://localhost:7235/api/User/activate?token={user.Token}";

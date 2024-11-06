@@ -66,8 +66,7 @@ namespace BackEnd.Models.Mappers
                 Gender = (Enums.Gender)user.gender!,
                 Image = user.image
             };
-
-            ValidateModel(userModel);
+                ValidateModel(userModel);
 
             return userModel;
         }

@@ -39,7 +39,9 @@ namespace BackEnd.Models.Mappers
                 ExpireDate = impulse.expireDate
             };
 
+           
             ValidateModel(impulseModel);
+
             return impulseModel;
         }
 
