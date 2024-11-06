@@ -337,10 +337,10 @@ namespace BackEnd.Test
             var response = await _controller.EditReviewById(2, 4.5F, "Great test");
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>());
-            var badRequestResult = response.Result as BadRequestObjectResult;
-            Assert.That(badRequestResult, Is.Not.Null);
-            Assert.That(badRequestResult?.Value, Is.EqualTo($"Review with id {invalidReservationId} not found."));
+            Assert.That(response.Result, Is.TypeOf<NotFoundObjectResult>());
+            var notFoundResult = response.Result as NotFoundObjectResult;
+            Assert.That(notFoundResult, Is.Not.Null);
+            Assert.That(notFoundResult?.Value, Is.EqualTo($"Review with id {invalidReservationId} not found."));
         }
 
         [Test]
