@@ -33,7 +33,30 @@ namespace BackEnd.Test
 
             _context = new ApplicationDbContext(options);
             _controller = new PaymentController(_context);
-            
+
+            string envTestPath = Path.GetFullPath("../../../../BackEnd/.env");
+            Console.WriteLine("Resolved.env Path: " + envTestPath);
+
+            if (System.IO.File.Exists(envTestPath))
+            {
+                try
+                {
+                    Env.Load(envTestPath);
+                    
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error loading.env.test: " + ex.Message);
+                }
+            }
+            else
+            {
+                Console.WriteLine(".env.test file not found at the specified path.");
+            }
+
+            stripeKey = Env.GetString("STRIPE_SECRET_KEY");
+            StripeConfiguration.ApiKey = stripeKey;
+
         }
 
         [TearDown]
@@ -48,9 +71,7 @@ namespace BackEnd.Test
         public async Task CreateReservationCheckoutSession_ReturnsOkWithCheckoutSessionId_ForValidReservation()
         {
             // Arrange
-            DotNetEnv.Env.Load(@"../BackEnd.Test/.env");
-            stripeKey = Env.GetString("STRIPE_SECRET_KEY");
-            StripeConfiguration.ApiKey = stripeKey;
+            
             byte[] userImg = new byte[]
             {
         137, 80, 78, 71, 13, 10, 26, 10,
@@ -112,9 +133,6 @@ namespace BackEnd.Test
             var response = await _controller.CreateReservationCheckoutSession(reservation);
 
             // Assert
-            var badRequestResult = response as BadRequestObjectResult;
-            Assert.That(badRequestResult, Is.Not.Null, "BadRequestObjectResult should not be null");
-            Assert.That(badRequestResult?.Value, Is.EqualTo(stripeKey), "Error message should match the expected bad request message");
             var OkRequestResult = response as OkObjectResult;
             Assert.That(OkRequestResult, Is.Not.Null);
         }
