@@ -16,7 +16,7 @@ namespace BackEnd.Test
     public class ReviewControllerTests
     {
         private ReviewController _controller;
-        private ApplicationDbContext _context;
+        private ApplicationDbContext _context; 
 
         [SetUp]
         public void Setup()
@@ -105,15 +105,58 @@ namespace BackEnd.Test
             Assert.That(badRequestResult?.Value, Is.EqualTo("Invalid Reservation ID. Reservation does not exist."));
         }
 
-        public async Task CreateReview_ReturnsCreatedAtAction_ForValidReservationId()
+        [Test]
+        [Category("UnitTest")]
+        public async Task CreateReview_ReturnsCreatedAtAction_ForValidReview()
         {
             // Arrange
-            var validReservationId = 1;
+            byte[] userImg = new byte[]
+            {
+        137, 80, 78, 71, 13, 10, 26, 10,
+        0, 0, 0, 13, 73, 72, 68, 82,
+        0, 0, 0, 1, 0, 0, 0, 1,
+        8, 6, 0, 0, 0, 197, 158, 108,
+        0, 0, 0, 1, 115, 90, 129,
+        1, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0
+            };
+            var user = new UserModel
+            {
+                UserId = 1,
+                FirstName = "John",
+                LastName = "Doe",
+                BirthDate = DateTime.Now.AddYears(-30),
+                CellPhoneNum = 919919919,
+                Email = "example@email.com",
+                Gender = Enums.Gender.MASCULINO,
+                Image = userImg
+            };
 
-            // Add a reservation model to simulate an existing reservation
+            _context.Users.Add(user);
+            var opportunity = new OpportunityModel
+            {
+                OpportunityId = 1,
+                Price = 100,
+                Address = "um sitio",
+                Category = Enums.Category.AGRICULTURA,
+                userID = 1,
+                Name = "name",
+                Description = "a description",
+                date = DateTime.Now.AddDays(30),
+                Vacancies = 2,
+                IsActive = true,
+                Location = Enums.Location.LISBOA,
+                Score = 0,
+                IsImpulsed = false
+            };
+
+            _context.Opportunities.Add(opportunity);
+            await _context.SaveChangesAsync();
+
             var reservationModel = new ReservationModel
             {
-                reservationID = validReservationId,
+                reservationID = 1,
                 reservationDate = DateTime.Now,
                 checkInDate = DateTime.Now,
                 opportunityID = 1,
@@ -127,7 +170,7 @@ namespace BackEnd.Test
 
             var newReviewDto = new BackEnd.Models.FrontEndModels.Review
             {
-                reservationId = validReservationId,
+                reservationId = reservationModel.reservationID,
                 rating = 4.5f,
                 desc = "New test review"
             };
@@ -136,22 +179,17 @@ namespace BackEnd.Test
             var response = await _controller.CreateReview(newReviewDto);
 
             // Assert
+   
             Assert.That(response.Result, Is.TypeOf<CreatedAtActionResult>());
-
             var createdAtResult = response.Result as CreatedAtActionResult;
             Assert.That(createdAtResult, Is.Not.Null);
             Assert.That(createdAtResult?.ActionName, Is.EqualTo(nameof(ReviewController.GetReviewById)));
 
-            var returnedReview = createdAtResult?.Value as ReviewModel;
+            var returnedReview = await _context.Reviews.FindAsync(reservationModel.reservationID);
             Assert.That(returnedReview, Is.Not.Null);
-            Assert.That(returnedReview?.ReservationId, Is.EqualTo(validReservationId));
+            Assert.That(returnedReview?.ReservationId, Is.EqualTo(newReviewDto.reservationId));
             Assert.That(returnedReview?.Desc, Is.EqualTo("New test review"));
             Assert.That(returnedReview?.Rating, Is.EqualTo(4.5f));
-
-            var savedReview = await _context.Reviews
-                .FirstOrDefaultAsync(r => r.ReservationId == validReservationId && r.Desc == "New test review");
-
-            Assert.That(savedReview, Is.Not.Null);
         }
 
 
@@ -208,14 +246,15 @@ namespace BackEnd.Test
         {
             // Arrange
             var reservationId = 1;
-
-            // Act
             var reviewDto = new BackEnd.Models.FrontEndModels.Review
             {
                 reservationId = reservationId,
                 rating = 6.5f,
                 desc = "test review"
             };
+
+            // Act
+
             var response = await _controller.CreateReview(reviewDto);
 
             // Assert
@@ -228,7 +267,26 @@ namespace BackEnd.Test
 
         [Test]
         [Category("UnitTest")]
-        public async Task DeleteReview_ReturnsBadRequest_ForInvalidReservationId()
+        public async Task CreateReview_ReturnsBadRequest_ForNullReview()
+        {
+            // Arrange
+            Models.FrontEndModels.Review reviewDto = null;
+
+            // Act
+            var response = await _controller.CreateReview(reviewDto);
+
+            // Assert
+            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>());
+
+            var badRequestResult = response.Result as BadRequestObjectResult;
+            Assert.That(badRequestResult, Is.Not.Null);
+            Assert.That(badRequestResult?.Value, Is.EqualTo("Review data is required."));
+        }
+
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task DeleteReview_ReturnsNotFound_ForInvalidReservationId()
         {
             // Arrange
             var reservationId = 1;
@@ -241,10 +299,10 @@ namespace BackEnd.Test
             var response = await _controller.DeleteReviewById(invalidReservationId);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>());
-            var badRequestResult = response.Result as BadRequestObjectResult;
-            Assert.That(badRequestResult, Is.Not.Null);
-            Assert.That(badRequestResult?.Value, Is.EqualTo($"Review with id {invalidReservationId} not found."));
+            Assert.That(response.Result, Is.TypeOf<NotFoundObjectResult>());
+            var notFoundResult = response.Result as NotFoundObjectResult;
+            Assert.That(notFoundResult, Is.Not.Null);
+            Assert.That(notFoundResult?.Value, Is.EqualTo($"Review with id {invalidReservationId} not found."));
         }
 
         [Test]

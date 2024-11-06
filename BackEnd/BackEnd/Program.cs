@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
@@ -32,6 +33,11 @@ builder.Services.AddAuthorization();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("PortalOportunidadesDB"))
 );
+
+// Configure Stripe
+var configuration = builder.Configuration;
+var stripeSection = configuration.GetSection("Stripe");
+StripeConfiguration.ApiKey = stripeSection["SecretKey"];
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

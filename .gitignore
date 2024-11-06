@@ -1,5 +1,6 @@
 appsettings.json
 appsettings.Development.json
+.env
 
 [Bb]in/
 obj/Debug/
@@ -406,3 +407,4 @@ FodyWeavers.xsd
 *.sln.iml
 /BackEnd/BackEnd/.env
 /.gitignore
+/BackEnd/BackEnd/env
