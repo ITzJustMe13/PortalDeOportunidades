@@ -33,11 +33,11 @@ namespace BackEnd.Controllers
             {
                 return NotFound("No Opportunities were found.");
             }
-            try 
-            { 
+            try
+            {
                 var opportunityDtos = opportunityModels.Select(OpportunityMapper.MapToDto).ToList();
                 return Ok(opportunityDtos);
-            } 
+            }
             catch (ValidationException ex)
             {
                 return BadRequest(ex.Message);
@@ -72,6 +72,11 @@ namespace BackEnd.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Opportunity>> GetOpportunityById(int id)
         {
+            if (id <= 0)
+            {
+                return BadRequest("Given opportunityId is invalid, it should be greater than 0.");
+            }
+
             var opportunity = await _context.Opportunities
                 .Include(o => o.OpportunityImgs)
                 .FirstOrDefaultAsync(o => o.OpportunityId == id);
@@ -84,26 +89,28 @@ namespace BackEnd.Controllers
             {
                 var opportunityDto = OpportunityMapper.MapToDto(opportunity);
                 return Ok(opportunityDto);
-            } catch (ValidationException ex)
+            }
+            catch (ValidationException ex)
             {
                 return BadRequest(ex.Message);
             }
-            
-
         }
 
         //GET api/Opportunity/User/1
         [HttpGet("User/{userId}")]
         public async Task<ActionResult<IEnumerable<Opportunity>>> GetAllOpportunitiesByUserId(int userId)
         {
+            if (userId <= 0)
+            {
+                return BadRequest("Given userId is invalid, it should be greater than 0.");
+            }
+
             var opportunities = await _context.Opportunities
-                .Where(e => e.User.UserId == userId)
+                .Where(e => e.UserID == userId)
                 .Include(o => o.OpportunityImgs)
                 .ToListAsync();
 
-            
-
-            if (opportunities == null || !opportunities.Any())
+            if (!opportunities.Any())
             {
                 return NotFound($"Opportunity with userId {userId} not found.");
             }
@@ -111,11 +118,12 @@ namespace BackEnd.Controllers
             {
                 var opportunityDtos = opportunities.Select(OpportunityMapper.MapToDto).ToList();
                 return Ok(opportunityDtos);
-            } catch (ValidationException ex)
+            }
+            catch (ValidationException ex)
             {
                 return BadRequest(ex.Message);
             }
-            
+
         }
 
         // GET api/Opportunity/Search?keyword=event&vacancies=5&minPrice=10&maxPrice=100&category=conference&location=VilaReal
@@ -139,8 +147,7 @@ namespace BackEnd.Controllers
 
             // Apply filters based on provided parameters
             if (!string.IsNullOrEmpty(keyword))
-                query = query.Where(o => o.Name.Contains(keyword) || o.Description.Contains(keyword));
-
+                query = query.Where(o => o.Name.Contains(keyword) || (o.Description != null && o.Description.Contains(keyword)));
             if (vacancies.HasValue)
                 query = query.Where(o => o.Vacancies >= vacancies.Value);
 
@@ -156,9 +163,9 @@ namespace BackEnd.Controllers
             if (location.HasValue)
                 query = query.Where(o => o.Location == location.Value);
 
-            
+
             // Execute the query and return the results
-            
+
             var opportunitiesModels = await query
                 .Include(o => o.OpportunityImgs)
                 .ToListAsync();
@@ -240,9 +247,14 @@ namespace BackEnd.Controllers
         //[Authorize]
         public async Task<ActionResult<Opportunity>> DeleteOpportunityById(int id)
         {
+            if (id <= 0)
+            {
+                return BadRequest("Given opportunityId is invalid, it should be greater than 0.");
+            }
+
             var opportunityModel = await _context.Opportunities.FindAsync(id);
 
-            if(opportunityModel == null)
+            if (opportunityModel == null)
             {
                 return NotFound($"Opportunity with id {id} not found.");
             }
@@ -268,18 +280,24 @@ namespace BackEnd.Controllers
         //[Authorize]
         public async Task<ActionResult<Opportunity>> ActivateOpportunityById(int id)
         {
+            if (id <= 0)
+            {
+                return BadRequest("Given opportunityId is invalid, it should be greater than 0.");
+            }
+
             var opportunityModel = await _context.Opportunities.FindAsync(id);
             if (opportunityModel == null)
             {
                 return NotFound($"Opportunity with id {id} not found.");
             }
-            if (!opportunityModel.IsActive) 
+            if (!opportunityModel.IsActive)
             {
                 opportunityModel.IsActive = true;
                 await _context.SaveChangesAsync();
                 return NoContent();
 
-            } else
+            }
+            else
             {
                 return BadRequest("Opportunity is Already Active");
             }
@@ -289,8 +307,13 @@ namespace BackEnd.Controllers
         //PUT api/Opportunity/1/deactivate
         [HttpPut("{id}/deactivate")]
         //[Authorize]
-        public async Task<ActionResult<Opportunity>>DeactivateOpportunityById(int id)
+        public async Task<ActionResult<Opportunity>> DeactivateOpportunityById(int id)
         {
+            if (id <= 0)
+            {
+                return BadRequest("Given opportunityId is invalid, it should be greater than 0.");
+            }
+
             var opportunityModel = await _context.Opportunities.FindAsync(id);
             if (opportunityModel == null)
             {
@@ -302,39 +325,11 @@ namespace BackEnd.Controllers
                 await _context.SaveChangesAsync();
                 return NoContent();
 
-            } else
+            }
+            else
             {
                 return BadRequest("Opportunity is Already Inactive");
             }
-
-        }
-
-        //PUT api/Opportunity/1/Impulse?days=30
-        [HttpPut("{id}/Impulse")]
-        //[Authorize]
-        public async Task<ActionResult<Opportunity>> ActivateImpulseById(int id, [FromQuery]int days)
-        {
-            var opportunityModel = await _context.Opportunities.FindAsync(id);
-            if(opportunityModel == null)
-            {
-                return NotFound($"Opportunity with id {id} not found.");
-            }
-            if(opportunityModel.IsImpulsed == true)
-            {
-                return BadRequest($"Opportunity already Impulsed, ends in: {opportunityModel.Impulse.ExpireDate}");
-            } 
-            if (days < 1)
-            {
-                return BadRequest("Impulse days must be a positive number.");
-            } 
-
-            DateTime expDate = DateTime.Today.AddDays(days);
-            opportunityModel.IsImpulsed = true;
-            opportunityModel.Impulse.ExpireDate = expDate;
-
-            await _context.SaveChangesAsync();
-            return NoContent();
-        
 
         }
 
@@ -354,6 +349,11 @@ namespace BackEnd.Controllers
             [FromBody] List<byte[]>? newImageUrls
         )
         {
+            if (id <= 0)
+            {
+                return BadRequest("Given opportunityId is invalid, it should be greater than 0.");
+            }
+
             var opportunityModel = await _context.Opportunities
                 .Include(o => o.OpportunityImgs)
                 .FirstOrDefaultAsync(o => o.OpportunityId == id);
@@ -388,7 +388,7 @@ namespace BackEnd.Controllers
             if (category.HasValue) opportunityModel.Category = category.Value;
             if (location.HasValue) opportunityModel.Location = location.Value;
             if (!string.IsNullOrEmpty(address)) opportunityModel.Address = address;
-            if (date.HasValue) opportunityModel.date = date.Value;
+            if (date.HasValue) opportunityModel.Date = date.Value;
 
             if (newImageUrls != null)
             {
@@ -431,6 +431,14 @@ namespace BackEnd.Controllers
 
             if (maxPrice.HasValue && maxPrice <= 0.00M)
                 errors.Add("MaxPrice should be greater than 0.01.");
+
+            if(minPrice.HasValue && maxPrice.HasValue)
+            {
+                if (minPrice > maxPrice)
+                {
+                    errors.Add("MaxPrice should be greater than MinPrice.");
+                }
+            }
 
             if (category.HasValue && !Enum.IsDefined(typeof(Category), category.Value))
                 errors.Add("Invalid category specified.");
@@ -488,6 +496,5 @@ namespace BackEnd.Controllers
 
             return errors;
         }
-
     }
 }

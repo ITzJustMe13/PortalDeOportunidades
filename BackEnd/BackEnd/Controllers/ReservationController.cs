@@ -131,7 +131,7 @@ namespace BackEnd.Controllers
 
 
             reservation.reservationDate = DateTime.Now;
-            reservation.checkInDate = opportunity.date;
+            reservation.checkInDate = opportunity.Date;
             reservation.isActive = true;
             reservation.fixedPrice = ((float?)(reservation.numOfPeople * opportunity.Price));
 
