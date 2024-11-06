@@ -7,20 +7,20 @@ namespace BackEnd.Models.Mappers
     public class ImpulseMapper
     {
         // Method to map ImpulseModel to Impulse(Dto)
-        public static Impulse? MapToDto(ImpulseModel favoriteModel)
+        public static Impulse? MapToDto(ImpulseModel impulseModel)
         {
-            if (favoriteModel == null)
+            if (impulseModel == null)
             {
                 return null;
             }
-            ValidateModel(favoriteModel);
+            ValidateModel(impulseModel);
 
             return new Impulse
             {
-                userId = favoriteModel.UserId,
-                opportunityId = favoriteModel.OpportunityId,
-                value = (float)favoriteModel.Price,
-                expireDate = favoriteModel.ExpireDate
+                userId = impulseModel.UserId,
+                opportunityId = impulseModel.OpportunityId,
+                value = (float)impulseModel.Price,
+                expireDate = impulseModel.ExpireDate
             };
         }
 
@@ -33,10 +33,10 @@ namespace BackEnd.Models.Mappers
             }
             var impulseModel = new ImpulseModel
             {
-                UserId = favorite.userId,
-                OpportunityId = favorite.opportunityId,
-                Price = (decimal)favorite.value,
-                ExpireDate = favorite.expireDate
+                UserId = impulse.userId,
+                OpportunityId = impulse.opportunityId,
+                Price = (decimal)impulse.value,
+                ExpireDate = impulse.expireDate
             };
 
             ValidateModel(impulseModel);
