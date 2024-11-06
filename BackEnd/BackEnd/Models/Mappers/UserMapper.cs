@@ -67,7 +67,14 @@ namespace BackEnd.Models.Mappers
                 Image = user.image
             };
 
-            ValidateModel(userModel);
+            try
+            {
+                ValidateModel(userModel);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
 
             return userModel;
         }

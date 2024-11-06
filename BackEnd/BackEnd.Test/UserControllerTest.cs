@@ -1,13 +1,14 @@
 ﻿using BackEnd.Controllers.Data;
 using BackEnd.Controllers;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using BackEnd.Models.BackEndModels;
 using Microsoft.AspNetCore.Mvc;
+using BackEnd.Models.FrontEndModels;
+using Sprache;
+using Microsoft.AspNetCore.Identity.Data;
+using BackEnd.Enums;
+using Azure;
+using DotNetEnv;
 
 namespace BackEnd.Test
 {
@@ -25,6 +26,25 @@ namespace BackEnd.Test
 
             _context = new ApplicationDbContext(options);
             _controller = new UserController(_context);
+
+            string envTestPath = Path.GetFullPath("../../../../BackEnd/.env");
+            Console.WriteLine("Resolved.env.test Path: " + envTestPath);
+
+            if (File.Exists(envTestPath))
+            {
+                try
+                {
+                    Env.Load(envTestPath);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error loading.env.test: " + ex.Message);
+                }
+            }
+            else
+            {
+                Console.WriteLine(".env.test file not found at the specified path.");
+            }
         }
 
         [TearDown]
@@ -80,20 +100,1246 @@ namespace BackEnd.Test
         }
 
         [Test]
-        [Category ("UnitTest")]
-        public async Task GetClientById_ReturnsNotFound_ForNonExistentUserId()
+        [Category("UnitTest")]
+        public async Task CreateNewUser_ReturnsCreated_WhenUserIsValid()
         {
             // Arrange
-            var userId = 1;
+            byte[] byteArray = new byte[] { 72, 101, 108, 108, 111 };
+            var user = new User
+            {
+                email = "leonardosilva.00009@gmail.com",
+                password = "ValidPassword123",
+                firstName = "Antonio",
+                lastName = "Silva",
+                cellPhoneNumber = 911232439,
+                birthDate = DateTime.Now.AddYears(-20),
+                gender = Gender.MASCULINO,
+                image = byteArray
+                
+            };
 
             // Act
-            var response = await _controller.GetUserByID(userId);
+            var response = await _controller.CreateNewUser(user);
+
+            // Assert
+            Assert.That(response.Result, Is.TypeOf<CreatedAtActionResult>());
+            var createdResult = response.Result as CreatedAtActionResult;
+            var createdUser = createdResult.Value as User;
+            Assert.That(createdUser, Is.Not.Null);
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task CreateNewUser_ReturnsNotFound_WhenDbContextIsNull()
+        {
+            // Arrange
+            var controllerWithNullContext = new UserController(null);
+            byte[] byteArray = new byte[] { 72, 101, 108, 108, 111 };
+            var user = new User
+            {
+                email = "newuser@gmail.com",
+                password = "ValidPassword123",
+                firstName = "Antonio",
+                lastName = "Silva",
+                cellPhoneNumber = 911232439,
+                birthDate = DateTime.Now.AddYears(-20), 
+                gender = Gender.MASCULINO,
+                image = byteArray
+
+            };
+
+            // Act
+            var response = await controllerWithNullContext.CreateNewUser(user);
 
             // Assert
             Assert.That(response.Result, Is.TypeOf<NotFoundObjectResult>());
             var notFoundResult = response.Result as NotFoundObjectResult;
-            Assert.That(notFoundResult, Is.Not.Null);
-            Assert.That(notFoundResult?.Value, Is.EqualTo("User was not found!"));
+            Assert.That(notFoundResult.Value, Is.EqualTo("DB context missing"));
         }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task CreateNewUser_ReturnsBadRequest_WhenModelStateIsInvalid()
+        {
+            // Arrange
+            _controller.ModelState.AddModelError("error", "ModelState is invalid");
+            byte[] byteArray = new byte[] { 72, 101, 108, 108, 111 };
+            var user = new User
+            {
+                email = "newuser@gmail.com",
+                password = "ValidPassword123",
+                firstName = "Antonio",
+                lastName = "Silva",
+                cellPhoneNumber = 911232439,
+                birthDate = DateTime.Now.AddYears(-20), 
+                gender = Gender.MASCULINO,
+                image = byteArray
+
+            };
+
+            // Act
+            var response = await _controller.CreateNewUser(user);
+
+            // Assert
+            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>());
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task CreateNewUser_ReturnsBadRequest_WhenEmailIsAlreadyInUse()
+        {
+            // Arrange
+            byte[] byteArray1 = new byte[] { 72, 101, 108, 108, 111 };
+            var existingUser = new UserModel { 
+                Email = "existing@example.com",
+                HashedPassword = BCrypt.Net.BCrypt.HashPassword("password"), 
+                isActive = true, 
+                FirstName = "John",
+                LastName = "Doe",   
+                CellPhoneNum = 912345678,
+                RegistrationDate = DateTime.Now, 
+                BirthDate = new DateTime(1990, 1, 1), 
+                Gender = Gender.MASCULINO, 
+                Image = byteArray1 
+            };
+            _context.Users.Add(existingUser);
+            await _context.SaveChangesAsync();
+
+            byte[] byteArray2 = new byte[] { 72, 101, 108, 108, 111 };
+            var user = new User
+            {
+                email = "existing@example.com",
+                password = "ValidPassword123",
+                firstName = "Antonio",
+                lastName = "Silva",
+                cellPhoneNumber = 911232439,
+                birthDate = DateTime.Now.AddYears(-20), 
+                gender = Gender.MASCULINO,
+                image = byteArray2
+
+            };
+
+            // Act
+            var response = await _controller.CreateNewUser(user);
+
+            // Assert
+            Assert.That(response.Result, Is.InstanceOf<BadRequestObjectResult>());
+            var badRequestResult = response.Result as BadRequestObjectResult;
+            Assert.That(badRequestResult.Value, Is.EqualTo("Email is already in use"));
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task CreateNewUser_ReturnsBadRequest_WhenGenderIsInvalid()
+        {
+            // Arrange
+            byte[] byteArray = new byte[] { 72, 101, 108, 108, 111 };
+            var user = new User
+            {
+                email = "existing@example.com",
+                password = "ValidPassword123",
+                firstName = "Antonio",
+                lastName = "Silva",
+                cellPhoneNumber = 911232439,
+                birthDate = DateTime.Now.AddYears(-20),
+                gender = (Gender)999,
+                image = byteArray
+
+            };
+
+            // Act
+            var response = await _controller.CreateNewUser(user);
+
+            // Assert
+            Assert.That(response.Result, Is.InstanceOf<BadRequestObjectResult>());
+            var badRequestResult = response.Result as BadRequestObjectResult;
+            Assert.That(badRequestResult.Value, Is.EqualTo("Gender has an invalid value"));
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task CreateNewUser_ReturnsBadRequest_WhenPasswordIsMissing()
+        {
+            // Arrange
+            byte[] byteArray = new byte[] { 72, 101, 108, 108, 111 };
+            var user = new User
+            {
+                email = "existing@example.com",
+                password = null,
+                firstName = "Antonio",
+                lastName = "Silva",
+                cellPhoneNumber = 911232439,
+                birthDate = DateTime.Now.AddYears(-20), 
+                gender = Gender.MASCULINO,
+                image = byteArray
+
+            };
+            // Act
+            var response = await _controller.CreateNewUser(user);
+
+            // Assert
+            Assert.That(response.Result, Is.InstanceOf<BadRequestObjectResult>());
+            var badRequestResult = response.Result as BadRequestObjectResult;
+            Assert.That(badRequestResult.Value, Is.EqualTo("Password is required"));
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task CreateNewUser_ReturnsBadRequest_WhenUserIsUnder18()
+        {
+            // Arrange
+            byte[] byteArray = new byte[] { 72, 101, 108, 108, 111 };
+            var user = new User
+            {
+                email = "existing@example.com",
+                password = "ValidPassword123",
+                firstName = "Antonio",
+                lastName = "Silva",
+                cellPhoneNumber = 911232439,
+                birthDate = DateTime.Now.AddYears(-17), 
+                gender = Gender.MASCULINO,
+                image = byteArray
+
+            };
+
+            // Act
+            var response = await _controller.CreateNewUser(user);
+
+            // Assert
+            Assert.That(response.Result, Is.InstanceOf<BadRequestObjectResult>());
+            var badRequestResult = response.Result as BadRequestObjectResult;
+            Assert.That(badRequestResult.Value, Is.EqualTo("You must be at least 18 years old"));
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task DeleteUser_ReturnsNotFound_ForNonExistentUserId()
+        {
+            // Arrange
+            var userid = 1;
+
+            // Act
+            var result = await _controller.DeleteUser(userid);
+
+            // Assert
+            Assert.That(result, Is.TypeOf<NotFoundObjectResult>());
+            var notFoundResult = result as NotFoundObjectResult;
+            Assert.That(notFoundResult?.Value, Is.EqualTo("The user was not Found!"));
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task DeleteUser_ReturnsNoContent_WhenUserExists()
+        {
+            // Arrange
+            var userId = 1;
+            var staticDate = new DateTime(2023, 1, 1);
+            byte[] byteArray = new byte[] { 72, 101, 108, 108, 111 };
+            var userModel = new UserModel
+            {
+                UserId = userId,
+                BirthDate = staticDate,
+                RegistrationDate = staticDate,
+                CellPhoneNum = 912345678,
+                Email = "example@example.com",
+                FirstName = "Example",
+                LastName = "Test",
+                Gender = Enums.Gender.MASCULINO,
+                Image = byteArray
+            };
+
+            _context.Users.Add(userModel);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var response = await _controller.DeleteUser(userId);
+
+            // Assert
+            Assert.That(response, Is.TypeOf<NoContentResult>());
+            Assert.That(await _context.Reservations.FindAsync(userModel.UserId), Is.Null);
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task EditUser_ReturnsOk_WhenUserIsValid()
+        {
+            // Arrange
+            int userId = 1;
+            byte[] byteArray = new byte[] { 72, 101, 108, 108, 111 };
+            var existingUser = new UserModel
+            {
+                UserId = userId,
+                FirstName = "Antonio",
+                LastName = "Silva",
+                Email = "existinguser@example.com",
+                CellPhoneNum = 911232439,
+                BirthDate = DateTime.Now.AddYears(-25),
+                Gender = Gender.MASCULINO,
+                isActive = true,
+                Image = byteArray
+            };
+            _context.Users.Add(existingUser);
+
+            var updatedUser = new User
+            {
+                userId = userId,
+                firstName = "Antonio Updated",
+                lastName = "Silva Updated",
+                email = "updateduser@example.com",
+                cellPhoneNumber = 922334455,
+                birthDate = DateTime.Now.AddYears(-25),
+                gender = Gender.MASCULINO,
+                password = "NewPassword123",
+                image = byteArray
+            };
+            await _context.SaveChangesAsync();
+
+            // Act
+            var response = await _controller.EditUser(userId, updatedUser);
+
+            // Assert
+            Assert.That(response.Result, Is.TypeOf<OkObjectResult>());
+            var okResult = response.Result as OkObjectResult;
+            Assert.That(okResult?.Value, Is.Not.Null);
+
+            var returnedUser = okResult.Value as User;
+            Assert.That(returnedUser?.email, Is.EqualTo(updatedUser.email));
+            Assert.That(returnedUser?.firstName, Is.EqualTo(updatedUser.firstName));
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task EditUser_ReturnsNotFound_WhenUserDoesNotExist()
+        {
+            // Arrange
+            int userId = 1;
+            byte[] byteArray = new byte[] { 72, 101, 108, 108, 111 };
+            var updatedUser = new User
+            {
+                userId = userId,
+                firstName = "Antonio Updated",
+                lastName = "Silva Updated",
+                email = "updateduser@example.com",
+                cellPhoneNumber = 922334455,
+                birthDate = DateTime.Now.AddYears(-25),
+                gender = Gender.MASCULINO,
+                password = "NewPassword123",
+                image = byteArray
+            };
+
+            await _context.SaveChangesAsync();
+
+            // Act
+            var response = await _controller.EditUser(userId, updatedUser);
+
+            // Assert
+            Assert.That(response.Result, Is.TypeOf<NotFoundObjectResult>());
+            var notFoundResult = response.Result as NotFoundObjectResult;
+            Assert.That(notFoundResult?.Value, Is.EqualTo("User Not Found!"));
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task EditUser_ReturnsBadRequest_WhenEmailAlreadyInUse()
+        {
+            // Arrange
+            int userId = 1;
+            byte[] byteArray = new byte[] { 72, 101, 108, 108, 111 };
+            var existingUser1 = new UserModel
+            {
+                UserId = userId,
+                FirstName = "Antonio",
+                LastName = "Silva",
+                Email = "existinguser1@example.com",
+                CellPhoneNum = 911232439,
+                BirthDate = DateTime.Now.AddYears(-25),
+                Gender = Gender.MASCULINO,
+                isActive = true,
+                Image = byteArray
+            };
+
+            var existingUser2 = new UserModel
+            {
+                UserId = 2,
+                FirstName = "Antonio",
+                LastName = "Silva",
+                Email = "existinguser2@example.com",
+                CellPhoneNum = 911232439,
+                BirthDate = DateTime.Now.AddYears(-25),
+                Gender = Gender.MASCULINO,
+                isActive = true,
+                Image = byteArray
+            };
+            _context.Users.Add(existingUser1);
+            _context.Users.Add(existingUser2);
+
+            var updatedUser = new User
+            {
+                userId = userId,
+                firstName = "Antonio Updated",
+                lastName = "Silva Updated",
+                email = "existinguser2@example.com",
+                cellPhoneNumber = 922334455,
+                birthDate = DateTime.Now.AddYears(-25),
+                gender = Gender.MASCULINO,
+                password = "NewPassword123",
+                image = byteArray
+            };
+            await _context.SaveChangesAsync();
+
+            // Act
+            var response = await _controller.EditUser(userId, updatedUser);
+
+            // Assert
+            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>());
+            var badRequestResult = response.Result as BadRequestObjectResult;
+            Assert.That(badRequestResult?.Value, Is.EqualTo("The email is already used"));
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task EditUser_ReturnsBadRequest_WhenUserIsUnderage()
+        {
+            // Arrange
+            int userId = 1;
+            byte[] byteArray = new byte[] { 72, 101, 108, 108, 111 };
+            var existingUser = new UserModel
+            {
+                UserId = userId,
+                FirstName = "Antonio",
+                LastName = "Silva",
+                Email = "existinguser1@example.com",
+                CellPhoneNum = 911232439,
+                BirthDate = DateTime.Now.AddYears(-25),
+                Gender = Gender.MASCULINO,
+                isActive = true,
+                Image = byteArray
+            };
+            _context.Users.Add(existingUser);
+
+            var updatedUser = new User
+            {
+                userId = userId,
+                firstName = "Antonio Updated",
+                lastName = "Silva Updated",
+                email = "existinguser2@example.com",
+                cellPhoneNumber = 922334455,
+                birthDate = DateTime.Now.AddYears(-17),
+                gender = Gender.MASCULINO,
+                password = "NewPassword123",
+                image = byteArray
+            };
+            await _context.SaveChangesAsync();
+
+            // Act
+            var response = await _controller.EditUser(userId, updatedUser);
+
+            // Assert
+            Assert.That(response.Result, Is.InstanceOf<BadRequestObjectResult>());
+            var badRequestResult = response.Result as BadRequestObjectResult;
+            Assert.That(badRequestResult?.Value, Is.EqualTo("You must be atleast 18"));
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task EditUser_ReturnsBadRequest_WhenGenderIsInvalid()
+        {
+            // Arrange
+            int userId = 1;
+            byte[] byteArray = new byte[] { 72, 101, 108, 108, 111 };
+            var existingUser = new UserModel
+            {
+                UserId = userId,
+                FirstName = "Antonio",
+                LastName = "Silva",
+                Email = "existinguser1@example.com",
+                CellPhoneNum = 911232439,
+                BirthDate = DateTime.Now.AddYears(-25),
+                Gender = Gender.MASCULINO,
+                isActive = true,
+                Image = byteArray
+            };
+            _context.Users.Add(existingUser);
+
+            var updatedUser = new User
+            {
+                userId = userId,
+                firstName = "Antonio Updated",
+                lastName = "Silva Updated",
+                email = "existinguser2@example.com",
+                cellPhoneNumber = 922334455,
+                birthDate = DateTime.Now.AddYears(-17),
+                gender = (Gender)999,
+                password = "NewPassword123",
+                image = byteArray
+            };
+            await _context.SaveChangesAsync();
+
+            // Act
+            var response = await _controller.EditUser(userId, updatedUser);
+
+            // Assert
+            Assert.That(response.Result, Is.InstanceOf<BadRequestObjectResult>());
+            var badRequestResult = response.Result as BadRequestObjectResult;
+            Assert.That(badRequestResult?.Value, Is.EqualTo("The gender is invalid"));
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task AddFavorite_ReturnsBadRequest_WhenUserId()
+        {
+            // Arrange
+            var favorite = new Favorite
+            {
+                userId = 0,
+                opportunityId = 1
+            };
+
+            // Act
+            var response = await _controller.AddFavorite(favorite);
+
+            // Assert
+            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>());
+            var badRequestResult = response.Result as BadRequestObjectResult;
+            Assert.That(badRequestResult?.Value, Is.EqualTo("Invalid user or opportunity ID"));
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task AddFavorite_ReturnsBadRequest_WhenOpportunityIdIsZero()
+        {
+            // Arrange
+            var favorite = new Favorite
+            {
+                userId = 1,
+                opportunityId = 0
+            };
+
+            // Act
+            var response = await _controller.AddFavorite(favorite);
+
+            // Assert
+            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>());
+            var badRequestResult = response.Result as BadRequestObjectResult;
+            Assert.That(badRequestResult?.Value, Is.EqualTo("Invalid user or opportunity ID"));
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task AddFavorite_ReturnsConflict_WhenFavoriteAlreadyExists()
+        {
+            // Arrange
+            var favorite = new Favorite
+            {
+                userId = 1,
+                opportunityId = 1
+            };
+
+            var existingFavorite = new FavoritesModel
+            {
+                UserId = 1,
+                OpportunityId = 1
+            };
+
+            _context.Favorites.Add(existingFavorite);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var response = await _controller.AddFavorite(favorite);
+
+            // Assert
+            Assert.That(response.Result, Is.TypeOf<ConflictObjectResult>());
+            var conflictResult = response.Result as ConflictObjectResult;
+            Assert.That(conflictResult?.Value, Is.EqualTo("Favorite already exists for this user and opportunity"));
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task AddFavorite_ReturnsCreatedAtAction_WhenFavoriteIsAddedSuccessfully()
+        {
+            // Arrange
+            var favorite = new Favorite
+            {
+                userId = 1,
+                opportunityId = 2
+            };
+
+            // Act
+            var response = await _controller.AddFavorite(favorite);
+
+            // Assert
+            Assert.That(response.Result, Is.TypeOf<CreatedAtActionResult>());
+            var createdResult = response.Result as CreatedAtActionResult;
+            Assert.That(createdResult, Is.Not.Null);
+            Assert.That(createdResult.RouteValues["userId"], Is.EqualTo(favorite.userId));
+            Assert.That(createdResult.RouteValues["opportunityId"], Is.EqualTo(favorite.opportunityId));
+
+            // Verifique se o favorito foi realmente adicionado ao banco de dados
+            var addedFavorite = await _context.Favorites
+                .FirstOrDefaultAsync(f => f.UserId == favorite.userId && f.OpportunityId == favorite.opportunityId);
+            Assert.That(addedFavorite, Is.Not.Null);
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task GetFavoriteById_ReturnsBadRequest_WhenUserId()
+        {
+            // Arrange
+            var userId = 0;
+            var opportunityId = 1;
+
+            // Act
+            var response = await _controller.GetFavoriteById(userId, opportunityId);
+
+            // Assert
+            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>());
+            var badRequestResult = response.Result as BadRequestObjectResult;
+            Assert.That(badRequestResult?.Value, Is.EqualTo("Invalid user or opportunity ID"));
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task GetFavoriteById_ReturnsBadRequest_WhenOpportunityIdIsZero()
+        {
+            // Arrange
+            var userId = 0;
+            var opportunityId = 1;
+
+            // Act
+            var response = await _controller.GetFavoriteById(userId, opportunityId);
+
+            // Assert
+            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>());
+            var badRequestResult = response.Result as BadRequestObjectResult;
+            Assert.That(badRequestResult?.Value, Is.EqualTo("Invalid user or opportunity ID"));
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task GetFavoriteById_ReturnsNotFound_WhenFavoriteDoesNotExist()
+        {
+            // Arrange
+            var userId = 1;
+            var opportunityId = 1;
+            var existingFavorite = await _context.Favorites.FindAsync(userId, opportunityId);
+            if (existingFavorite != null)
+            {
+                _context.Favorites.Remove(existingFavorite);
+                await _context.SaveChangesAsync();
+            }
+
+            // Act
+            var response = await _controller.GetFavoriteById(userId, opportunityId);
+
+            // Assert
+            Assert.That(response.Result, Is.TypeOf<NotFoundResult>());
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task GetFavoriteById_ReturnsOkWithFavorite_WhenFavoriteExists()
+        {
+            // Arrange
+            var userId = 1;
+            var opportunityId = 1;
+
+            var favorite = new FavoritesModel
+            {
+                UserId = userId,
+                OpportunityId = opportunityId
+            };
+
+            _context.Favorites.Add(favorite);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var response = await _controller.GetFavoriteById(userId, opportunityId);
+
+            // Assert
+            Assert.That(response.Result, Is.TypeOf<OkObjectResult>());
+            var okResult = response.Result as OkObjectResult;
+            Assert.That(okResult, Is.Not.Null);
+
+            var returnedFavorite = okResult.Value as FavoritesModel;
+            Assert.That(returnedFavorite, Is.Not.Null);
+            Assert.That(returnedFavorite.UserId, Is.EqualTo(userId));
+            Assert.That(returnedFavorite.OpportunityId, Is.EqualTo(opportunityId));
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task GetFavorites_ReturnsBadRequest_WhenUserIdIsInvalid()
+        {
+            // Arrange
+            var userId = 0; 
+
+            // Act
+            var response = await _controller.GetFavorites(userId);
+
+            // Assert
+            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>());
+            var badRequestResult = response.Result as BadRequestObjectResult;
+            Assert.That(badRequestResult?.Value, Is.EqualTo("Invalid userId"));
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task GetFavorites_ReturnsNotFound_WhenUserHasNoFavorites()
+        {
+            // Arrange
+            var userId = 1;
+            var existingFavorites = await _context.Favorites.Where(f => f.UserId == userId).ToListAsync();
+            if (existingFavorites.Any())
+            {
+                _context.Favorites.RemoveRange(existingFavorites);
+                await _context.SaveChangesAsync();
+            }
+
+            // Act
+            var response = await _controller.GetFavorites(userId);
+
+            // Assert
+            Assert.That(response.Result, Is.TypeOf<NotFoundObjectResult>());
+            var notFoundResult = response.Result as NotFoundObjectResult;
+            Assert.That(notFoundResult?.Value, Is.EqualTo("No favorites found!"));
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task GetFavorites_ReturnsOkWithFavorites_WhenUserHasFavorites()
+        {
+            // Arrange
+            var userId = 1;
+            var favorite1 = new FavoritesModel { UserId = userId, OpportunityId = 1 };
+            var favorite2 = new FavoritesModel { UserId = userId, OpportunityId = 2 };
+
+            _context.Favorites.AddRange(favorite1, favorite2);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var response = await _controller.GetFavorites(userId);
+
+            // Assert
+            Assert.That(response.Result, Is.TypeOf<OkObjectResult>());
+            var okResult = response.Result as OkObjectResult;
+            Assert.That(okResult, Is.Not.Null);
+
+            var returnedFavorites = okResult.Value as Favorite[];
+            Assert.That(returnedFavorites, Is.Not.Null);
+            Assert.That(returnedFavorites.Length, Is.EqualTo(2));
+            Assert.That(returnedFavorites.Any(f => f.opportunityId == 1));
+            Assert.That(returnedFavorites.Any(f => f.opportunityId == 2));
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public void ImpulseOportunity_ReturnsNotFound_WhenDbContextIsNull()
+        {
+            // Arrange
+            var controllerWithNullContext = new UserController(null);
+
+            var impulse = new Impulse
+            {
+                userId = 1,
+                opportunityId = 1,
+                value = 10,
+                expireDate = DateTime.Now.AddDays(1)
+            };
+
+            // Act
+            var response = controllerWithNullContext.ImpulseOportunity(impulse);
+
+            // Assert
+            Assert.That(response.Result, Is.TypeOf<NotFoundObjectResult>());
+            var notFoundResult = response.Result as NotFoundObjectResult;
+            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public void ImpulseOportunity_ReturnsBadRequest_WhenModelStateIsInvalid()
+        {
+            // Arrange
+            _controller.ModelState.AddModelError("key", "Model error");
+
+            var impulse = new Impulse { userId = 1, opportunityId = 1, value = 10, expireDate = DateTime.Now.AddDays(1) };
+
+            // Act
+            var response = _controller.ImpulseOportunity(impulse);
+
+            // Assert
+            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>());
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public void ImpulseOportunity_ReturnsProblem_WhenMappingToModelFails()
+        {
+            var invalidImpulse = new Impulse
+            {
+                userId = 1,             
+                opportunityId = 1,      
+                value = null,          
+                expireDate = DateTime.Now.AddDays(1) 
+            };
+
+            // Act
+            var response = _controller.ImpulseOportunity(invalidImpulse);
+
+            // Assert
+            Assert.That(response, Is.InstanceOf<BadRequestObjectResult>());
+            var badRequestResult = response.Result as BadRequestObjectResult;
+
+            Assert.That(badRequestResult.Value.ToString(), Does.Contain("Erro de validação"));
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public void ImpulseOportunity_ReturnsBadRequest_WhenValueIsInvalid()
+        {
+            // Arrange
+            var impulse = new Impulse { userId = 1, opportunityId = 1, value = 0, expireDate = DateTime.Now.AddDays(1) };
+
+            // Act
+            var response = _controller.ImpulseOportunity(impulse);
+
+            // Assert
+            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>());
+            var badRequestResult = response.Result as BadRequestObjectResult;
+            Assert.That(badRequestResult?.Value, Is.EqualTo("The value has to be more than 0."));
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public void ImpulseOportunity_ReturnsBadRequest_WhenExpireDateIsInvalid()
+        {
+            // Arrange
+            var impulse = new Impulse { userId = 1, opportunityId = 1, value = 10, expireDate = DateTime.Now.AddMinutes(-1) };
+
+            // Act
+            var response = _controller.ImpulseOportunity(impulse);
+
+            // Assert
+            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>());
+            var badRequestResult = response.Result as BadRequestObjectResult;
+            Assert.That(badRequestResult?.Value, Is.EqualTo("The impulse expire date has to be in the future."));
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public void ImpulseOportunity_ReturnsCreated_WhenImpulseIsValid()
+        {
+            // Arrange
+            var impulse = new Impulse { userId = 1, opportunityId = 1, value = 10, expireDate = DateTime.Now.AddDays(1) };
+
+            // Act
+            var response = _controller.ImpulseOportunity(impulse);
+
+            // Assert
+            Assert.That(response.Result, Is.TypeOf<CreatedAtActionResult>());
+            var createdResult = response.Result as CreatedAtActionResult;
+            Assert.That(createdResult, Is.Not.Null);
+
+            var impulseDTO = createdResult.Value as Impulse;
+            Assert.That(impulseDTO, Is.Not.Null);
+            Assert.That(impulseDTO.userId, Is.EqualTo(impulse.userId));
+            Assert.That(impulseDTO.opportunityId, Is.EqualTo(impulse.opportunityId));
+            Assert.That(impulseDTO.value, Is.EqualTo(impulse.value));
+            Assert.That(impulseDTO.expireDate, Is.EqualTo(impulse.expireDate));
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task GetCreatedOpportunities_ReturnsBadRequest_WhenUserIdIsInvalid()
+        {
+            // Arrange
+            var userId = 0; 
+
+            // Act
+            var response = await _controller.GetCreatedOpportunities(userId);
+
+            // Assert
+            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>());
+            var badRequestResult = response.Result as BadRequestObjectResult;
+            Assert.That(badRequestResult?.Value, Is.EqualTo("Invalid userId"));
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task GetCreatedOpportunities_ReturnsNotFound_WhenNoOpportunitiesExist()
+        {
+            // Arrange
+            int userId = 1;
+
+            // Act
+            var response = await _controller.GetCreatedOpportunities(userId);
+
+            // Assert
+            Assert.That(response.Result, Is.TypeOf<NotFoundObjectResult>());
+            var notFoundResult = response.Result as NotFoundObjectResult;
+            Assert.That(notFoundResult?.Value, Is.EqualTo("You have no created Opportunities!"));
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task GetCreatedOpportunities_ReturnsOkWithOpportunities_ForValidUserIdWithOpportunities()
+        {
+            // Arrange
+            int userId = 1;
+
+            var opportunity1 = new OpportunityModel { OpportunityId = 1, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, userID = 1, Name = "name", Description = "a description", date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
+            var opportunity2 = new OpportunityModel { OpportunityId = 2, Price = 100, Address = "outro sitio", Category = Enums.Category.AGRICULTURA, userID = 1, Name = "name", Description = "a description", date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
+
+            _context.Opportunities.Add(opportunity1);
+            _context.Opportunities.Add(opportunity2);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var response = await _controller.GetCreatedOpportunities(userId);
+
+            // Assert
+            Assert.That(response.Result, Is.TypeOf<OkObjectResult>());
+            var okResult = response.Result as OkObjectResult;
+            Assert.That(okResult, Is.Not.Null);
+
+            var opportunitiesDTOs = okResult.Value as Favorite[];
+            Assert.That(opportunitiesDTOs, Is.Not.Null);
+            Assert.That(opportunitiesDTOs.Length, Is.EqualTo(2));
+            Assert.That(opportunitiesDTOs.Any(o => o.opportunityId == opportunity1.OpportunityId && o.userId == userId));
+            Assert.That(opportunitiesDTOs.Any(o => o.opportunityId == opportunity2.OpportunityId && o.userId == userId));
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task Login_ReturnsBadRequest_WhenEmailOrPasswordIsEmpty()
+        {
+            // Arrange
+            var request = new LoginRequest { Email = "", Password = "" };
+
+            // Act
+            var response = await _controller.Login(request);
+
+            // Assert
+            Assert.That(response, Is.InstanceOf<BadRequestObjectResult>());
+            var badRequestResult = response as BadRequestObjectResult;
+            Assert.That(badRequestResult.Value, Is.EqualTo("Username or password is incorrect"));
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task Login_ReturnsUnauthorized_WhenUserNotFound()
+        {
+            // Arrange
+            var request = new LoginRequest { Email = "nonexistent@example.com", Password = "password" };
+
+            // Act
+            var response = await _controller.Login(request);
+
+            // Assert
+            Assert.That(response, Is.InstanceOf<UnauthorizedObjectResult>());
+            var unauthorizedResult = response as UnauthorizedObjectResult;
+            Assert.That(unauthorizedResult.Value, Is.EqualTo("The autentication failed! Please check your credentials."));
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task Login_ReturnsBadRequest_WhenAccountIsDeactivated()
+        {
+            // Arrange
+            byte[] byteArray = new byte[] { 72, 101, 108, 108, 111 };
+            var user = new UserModel
+            {
+                Email = "test@example.com",
+                HashedPassword = BCrypt.Net.BCrypt.HashPassword("hashed_password"),
+                isActive = false,
+                FirstName = "John", 
+                LastName = "Doe",  
+                CellPhoneNum = 912345678, 
+                RegistrationDate = DateTime.Now, 
+                BirthDate = new DateTime(1990, 1, 1), 
+                Gender = Gender.MASCULINO, 
+                Image = byteArray 
+            };
+
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            var request = new LoginRequest { Email = user.Email, Password = "password" };
+
+            // Act
+            var response = await _controller.Login(request);
+
+            // Assert
+            Assert.That(response, Is.InstanceOf<BadRequestObjectResult>());
+            var badRequestResult = response as BadRequestObjectResult;
+            Assert.That(badRequestResult.Value, Is.EqualTo("Account is dectivated. Please check your email for the activation link."));
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task Login_ReturnsUnauthorized_WhenPasswordIsIncorrect()
+        {
+            // Arrange
+            byte[] byteArray = new byte[] { 72, 101, 108, 108, 111 };
+            var user = new UserModel
+            {
+                Email = "test@example.com",
+                HashedPassword = BCrypt.Net.BCrypt.HashPassword("password"), 
+                isActive = true, 
+                FirstName = "John",
+                LastName = "Doe",   
+                CellPhoneNum = 912345678, 
+                RegistrationDate = DateTime.Now, 
+                BirthDate = new DateTime(1990, 1, 1), 
+                Gender = Gender.MASCULINO, 
+                Image = byteArray 
+            };
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            var request = new LoginRequest { Email = user.Email, Password = "wrong_password" };
+
+            // Act
+            var response = await _controller.Login(request);
+
+            // Assert
+            Assert.That(response, Is.InstanceOf<UnauthorizedObjectResult>());
+            var unauthorizedResult = response as UnauthorizedObjectResult;
+            Assert.That(unauthorizedResult.Value, Is.EqualTo("The autentication failed! Please check your credentials."));
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task Login_ReturnsOk_WithTokenAndAuthenticatedUserDto_WhenLoginIsSuccessful()
+        {
+            // Arrange
+            byte[] byteArray = new byte[] { 72, 101, 108, 108, 111 };
+            var user = new UserModel
+            {
+                Email = "test@example.com",
+                HashedPassword = BCrypt.Net.BCrypt.EnhancedHashPassword("password", 13),
+                isActive = true,
+                FirstName = "John",
+                LastName = "Doe",
+                CellPhoneNum = 912345678,
+                RegistrationDate = DateTime.Now,
+                BirthDate = new DateTime(1990, 1, 1),
+                Gender = Gender.MASCULINO,
+                Image = byteArray
+            };
+
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            var request = new LoginRequest { Email = user.Email, Password = "password" };
+
+            // Act
+            var response = await _controller.Login(request);
+
+            // Assert
+            Assert.That(response, Is.InstanceOf<OkObjectResult>());
+            var okResult = response as OkObjectResult;
+            Assert.That(okResult, Is.Not.Null);
+         
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task GetEmailAvailability_ReturnsOk_WithAvailableEmail()
+        {
+            // Arrange
+
+            string email = "available@example.com"; // Email que já existe
+            byte[] byteArray = new byte[] { 72, 101, 108, 108, 111 };
+            var user = new UserModel
+            {
+                Email = "unavailable@example.com",
+                HashedPassword = BCrypt.Net.BCrypt.HashPassword("password"), 
+                isActive = true,
+                FirstName = "John",
+                LastName = "Doe",  
+                CellPhoneNum = 912345678,
+                RegistrationDate = DateTime.Now, 
+                BirthDate = new DateTime(1990, 1, 1), 
+                Gender = Gender.MASCULINO, 
+                Image = byteArray 
+            };
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var response = await _controller.GetEmailAvailability(email);
+
+            // Assert
+            Assert.That(response, Is.InstanceOf<OkObjectResult>());
+            var okResult = response as OkObjectResult;
+            Assert.That(okResult.Value, Is.Not.Null);
+
+
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task GetEmailAvailability_ReturnsOk_WithUnavailableEmail()
+        {
+            // Arrange
+            string email = "unavailable@example.com"; 
+            byte[] byteArray = new byte[] { 72, 101, 108, 108, 111 };
+            var user = new UserModel
+            {
+                Email = email,
+                HashedPassword = BCrypt.Net.BCrypt.HashPassword("password"), 
+                isActive = true, 
+                FirstName = "John", 
+                LastName = "Doe",   
+                CellPhoneNum = 912345678, 
+                RegistrationDate = DateTime.Now,
+                BirthDate = new DateTime(1990, 1, 1),
+                Gender = Gender.MASCULINO, 
+                Image = byteArray 
+            };
+
+            // Adiciona o usuário ao contexto
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var response = await _controller.GetEmailAvailability(email);
+
+            // Assert
+            Assert.That(response, Is.InstanceOf<OkObjectResult>());
+            var okResult = response as OkObjectResult;
+            Assert.That(okResult.Value, Is.Not.Null);
+
+            Assert.That(okResult.Value, Is.EqualTo(false));
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task GetEmailAvailability_ReturnsBadRequest_WhenEmailIsNull()
+        {
+            // Arrange
+            string email = null; // Email nulo
+
+            // Act
+            var response = await _controller.GetEmailAvailability(email);
+
+            // Assert
+            Assert.That(response, Is.InstanceOf<OkObjectResult>());
+            var okResult = response as OkObjectResult;
+            var expectedValue = new { isAvailable = false };
+            Assert.That(okResult.Value, Is.EqualTo(false));
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task GetEmailAvailability_ReturnsBadRequest_WhenEmailIsEmpty()
+        {
+            // Arrange
+            string email = ""; // Email vazio
+
+            // Act
+            var response = await _controller.GetEmailAvailability(email);
+
+            // Assert
+            Assert.That(response, Is.InstanceOf<OkObjectResult>());
+            var okResult = response as OkObjectResult;
+            var expectedValue = new { isAvailable = false };
+            Assert.That(okResult.Value, Is.EqualTo(false)); 
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task ActivateAccount_ReturnsOk_WhenTokenIsValid()
+        {
+            // Arrange
+            string token = "valid_token";
+            byte[] byteArray = new byte[] { 72, 101, 108, 108, 111 };
+            var user = new UserModel
+            {
+                Email = "test@example.com",
+                HashedPassword = BCrypt.Net.BCrypt.HashPassword("password"),
+                isActive = false, 
+                FirstName = "John", 
+                LastName = "Doe",   
+                CellPhoneNum = 912345678, 
+                RegistrationDate = DateTime.Now, 
+                BirthDate = new DateTime(1990, 1, 1), 
+                Gender = Gender.MASCULINO, 
+                Image = byteArray,
+                Token = token,
+                TokenExpDate = DateTime.UtcNow.AddMinutes(30) 
+            };
+
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var response = await _controller.ActivateAccount(token);
+
+            // Assert
+            Assert.That(response, Is.InstanceOf<OkObjectResult>());
+            var okResult = response as OkObjectResult;
+            Assert.That(okResult.Value, Is.EqualTo("Account activated successfully."));
+
+            var updatedUser = await _context.Users.FindAsync(user.UserId);
+            Assert.That(updatedUser.isActive, Is.EqualTo(true));
+            Assert.That(updatedUser.Token, Is.EqualTo(null));
+            Assert.That(updatedUser.TokenExpDate, Is.EqualTo(null));
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task ActivateAccount_ReturnsBadRequest_WhenTokenIsInvalid()
+        {
+            // Arrange
+            string token = "invalid_token"; 
+
+            // Act
+            var response = await _controller.ActivateAccount(token);
+
+            // Assert
+            Assert.That(response, Is.InstanceOf<BadRequestObjectResult>());
+            var badRequestResult = response as BadRequestObjectResult;
+            Assert.That(badRequestResult.Value, Is.EqualTo("Invalid or expired activation token."));
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task ActivateAccount_ReturnsBadRequest_WhenTokenIsExpired()
+        {
+            // Arrange
+            string token = "expired_token";
+            byte[] byteArray = new byte[] { 72, 101, 108, 108, 111 };
+            var user = new UserModel
+            {
+                Email = "expired@example.com",
+                HashedPassword = BCrypt.Net.BCrypt.HashPassword("password"),
+                isActive = false,
+                FirstName = "John", 
+                LastName = "Doe",  
+                CellPhoneNum = 912345678, 
+                RegistrationDate = DateTime.Now, 
+                BirthDate = new DateTime(1990, 1, 1), 
+                Gender = Gender.MASCULINO,
+                Image = byteArray,
+                Token = token,
+                TokenExpDate = DateTime.UtcNow.AddMinutes(-10) 
+            };
+
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var response = await _controller.ActivateAccount(token);
+
+            // Assert
+            Assert.That(response, Is.InstanceOf<BadRequestObjectResult>());
+            var badRequestResult = response as BadRequestObjectResult;
+            Assert.That(badRequestResult.Value, Is.EqualTo("Invalid or expired activation token."));
+        }
+
+
+
     }
 }

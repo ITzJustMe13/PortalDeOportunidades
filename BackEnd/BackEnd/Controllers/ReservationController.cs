@@ -161,7 +161,7 @@ namespace BackEnd.Controllers
             {
                 return NotFound($"Reservation with id {id} not found.");
             }
-            if (reservationModel.checkInDate < DateTime.Now)
+            if (reservationModel.checkInDate > DateTime.Now && reservationModel.isActive == true)
             {
                 reservationModel.isActive = false;
                 await dbContext.SaveChangesAsync();
