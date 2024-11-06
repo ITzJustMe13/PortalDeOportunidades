@@ -98,7 +98,7 @@ namespace BackEnd.Controllers
                 u.Token = activationToken;
                 u.TokenExpDate = DateTime.UtcNow.AddHours(24);
                 await dbContext.SaveChangesAsync();
-                emailService.SendActivationEmail(u);
+                EmailService.SendActivationEmail(u);
 
                 await dbContext.Users.AddAsync(u);
                 await dbContext.SaveChangesAsync();

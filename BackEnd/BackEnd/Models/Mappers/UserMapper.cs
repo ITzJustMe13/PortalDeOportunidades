@@ -66,15 +66,7 @@ namespace BackEnd.Models.Mappers
                 Gender = (Enums.Gender)user.gender!,
                 Image = user.image
             };
-
-            try
-            {
                 ValidateModel(userModel);
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
 
             return userModel;
         }

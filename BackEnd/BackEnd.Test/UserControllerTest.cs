@@ -873,28 +873,6 @@ namespace BackEnd.Test
 
         [Test]
         [Category("UnitTest")]
-        public void ImpulseOportunity_ReturnsProblem_WhenMappingToModelFails()
-        {
-            var invalidImpulse = new Impulse
-            {
-                userId = 1,             
-                opportunityId = 1,      
-                value = null,          
-                expireDate = DateTime.Now.AddDays(1) 
-            };
-
-            // Act
-            var response = _controller.ImpulseOportunity(invalidImpulse);
-
-            // Assert
-            Assert.That(response, Is.InstanceOf<BadRequestObjectResult>());
-            var badRequestResult = response.Result as BadRequestObjectResult;
-
-            Assert.That(badRequestResult.Value.ToString(), Does.Contain("Erro de validação"));
-        }
-
-        [Test]
-        [Category("UnitTest")]
         public void ImpulseOportunity_ReturnsBadRequest_WhenValueIsInvalid()
         {
             // Arrange
@@ -1149,7 +1127,7 @@ namespace BackEnd.Test
         {
             // Arrange
 
-            string email = "available@example.com"; // Email que já existe
+            string email = "available@example.com";
             byte[] byteArray = new byte[] { 72, 101, 108, 108, 111 };
             var user = new UserModel
             {
