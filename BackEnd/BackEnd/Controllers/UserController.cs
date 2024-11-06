@@ -132,7 +132,7 @@ namespace BackEnd.Controllers
 
             // encontra e elimina as reservas, oportunidades e impulsos do utilizador
             var reservas = await dbContext.Reservations.Where(r => r.userID == id).ToListAsync();
-            var oportunidades = await dbContext.Opportunities.Where(o => o.userID == id).ToListAsync();
+            var oportunidades = await dbContext.Opportunities.Where(o => o.UserID == id).ToListAsync();
             var impulses = await dbContext.Impulses.Where(i => i.UserId == id).ToListAsync();
 
             dbContext.Users.Remove(user);
@@ -337,11 +337,11 @@ namespace BackEnd.Controllers
         public async Task<ActionResult<Favorite[]>> GetCreatedOpportunities(int userId)
         {
 
-            var opportunities = await dbContext.Opportunities.Where(o => o.userID == userId).ToListAsync();
+            var opportunities = await dbContext.Opportunities.Where(o => o.UserID == userId).ToListAsync();
 
             var opportunitiesDTOs = opportunities.Select(o => new Favorite
             {
-                userId = o.userID,
+                userId = o.UserID,
                 opportunityId = o.OpportunityId,
             }).ToArray();
 

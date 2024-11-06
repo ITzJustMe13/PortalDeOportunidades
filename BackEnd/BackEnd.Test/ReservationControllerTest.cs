@@ -225,9 +225,9 @@ namespace BackEnd.Test
         public async Task CreateNewReservation_ReturnsCreated_WhenReservationIsValid()
         {
             // Arrange
+            var opportunity = new OpportunityModel { OpportunityId = 1, Price = 100, Address= "um sitio", Category= Enums.Category.AGRICULTURA, UserID= 1,Name="name", Description="a description", Date= DateTime.Now.AddDays(30),Vacancies=2,IsActive=true,Location= Enums.Location.LISBOA,Score= 0, IsImpulsed=false };
+            var user = new UserModel { UserId = 1, FirstName = "John", LastName="Doe", BirthDate = DateTime.Now.AddYears(-30), CellPhoneNum = 919919919, Email= "example@email.com", Gender=Enums.Gender.MASCULINO };
 
-            var opportunity = new OpportunityModel { OpportunityId = 1, Price = 100, Address= "um sitio", Category= Enums.Category.AGRICULTURA, userID= 1,Name="name", Description="a description", date= DateTime.Now.AddDays(30),Vacancies=2,IsActive=true,Location= Enums.Location.LISBOA,Score= 0, IsImpulsed=false };
-            var user = new UserModel { UserId = 1, FirstName = "John", LastName="Doe", BirthDate = DateTime.Now.AddYears(-30), CellPhoneNum = 919919919, Email= "example@email.com", Gender=Enums.Gender.MASCULINO, Image= [1] };
             _dbContext.Opportunities.Add(opportunity);
             _dbContext.Users.Add(user);
             await _dbContext.SaveChangesAsync();
