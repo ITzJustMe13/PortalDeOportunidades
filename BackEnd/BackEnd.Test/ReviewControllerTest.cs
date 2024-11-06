@@ -9,7 +9,6 @@ using BackEnd.Models.Mappers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
-using Stripe;
 
 namespace BackEnd.Test
 {
@@ -17,7 +16,7 @@ namespace BackEnd.Test
     public class ReviewControllerTests
     {
         private ReviewController _controller;
-        private ApplicationDbContext _context;
+        private ApplicationDbContext _context; 
 
         [SetUp]
         public void Setup()

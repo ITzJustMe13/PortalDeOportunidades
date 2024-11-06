@@ -407,3 +407,4 @@ FodyWeavers.xsd
 *.sln.iml
 /BackEnd/BackEnd/.env
 /.gitignore
+/BackEnd/BackEnd/env
