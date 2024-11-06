@@ -59,8 +59,8 @@ namespace BackEnd.Test
         public async Task GetAllActiveReservationsByUserId_ReturnsReservations_WhenAreActiveReservations()
         {
             // Arrange
-            var opportunity = new OpportunityModel { OpportunityId = 1, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, userID = 1, Name = "name", Description = "a description", date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
-            var opportunity2 = new OpportunityModel { OpportunityId = 2, Price = 100, Address = "outro sitio", Category = Enums.Category.AGRICULTURA, userID = 1, Name = "name", Description = "a description", date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
+            var opportunity = new OpportunityModel { OpportunityId = 1, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "a description", Date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
+            var opportunity2 = new OpportunityModel { OpportunityId = 2, Price = 100, Address = "outro sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "a description", Date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
             var user = new UserModel { UserId = 1, FirstName = "John", LastName = "Doe", BirthDate = DateTime.Now.AddYears(-30), CellPhoneNum = 919919919, Email = "example@email.com", Gender = Enums.Gender.MASCULINO, Image = [1] };
             var user2 = new UserModel { UserId = 2, FirstName = "John", LastName = "NotDoe", BirthDate = DateTime.Now.AddYears(-30), CellPhoneNum = 919919919, Email = "exampleother@email.com", Gender = Enums.Gender.MASCULINO, Image = [1] };
             _dbContext.Opportunities.Add(opportunity);
@@ -111,8 +111,8 @@ namespace BackEnd.Test
         public async Task GetAllReservationsByUserId_ReturnsReservations_WhenAreReservations()
         {
             // Arrange
-            var opportunity = new OpportunityModel { OpportunityId = 1, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, userID = 1, Name = "name", Description = "a description", date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
-            var opportunity2 = new OpportunityModel { OpportunityId = 2, Price = 100, Address = "outro sitio", Category = Enums.Category.AGRICULTURA, userID = 1, Name = "name", Description = "a description", date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
+            var opportunity = new OpportunityModel { OpportunityId = 1, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "a description", Date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
+            var opportunity2 = new OpportunityModel { OpportunityId = 2, Price = 100, Address = "outro sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "a description", Date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
             var user = new UserModel { UserId = 1, FirstName = "John", LastName = "Doe", BirthDate = DateTime.Now.AddYears(-30), CellPhoneNum = 919919919, Email = "example@email.com", Gender = Enums.Gender.MASCULINO, Image = [1] };
             var user2 = new UserModel { UserId = 2, FirstName = "John", LastName = "NotDoe", BirthDate = DateTime.Now.AddYears(-30), CellPhoneNum = 919919919, Email = "exampleother@email.com", Gender = Enums.Gender.MASCULINO, Image = [1] };
             _dbContext.Opportunities.Add(opportunity);
@@ -226,7 +226,7 @@ namespace BackEnd.Test
         {
             // Arrange
             var opportunity = new OpportunityModel { OpportunityId = 1, Price = 100, Address= "um sitio", Category= Enums.Category.AGRICULTURA, UserID= 1,Name="name", Description="a description", Date= DateTime.Now.AddDays(30),Vacancies=2,IsActive=true,Location= Enums.Location.LISBOA,Score= 0, IsImpulsed=false };
-            var user = new UserModel { UserId = 1, FirstName = "John", LastName="Doe", BirthDate = DateTime.Now.AddYears(-30), CellPhoneNum = 919919919, Email= "example@email.com", Gender=Enums.Gender.MASCULINO };
+            var user = new UserModel { UserId = 1, FirstName = "John", LastName = "Doe", BirthDate = DateTime.Now.AddYears(-30), CellPhoneNum = 919919919, Email = "example@email.com", Gender = Enums.Gender.MASCULINO, Image = new byte[]{ 0xFF, 0xD8, 0xFF, 0xE0 } };
 
             _dbContext.Opportunities.Add(opportunity);
             _dbContext.Users.Add(user);
@@ -259,7 +259,7 @@ namespace BackEnd.Test
         {
             // Arrange
 
-            var opportunity = new OpportunityModel { OpportunityId = 1, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, userID = 1, Name = "name", Description = "a description", date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
+            var opportunity = new OpportunityModel { OpportunityId = 1, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "a description", Date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
             var user = new UserModel { UserId = 1, FirstName = "John", LastName = "Doe", BirthDate = DateTime.Now.AddYears(-30), CellPhoneNum = 919919919, Email = "example@email.com", Gender = Enums.Gender.MASCULINO, Image = [1] };
             _dbContext.Opportunities.Add(opportunity);
             _dbContext.Users.Add(user);
@@ -369,7 +369,7 @@ namespace BackEnd.Test
         public async Task UpdateReservationById_ReturnsNoContent_WhenReservationUpdates()
         {
             // Arrange
-            var opportunity = new OpportunityModel { OpportunityId = 1, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, userID = 1, Name = "name", Description = "a description", date = DateTime.Now.AddDays(30), Vacancies = 5, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
+            var opportunity = new OpportunityModel { OpportunityId = 1, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "a description", Date = DateTime.Now.AddDays(30), Vacancies = 5, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
             _dbContext.Opportunities.Add(opportunity);
             var user = new UserModel { UserId = 1, FirstName = "John", LastName = "Doe", BirthDate = DateTime.Now.AddYears(-30), CellPhoneNum = 919919919, Email = "example@email.com", Gender = Enums.Gender.MASCULINO, Image = [1] };
             _dbContext.Users.Add(user);

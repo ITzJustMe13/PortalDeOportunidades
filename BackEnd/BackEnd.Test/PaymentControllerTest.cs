@@ -103,10 +103,10 @@ namespace BackEnd.Test
                 Price = 100,
                 Address = "um sitio",
                 Category = Enums.Category.AGRICULTURA,
-                userID = 1,
+                UserID = 1,
                 Name = "name",
                 Description = "a description",
-                date = DateTime.Now.AddDays(30),
+                Date = DateTime.Now.AddDays(30),
                 Vacancies = 2,
                 IsActive = true,
                 Location = Enums.Location.LISBOA,
@@ -172,7 +172,7 @@ namespace BackEnd.Test
             };
             var user = new UserModel { UserId = 1, FirstName = "John", LastName = "Doe", BirthDate = DateTime.Now.AddYears(-30), CellPhoneNum = 919919919, Email = "example@email.com", Gender = Enums.Gender.MASCULINO, Image = userImg };
             _context.Users.Add(user);
-            var opportunity = new OpportunityModel { OpportunityId = 1, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, userID = 1, Name = "name", Description = "a description", date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
+            var opportunity = new OpportunityModel { OpportunityId = 1, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "a description", Date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
             _context.Opportunities.Add(opportunity);
             await _context.SaveChangesAsync();
             var reservation = new Reservation
@@ -201,7 +201,7 @@ namespace BackEnd.Test
         {
             // Arrange
             var nonExistentUserId = 1;
-            var opportunity = new OpportunityModel { OpportunityId = 1, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, userID = 1, Name = "name", Description = "a description", date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
+            var opportunity = new OpportunityModel { OpportunityId = 1, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "a description", Date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
             _context.Opportunities.Add(opportunity);
             await _context.SaveChangesAsync();
 
@@ -305,7 +305,7 @@ namespace BackEnd.Test
             };
             var user = new UserModel { UserId = 1, FirstName = "John", LastName = "Doe", BirthDate = DateTime.Now.AddYears(-30), CellPhoneNum = 919919919, Email = "example@email.com", Gender = Enums.Gender.MASCULINO, Image = userImg };
             _context.Users.Add(user);
-            var opportunity = new OpportunityModel { OpportunityId = 1, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, userID = 1, Name = "name", Description = "a description", date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
+            var opportunity = new OpportunityModel { OpportunityId = 1, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "a description", Date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
             _context.Opportunities.Add(opportunity);
             await _context.SaveChangesAsync();
             var date = DateTime.Today;
@@ -346,7 +346,7 @@ namespace BackEnd.Test
             };
             var user = new UserModel { UserId = 1, FirstName = "John", LastName = "Doe", BirthDate = DateTime.Now.AddYears(-30), CellPhoneNum = 919919919, Email = "example@email.com", Gender = Enums.Gender.MASCULINO, Image = userImg };
             _context.Users.Add(user);
-            var opportunity = new OpportunityModel { OpportunityId = 1, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, userID = 1, Name = "name", Description = "a description", date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
+            var opportunity = new OpportunityModel { OpportunityId = 1, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "a description", Date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
             _context.Opportunities.Add(opportunity);
             await _context.SaveChangesAsync();
             var date = DateTime.Today;
@@ -387,7 +387,7 @@ namespace BackEnd.Test
             };
             var user = new UserModel { UserId = 1, FirstName = "John", LastName = "Doe", BirthDate = DateTime.Now.AddYears(-30), CellPhoneNum = 919919919, Email = "example@email.com", Gender = Enums.Gender.MASCULINO, Image = userImg };
             _context.Users.Add(user);
-            var opportunity = new OpportunityModel { OpportunityId = 1, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, userID = 1, Name = "name", Description = "a description", date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
+            var opportunity = new OpportunityModel { OpportunityId = 1, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "a description", Date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
             _context.Opportunities.Add(opportunity);
             await _context.SaveChangesAsync();
             var date = DateTime.Today;
@@ -415,7 +415,7 @@ namespace BackEnd.Test
         {
             // Arrange
             var nonExistentUserId = 1;
-            var opportunity = new OpportunityModel { OpportunityId = 1, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, userID = 1, Name = "name", Description = "a description", date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
+            var opportunity = new OpportunityModel { OpportunityId = 1, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "a description", Date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
             _context.Opportunities.Add(opportunity);
             await _context.SaveChangesAsync();
             var date = DateTime.Today;
@@ -515,10 +515,10 @@ namespace BackEnd.Test
                 Price = 100,
                 Address = "um sitio",
                 Category = Enums.Category.AGRICULTURA,
-                userID = 1,
+                UserID = 1,
                 Name = "name",
                 Description = "a description",
-                date = DateTime.Now.AddDays(30),
+                Date = DateTime.Now.AddDays(30),
                 Vacancies = 2,
                 IsActive = true,
                 Location = Enums.Location.LISBOA,
