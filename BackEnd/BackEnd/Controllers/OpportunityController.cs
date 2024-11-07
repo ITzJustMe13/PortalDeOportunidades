@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.IdentityModel.Tokens;
 using System.ComponentModel.DataAnnotations;
 using System.Security;
+using BackEnd.Services;
 
 namespace BackEnd.Controllers
 {
@@ -18,6 +19,7 @@ namespace BackEnd.Controllers
     public class OpportunityController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private OpportunityService _opportunityService;
 
         public OpportunityController(ApplicationDbContext opportunityContext) => this._context = opportunityContext;
 
@@ -137,7 +139,7 @@ namespace BackEnd.Controllers
             [FromQuery] Location? location
         )
         {
-            var errors = ValidateSearchParameters(vacancies, minPrice, maxPrice, category, location);
+            var errors = _opportunityService.ValidateSearchParameters(vacancies, minPrice, maxPrice, category, location);
             if (errors.Any())
             {
                 return BadRequest(string.Join("; ", errors));
@@ -182,10 +184,10 @@ namespace BackEnd.Controllers
 
         //POST api/Opportunity/
         [HttpPost]
-        //[Authorize]
+        [Authorize]
         public async Task<ActionResult<Opportunity>> CreateOpportunity(Opportunity opportunity)
         {
-            var errors = ValidateOpportunityParameters(
+            var errors = _opportunityService.ValidateOpportunityParameters(
                 opportunity.name,
                 opportunity.description,
                 opportunity.price,
@@ -244,7 +246,7 @@ namespace BackEnd.Controllers
 
         //DELETE api/Opportunity/
         [HttpDelete("{id}")]
-        //[Authorize]
+        [Authorize]
         public async Task<ActionResult<Opportunity>> DeleteOpportunityById(int id)
         {
             if (id <= 0)
@@ -277,7 +279,7 @@ namespace BackEnd.Controllers
 
         //PUT api/Opportunity/1/activate
         [HttpPut("{id}/activate")]
-        //[Authorize]
+        [Authorize]
         public async Task<ActionResult<Opportunity>> ActivateOpportunityById(int id)
         {
             if (id <= 0)
@@ -306,7 +308,7 @@ namespace BackEnd.Controllers
 
         //PUT api/Opportunity/1/deactivate
         [HttpPut("{id}/deactivate")]
-        //[Authorize]
+        [Authorize]
         public async Task<ActionResult<Opportunity>> DeactivateOpportunityById(int id)
         {
             if (id <= 0)
@@ -335,7 +337,7 @@ namespace BackEnd.Controllers
 
         // PUT api/Opportunity/1/Edit?name=event&description=description&price=10&vacancies=2&category=agricultura&location=VilaReal&address=RuaTeste&date=10/02/2025&newImages=["img1","img2"]
         [HttpPut("{id}/Edit")]
-        //[Authorize]
+        [Authorize]
         public async Task<ActionResult<Opportunity>> EditOpportunityById(
             int id,
             [FromQuery] string? name,
@@ -363,7 +365,7 @@ namespace BackEnd.Controllers
                 return BadRequest($"Opportunity with id {id} not found.");
             }
 
-            var errors = ValidateOpportunityParameters(
+            var errors = _opportunityService.ValidateOpportunityParameters(
                 name,
                 description,
                 price,
@@ -418,83 +420,6 @@ namespace BackEnd.Controllers
             }
         }
 
-        // Helper method for validating parameters
-        private List<string> ValidateSearchParameters(int? vacancies, decimal? minPrice, decimal? maxPrice, Category? category, Location? location)
-        {
-            var errors = new List<string>();
-
-            if (vacancies.HasValue && vacancies <= 0)
-                errors.Add("Vacancies must be greater than zero.");
-
-            if (minPrice.HasValue && minPrice <= 0.00M)
-                errors.Add("MinPrice should be greater than 0.01.");
-
-            if (maxPrice.HasValue && maxPrice <= 0.00M)
-                errors.Add("MaxPrice should be greater than 0.01.");
-
-            if(minPrice.HasValue && maxPrice.HasValue)
-            {
-                if (minPrice > maxPrice)
-                {
-                    errors.Add("MaxPrice should be greater than MinPrice.");
-                }
-            }
-
-            if (category.HasValue && !Enum.IsDefined(typeof(Category), category.Value))
-                errors.Add("Invalid category specified.");
-
-            if (location.HasValue && !Enum.IsDefined(typeof(Location), location.Value))
-                errors.Add("Invalid location specified.");
-
-            return errors;
-        }
-
-        private List<string> ValidateOpportunityParameters(
-            string? name,
-            string? description,
-            decimal? price,
-            int? vacancies,
-            Category? category,
-            Location? location,
-            string? address,
-            DateTime? date,
-            bool isCreation // Indicate if this validation is for creating the Opp
-)
-        {
-            var errors = new List<string>();
-
-            if (isCreation)
-            {
-                if (string.IsNullOrWhiteSpace(name))
-                    errors.Add("Name cannot be empty.");
-                else if (name.Length > 100)
-                    errors.Add("Name should be 100 characters or less.");
-
-                if (string.IsNullOrWhiteSpace(description))
-                    errors.Add("Description cannot be empty.");
-                else if (description.Length > 1000)
-                    errors.Add("Description should be 1000 characters or less.");
-            }
-
-            if (price.HasValue && price <= 0.00M)
-                errors.Add("Price should be at least 0.01.");
-
-            if (vacancies.HasValue && vacancies <= 0)
-                errors.Add("Vacancies should be at least one.");
-
-            if (category.HasValue && !Enum.IsDefined(typeof(Category), category.Value))
-                errors.Add("Category is not valid.");
-
-            if (location.HasValue && !Enum.IsDefined(typeof(Location), location.Value))
-                errors.Add("Location is not valid.");
-
-            if (!string.IsNullOrWhiteSpace(address) && address.Length > 200)
-                errors.Add("Address should be 200 characters or less.");
-
-            if (date.HasValue && date <= DateTime.Today)
-                errors.Add("Date must be in the future.");
-
-            return errors;
-        }
+       
     }
 }

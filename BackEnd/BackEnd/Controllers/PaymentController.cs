@@ -2,11 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Stripe.Checkout;
 using Stripe;
-using Stripe.Events;
-using Microsoft.Extensions.Options;
-using BackEnd.Enums;
-using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
 using BackEnd.Controllers.Data;
 
 namespace BackEnd.Controllers

@@ -2,6 +2,7 @@
 using BackEnd.Models.BackEndModels;
 using BackEnd.Models.FrontEndModels;
 using BackEnd.Models.Mappers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
@@ -18,6 +19,7 @@ namespace BackEnd.Controllers
 
         //GET api/Review/1
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<Review>> GetReviewById(int id)
         {
             var reviewModel = await _context.Reviews.FindAsync(id);
@@ -38,6 +40,7 @@ namespace BackEnd.Controllers
 
         //POST api/Review
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Review>> CreateReview(Review review)
         {
             if (review == null)
@@ -103,6 +106,7 @@ namespace BackEnd.Controllers
 
         //DELETE api/Review/1
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<ActionResult<Review>> DeleteReviewById(int id)
         {
             var reviewModel = await _context.Reviews.FindAsync(id);
@@ -120,6 +124,7 @@ namespace BackEnd.Controllers
 
         //PUT api/Review/1/Edit?score=2.5&desc=teste123
         [HttpPut("{id}/Edit")]
+        [Authorize]
         public async Task<ActionResult<Review>> EditReviewById(int id, [FromQuery]float score, [FromQuery]string? desc)
         {
             var reviewModel = await _context.Reviews.FindAsync(id);

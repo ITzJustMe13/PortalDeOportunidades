@@ -101,7 +101,7 @@ namespace BackEnd.Test
 
         [Test]
         [Category("UnitTest")]
-        public async Task GetClientById_ReturnsOkWithUserDto_ForInValidId()
+        public async Task GetClientById_ReturnsNotFoundWithUserDto_ForInValidId()
         {
             // Arrange
             var userId = -1;
@@ -109,7 +109,7 @@ namespace BackEnd.Test
             byte[] byteArray = new byte[] { 72, 101, 108, 108, 111 };
             var userModel = new UserModel
             {
-                UserId = -1,
+                UserId = 1,
                 BirthDate = staticDate,
                 RegistrationDate = staticDate,
                 CellPhoneNum = 912345678,

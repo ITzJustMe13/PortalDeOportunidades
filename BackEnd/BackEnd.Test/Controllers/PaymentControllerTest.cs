@@ -12,6 +12,7 @@ using BackEnd.Models.BackEndModels;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using Stripe;
 using DotNetEnv;
+using Sprache;
 
 
 namespace BackEnd.Test
@@ -134,8 +135,9 @@ namespace BackEnd.Test
             var response = await _controller.CreateReservationCheckoutSession(reservation);
 
             // Assert
-            var OkRequestResult = response as OkObjectResult;
-            Assert.That(OkRequestResult, Is.Not.Null);
+            Assert.That(response, Is.InstanceOf<OkObjectResult>());
+            var OkResult = response as OkObjectResult;
+            Assert.That(OkResult, Is.Not.Null);
         }
 
         [Test]
@@ -627,8 +629,9 @@ namespace BackEnd.Test
 
             // Assert
 
-            var OkRequestResult = response as OkObjectResult;
-            Assert.That(OkRequestResult, Is.Not.Null);
+            Assert.That(response, Is.InstanceOf<OkObjectResult>());
+            var OkResult = response as OkObjectResult;
+            Assert.That(OkResult, Is.Not.Null);
         }
 
         [Test]

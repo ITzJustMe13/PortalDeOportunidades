@@ -9,8 +9,6 @@ using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
-using System.Net.Mail;
-using System.Net;
 
 
 namespace BackEnd.Controllers
@@ -147,8 +145,9 @@ namespace BackEnd.Controllers
 
 
         //PUT: api/User/1
-        [Authorize]
+        
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<ActionResult<User>> EditUser(int id, User updatedUser)
         {
             if (dbContext == null)
