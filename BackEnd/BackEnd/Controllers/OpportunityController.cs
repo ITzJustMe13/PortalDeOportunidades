@@ -27,6 +27,9 @@ namespace BackEnd.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Opportunity>>> GetAllOpportunities()
         {
+            if (_context == null)
+                return NotFound("DB context missing");
+
             var opportunityModels = await _context.Opportunities
                 .Include(o => o.OpportunityImgs) // Include images
                 .ToListAsync();
@@ -50,6 +53,9 @@ namespace BackEnd.Controllers
         [HttpGet("Impulsed")]
         public async Task<ActionResult<IEnumerable<Opportunity>>> GetAllImpulsedOpportunities()
         {
+            if (_context == null)
+                return NotFound("DB context missing");
+
             var opportunityModels = await _context.Opportunities
                 .Where(o => o.IsImpulsed == true)
                 .Include(o => o.OpportunityImgs)
@@ -74,6 +80,9 @@ namespace BackEnd.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Opportunity>> GetOpportunityById(int id)
         {
+            if (_context == null)
+                return NotFound("DB context missing");
+
             if (id <= 0)
             {
                 return BadRequest("Given opportunityId is invalid, it should be greater than 0.");
@@ -102,6 +111,9 @@ namespace BackEnd.Controllers
         [HttpGet("User/{userId}")]
         public async Task<ActionResult<IEnumerable<Opportunity>>> GetAllOpportunitiesByUserId(int userId)
         {
+            if (_context == null)
+                return NotFound("DB context missing");
+
             if (userId <= 0)
             {
                 return BadRequest("Given userId is invalid, it should be greater than 0.");
@@ -139,6 +151,9 @@ namespace BackEnd.Controllers
             [FromQuery] Location? location
         )
         {
+            if (_context == null)
+                return NotFound("DB context missing");
+
             var errors = OpportunityService.ValidateSearchParameters(vacancies, minPrice, maxPrice, category, location);
             if (errors.Any())
             {
@@ -187,6 +202,9 @@ namespace BackEnd.Controllers
         //[Authorize]
         public async Task<ActionResult<Opportunity>> CreateOpportunity(Opportunity opportunity)
         {
+            if (_context == null)
+                return NotFound("DB context missing");
+
             var errors = OpportunityService.ValidateOpportunityParameters(
                 opportunity.name,
                 opportunity.description,
@@ -249,6 +267,9 @@ namespace BackEnd.Controllers
         [Authorize]
         public async Task<ActionResult<Opportunity>> DeleteOpportunityById(int id)
         {
+            if (_context == null)
+                return NotFound("DB context missing");
+
             if (id <= 0)
             {
                 return BadRequest("Given opportunityId is invalid, it should be greater than 0.");
@@ -282,6 +303,9 @@ namespace BackEnd.Controllers
         [Authorize]
         public async Task<ActionResult<Opportunity>> ActivateOpportunityById(int id)
         {
+            if (_context == null)
+                return NotFound("DB context missing");
+
             if (id <= 0)
             {
                 return BadRequest("Given opportunityId is invalid, it should be greater than 0.");
@@ -311,6 +335,9 @@ namespace BackEnd.Controllers
         [Authorize]
         public async Task<ActionResult<Opportunity>> DeactivateOpportunityById(int id)
         {
+            if (_context == null)
+                return NotFound("DB context missing");
+
             if (id <= 0)
             {
                 return BadRequest("Given opportunityId is invalid, it should be greater than 0.");
@@ -351,6 +378,9 @@ namespace BackEnd.Controllers
             [FromBody] List<byte[]>? newImageUrls
         )
         {
+            if (_context == null)
+                return NotFound("DB context missing");
+
             if (id <= 0)
             {
                 return BadRequest("Given opportunityId is invalid, it should be greater than 0.");
@@ -419,7 +449,5 @@ namespace BackEnd.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
-       
     }
 }

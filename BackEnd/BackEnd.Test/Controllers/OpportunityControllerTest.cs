@@ -82,6 +82,22 @@ namespace BackEnd.Test
 
         [Test]
         [Category("UnitTest")]
+        public async Task GetAllOpportunities_NotFoundObjectResult_DBContextMissing()
+        {
+            // Arrange
+            var controller = new OpportunityController(null);
+
+            // Act
+            var response = await controller.GetAllOpportunities();
+
+            // Assert
+            Assert.That(response.Result, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = response.Result as NotFoundObjectResult;
+            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
+        }
+
+        [Test]
+        [Category("UnitTest")]
         public async Task GetAllImpulsedOpportunities_ReturnsOkEnumeratortOfOpportunityDTOs_IfThereAreImpulsedOpportunities()
         {
             // Arrange
@@ -131,6 +147,22 @@ namespace BackEnd.Test
             var notFoundResult = response.Result as NotFoundObjectResult;
             Assert.That(notFoundResult, Is.Not.Null, "NotFoundObjectResult should not be null");
             Assert.That(notFoundResult?.Value, Is.EqualTo("No Opportunities were found."), "Error message should match the expected not found message");
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task GetAllImpulsedOpportunities_NotFoundObjectResult_DBContextMissing()
+        {
+            // Arrange
+            var controller = new OpportunityController(null);
+
+            // Act
+            var response = await controller.GetAllImpulsedOpportunities();
+
+            // Assert
+            Assert.That(response.Result, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = response.Result as NotFoundObjectResult;
+            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
         }
 
         [Test]
@@ -185,7 +217,7 @@ namespace BackEnd.Test
 
         [Test]
         [Category("UnitTest")]
-        public async Task GetOpportunityById_ReturnsNotFoundObjectResult_ForNonexistentId()
+        public async Task GetOpportunityById_ReturnsNotFoundObjectResult_ForNonExistentId()
         {
             // Arrange
             var opportunityId = 1;
@@ -203,6 +235,28 @@ namespace BackEnd.Test
             var notFoundResult = response.Result as NotFoundObjectResult;
             Assert.That(notFoundResult, Is.Not.Null, "NotFoundObjectResult should not be null");
             Assert.That(notFoundResult?.Value, Is.EqualTo($"Opportunity with id {opportunityId} not found."), "Error message should match the expected not found message");
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task GetOpportunityById_ReturnsNotFoundObjectResult_DBContextMissing()
+        {
+            // Arrange
+            var controller = new OpportunityController(null);
+
+            var opportunityId = 1;
+            var opportunityModel = new OpportunityModel { OpportunityId = 2, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "a description", Date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
+
+            _context.Opportunities.Add(opportunityModel);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var response = await controller.GetOpportunityById(opportunityId);
+
+            // Assert
+            Assert.That(response.Result, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = response.Result as NotFoundObjectResult;
+            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
         }
 
         [Test]
@@ -285,6 +339,32 @@ namespace BackEnd.Test
             var notFoundResult = response.Result as NotFoundObjectResult;
             Assert.That(notFoundResult, Is.Not.Null, "NotFoundObjectResult should not be null");
             Assert.That(notFoundResult?.Value, Is.EqualTo($"Opportunity with userId {userId} not found."), "Error message should match the expected not found message");
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task GetAllOpportunitiesByUserId_returnsNotFoundObjectResults_DBContextMissing()
+        {
+            // Arrange
+            var controller = new OpportunityController(null);
+
+            var userId = 2;
+
+            var opportunity = new OpportunityModel { OpportunityId = 1, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "a description", Date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
+            var opportunity2 = new OpportunityModel { OpportunityId = 2, Price = 100, Address = "um sitio2", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "a description", Date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
+
+            _context.Opportunities.Add(opportunity);
+            _context.Opportunities.Add(opportunity2);
+
+            await _context.SaveChangesAsync();
+
+            // Act
+            var response = await controller.GetAllOpportunitiesByUserId(userId);
+
+            // Assert
+            Assert.That(response.Result, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = response.Result as NotFoundObjectResult;
+            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
         }
 
         [Test]
@@ -525,6 +605,31 @@ namespace BackEnd.Test
             Assert.That(badRequestResult?.Value, Is.EqualTo("Invalid location specified."), "Error message should match the expected bad request message");
         }
 
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task SearchOpportunities_ReturnsNotFoundObjectResult_DBContextMissing()
+        {
+
+            // Arrange
+            var controller = new OpportunityController(null);
+
+
+            var opportunity = new OpportunityModel { OpportunityId = 1, Price = 1, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "um sitio", Date = DateTime.Now.AddDays(30), Vacancies = 1, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = true };
+
+            _context.Opportunities.Add(opportunity);
+
+            await _context.SaveChangesAsync();
+
+            // Act
+            var response = await controller.SearchOpportunities(null, null, null, null, null, null);
+
+            // Assert
+            Assert.That(response.Result, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = response.Result as NotFoundObjectResult;
+            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
+        }
+
         [Test]
         [Category("UnitTest")]
         public async Task CreateOpportunity_ReturnsCreatedAtActionOpportunityDTO_ForValidOpportunity()
@@ -578,7 +683,7 @@ namespace BackEnd.Test
 
         [Test]
         [Category("UnitTest")]
-        public async Task CreateOpportunity_ReturnsBadRequestObjectResult_ForNonexistentUserId()
+        public async Task CreateOpportunity_ReturnsBadRequestObjectResult_ForNonExistentUserId()
         {
             // Arrange
             var opportunity = new Opportunity
@@ -1085,6 +1190,53 @@ namespace BackEnd.Test
 
         [Test]
         [Category("UnitTest")]
+        public async Task CreateOpportunity_ReturnsNotFoundObjectResult_DBContextMissing()
+        {
+            // Arrange
+            var controller = new OpportunityController(null);
+
+            var user = new UserModel
+            {
+                FirstName = "Joel",
+                LastName = "Sousa",
+                Email = "joel@gmail.com",
+                CellPhoneNum = 123456789,
+                BirthDate = DateTime.Parse("2004 -11-01T22:17:41.558"),
+                Gender = 0,
+                Image = [22, 22]
+            };
+
+            _context.Users.Add(user);
+            _context.SaveChanges();
+
+            var opportunity = new Opportunity
+            {
+                name = "name",
+                price = 10,
+                vacancies = 10,
+                isActive = true,
+                category = 0,
+                description = "description",
+                location = 0,
+                address = "string",
+                userId = 1,
+                reviewScore = 0,
+                date = DateTime.Now.AddDays(12),
+                isImpulsed = true,
+                OpportunityImgs = []
+            };
+
+            // Act
+            var response = await controller.CreateOpportunity(opportunity);
+
+            // Assert
+            Assert.That(response.Result, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = response.Result as NotFoundObjectResult;
+            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
+        }
+
+        [Test]
+        [Category("UnitTest")]
         public async Task DeleteOpportunityById_ReturnsNoContentResult_ForValidOpportunityId()
         {
             var opportunityId = 1;
@@ -1187,6 +1339,30 @@ namespace BackEnd.Test
 
         [Test]
         [Category("UnitTest")]
+        public async Task DeleteOpportunityById_ReturnsNotFoundObjectResult_DBContextMissing()
+        {
+            // Arrange
+            var controller = new OpportunityController(null);
+
+            var opportunityId = 1;
+
+            var opportunity = new OpportunityModel { OpportunityId = 1, Price = 1, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "um sitio", Date = DateTime.Now.AddDays(30), Vacancies = 1, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = true };
+
+            _context.Opportunities.Add(opportunity);
+
+            await _context.SaveChangesAsync();
+
+            // Act
+            var response = await controller.DeleteOpportunityById(opportunityId);
+
+            // Assert
+            Assert.That(response.Result, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = response.Result as NotFoundObjectResult;
+            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
+        }
+
+        [Test]
+        [Category("UnitTest")]
         public async Task ActivateOpportunityById_ReturnsNoContentResult_ForValidOpportunityId()
         {
             var opportunityId = 1;
@@ -1275,6 +1451,29 @@ namespace BackEnd.Test
             var badRequestResult = response.Result as BadRequestObjectResult;
             Assert.That(badRequestResult, Is.Not.Null, "BadRequestObjectResult should not be null");
             Assert.That(badRequestResult?.Value, Is.EqualTo("Opportunity is Already Active"), "Error message should match the expected bad request message");
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task ActivateOpportunityById_ReturnsNotFoundObjectResult_DBContextMissing()
+        {
+            // Arrange
+            var controller = new OpportunityController(null);
+
+            var opportunityId = 1;
+            var opportunity = new OpportunityModel { OpportunityId = 1, Price = 1, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "um sitio", Date = DateTime.Now.AddDays(30), Vacancies = 1, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = true };
+
+            _context.Opportunities.Add(opportunity);
+
+            await _context.SaveChangesAsync();
+
+            // Act
+            var response = await controller.ActivateOpportunityById(opportunityId);
+
+            // Assert
+            Assert.That(response.Result, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = response.Result as NotFoundObjectResult;
+            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
         }
 
         [Test]
@@ -1371,6 +1570,29 @@ namespace BackEnd.Test
 
         [Test]
         [Category("UnitTest")]
+        public async Task DeactivateOpportunityById_ReturnsNotFoundObjectResult_DBContextMissing()
+        {
+            // Arrange
+            var controller = new OpportunityController(null);
+
+            var opportunityId = 1;
+            var opportunity = new OpportunityModel { OpportunityId = 1, Price = 1, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "um sitio", Date = DateTime.Now.AddDays(30), Vacancies = 1, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = true };
+
+            _context.Opportunities.Add(opportunity);
+
+            await _context.SaveChangesAsync();
+
+            // Act
+            var response = await controller.DeactivateOpportunityById(opportunityId);
+
+            // Assert
+            Assert.That(response.Result, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = response.Result as NotFoundObjectResult;
+            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
+        }
+
+        [Test]
+        [Category("UnitTest")]
         public async Task EditOpportunityById_ReturnsOkOpportunityDto_ForValidValues()
         {
             // Arrange
@@ -1415,7 +1637,7 @@ namespace BackEnd.Test
 
             var returnedImages = new List<byte[]>();
 
-            for (int i = 0; i<returnedOpportunity.OpportunityImgs.Count; i++)
+            for (int i = 0; i < returnedOpportunity.OpportunityImgs.Count; i++)
             {
                 returnedImages.Add(image);
             }
@@ -1694,6 +1916,31 @@ namespace BackEnd.Test
             var badRequestResult = response.Result as BadRequestObjectResult;
             Assert.That(badRequestResult, Is.Not.Null, "BadRequestObjectResult should not be null");
             Assert.That(badRequestResult?.Value, Is.EqualTo("Date must be in the future."), "Error message should match the expected bad request message");
+        }
+
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task EditOpportunityById_ReturnsNotFoundObjectResult_DBContextMissing()
+        {
+            // Arrange
+            var controller = new OpportunityController(null);
+
+            var opportunityId = 1;
+            var opportunityModel = new OpportunityModel { OpportunityId = opportunityId, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "a description", Date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
+
+            _context.Opportunities.Add(opportunityModel);
+            await _context.SaveChangesAsync();
+
+            var name = "oportunidade 1";
+
+            // Act
+            var response = await controller.EditOpportunityById(opportunityId, name, null, null, null, null, null, null, null, null);
+
+            // Assert
+            Assert.That(response.Result, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = response.Result as NotFoundObjectResult;
+            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
         }
     }
 }
