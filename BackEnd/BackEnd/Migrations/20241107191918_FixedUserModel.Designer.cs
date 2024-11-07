@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BackEnd.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241105152931_FixTest2")]
-    partial class FixTest2
+    [Migration("20241107191918_FixedUserModel")]
+    partial class FixedUserModel
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -100,6 +100,9 @@ namespace BackEnd.Migrations
                     b.Property<int>("Category")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Description")
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
@@ -124,18 +127,15 @@ namespace BackEnd.Migrations
                     b.Property<float>("Score")
                         .HasColumnType("real");
 
-                    b.Property<int>("Vacancies")
+                    b.Property<int>("UserID")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("userID")
+                    b.Property<int>("Vacancies")
                         .HasColumnType("int");
 
                     b.HasKey("OpportunityId");
 
-                    b.HasIndex("userID");
+                    b.HasIndex("UserID");
 
                     b.ToTable("Opportunities");
                 });
@@ -228,6 +228,9 @@ namespace BackEnd.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<string>("IBAN")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<byte[]>("Image")
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
@@ -308,7 +311,7 @@ namespace BackEnd.Migrations
                 {
                     b.HasOne("BackEnd.Models.BackEndModels.UserModel", "User")
                         .WithMany("Opportunities")
-                        .HasForeignKey("userID")
+                        .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

@@ -2,7 +2,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using BackEnd.Helpers;
 using BackEnd.Models.BackEndModels;
 using BackEnd.Models.FrontEndModels;
 using Microsoft.IdentityModel.Tokens;
@@ -14,7 +13,7 @@ public class AuthService
     public static string GenerateToken(UserModel user)
     {
         var handler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(AuthSettings.PrivateKey);
+        var key = Encoding.ASCII.GetBytes(Environment.GetEnvironmentVariable("JWT_SECRET")!);
         var credentials = new SigningCredentials(
             new SymmetricSecurityKey(key),
             SecurityAlgorithms.HmacSha256Signature);

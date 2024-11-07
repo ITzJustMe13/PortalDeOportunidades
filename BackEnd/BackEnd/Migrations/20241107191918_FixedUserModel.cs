@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BackEnd.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class FixedUserModel : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -29,7 +29,8 @@ namespace BackEnd.Migrations
                     Token = table.Column<string>(type: "nvarchar(350)", maxLength: 350, nullable: true),
                     isActive = table.Column<bool>(type: "bit", nullable: false),
                     Image = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
-                    TokenExpDate = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    TokenExpDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IBAN = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -42,7 +43,7 @@ namespace BackEnd.Migrations
                 {
                     OpportunityId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    userID = table.Column<int>(type: "int", nullable: false),
+                    UserID = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
                     Price = table.Column<decimal>(type: "decimal(6,2)", nullable: false),
@@ -53,14 +54,14 @@ namespace BackEnd.Migrations
                     Address = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     Score = table.Column<float>(type: "real", nullable: false),
                     IsImpulsed = table.Column<bool>(type: "bit", nullable: false),
-                    date = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Opportunities", x => x.OpportunityId);
                     table.ForeignKey(
-                        name: "FK_Opportunities_Users_userID",
-                        column: x => x.userID,
+                        name: "FK_Opportunities_Users_UserID",
+                        column: x => x.UserID,
                         principalTable: "Users",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
@@ -198,9 +199,9 @@ namespace BackEnd.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Opportunities_userID",
+                name: "IX_Opportunities_UserID",
                 table: "Opportunities",
-                column: "userID");
+                column: "UserID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OpportunityImgs_OpportunityId",
