@@ -4,7 +4,7 @@ namespace BackEnd.Services
 {
     public class OpportunityService
     {
-        public List<string> ValidateSearchParameters(int? vacancies, decimal? minPrice, decimal? maxPrice, Category? category, Location? location)
+        public static List<string> ValidateSearchParameters(int? vacancies, decimal? minPrice, decimal? maxPrice, Category? category, Location? location)
         {
             var errors = new List<string>();
 
@@ -34,7 +34,7 @@ namespace BackEnd.Services
             return errors;
         }
 
-        public List<string> ValidateOpportunityParameters(
+        public static List<string> ValidateOpportunityParameters(
            string? name,
            string? description,
            decimal? price,

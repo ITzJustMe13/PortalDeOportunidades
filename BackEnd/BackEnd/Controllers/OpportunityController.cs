@@ -19,7 +19,7 @@ namespace BackEnd.Controllers
     public class OpportunityController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-        private OpportunityService _opportunityService;
+        
 
         public OpportunityController(ApplicationDbContext opportunityContext) => this._context = opportunityContext;
 
@@ -139,7 +139,7 @@ namespace BackEnd.Controllers
             [FromQuery] Location? location
         )
         {
-            var errors = _opportunityService.ValidateSearchParameters(vacancies, minPrice, maxPrice, category, location);
+            var errors = OpportunityService.ValidateSearchParameters(vacancies, minPrice, maxPrice, category, location);
             if (errors.Any())
             {
                 return BadRequest(string.Join("; ", errors));
@@ -184,10 +184,10 @@ namespace BackEnd.Controllers
 
         //POST api/Opportunity/
         [HttpPost]
-        [Authorize]
+        //[Authorize]
         public async Task<ActionResult<Opportunity>> CreateOpportunity(Opportunity opportunity)
         {
-            var errors = _opportunityService.ValidateOpportunityParameters(
+            var errors = OpportunityService.ValidateOpportunityParameters(
                 opportunity.name,
                 opportunity.description,
                 opportunity.price,
@@ -365,7 +365,7 @@ namespace BackEnd.Controllers
                 return BadRequest($"Opportunity with id {id} not found.");
             }
 
-            var errors = _opportunityService.ValidateOpportunityParameters(
+            var errors = OpportunityService.ValidateOpportunityParameters(
                 name,
                 description,
                 price,
