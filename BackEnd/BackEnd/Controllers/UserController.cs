@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
-
+using BackEnd.Services;
 
 namespace BackEnd.Controllers
 {
@@ -77,6 +77,14 @@ namespace BackEnd.Controllers
             if ((DateTime.Now.Year - user.birthDate.Year) < 18)
             {
                 return BadRequest("You must be at least 18 years old");
+            }
+
+            if (user.IBAN != null) 
+            {
+                if (!IBANService.ValidateIBAN(user.IBAN))
+                {
+                    return BadRequest("IBAN is not valid");
+                }
             }
 
             // encripta a password do utilizador
@@ -176,6 +184,14 @@ namespace BackEnd.Controllers
             if ((DateTime.Now.Year - updatedUser.birthDate.Year) < 18)
             {
                 return BadRequest("You must be atleast 18");
+            }
+            // valida se o utilizador tem iban e se este é valido
+            if (updatedUser.IBAN != null)
+            {
+                if (!IBANService.ValidateIBAN(updatedUser.IBAN))
+                {
+                    return BadRequest("IBAN is not valid");
+                }
             }
 
             // Atualizar as informa��es do utilizador existente com as novas informa��es

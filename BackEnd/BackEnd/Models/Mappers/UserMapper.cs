@@ -35,6 +35,7 @@ namespace BackEnd.Models.Mappers
                 birthDate = userModel.BirthDate,
                 gender = userModel.Gender,
                 image = userModel.Image,
+                IBAN = userModel.IBAN
             };
         }
 
@@ -64,7 +65,8 @@ namespace BackEnd.Models.Mappers
                 RegistrationDate = user.registrationDate,
                 BirthDate = (DateTime)user.birthDate!,
                 Gender = (Enums.Gender)user.gender!,
-                Image = user.image
+                Image = user.image,
+                IBAN = user.IBAN
             };
                 ValidateModel(userModel);
 

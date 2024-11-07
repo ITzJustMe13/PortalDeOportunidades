@@ -23,5 +23,7 @@ namespace BackEnd.Models.FrontEndModels
         public required Gender gender { get; set; }
 
         public required byte[] image { get; set; }
+
+        public string? IBAN { get; set; }
     }
 }

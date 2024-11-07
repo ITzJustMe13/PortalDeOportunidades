@@ -48,6 +48,8 @@ namespace BackEnd.Models.BackEndModels
 
         public DateTime? TokenExpDate { get; set; }
 
+        public string? IBAN { get; set; }
+
         public ICollection<ReservationModel> Reservations { get; set; }
 
         public ICollection<OpportunityModel> Opportunities { get; set; }
