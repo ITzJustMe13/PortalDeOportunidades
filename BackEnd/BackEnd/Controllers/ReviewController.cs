@@ -126,7 +126,7 @@ namespace BackEnd.Controllers
 
             if(reviewModel == null)
             {
-                return BadRequest($"Review with id {id} not found.");
+                return NotFound($"Review with id {id} not found.");
             }
 
             if (!string.IsNullOrWhiteSpace(desc))

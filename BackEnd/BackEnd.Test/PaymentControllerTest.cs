@@ -55,7 +55,7 @@ namespace BackEnd.Test
             }
 
             stripeKey = Env.GetString("STRIPE_SECRET_KEY");
-            StripeConfiguration.ApiKey = stripeKey;
+            
 
         }
 
@@ -71,7 +71,8 @@ namespace BackEnd.Test
         public async Task CreateReservationCheckoutSession_ReturnsOkWithCheckoutSessionId_ForValidReservation()
         {
             // Arrange
-            
+            StripeConfiguration.ApiKey = stripeKey;
+
             byte[] userImg = new byte[]
             {
         137, 80, 78, 71, 13, 10, 26, 10,
@@ -142,6 +143,7 @@ namespace BackEnd.Test
         public async Task CreateReservationCheckoutSession_ReturnsBadRequest_ForEmptyReservation()
         {
             // Arrange
+            StripeConfiguration.ApiKey = stripeKey;
             Reservation invalidReservation = null;
 
             // Act
@@ -158,6 +160,7 @@ namespace BackEnd.Test
         public async Task CreateReservationCheckoutSession_ReturnsBadRequest_ForReservationFixedPriceLessOrEqualTo0()
         {
             // Arrange
+            StripeConfiguration.ApiKey = stripeKey;
             byte[] userImg = new byte[]
             {
                 137, 80, 78, 71, 13, 10, 26, 10,
@@ -200,6 +203,7 @@ namespace BackEnd.Test
         public async Task CreateReservationCheckoutSession_ReturnsNotFound_ForReservationUserNotFound()
         {
             // Arrange
+            StripeConfiguration.ApiKey = stripeKey;
             var nonExistentUserId = 1;
             var opportunity = new OpportunityModel { OpportunityId = 1, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "a description", Date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
             _context.Opportunities.Add(opportunity);
@@ -228,9 +232,10 @@ namespace BackEnd.Test
 
         [Test]
         [Category("UnitTest")]
-        public async Task CreateReservationCheckoutSession_ReturnsNotFound_ForReservationOpportunityNotFound()
+        public async Task CreateReservationCheckoutSession_ReturnsNotFound_ForReservationOpportunityIdNotFound()
         {
             // Arrange
+            StripeConfiguration.ApiKey = stripeKey;
             byte[] userImg = new byte[]
             {
                 137, 80, 78, 71, 13, 10, 26, 10,
@@ -269,11 +274,84 @@ namespace BackEnd.Test
 
         }
 
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task CreateReservationCheckoutSession_ReturnsBadRequest_ForStripeError()
+        {
+            // Arrange
+            StripeConfiguration.ApiKey = "falsekey";
+            byte[] userImg = new byte[]
+            {
+        137, 80, 78, 71, 13, 10, 26, 10,
+        0, 0, 0, 13, 73, 72, 68, 82,
+        0, 0, 0, 1, 0, 0, 0, 1,
+        8, 6, 0, 0, 0, 197, 158, 108,
+        0, 0, 0, 1, 115, 90, 129,
+        1, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0
+            };
+
+            var user = new UserModel
+            {
+                UserId = 1,
+                FirstName = "John",
+                LastName = "Doe",
+                BirthDate = DateTime.Now.AddYears(-30),
+                CellPhoneNum = 919919919,
+                Email = "example@email.com",
+                Gender = Enums.Gender.MASCULINO,
+                Image = userImg
+            };
+
+            _context.Users.Add(user);
+            var opportunity = new OpportunityModel
+            {
+                OpportunityId = 1,
+                Price = 100,
+                Address = "um sitio",
+                Category = Enums.Category.AGRICULTURA,
+                UserID = 1,
+                Name = "name",
+                Description = "a description",
+                Date = DateTime.Now.AddDays(30),
+                Vacancies = 2,
+                IsActive = true,
+                Location = Enums.Location.LISBOA,
+                Score = 0,
+                IsImpulsed = false
+            };
+
+            _context.Opportunities.Add(opportunity);
+            await _context.SaveChangesAsync();
+
+            var reservation = new Reservation
+            {
+                opportunityId = opportunity.OpportunityId,
+                userId = user.UserId,
+                reservationDate = DateTime.Now.Date,
+                checkInDate = DateTime.Now.Date.AddDays(1),
+                numOfPeople = 1,
+                isActive = true,
+                fixedPrice = 100
+            };
+
+            // Act
+
+            var response = await _controller.CreateReservationCheckoutSession(reservation);
+
+            // Assert
+            var badRequestResult = response as BadRequestObjectResult;
+            Assert.That(badRequestResult, Is.Not.Null);
+        }
+
         [Test]
         [Category("UnitTest")]
         public async Task CreateImpulseCheckoutSession_ReturnsBadRequest_ForNullImpulseDto()
         {
             // Arrange
+            StripeConfiguration.ApiKey = stripeKey;
             Impulse impulse = null;
 
             // Act
@@ -291,6 +369,7 @@ namespace BackEnd.Test
         public async Task CreateImpulseCheckoutSession_ReturnsBadRequest_ForValueLessOrEqualTo0()
         {
             // Arrange
+            StripeConfiguration.ApiKey = stripeKey;
             byte[] userImg = new byte[]
             {
                 137, 80, 78, 71, 13, 10, 26, 10,
@@ -332,6 +411,7 @@ namespace BackEnd.Test
         public async Task CreateImpulseCheckoutSession_ReturnsBadRequest_ForDateBeforeTomorrow()
         {
             // Arrange
+            StripeConfiguration.ApiKey = stripeKey;
             byte[] userImg = new byte[]
             {
                 137, 80, 78, 71, 13, 10, 26, 10,
@@ -373,6 +453,7 @@ namespace BackEnd.Test
         public async Task CreateImpulseCheckoutSession_ReturnsBadRequest_ForDateOnTheSameDay()
         {
             // Arrange
+            StripeConfiguration.ApiKey = stripeKey;
             byte[] userImg = new byte[]
             {
                 137, 80, 78, 71, 13, 10, 26, 10,
@@ -414,6 +495,7 @@ namespace BackEnd.Test
         public async Task CreateImpulseCheckoutSession_ReturnsNotFound_ForNonExistentUser()
         {
             // Arrange
+            StripeConfiguration.ApiKey = stripeKey;
             var nonExistentUserId = 1;
             var opportunity = new OpportunityModel { OpportunityId = 1, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "a description", Date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
             _context.Opportunities.Add(opportunity);
@@ -442,6 +524,7 @@ namespace BackEnd.Test
         public async Task CreateImpulseCheckoutSession_ReturnsNotFound_ForNonExistentOpportunity()
         {
             // Arrange
+            StripeConfiguration.ApiKey = stripeKey;
             byte[] userImg = new byte[]
             {
                 137, 80, 78, 71, 13, 10, 26, 10,
@@ -546,6 +629,75 @@ namespace BackEnd.Test
 
             var OkRequestResult = response as OkObjectResult;
             Assert.That(OkRequestResult, Is.Not.Null);
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task CreateImpulseCheckoutSession_ReturnsBadRequest_ForStripeError()
+        {
+            // Arrange
+            StripeConfiguration.ApiKey = "falsekey";
+            byte[] userImg = new byte[]
+            {
+        137, 80, 78, 71, 13, 10, 26, 10,
+        0, 0, 0, 13, 73, 72, 68, 82,
+        0, 0, 0, 1, 0, 0, 0, 1,
+        8, 6, 0, 0, 0, 197, 158, 108,
+        0, 0, 0, 1, 115, 90, 129,
+        1, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0
+            };
+
+            var user = new UserModel
+            {
+                UserId = 1,
+                FirstName = "John",
+                LastName = "Doe",
+                BirthDate = DateTime.Now.AddYears(-30),
+                CellPhoneNum = 919919919,
+                Email = "example@email.com",
+                Gender = Enums.Gender.MASCULINO,
+                Image = userImg
+            };
+
+            _context.Users.Add(user);
+            var opportunity = new OpportunityModel
+            {
+                OpportunityId = 1,
+                Price = 100,
+                Address = "um sitio",
+                Category = Enums.Category.AGRICULTURA,
+                UserID = 1,
+                Name = "name",
+                Description = "a description",
+                Date = DateTime.Now.AddDays(30),
+                Vacancies = 2,
+                IsActive = true,
+                Location = Enums.Location.LISBOA,
+                Score = 0,
+                IsImpulsed = false
+            };
+
+            _context.Opportunities.Add(opportunity);
+            await _context.SaveChangesAsync();
+
+            var date = DateTime.Today;
+            var impulse = new Impulse
+            {
+                userId = user.UserId,
+                opportunityId = opportunity.OpportunityId,
+                value = 10,
+                expireDate = date.AddDays(30)
+            };
+
+            // Act
+
+            var response = await _controller.CreateImpulseCheckoutSession(impulse);
+
+            // Assert
+            var badRequestResult = response as BadRequestObjectResult;
+            Assert.That(badRequestResult, Is.Not.Null);
         }
     }
 }
