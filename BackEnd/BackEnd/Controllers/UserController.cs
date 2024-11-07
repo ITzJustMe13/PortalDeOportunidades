@@ -29,8 +29,8 @@ namespace BackEnd.Controllers
         [Authorize]
         public async Task<ActionResult<User>> GetUserByID(int id)
         {
-            if (dbContext.Users == null)
-                return NotFound();
+            if (dbContext == null)
+                return NotFound("DB context missing");
 
             var user = await dbContext.Users.FindAsync(id);
 
@@ -47,9 +47,8 @@ namespace BackEnd.Controllers
         public async Task<ActionResult<User>> CreateNewUser(User user)
         {
             if (dbContext == null)
-            {
                 return NotFound("DB context missing");
-            }
+
 
             // Verifica se o dto é valido
             if (!ModelState.IsValid)
@@ -121,7 +120,7 @@ namespace BackEnd.Controllers
         public async Task<ActionResult> DeleteUser(int id)
         {
             if (dbContext == null)
-                return NotFound("DB Context missing!");
+                return NotFound("DB context missing");
 
             var user = await dbContext.Users.FindAsync(id);
 
@@ -151,7 +150,7 @@ namespace BackEnd.Controllers
         public async Task<ActionResult<User>> EditUser(int id, User updatedUser)
         {
             if (dbContext == null)
-                return NotFound("DB Context missing!");
+                return NotFound("DB context missing");
 
             // Find the existing user by ID
             var existingUser = await dbContext.Users.FindAsync(id);
@@ -218,6 +217,9 @@ namespace BackEnd.Controllers
         [HttpPost("favorite")]
         public async Task<ActionResult<Favorite>> AddFavorite(Favorite favorite)
         {
+            if (dbContext == null)
+                return NotFound("DB context missing");
+
 
             if (favorite.userId <= 0 || favorite.opportunityId == 0)
             {
@@ -242,6 +244,9 @@ namespace BackEnd.Controllers
         [HttpGet("favorite/{userId}/{opportunityId}")]
         public async Task<ActionResult<Favorite>> GetFavoriteById(int userId, int opportunityId)
         {
+            if (dbContext == null)
+                return NotFound("DB context missing");
+
             if (userId <= 0 || opportunityId <= 0)
             {
                 return BadRequest("Invalid user or opportunity ID");
@@ -262,6 +267,10 @@ namespace BackEnd.Controllers
         [HttpGet("favorites/{userId}")]
         public async Task<ActionResult<Favorite[]>> GetFavorites(int userId)
         {
+            if (dbContext == null)
+                return NotFound("DB context missing");
+
+
             if (userId <= 0)
             {
                 return BadRequest("Invalid userId");
@@ -289,9 +298,8 @@ namespace BackEnd.Controllers
         public ActionResult<Impulse> ImpulseOportunity(Impulse impulse)
         {
             if (dbContext == null)
-            {
                 return NotFound("DB context missing");
-            }
+
 
             if (!ModelState.IsValid)
             {
@@ -313,8 +321,6 @@ namespace BackEnd.Controllers
             {
                 return BadRequest(ex.Message);
             }
-
-       
 
                 if (impulse.value <= 0)
                 {
@@ -344,7 +350,10 @@ namespace BackEnd.Controllers
         [HttpGet("created-opportunities/{userId}")]
         public async Task<ActionResult<Favorite[]>> GetCreatedOpportunities(int userId)
         {
-            if(userId <= 0) 
+            if (dbContext == null)
+                return NotFound("DB context missing");
+
+            if (userId <= 0) 
             {
                 return BadRequest("Invalid userId");
             }
@@ -368,8 +377,12 @@ namespace BackEnd.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
+            if (dbContext == null)
+                return NotFound("DB context missing");
+
+
             if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password))
-                return BadRequest("Username or password is incorrect");
+                return BadRequest("Username or password is null");
 
             var user = await dbContext.Users.SingleOrDefaultAsync(u => u.Email == request.Email);
 
@@ -406,6 +419,7 @@ namespace BackEnd.Controllers
 
         private async Task<Boolean> IsEmailAvailable(string email)
         {
+
             if (string.IsNullOrWhiteSpace(email))
                 return false;
 
@@ -415,6 +429,9 @@ namespace BackEnd.Controllers
         [HttpGet("get-email-availability/{email}")]
         public async Task<IActionResult> GetEmailAvailability(string email)
         {
+            if (dbContext == null)
+                return NotFound("DB context missing");
+
             var emailAvailable = await IsEmailAvailable(email);
 
             return Ok( emailAvailable );
@@ -423,6 +440,9 @@ namespace BackEnd.Controllers
         [HttpGet("activate")]
         public async Task<IActionResult> ActivateAccount([FromQuery]string token)
         {
+            if (dbContext == null)
+                return NotFound("DB context missing");
+
             // Encontrar o utilizador pelo Token
             var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Token == token);
 

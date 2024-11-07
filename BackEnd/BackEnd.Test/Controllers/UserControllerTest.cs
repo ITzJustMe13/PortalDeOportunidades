@@ -129,7 +129,23 @@ namespace BackEnd.Test
             // Assert
             Assert.That(response.Result, Is.TypeOf<NotFoundObjectResult>());
             var notFoundResult = response.Result as NotFoundObjectResult;
-            Assert.That(notFoundResult.Value, Is.EqualTo("User was not found!"));
+            Assert.That(notFoundResult?.Value, Is.EqualTo("User was not found!"));
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task GetUserByID_ReturnsNotFound_WhenDbContextIsMissing()
+        {
+            //Arrange
+            var controller = new UserController(null); 
+
+            // Act
+            var response = await controller.GetUserByID(1);
+
+            // Assert
+            Assert.That(response.Result, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = response.Result as NotFoundObjectResult;
+            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
         }
 
         [Test]
@@ -157,7 +173,7 @@ namespace BackEnd.Test
             // Assert
             Assert.That(response.Result, Is.TypeOf<CreatedAtActionResult>());
             var createdResult = response.Result as CreatedAtActionResult;
-            var createdUser = createdResult.Value as User;
+            var createdUser = createdResult?.Value as User;
             Assert.That(createdUser, Is.Not.Null);
         }
 
@@ -187,7 +203,7 @@ namespace BackEnd.Test
             // Assert
             Assert.That(response.Result, Is.TypeOf<NotFoundObjectResult>());
             var notFoundResult = response.Result as NotFoundObjectResult;
-            Assert.That(notFoundResult.Value, Is.EqualTo("DB context missing"));
+            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
         }
 
         [Test]
@@ -258,7 +274,7 @@ namespace BackEnd.Test
             // Assert
             Assert.That(response.Result, Is.InstanceOf<BadRequestObjectResult>());
             var badRequestResult = response.Result as BadRequestObjectResult;
-            Assert.That(badRequestResult.Value, Is.EqualTo("Email is already in use"));
+            Assert.That(badRequestResult?.Value, Is.EqualTo("Email is already in use"));
         }
 
         [Test]
@@ -286,7 +302,7 @@ namespace BackEnd.Test
             // Assert
             Assert.That(response.Result, Is.InstanceOf<BadRequestObjectResult>());
             var badRequestResult = response.Result as BadRequestObjectResult;
-            Assert.That(badRequestResult.Value, Is.EqualTo("Gender has an invalid value"));
+            Assert.That(badRequestResult?.Value, Is.EqualTo("Gender has an invalid value"));
         }
 
         [Test]
@@ -313,7 +329,7 @@ namespace BackEnd.Test
             // Assert
             Assert.That(response.Result, Is.InstanceOf<BadRequestObjectResult>());
             var badRequestResult = response.Result as BadRequestObjectResult;
-            Assert.That(badRequestResult.Value, Is.EqualTo("Password is required"));
+            Assert.That(badRequestResult?.Value, Is.EqualTo("Password is required"));
         }
 
         [Test]
@@ -341,7 +357,7 @@ namespace BackEnd.Test
             // Assert
             Assert.That(response.Result, Is.InstanceOf<BadRequestObjectResult>());
             var badRequestResult = response.Result as BadRequestObjectResult;
-            Assert.That(badRequestResult.Value, Is.EqualTo("You must be at least 18 years old"));
+            Assert.That(badRequestResult?.Value, Is.EqualTo("You must be at least 18 years old"));
         }
 
         [Test]
@@ -390,6 +406,21 @@ namespace BackEnd.Test
             // Assert
             Assert.That(response, Is.TypeOf<NoContentResult>());
             Assert.That(await _context.Reservations.FindAsync(userModel.UserId), Is.Null);
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task DeleteUser_ReturnsNotFound_WhenDbContextIsMissing()
+        {
+            //Arrange
+            var controller = new UserController(null);
+            // Act
+            var response = await controller.DeleteUser(1);
+
+            // Assert
+            Assert.That(response, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = response as NotFoundObjectResult;
+            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
         }
 
         [Test]
@@ -619,6 +650,36 @@ namespace BackEnd.Test
 
         [Test]
         [Category("UnitTest")]
+        public async Task EditUser_ReturnsNotFound_WhenDbContextIsMissing()
+        {
+            //Arrange
+            var controller = new UserController(null);
+            int userId = 1;
+            byte[] byteArray = new byte[] { 72, 101, 108, 108, 111 };
+            var updatedUser = new User
+            {
+                userId = userId,
+                firstName = "Antonio Updated",
+                lastName = "Silva Updated",
+                email = "existinguser2@example.com",
+                cellPhoneNumber = 922334455,
+                birthDate = DateTime.Now.AddYears(-17),
+                gender = (Gender)999,
+                password = "NewPassword123",
+                image = byteArray
+            };
+
+            // Act
+            var response = await controller.EditUser(userId, updatedUser);
+
+            // Assert
+            Assert.That(response.Result, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = response.Result as NotFoundObjectResult;
+            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
+        }
+
+        [Test]
+        [Category("UnitTest")]
         public async Task AddFavorite_ReturnsBadRequest_WhenUserId()
         {
             // Arrange
@@ -704,13 +765,34 @@ namespace BackEnd.Test
             Assert.That(response.Result, Is.TypeOf<CreatedAtActionResult>());
             var createdResult = response.Result as CreatedAtActionResult;
             Assert.That(createdResult, Is.Not.Null);
-            Assert.That(createdResult.RouteValues["userId"], Is.EqualTo(favorite.userId));
-            Assert.That(createdResult.RouteValues["opportunityId"], Is.EqualTo(favorite.opportunityId));
+            Assert.That(createdResult.RouteValues?["userId"], Is.EqualTo(favorite.userId));
+            Assert.That(createdResult.RouteValues?["opportunityId"], Is.EqualTo(favorite.opportunityId));
 
             // Verifique se o favorito foi realmente adicionado ao banco de dados
             var addedFavorite = await _context.Favorites
                 .FirstOrDefaultAsync(f => f.UserId == favorite.userId && f.OpportunityId == favorite.opportunityId);
             Assert.That(addedFavorite, Is.Not.Null);
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task AddFavorite_ReturnsNotFound_WhenDbContextIsMissing()
+        {
+            //Arrange
+            var controller = new UserController(null);
+            var favorite = new Favorite
+            {
+                userId = 1,
+                opportunityId = 2
+            };
+
+            // Act
+            var response = await controller.AddFavorite(favorite);
+
+            // Assert
+            Assert.That(response.Result, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = response.Result as NotFoundObjectResult;
+            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
         }
 
         [Test]
@@ -801,6 +883,22 @@ namespace BackEnd.Test
 
         [Test]
         [Category("UnitTest")]
+        public async Task GetFavoriteById_ReturnsNotFound_WhenDbContextIsMissing()
+        {
+            //Arrange
+            var controller = new UserController(null);
+
+            // Act
+            var response = await controller.GetFavoriteById(1, 1);
+
+            // Assert
+            Assert.That(response.Result, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = response.Result as NotFoundObjectResult;
+            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
+        }
+
+        [Test]
+        [Category("UnitTest")]
         public async Task GetFavorites_ReturnsBadRequest_WhenUserIdIsInvalid()
         {
             // Arrange
@@ -862,6 +960,22 @@ namespace BackEnd.Test
             Assert.That(returnedFavorites.Length, Is.EqualTo(2));
             Assert.That(returnedFavorites.Any(f => f.opportunityId == 1));
             Assert.That(returnedFavorites.Any(f => f.opportunityId == 2));
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task GetFavorites_ReturnsNotFound_WhenDbContextIsMissing()
+        {
+            //Arrange
+            var controller = new UserController(null);
+
+            // Act
+            var response = await controller.GetFavorites(1);
+
+            // Assert
+            Assert.That(response.Result, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = response.Result as NotFoundObjectResult;
+            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
         }
 
         [Test]
@@ -1022,10 +1136,43 @@ namespace BackEnd.Test
 
         [Test]
         [Category("UnitTest")]
-        public async Task Login_ReturnsBadRequest_WhenEmailOrPasswordIsEmpty()
+        public async Task GetCreatedOpportunities_ReturnsNotFound_WhenDbContextIsMissing()
+        {
+            //Arrange
+            var controller = new UserController(null);
+
+            // Act
+            var response = await controller.GetCreatedOpportunities(1);
+
+            // Assert
+            Assert.That(response.Result, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = response.Result as NotFoundObjectResult;
+            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task Login_ReturnsBadRequest_WhenEmailIsEmpty()
         {
             // Arrange
-            var request = new LoginRequest { Email = "", Password = "" };
+            byte[] byteArray = new byte[] { 72, 101, 108, 108, 111 };
+            var user = new UserModel
+            {
+                UserId = 1,
+                FirstName = "Antonio",
+                LastName = "Silva",
+                HashedPassword = BCrypt.Net.BCrypt.EnhancedHashPassword("password", 13),
+                Email = "existinguser1@example.com",
+                CellPhoneNum = 911232439,
+                BirthDate = DateTime.Now.AddYears(-25),
+                Gender = Gender.MASCULINO,
+                isActive = true,
+                Image = byteArray
+            };
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            var request = new LoginRequest { Email = "", Password = "password" };
 
             // Act
             var response = await _controller.Login(request);
@@ -1033,8 +1180,42 @@ namespace BackEnd.Test
             // Assert
             Assert.That(response, Is.InstanceOf<BadRequestObjectResult>());
             var badRequestResult = response as BadRequestObjectResult;
-            Assert.That(badRequestResult.Value, Is.EqualTo("Username or password is incorrect"));
+            Assert.That(badRequestResult?.Value, Is.EqualTo("Username or password is null"));
         }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task Login_ReturnsBadRequest_WhenPasswordIsEmpty()
+        {
+            // Arrange
+            byte[] byteArray = new byte[] { 72, 101, 108, 108, 111 };
+            var user = new UserModel
+            {
+                UserId = 1,
+                FirstName = "Antonio",
+                LastName = "Silva",
+                HashedPassword = BCrypt.Net.BCrypt.EnhancedHashPassword("password", 13),
+                Email = "existinguser1@example.com",
+                CellPhoneNum = 911232439,
+                BirthDate = DateTime.Now.AddYears(-25),
+                Gender = Gender.MASCULINO,
+                isActive = true,
+                Image = byteArray
+            };
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            var request = new LoginRequest { Email = user.Email, Password = "" };
+
+            // Act
+            var response = await _controller.Login(request);
+
+            // Assert
+            Assert.That(response, Is.InstanceOf<BadRequestObjectResult>());
+            var badRequestResult = response as BadRequestObjectResult;
+            Assert.That(badRequestResult?.Value, Is.EqualTo("Username or password is null"));
+        }
+
 
         [Test]
         [Category("UnitTest")]
@@ -1049,7 +1230,7 @@ namespace BackEnd.Test
             // Assert
             Assert.That(response, Is.InstanceOf<UnauthorizedObjectResult>());
             var unauthorizedResult = response as UnauthorizedObjectResult;
-            Assert.That(unauthorizedResult.Value, Is.EqualTo("The autentication failed! Please check your credentials."));
+            Assert.That(unauthorizedResult?.Value, Is.EqualTo("The autentication failed! Please check your credentials."));
         }
 
         [Test]
@@ -1083,7 +1264,7 @@ namespace BackEnd.Test
             // Assert
             Assert.That(response, Is.InstanceOf<BadRequestObjectResult>());
             var badRequestResult = response as BadRequestObjectResult;
-            Assert.That(badRequestResult.Value, Is.EqualTo("Account is dectivated. Please check your email for the activation link."));
+            Assert.That(badRequestResult?.Value, Is.EqualTo("Account is dectivated. Please check your email for the activation link."));
         }
 
         [Test]
@@ -1116,7 +1297,7 @@ namespace BackEnd.Test
             // Assert
             Assert.That(response, Is.InstanceOf<UnauthorizedObjectResult>());
             var unauthorizedResult = response as UnauthorizedObjectResult;
-            Assert.That(unauthorizedResult.Value, Is.EqualTo("The autentication failed! Please check your credentials."));
+            Assert.That(unauthorizedResult?.Value, Is.EqualTo("The autentication failed! Please check your credentials."));
         }
 
         [Test]
@@ -1156,6 +1337,40 @@ namespace BackEnd.Test
 
         [Test]
         [Category("UnitTest")]
+        public async Task Login_ReturnsNotFound_WhenDbContextIsMissing()
+        {
+            //Arrange
+            var controller = new UserController(null);
+
+            byte[] byteArray = new byte[] { 72, 101, 108, 108, 111 };
+            var user = new UserModel
+            {
+                Email = "test@example.com",
+                HashedPassword = BCrypt.Net.BCrypt.EnhancedHashPassword("password", 13),
+                isActive = true,
+                FirstName = "John",
+                LastName = "Doe",
+                CellPhoneNum = 912345678,
+                RegistrationDate = DateTime.Now,
+                BirthDate = new DateTime(1990, 1, 1),
+                Gender = Gender.MASCULINO,
+                Image = byteArray
+            };
+
+            var request = new LoginRequest { Email = user.Email, Password = "password" };
+
+
+            // Act
+            var response = await controller.Login(request);
+
+            // Assert
+            Assert.That(response, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = response as NotFoundObjectResult;
+            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
+        }
+
+        [Test]
+        [Category("UnitTest")]
         public async Task GetEmailAvailability_ReturnsOk_WithAvailableEmail()
         {
             // Arrange
@@ -1184,7 +1399,7 @@ namespace BackEnd.Test
             // Assert
             Assert.That(response, Is.InstanceOf<OkObjectResult>());
             var okResult = response as OkObjectResult;
-            Assert.That(okResult.Value, Is.Not.Null);
+            Assert.That(okResult?.Value, Is.EqualTo(true));
 
 
         }
@@ -1220,7 +1435,7 @@ namespace BackEnd.Test
             // Assert
             Assert.That(response, Is.InstanceOf<OkObjectResult>());
             var okResult = response as OkObjectResult;
-            Assert.That(okResult.Value, Is.Not.Null);
+            Assert.That(okResult?.Value, Is.Not.Null);
 
             Assert.That(okResult.Value, Is.EqualTo(false));
         }
@@ -1239,7 +1454,7 @@ namespace BackEnd.Test
             Assert.That(response, Is.InstanceOf<OkObjectResult>());
             var okResult = response as OkObjectResult;
             var expectedValue = new { isAvailable = false };
-            Assert.That(okResult.Value, Is.EqualTo(false));
+            Assert.That(okResult?.Value, Is.EqualTo(false));
         }
 
         [Test]
@@ -1256,8 +1471,25 @@ namespace BackEnd.Test
             Assert.That(response, Is.InstanceOf<OkObjectResult>());
             var okResult = response as OkObjectResult;
             var expectedValue = new { isAvailable = false };
-            Assert.That(okResult.Value, Is.EqualTo(false)); 
+            Assert.That(okResult?.Value, Is.EqualTo(false)); 
         }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task GetEmailAvailability_ReturnsNotFound_WhenDbContextIsMissing()
+        {
+            //Arrange
+            var controller = new UserController(null);
+
+            // Act
+            var response = await controller.GetEmailAvailability("email@example.pt");
+
+            // Assert
+            Assert.That(response, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = response as NotFoundObjectResult;
+            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
+        }
+
 
         [Test]
         [Category("UnitTest")]
@@ -1291,10 +1523,10 @@ namespace BackEnd.Test
             // Assert
             Assert.That(response, Is.InstanceOf<OkObjectResult>());
             var okResult = response as OkObjectResult;
-            Assert.That(okResult.Value, Is.EqualTo("Account activated successfully."));
+            Assert.That(okResult?.Value, Is.EqualTo("Account activated successfully."));
 
             var updatedUser = await _context.Users.FindAsync(user.UserId);
-            Assert.That(updatedUser.isActive, Is.EqualTo(true));
+            Assert.That(updatedUser?.isActive, Is.EqualTo(true));
             Assert.That(updatedUser.Token, Is.EqualTo(null));
             Assert.That(updatedUser.TokenExpDate, Is.EqualTo(null));
         }
@@ -1312,7 +1544,7 @@ namespace BackEnd.Test
             // Assert
             Assert.That(response, Is.InstanceOf<BadRequestObjectResult>());
             var badRequestResult = response as BadRequestObjectResult;
-            Assert.That(badRequestResult.Value, Is.EqualTo("Invalid or expired activation token."));
+            Assert.That(badRequestResult?.Value, Is.EqualTo("Invalid or expired activation token."));
         }
 
         [Test]
@@ -1347,7 +1579,23 @@ namespace BackEnd.Test
             // Assert
             Assert.That(response, Is.InstanceOf<BadRequestObjectResult>());
             var badRequestResult = response as BadRequestObjectResult;
-            Assert.That(badRequestResult.Value, Is.EqualTo("Invalid or expired activation token."));
+            Assert.That(badRequestResult?.Value, Is.EqualTo("Invalid or expired activation token."));
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task ActivateAccount_ReturnsNotFound_WhenDbContextIsMissing()
+        {
+            //Arrange
+            var controller = new UserController(null);
+
+            // Act
+            var response = await controller.ActivateAccount("token");
+
+            // Assert
+            Assert.That(response, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = response as NotFoundObjectResult;
+            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
         }
 
 
