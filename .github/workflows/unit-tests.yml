@@ -13,7 +13,11 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-
+    env: 
+      GMAIL_APP_PASSWORD: ${{GMAIL_APP_PASSWORD}}
+      PrivateKey: ${{PrivateKey}}
+      STRIPE_SECRET_KEY: ${{STRIPE_SECRET_KEY}}
+      STRIPE_PUBLISHABLE_KEY: ${{STRIPE_PUBLISHABLE_KEY}}
     steps:
       - uses: actions/checkout@v2
       - name: Set up .NET
