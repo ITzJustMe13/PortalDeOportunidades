@@ -156,7 +156,7 @@ namespace BackEnd.Test
             byte[] byteArray = new byte[] { 72, 101, 108, 108, 111 };
             var user = new User
             {
-                email = "leonardosilva.00009@gmail.com",
+                email = "user@gmail.com",
                 password = "ValidPassword123",
                 firstName = "Antonio",
                 lastName = "Silva",
