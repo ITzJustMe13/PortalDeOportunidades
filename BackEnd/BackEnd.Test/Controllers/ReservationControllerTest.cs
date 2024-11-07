@@ -287,6 +287,135 @@ namespace BackEnd.Test
 
         [Test]
         [Category("UnitTest")]
+        public async Task CreateNewReservation_ReturnsNotFound_WhenOpportunityIsInvalid()
+        {
+            // Arrange
+
+            var opportunity = new OpportunityModel { OpportunityId = 1, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "a description", Date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
+            var user = new UserModel { UserId = 1, FirstName = "John", LastName = "Doe", BirthDate = DateTime.Now.AddYears(-30), CellPhoneNum = 919919919, Email = "example@email.com", Gender = Enums.Gender.MASCULINO, Image = [1] };
+            _dbContext.Opportunities.Add(opportunity);
+            _dbContext.Users.Add(user);
+            await _dbContext.SaveChangesAsync();
+
+            var reservation = new Reservation
+            {
+                opportunityId = 2,
+                userId = user.UserId,
+                reservationDate = DateTime.Now.Date,
+                checkInDate = DateTime.Now.Date.AddDays(1),
+                numOfPeople = 1,
+                isActive = true,
+                fixedPrice = 100
+            };
+
+            // Act
+            var result = await _controller.CreateNewReservation(reservation);
+
+            // Assert
+            Assert.That(result.Result, Is.TypeOf<NotFoundObjectResult>());
+            var createdResult = result.Result as NotFoundObjectResult;
+            Assert.That(createdResult.Value, Is.EqualTo("Opportunity not found."));
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task CreateNewReservation_ReturnsNotFound_WhenUserIsInvalid()
+        {
+            // Arrange
+
+            var opportunity = new OpportunityModel { OpportunityId = 1, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "a description", Date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
+            var user = new UserModel { UserId = 1, FirstName = "John", LastName = "Doe", BirthDate = DateTime.Now.AddYears(-30), CellPhoneNum = 919919919, Email = "example@email.com", Gender = Enums.Gender.MASCULINO, Image = [1] };
+            _dbContext.Opportunities.Add(opportunity);
+            _dbContext.Users.Add(user);
+            await _dbContext.SaveChangesAsync();
+
+            var reservation = new Reservation
+            {
+                opportunityId = opportunity.OpportunityId,
+                userId = 4,
+                reservationDate = DateTime.Now.Date,
+                checkInDate = DateTime.Now.Date.AddDays(1),
+                numOfPeople = 1,
+                isActive = true,
+                fixedPrice = 100
+            };
+
+            // Act
+            var result = await _controller.CreateNewReservation(reservation);
+
+            // Assert
+            Assert.That(result.Result, Is.TypeOf<NotFoundObjectResult>());
+            var createdResult = result.Result as NotFoundObjectResult;
+            Assert.That(createdResult.Value, Is.EqualTo("User not found."));
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task CreateNewReservation_ReturnsBadRequest_WhenNumOfPeopleIsInvalid()
+        {
+            // Arrange
+
+            var opportunity = new OpportunityModel { OpportunityId = 1, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "a description", Date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
+            var user = new UserModel { UserId = 1, FirstName = "John", LastName = "Doe", BirthDate = DateTime.Now.AddYears(-30), CellPhoneNum = 919919919, Email = "example@email.com", Gender = Enums.Gender.MASCULINO, Image = new byte[] { 0xFF, 0xD8, 0xFF, 0xE0 } };
+
+            _dbContext.Opportunities.Add(opportunity);
+            _dbContext.Users.Add(user);
+            await _dbContext.SaveChangesAsync();
+
+            var reservation = new Reservation
+            {
+                opportunityId = opportunity.OpportunityId,
+                userId = user.UserId,
+                reservationDate = DateTime.Now.Date,
+                checkInDate = DateTime.Now.Date.AddDays(1),
+                numOfPeople = -1,
+                isActive = true,
+                fixedPrice = 100
+            };
+
+            // Act
+            var result = await _controller.CreateNewReservation(reservation);
+
+            // Assert
+            Assert.That(result.Result, Is.TypeOf<BadRequestObjectResult>());
+            var createdResult = result.Result as BadRequestObjectResult;
+            Assert.That(createdResult.Value, Is.EqualTo("The value Number Of People must be valid"));
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task CreateNewReservation_ReturnsBadRequest_WhenNumOfPeopleIsGreaterThanVacancies()
+        {
+            // Arrange
+
+            var opportunity = new OpportunityModel { OpportunityId = 1, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "a description", Date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
+            var user = new UserModel { UserId = 1, FirstName = "John", LastName = "Doe", BirthDate = DateTime.Now.AddYears(-30), CellPhoneNum = 919919919, Email = "example@email.com", Gender = Enums.Gender.MASCULINO, Image = [1] };
+            _dbContext.Opportunities.Add(opportunity);
+            _dbContext.Users.Add(user);
+            await _dbContext.SaveChangesAsync();
+
+            var reservation = new Reservation
+            {
+                opportunityId = opportunity.OpportunityId,
+                userId = user.UserId,
+                reservationDate = DateTime.Now.Date,
+                checkInDate = DateTime.Now.Date.AddDays(1),
+                numOfPeople = 3,
+                isActive = true,
+                fixedPrice = 100
+            };
+
+            // Act
+            var result = await _controller.CreateNewReservation(reservation);
+
+            // Assert
+            Assert.That(result.Result, Is.InstanceOf<BadRequestObjectResult>());
+            var createdResult = result.Result as BadRequestObjectResult;
+            Assert.That(createdResult.Value, Is.EqualTo("The numberOfPeople is bigger than number of vacancies"));
+        }
+
+        [Test]
+        [Category("UnitTest")]
         public async Task DeactivateReservationById_ReturnsOk_WhenExistReservation()
         {
             // Arrange
@@ -360,13 +489,13 @@ namespace BackEnd.Test
             // Assert
             Assert.That(result.Result, Is.TypeOf<BadRequestObjectResult>());
             var BadResult = result.Result as BadRequestObjectResult;
-            Assert.That(400, Is.EqualTo(BadResult.StatusCode));
+            Assert.That(BadResult.Value, Is.EqualTo("Reservation is impossible to deactivate"));
 
         }
 
         [Test]
         [Category("UnitTest")]
-        public async Task UpdateReservationById_ReturnsNoContent_WhenReservationUpdates()
+        public async Task UpdateReservationById_ReturnsOk_WhenReservationUpdates()
         {
             // Arrange
             var opportunity = new OpportunityModel { OpportunityId = 1, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "a description", Date = DateTime.Now.AddDays(30), Vacancies = 5, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
@@ -401,7 +530,7 @@ namespace BackEnd.Test
             var result = await _controller.UpdateReservation(reservation.reservationID, reservationDTO);
 
             // Assert
-            Assert.That(result, Is.TypeOf<NoContentResult>());
+            Assert.That(result.Result, Is.InstanceOf<OkResult>());
             
 
         }
@@ -428,14 +557,104 @@ namespace BackEnd.Test
             var result = await _controller.UpdateReservation(reservationid, reservationDTO);
 
             // Assert
-            Assert.That(result, Is.TypeOf<NotFoundObjectResult>());
+            Assert.That(result.Result, Is.InstanceOf<NotFoundObjectResult>());
+            var NotFoundResult = result.Result as NotFoundObjectResult;
+            Assert.That(NotFoundResult.Value, Is.EqualTo("Reservation Not Found"));
+
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task UpdateReservationById_ReturnsBadRequest_WhenInvalidNumOfPeople()
+        {
+            // Arrange
+            var opportunity = new OpportunityModel { OpportunityId = 1, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "a description", Date = DateTime.Now.AddDays(30), Vacancies = 5, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
+            _dbContext.Opportunities.Add(opportunity);
+            var user = new UserModel { UserId = 1, FirstName = "John", LastName = "Doe", BirthDate = DateTime.Now.AddYears(-30), CellPhoneNum = 919919919, Email = "example@email.com", Gender = Enums.Gender.MASCULINO, Image = [1] };
+            _dbContext.Users.Add(user);
+            var reservation = new ReservationModel
+            {
+                reservationID = 1,
+                opportunityID = 1,
+                userID = 1,
+                reservationDate = DateTime.Now.Date,
+                checkInDate = DateTime.Now.Date.AddDays(1),
+                numOfPeople = 1,
+                isActive = false,
+                fixedPrice = 100
+            };
+            _dbContext.Reservations.Add(reservation);
+            var reservationDTO = new Reservation
+            {
+                opportunityId = 1,
+                userId = 1,
+                reservationDate = DateTime.Now.Date,
+                checkInDate = DateTime.Now.Date.AddDays(1),
+                numOfPeople = -3,
+                isActive = false,
+                fixedPrice = 150
+            };
+            await _dbContext.SaveChangesAsync();
+
+            // Act
+            var result = await _controller.UpdateReservation(reservation.reservationID, reservationDTO);
+
+            // Assert
+            Assert.That(result.Result, Is.TypeOf<BadRequestObjectResult>());
+            var BadResult = result.Result as BadRequestObjectResult;
+            Assert.That(BadResult.Value, Is.EqualTo("The value Number Of People must be valid"));
+
+
+        }
+
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task UpdateReservationById_ReturnsBadRequest_WhenNumOfPeopleGreaterthanVacancies()
+        {
+            // Arrange
+            var opportunity = new OpportunityModel { OpportunityId = 1, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "a description", Date = DateTime.Now.AddDays(30), Vacancies = 5, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
+            _dbContext.Opportunities.Add(opportunity);
+            var user = new UserModel { UserId = 1, FirstName = "John", LastName = "Doe", BirthDate = DateTime.Now.AddYears(-30), CellPhoneNum = 919919919, Email = "example@email.com", Gender = Enums.Gender.MASCULINO, Image = [1] };
+            _dbContext.Users.Add(user);
+            var reservation = new ReservationModel
+            {
+                reservationID = 1,
+                opportunityID = 1,
+                userID = 1,
+                reservationDate = DateTime.Now.Date,
+                checkInDate = DateTime.Now.Date.AddDays(1),
+                numOfPeople = 1,
+                isActive = false,
+                fixedPrice = 100
+            };
+            _dbContext.Reservations.Add(reservation);
+            var reservationDTO = new Reservation
+            {
+                opportunityId = 1,
+                userId = 1,
+                reservationDate = DateTime.Now.Date,
+                checkInDate = DateTime.Now.Date.AddDays(1),
+                numOfPeople = 7,
+                isActive = false,
+                fixedPrice = 150
+            };
+            await _dbContext.SaveChangesAsync();
+
+            // Act
+            var result = await _controller.UpdateReservation(reservation.reservationID, reservationDTO);
+
+            // Assert
+            Assert.That(result.Result, Is.TypeOf<BadRequestObjectResult>());
+            var BadResult = result.Result as BadRequestObjectResult;
+            Assert.That(BadResult.Value, Is.EqualTo("The numberOfPeople is bigger than number of vacancies"));
 
 
         }
 
         [Test]
         [Category("UnitTest")]
-        public async Task DeleteReservation_ReturnsNoContent_WhenReservationExists()
+        public async Task DeleteReservation_ReturnsOK_WhenReservationExists()
         {
             // Arrange
             var reservation = new ReservationModel
@@ -455,7 +674,7 @@ namespace BackEnd.Test
             var result = await _controller.DeleteReservation(reservation.reservationID);
 
             // Assert
-            Assert.That(result, Is.TypeOf<NoContentResult>());
+            Assert.That(result, Is.TypeOf<OkResult>());
             Assert.That(await _dbContext.Reservations.FindAsync(reservation.reservationID), Is.Null);
         }
 

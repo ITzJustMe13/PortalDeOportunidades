@@ -121,12 +121,12 @@ namespace BackEnd.Controllers
 
             if(reservation.numOfPeople < 0)
             {
-                return NotFound("The value must be valid");
+                return BadRequest("The value Number Of People must be valid");
             }
 
             if (reservation.numOfPeople > opportunity.Vacancies)
             {
-                return NotFound("The numberOfPeople is bigger than number of vacancies");
+                return BadRequest("The numberOfPeople is bigger than number of vacancies");
             }
 
 
@@ -179,7 +179,7 @@ namespace BackEnd.Controllers
         //PUT para atualizar uma reserva
         [HttpPut("{id}")]
         [Authorize]
-        public async Task<IActionResult> UpdateReservation(int id, Reservation reservation)
+        public async Task<ActionResult<Reservation>> UpdateReservation(int id, Reservation reservation)
         {
             // Busca a reserva e a oportunidade associada
             var existingReservation = await dbContext.Reservations.FindAsync(id);
@@ -192,12 +192,12 @@ namespace BackEnd.Controllers
 
             if (reservation.numOfPeople < 0)
             {
-                return NotFound("The value must be valid");
+                return BadRequest("The value Number Of People must be valid");
             }
 
             if (reservation.numOfPeople > opportunity.Vacancies)
             {
-                return NotFound("The numberOfPeople is bigger than number of vacancies");
+                return BadRequest("The numberOfPeople is bigger than number of vacancies");
             }
 
 
@@ -209,13 +209,13 @@ namespace BackEnd.Controllers
 
             await dbContext.SaveChangesAsync();
 
-            return NoContent();
+            return Ok();
         }
 
         //DELETE para apagar uma reserva
         [HttpDelete("{id}")]
         [Authorize]
-        public async Task<IActionResult> DeleteReservation(int id)
+        public async Task<ActionResult> DeleteReservation(int id)
         {
             var reservationToDelete = await dbContext.Reservations.FindAsync(id);
 
@@ -227,7 +227,7 @@ namespace BackEnd.Controllers
             dbContext.Reservations.Remove(reservationToDelete);
             await dbContext.SaveChangesAsync();
 
-            return NoContent();
+            return Ok();
         }
     }
 }
