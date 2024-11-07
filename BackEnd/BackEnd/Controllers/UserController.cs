@@ -479,6 +479,14 @@ namespace BackEnd.Controllers
             return Ok("Account activated successfully.");
         }
 
+        [HttpPost("auth/google")]
+        public async Task<IActionResult> GoogleLogin([FromBody] string googleToken)
+        {
+            //Irá ser implementado quando tivermos front-end
+
+            throw new NotImplementedException();
+        }
+
 
 
     }
