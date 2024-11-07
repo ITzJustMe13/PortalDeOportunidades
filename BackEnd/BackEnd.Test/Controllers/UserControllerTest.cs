@@ -362,6 +362,35 @@ namespace BackEnd.Test
 
         [Test]
         [Category("UnitTest")]
+        public async Task CreateNewUser_ReturnsBadRequest_WhenIBANIsInvalid()
+        {
+            // Arrange
+            byte[] byteArray = new byte[] { 72, 101, 108, 108, 111 };
+            var user = new User
+            {
+                email = "leonardosilva.00009@gmail.com",
+                password = "ValidPassword123",
+                firstName = "Antonio",
+                lastName = "Silva",
+                cellPhoneNumber = 911232439,
+                birthDate = DateTime.Now.AddYears(-20),
+                gender = Gender.MASCULINO,
+                image = byteArray,
+                IBAN = "NL91ABNA04171643000"
+
+            };
+
+            // Act
+            var response = await _controller.CreateNewUser(user);
+
+            // Assert
+            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>());
+            var badRequestResult = response.Result as BadRequestObjectResult;
+            Assert.That(badRequestResult?.Value, Is.EqualTo("IBAN is not valid"));
+        }
+
+        [Test]
+        [Category("UnitTest")]
         public async Task DeleteUser_ReturnsNotFound_ForNonExistentUserId()
         {
             // Arrange
@@ -676,6 +705,52 @@ namespace BackEnd.Test
             Assert.That(response.Result, Is.InstanceOf<NotFoundObjectResult>());
             var notFoundResult = response.Result as NotFoundObjectResult;
             Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task EditUser_ReturnsBadRequest_WhenIBANIsInvalid()
+        {
+            // Arrange
+            int userId = 1;
+            byte[] byteArray = new byte[] { 72, 101, 108, 108, 111 };
+            var existingUser = new UserModel
+            {
+                UserId = userId,
+                FirstName = "Antonio",
+                LastName = "Silva",
+                Email = "existinguser@example.com",
+                CellPhoneNum = 911232439,
+                BirthDate = DateTime.Now.AddYears(-25),
+                Gender = Gender.MASCULINO,
+                isActive = true,
+                Image = byteArray
+            };
+            _context.Users.Add(existingUser);
+
+            var updatedUser = new User
+            {
+                userId = userId,
+                firstName = "Antonio Updated",
+                lastName = "Silva Updated",
+                email = "updateduser@example.com",
+                cellPhoneNumber = 922334455,
+                birthDate = DateTime.Now.AddYears(-25),
+                gender = Gender.MASCULINO,
+                password = "NewPassword123",
+                image = byteArray,
+                IBAN = "NL91ABNA04171643000"
+            };
+            await _context.SaveChangesAsync();
+
+            // Act
+            var response = await _controller.EditUser(userId, updatedUser);
+
+            // Assert
+            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>());
+            var badRequestResult = response.Result as BadRequestObjectResult;
+            Assert.That(badRequestResult?.Value, Is.EqualTo("IBAN is not valid"));
+
         }
 
         [Test]
