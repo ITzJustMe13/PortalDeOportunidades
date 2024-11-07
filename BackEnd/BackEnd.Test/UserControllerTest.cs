@@ -101,6 +101,39 @@ namespace BackEnd.Test
 
         [Test]
         [Category("UnitTest")]
+        public async Task GetClientById_ReturnsOkWithUserDto_ForInValidId()
+        {
+            // Arrange
+            var userId = -1;
+            var staticDate = new DateTime(2023, 1, 1);
+            byte[] byteArray = new byte[] { 72, 101, 108, 108, 111 };
+            var userModel = new UserModel
+            {
+                UserId = -1,
+                BirthDate = staticDate,
+                RegistrationDate = staticDate,
+                CellPhoneNum = 912345678,
+                Email = "example@example.com",
+                FirstName = "Example",
+                LastName = "Test",
+                Gender = Enums.Gender.MASCULINO,
+                Image = byteArray
+            };
+
+            _context.Users.Add(userModel);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var response = await _controller.GetUserByID(userId);
+
+            // Assert
+            Assert.That(response.Result, Is.TypeOf<NotFoundObjectResult>());
+            var notFoundResult = response.Result as NotFoundObjectResult;
+            Assert.That(notFoundResult.Value, Is.EqualTo("User was not found!"));
+        }
+
+        [Test]
+        [Category("UnitTest")]
         public async Task CreateNewUser_ReturnsCreated_WhenUserIsValid()
         {
             // Arrange
