@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     env: 
       GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
-      PrivateKey: ${{ secrets.PrivateKey }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
       STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
       STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY }}
     steps:
