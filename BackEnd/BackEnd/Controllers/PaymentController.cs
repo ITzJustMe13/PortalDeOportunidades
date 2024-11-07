@@ -20,6 +20,8 @@ namespace BackEnd.Controllers
         [HttpPost("Checkout-Reservation")]
         public async Task<IActionResult> CreateReservationCheckoutSession([FromBody] Reservation reservation)
         {
+            if (_context == null)
+                return NotFound("DB context missing");
 
             if (reservation == null || reservation.fixedPrice <= 0)
             {
@@ -88,10 +90,14 @@ namespace BackEnd.Controllers
         [HttpPost("Checkout-Impulse")]
         public async Task<IActionResult> CreateImpulseCheckoutSession([FromBody] Impulse impulse)
         {
+
             if (impulse == null || impulse.value <= 0 || impulse.expireDate <= DateTime.Today)
             {
                 return BadRequest("Invalid impulse data.");
             }
+
+            if (_context == null)
+                return NotFound("DB context missing");
 
             // Find the User
             var user = await _context.Users.FindAsync(impulse.userId);

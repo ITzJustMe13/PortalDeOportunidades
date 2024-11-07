@@ -142,6 +142,80 @@ namespace BackEnd.Test
 
         [Test]
         [Category("UnitTest")]
+        public async Task CreateReservationCheckoutSession_ReturnsNotFound_ForDBContextMissing()
+        {
+            // Arrange
+            var controller = new PaymentController(null);
+            StripeConfiguration.ApiKey = stripeKey;
+
+            byte[] userImg = new byte[]
+            {
+        137, 80, 78, 71, 13, 10, 26, 10,
+        0, 0, 0, 13, 73, 72, 68, 82,
+        0, 0, 0, 1, 0, 0, 0, 1,
+        8, 6, 0, 0, 0, 197, 158, 108,
+        0, 0, 0, 1, 115, 90, 129,
+        1, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0
+            };
+
+            var user = new UserModel
+            {
+                UserId = 1,
+                FirstName = "John",
+                LastName = "Doe",
+                BirthDate = DateTime.Now.AddYears(-30),
+                CellPhoneNum = 919919919,
+                Email = "example@email.com",
+                Gender = Enums.Gender.MASCULINO,
+                Image = userImg
+            };
+
+            _context.Users.Add(user);
+            var opportunity = new OpportunityModel
+            {
+                OpportunityId = 1,
+                Price = 100,
+                Address = "um sitio",
+                Category = Enums.Category.AGRICULTURA,
+                UserID = 1,
+                Name = "name",
+                Description = "a description",
+                Date = DateTime.Now.AddDays(30),
+                Vacancies = 2,
+                IsActive = true,
+                Location = Enums.Location.LISBOA,
+                Score = 0,
+                IsImpulsed = false
+            };
+
+            _context.Opportunities.Add(opportunity);
+            await _context.SaveChangesAsync();
+
+            var reservation = new Reservation
+            {
+                opportunityId = opportunity.OpportunityId,
+                userId = user.UserId,
+                reservationDate = DateTime.Now.Date,
+                checkInDate = DateTime.Now.Date.AddDays(1),
+                numOfPeople = 1,
+                isActive = true,
+                fixedPrice = 100
+            };
+
+            // Act
+
+            var response = await controller.CreateReservationCheckoutSession(reservation);
+
+            // Assert
+            Assert.That(response, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = response as NotFoundObjectResult;
+            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
+        }
+
+        [Test]
+        [Category("UnitTest")]
         public async Task CreateReservationCheckoutSession_ReturnsBadRequest_ForEmptyReservation()
         {
             // Arrange
@@ -632,6 +706,78 @@ namespace BackEnd.Test
             Assert.That(response, Is.InstanceOf<OkObjectResult>());
             var OkResult = response as OkObjectResult;
             Assert.That(OkResult, Is.Not.Null);
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task CreateImpulseCheckoutSession_ReturnsNotFound_ForDBContextMissing()
+        {
+            // Arrange
+            var controller = new PaymentController(null);
+            StripeConfiguration.ApiKey = stripeKey;
+            byte[] userImg = new byte[]
+            {
+        137, 80, 78, 71, 13, 10, 26, 10,
+        0, 0, 0, 13, 73, 72, 68, 82,
+        0, 0, 0, 1, 0, 0, 0, 1,
+        8, 6, 0, 0, 0, 197, 158, 108,
+        0, 0, 0, 1, 115, 90, 129,
+        1, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0
+            };
+
+            var user = new UserModel
+            {
+                UserId = 1,
+                FirstName = "John",
+                LastName = "Doe",
+                BirthDate = DateTime.Now.AddYears(-30),
+                CellPhoneNum = 919919919,
+                Email = "example@email.com",
+                Gender = Enums.Gender.MASCULINO,
+                Image = userImg
+            };
+
+            _context.Users.Add(user);
+            var opportunity = new OpportunityModel
+            {
+                OpportunityId = 1,
+                Price = 100,
+                Address = "um sitio",
+                Category = Enums.Category.AGRICULTURA,
+                UserID = 1,
+                Name = "name",
+                Description = "a description",
+                Date = DateTime.Now.AddDays(30),
+                Vacancies = 2,
+                IsActive = true,
+                Location = Enums.Location.LISBOA,
+                Score = 0,
+                IsImpulsed = false
+            };
+
+            _context.Opportunities.Add(opportunity);
+            await _context.SaveChangesAsync();
+
+            var date = DateTime.Today;
+            var impulse = new Impulse
+            {
+                userId = user.UserId,
+                opportunityId = opportunity.OpportunityId,
+                value = 10,
+                expireDate = date.AddDays(30)
+            };
+
+            // Act
+
+            var response = await controller.CreateImpulseCheckoutSession(impulse);
+
+            // Assert
+
+            Assert.That(response, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = response as NotFoundObjectResult;
+            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
         }
 
         [Test]

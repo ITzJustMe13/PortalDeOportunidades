@@ -22,6 +22,10 @@ namespace BackEnd.Controllers
         [Authorize]
         public async Task<ActionResult<Review>> GetReviewById(int id)
         {
+
+            if (_context == null)
+                return NotFound("DB context missing");
+
             var reviewModel = await _context.Reviews.FindAsync(id);
             if (reviewModel == null)
             {
@@ -43,6 +47,9 @@ namespace BackEnd.Controllers
         [Authorize]
         public async Task<ActionResult<Review>> CreateReview(Review review)
         {
+            if (_context == null)
+                return NotFound("DB context missing");
+
             if (review == null)
             {
                 return BadRequest("Review data is required.");
@@ -109,6 +116,9 @@ namespace BackEnd.Controllers
         [Authorize]
         public async Task<ActionResult<Review>> DeleteReviewById(int id)
         {
+            if (_context == null)
+                return NotFound("DB context missing");
+
             var reviewModel = await _context.Reviews.FindAsync(id);
 
             if(reviewModel == null)
@@ -127,6 +137,9 @@ namespace BackEnd.Controllers
         [Authorize]
         public async Task<ActionResult<Review>> EditReviewById(int id, [FromQuery]float score, [FromQuery]string? desc)
         {
+            if (_context == null)
+                return NotFound("DB context missing");
+
             var reviewModel = await _context.Reviews.FindAsync(id);
 
             if(reviewModel == null)

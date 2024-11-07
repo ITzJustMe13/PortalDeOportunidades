@@ -230,30 +230,26 @@ namespace BackEnd.Controllers
 
             try
             {
-                // Initialize the review score
+                // Initialize review score
                 opportunity.reviewScore = 0.0F;
 
-                // Map DTO to model
                 var opportunityModel = OpportunityMapper.MapToModel(opportunity);
 
-                // If there are images in the opportunity, map them to the model
+                // If the opportunity has imgs map them to the model
                 if (opportunity.OpportunityImgs != null && opportunity.OpportunityImgs.Any())
                 {
                     opportunityModel.OpportunityImgs = opportunity.OpportunityImgs
-                        .Select(OpportunityImgMapper.MapToModel) // Assuming you have a mapper for images
+                        .Select(OpportunityImgMapper.MapToModel)
                         .ToList();
                 }
 
-                // Add the opportunity model to the context
                 await _context.Opportunities.AddAsync(opportunityModel);
 
-                // Save changes to the database
                 await _context.SaveChangesAsync();
 
                 // Map the created model back to DTO
                 var createdOpportunityDto = OpportunityMapper.MapToDto(opportunityModel);
 
-                // Return the created opportunity
                 return CreatedAtAction(nameof(GetOpportunityById), new { id = createdOpportunityDto.opportunityId }, createdOpportunityDto);
             }
             catch (ValidationException ex)
@@ -262,7 +258,7 @@ namespace BackEnd.Controllers
             }
         }
 
-        //DELETE api/Opportunity/
+        //DELETE api/Opportunity/1
         [HttpDelete("{id}")]
         [Authorize]
         public async Task<ActionResult<Opportunity>> DeleteOpportunityById(int id)

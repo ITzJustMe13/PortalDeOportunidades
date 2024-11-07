@@ -83,6 +83,23 @@ namespace BackEnd.Test
 
         [Test]
         [Category("UnitTest")]
+        public async Task GetReviewById_ReturnsNotFoundObjectResult_DBContextMissing()
+        {
+            // Arrange
+            var controller = new ReviewController(null);
+            var reviewId = 1;
+
+            // Act
+            var response = await controller.GetReviewById(reviewId);
+
+            // Assert
+            Assert.That(response.Result, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = response.Result as NotFoundObjectResult;
+            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
+        }
+
+        [Test]
+        [Category("UnitTest")]
         public async Task CreateReview_ReturnsBadRequest_ForInvalidReservationId()
         {
             // Arrange
@@ -190,6 +207,87 @@ namespace BackEnd.Test
             Assert.That(returnedReview?.ReservationId, Is.EqualTo(newReviewDto.reservationId));
             Assert.That(returnedReview?.Desc, Is.EqualTo("New test review"));
             Assert.That(returnedReview?.Rating, Is.EqualTo(4.5f));
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task CreateReview_ReturnsNotFoundt_DBContextMissing()
+        {
+            // Arrange
+            var controller = new ReviewController(null);
+            byte[] userImg = new byte[]
+            {
+        137, 80, 78, 71, 13, 10, 26, 10,
+        0, 0, 0, 13, 73, 72, 68, 82,
+        0, 0, 0, 1, 0, 0, 0, 1,
+        8, 6, 0, 0, 0, 197, 158, 108,
+        0, 0, 0, 1, 115, 90, 129,
+        1, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0
+            };
+            var user = new UserModel
+            {
+                UserId = 1,
+                FirstName = "John",
+                LastName = "Doe",
+                BirthDate = DateTime.Now.AddYears(-30),
+                CellPhoneNum = 919919919,
+                Email = "example@email.com",
+                Gender = Enums.Gender.MASCULINO,
+                Image = userImg
+            };
+
+            _context.Users.Add(user);
+            var opportunity = new OpportunityModel
+            {
+                OpportunityId = 1,
+                Price = 100,
+                Address = "um sitio",
+                Category = Enums.Category.AGRICULTURA,
+                UserID = 1,
+                Name = "name",
+                Description = "a description",
+                Date = DateTime.Now.AddDays(30),
+                Vacancies = 2,
+                IsActive = true,
+                Location = Enums.Location.LISBOA,
+                Score = 0,
+                IsImpulsed = false
+            };
+
+            _context.Opportunities.Add(opportunity);
+            await _context.SaveChangesAsync();
+
+            var reservationModel = new ReservationModel
+            {
+                reservationID = 1,
+                reservationDate = DateTime.Now,
+                checkInDate = DateTime.Now,
+                opportunityID = 1,
+                userID = 1,
+                numOfPeople = 2,
+                isActive = true
+            };
+
+            _context.Reservations.Add(reservationModel);
+            await _context.SaveChangesAsync();
+
+            var newReviewDto = new BackEnd.Models.FrontEndModels.Review
+            {
+                reservationId = reservationModel.reservationID,
+                rating = 4.5f,
+                desc = "New test review"
+            };
+
+            // Act
+            var response = await controller.CreateReview(newReviewDto);
+
+            // Assert
+
+            Assert.That(response.Result, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = response.Result as NotFoundObjectResult;
+            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
         }
 
 
@@ -324,6 +422,26 @@ namespace BackEnd.Test
 
         [Test]
         [Category("UnitTest")]
+        public async Task DeleteReview_ReturnsNotFound_ForDBContextMissing()
+        {
+            // Arrange
+            var controller = new ReviewController(null);
+            var reservationId = 1;
+            var reviewModel = new ReviewModel { ReservationId = reservationId, Rating = 4.5f, Desc = "Test review" };
+            _context.Reviews.Add(reviewModel);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var response = await controller.DeleteReviewById(reservationId);
+
+            // Assert
+            Assert.That(response.Result, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = response.Result as NotFoundObjectResult;
+            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
+        }
+
+        [Test]
+        [Category("UnitTest")]
         public async Task EditReview_ReturnsBadRequest_ForInvalidReservationId()
         {
             // Arrange
@@ -386,6 +504,26 @@ namespace BackEnd.Test
             var badRequestResult = response.Result as BadRequestObjectResult;
             Assert.That(badRequestResult, Is.Not.Null);
             Assert.That(badRequestResult?.Value, Is.EqualTo("Rating can't be below 0 or bigger than 5"));
+        }
+
+        [Test]
+        [Category("UnitTest")]
+        public async Task EditReview_ReturnsNotFound_ForDBContextMissing()
+        {
+            // Arrange
+            var controller = new ReviewController(null);
+            var reservationId = 1;
+            var reviewModel = new ReviewModel { ReservationId = reservationId, Rating = 4.5f, Desc = "Test review" };
+            _context.Reviews.Add(reviewModel);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var response = await controller.EditReviewById(1, 2.5F, "Great test");
+
+            // Assert
+            Assert.That(response.Result, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = response.Result as NotFoundObjectResult;
+            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
         }
     }
 }

@@ -21,6 +21,9 @@ namespace BackEnd.Controllers
         [HttpGet("{userId}/AllActiveReservations")]
         public async Task<ActionResult<IEnumerable<Reservation>>> GetAllActiveReservationsByUserId(int userId)
         {
+            if (dbContext == null)
+                return NotFound("DB context missing");
+
             var reservations = await dbContext.Reservations
                 .Where(r => r.userID == userId && r.isActive)
                 .ToListAsync();
@@ -46,6 +49,9 @@ namespace BackEnd.Controllers
         [Authorize]
         public async Task<ActionResult<IEnumerable<Reservation>>> GetAllReservationByUserId(int userId)
         {
+            if (dbContext == null)
+                return NotFound("DB context missing");
+
             var reservations = await dbContext.Reservations
                 .Where(r => r.userID == userId)
                 .ToListAsync();
@@ -72,6 +78,9 @@ namespace BackEnd.Controllers
         [Authorize]
         public async Task<ActionResult<Reservation>> GetReservationById(int id)
         {
+            if (dbContext == null)
+                return NotFound("DB context missing");
+
             // Busca a reserva pelo ID fornecido
             var reservation = await dbContext.Reservations.FindAsync(id);
 
@@ -104,6 +113,9 @@ namespace BackEnd.Controllers
             {
                 return BadRequest("Some required fields are missing or invalid.");
             }
+
+            if (dbContext == null)
+                return NotFound("DB context missing");
 
             // Verifica se a oportunidade e o usuário existem
             var opportunity = await dbContext.Opportunities.FindAsync(reservation.opportunityId);
@@ -156,6 +168,9 @@ namespace BackEnd.Controllers
         [Authorize]
         public async Task<ActionResult<Reservation>> DeactivateReservationById(int id)
         {
+            if (dbContext == null)
+                return NotFound("DB context missing");
+
             var reservationModel = await dbContext.Reservations.FindAsync(id);
             if (reservationModel == null)
             {
@@ -181,6 +196,9 @@ namespace BackEnd.Controllers
         [Authorize]
         public async Task<ActionResult<Reservation>> UpdateReservation(int id, Reservation reservation)
         {
+            if (dbContext == null)
+                return NotFound("DB context missing");
+
             // Busca a reserva e a oportunidade associada
             var existingReservation = await dbContext.Reservations.FindAsync(id);
             var opportunity = await dbContext.Opportunities.FindAsync(reservation.opportunityId);
@@ -217,6 +235,9 @@ namespace BackEnd.Controllers
         [Authorize]
         public async Task<ActionResult> DeleteReservation(int id)
         {
+            if (dbContext == null)
+                return NotFound("DB context missing");
+
             var reservationToDelete = await dbContext.Reservations.FindAsync(id);
 
             if (reservationToDelete == null)
