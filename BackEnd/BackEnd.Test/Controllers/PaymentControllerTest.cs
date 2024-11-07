@@ -47,12 +47,12 @@ namespace BackEnd.Test
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Error loading.env.test: " + ex.Message);
+                    Console.WriteLine("Error loading.env: " + ex.Message);
                 }
             }
             else
             {
-                Console.WriteLine(".env.test file not found at the specified path.");
+                Console.WriteLine(".env file not found at the specified path.");
             }
 
             stripeKey = Env.GetString("STRIPE_SECRET_KEY");
