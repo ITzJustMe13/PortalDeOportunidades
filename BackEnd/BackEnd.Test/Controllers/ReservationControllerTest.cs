@@ -282,7 +282,7 @@ namespace BackEnd.Test
             // Assert
             Assert.That(result.Result, Is.TypeOf<BadRequestObjectResult>());
             var createdResult = result.Result as BadRequestObjectResult;
-            Assert.That(400, Is.EqualTo(createdResult.StatusCode));
+            Assert.That(createdResult.Value, Is.EqualTo("Some required fields are missing or invalid."));
         }
 
         [Test]
