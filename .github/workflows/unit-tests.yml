@@ -16,8 +16,8 @@ jobs:
     env: 
       GMAIL_APP_PASSWORD: ${{GMAIL_APP_PASSWORD}}
       PrivateKey: ${{PrivateKey}}
-      StipeSecretKey: ${{StipeSecretKey}}
-      StripePublishableKey: ${{StripePublishableKey}}
+      STRIPE_SECRET_KEY: ${{STRIPE_SECRET_KEY}}
+      STRIPE_PUBLISHABLE_KEY: ${{STRIPE_PUBLISHABLE_KEY}}
     steps:
       - uses: actions/checkout@v2
       - name: Set up .NET
