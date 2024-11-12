@@ -20,7 +20,7 @@ class Opportunity {
   final List<OpportunityImg> opportunityImgs;
 
   Opportunity({
-    required this.opportunityId,
+    this.opportunityId,
     required this.name,
     required this.price,
     required this.vacancies,
@@ -33,7 +33,7 @@ class Opportunity {
     required this.reviewScore,
     required this.date,
     required this.isImpulsed,
-    required this.opportunityImgs,
+    this.opportunityImgs,
   });
 
   factory Opportunity.fromJson(Map<String, dynamic> json) => Opportunity(
@@ -55,22 +55,21 @@ class Opportunity {
       .toList()
   );
 
-    Map<String, dynamic> toJson() => {
-      "opportunityId": opportunityId,
-      "name": name,
-      "price": price,
-      "vacancies": vacancies,
-      "isActive": isActive,
-      "category": categoryToInt(category),
-      "description": description,
-      "location": locationToInt(location),
-      "address": address,
-      "userId": userId,
-      "reviewScore": reviewScore,
-      "date": date.toIso8601String(),
-      "isImpulsed": isImpulsed,
-      "opportunityImgs": opportunityImgs.map((e) => e.toJson()).toList(),
-    };
+  Map<String, dynamic> toJson() => {
+    "name": name,
+    "price": price,
+    "vacancies": vacancies,
+    "isActive": isActive,
+    "category": categoryToInt(category),
+    "description": description,
+    "location": locationToInt(location),
+    "address": address,
+    "userId": userId,
+    "reviewScore": reviewScore,
+    "date": date.toIso8601String(),
+    "isImpulsed": isImpulsed,
+    "opportunityImgs": opportunityImgs.map((e) => e.toJson()).toList(),
+  };
 
 }
 
