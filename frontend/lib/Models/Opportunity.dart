@@ -1,23 +1,20 @@
-
-import 'dart:ffi';
-
 import 'package:flutter/foundation.dart';
-import 'package:frontend/Enums/Category.dart';
+import 'package:frontend/Enums/OppCategory.dart';
 import 'package:frontend/Enums/Location.dart';
 import 'package:frontend/Models/OpportunityImg.dart';
 
 class Opportunity {
   final int opportunityId;
   final String name;
-  final Float price;
+  final double price;
   final int vacancies;
   final bool isActive;
-  final Category category;
+  final OppCategory category;
   final String description;
   final Location location;
   final String address;
   final int userId;
-  final Float reviewScore;
+  final double reviewScore;
   final DateTime date;
   final bool isImpulsed;
   final List<OpportunityImg> opportunityImgs;
@@ -53,6 +50,27 @@ class Opportunity {
     reviewScore: json["reviewScore"], 
     date: DateTime.parse(json["date"]), 
     isImpulsed: json["isImpulsed"], 
-    opportunityImgs: opportunityImgs)
+    opportunityImgs: (json["opportunityImgs"] as List<dynamic>)
+      .map((e) => OpportunityImg.fromJson(e))
+      .toList()
+  );
+
+    Map<String, dynamic> toJson() => {
+      "opportunityId": opportunityId,
+      "name": name,
+      "price": price,
+      "vacancies": vacancies,
+      "isActive": isActive,
+      "category": categoryToInt(category),
+      "description": description,
+      "location": locationToInt(location),
+      "address": address,
+      "userId": userId,
+      "reviewScore": reviewScore,
+      "date": date.toIso8601String(),
+      "isImpulsed": isImpulsed,
+      "opportunityImgs": opportunityImgs.map((e) => e.toJson()).toList(),
+    };
+
 }
 

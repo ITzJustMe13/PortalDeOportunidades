@@ -10,6 +10,23 @@ using Stripe;
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
 DotNetEnv.Env.Load();
+
+var specificOrgins = "AppOrigins";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: specificOrgins,
+        policy =>
+        {
+            // Allow any origin starting with "https://localhost:" which will cover any port on localhost with HTTPS
+            policy.WithOrigins("https://localhost:*")
+                  .AllowAnyMethod()
+                  .AllowAnyHeader()
+                  .AllowCredentials();
+        });
+});
+
+
 builder.Services
     .AddAuthentication(x =>
     {

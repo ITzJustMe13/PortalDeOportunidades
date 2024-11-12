@@ -1,4 +1,4 @@
-enum Category
+enum OppCategory
 {
     AGRICULTURA,
     ARTESANATO,
@@ -11,11 +11,11 @@ enum Category
 }
 
 // Convert an integer (from the backend) to the corresponding Category enum
-Category categoryFromInt(int categoryInt) {
-  return Category.values[categoryInt]; // This works because Flutter's enums are indexed
+OppCategory categoryFromInt(int categoryInt) {
+  return OppCategory.values[categoryInt]; // This works because Flutter's enums are indexed
 }
 
 // Convert a Category enum to its integer value for sending to the backend
-int categoryToInt(Category category) {
+int categoryToInt(OppCategory category) {
   return category.index; // This gives the integer value of the enum
 }
