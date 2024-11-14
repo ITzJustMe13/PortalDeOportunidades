@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/Views/CreateOpportunityScreen.dart';
 import 'package:frontend/main_page.dart';
 
 void main() {
@@ -10,8 +11,11 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: MainPage(),
+    return MaterialApp(
+      home: const MainPage(),
+      routes: {
+        '/add-opportunity': (context) => CreateOpportunityScreen(),
+      },
     );
   }
 }
