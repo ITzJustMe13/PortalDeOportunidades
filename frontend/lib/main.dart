@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/Views/OpportunityDetailsScreen.dart';
 import 'package:frontend/main_page.dart';
 
 void main() {
@@ -10,8 +11,13 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: MainPage(),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false, // Removes the debug banner
+      title: 'Flutter App',
+      theme: ThemeData(
+        primarySwatch: Colors.green,
+      ),
+      home: OpportunityDetailsScreen(), // No need to use `.new`
     );
   }
 }
