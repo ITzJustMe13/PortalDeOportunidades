@@ -1,8 +1,6 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:frontend/Models/Opportunity.dart';
 import 'package:http/http.dart' as http;
-import 'Api/user_api_handler.dart';
 import 'Api/opportunity_api_handler.dart';
 
 class MainPage extends StatefulWidget {
@@ -22,7 +20,7 @@ class _MyWidgetState extends State<MainPage> {
     opportunityApiHandler = OpportunityApiHandler(http.Client());
   }
 
-  @override
+@override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -30,6 +28,13 @@ class _MyWidgetState extends State<MainPage> {
         centerTitle: true,
         backgroundColor: const Color(0xFF50C878),
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(icon: const Icon(Icons.add),
+          onPressed:(){
+            //Navigator.pushNamed(context, '/add-opportunity');
+            Navigator.pushNamed(context, '/home');
+          })
+        ]
       ),
       body: FutureBuilder<Opportunity?>(
         future: opportunityApiHandler.getOpportunityByID(2), // Use the instance here
