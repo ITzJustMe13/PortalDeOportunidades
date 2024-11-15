@@ -1,8 +1,6 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:frontend/Models/Opportunity.dart';
 import 'package:http/http.dart' as http;
-import 'Api/user_api_handler.dart';
 import 'Api/opportunity_api_handler.dart';
 
 class MainPage extends StatefulWidget {
@@ -32,7 +30,8 @@ class _MyWidgetState extends State<MainPage> {
         foregroundColor: Colors.white,
       ),
       body: FutureBuilder<Opportunity?>(
-        future: opportunityApiHandler.getOpportunityByID(2), // Use the instance here
+        future: opportunityApiHandler
+            .getOpportunityByID(2), // Use the instance here
         builder: (context, snapshot) {
           // Handle loading state
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -59,17 +58,17 @@ class _MyWidgetState extends State<MainPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Opportunity ID: ${opportunity.opportunityId}',  // Access `id` from Opportunity object
+                  'Opportunity ID: ${opportunity.opportunityId}', // Access `id` from Opportunity object
                   style: const TextStyle(fontSize: 18),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Name: ${opportunity.name}',  // Access `name` from Opportunity object
+                  'Name: ${opportunity.name}', // Access `name` from Opportunity object
                   style: const TextStyle(fontSize: 18),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Price: ${opportunity.price}',  // Access `price` from Opportunity object
+                  'Price: ${opportunity.price}', // Access `price` from Opportunity object
                   style: const TextStyle(fontSize: 18),
                 ),
               ],

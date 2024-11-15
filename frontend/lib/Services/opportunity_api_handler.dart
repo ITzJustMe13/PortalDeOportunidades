@@ -3,8 +3,7 @@ import 'package:http/http.dart' as http;
 import '../Models/Opportunity.dart';
 
 class OpportunityApiHandler {
-
-  final String baseUri = "https://localhost:7235/api/opportunity";
+  final String baseUri = "https://localhost:7235/api/Opportunity";
 
   // You should initialize the http.Client in the constructor or elsewhere in your code.
   final http.Client client;
@@ -47,6 +46,5 @@ class OpportunityApiHandler {
       print('Exception occurred: $e');
       return null;
     }
-    
   }
 }
