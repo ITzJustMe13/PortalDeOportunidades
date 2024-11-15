@@ -6,10 +6,8 @@ class OpportunityDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
-        title: 'Portal de Oportunidades', // Pass the title you want here
-      ),
-      endDrawer: CustomDrawer(), // Use the CustomDrawer here
+      appBar: CustomAppBar(),
+      endDrawer: CustomDrawer(),
       body: Center(
         child: const Text(
           'Welcome to Your Opportunity Details Screen!',
