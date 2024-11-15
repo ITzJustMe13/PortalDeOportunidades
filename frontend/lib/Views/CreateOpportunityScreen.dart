@@ -31,7 +31,7 @@ class _AddOpportunityScreenState extends State<CreateOpportunityScreen> {
           if (constraints.maxWidth < 600) {
             // Layout para telas pequenas (smartphones)
             return _buildMobileLayout();
-          } else if (constraints.maxWidth < 1024) {
+          } else if (constraints.maxWidth < 1200) {
             // Layout para telas médias (tablets)
             return _buildTabletLayout();
           } else {
@@ -49,7 +49,9 @@ class _AddOpportunityScreenState extends State<CreateOpportunityScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildImagePicker(),
+          Center(
+            child: _buildImagePicker(),
+          ),
           const SizedBox(height: 16),
           _buildTextFields(),
           const SizedBox(height: 16),
@@ -92,39 +94,39 @@ class _AddOpportunityScreenState extends State<CreateOpportunityScreen> {
           const SizedBox(height: 16),
           _buildSubmitButton(),
         ],
-        
       ),
     );
   }
 
   Widget _buildDesktopLayout() {
-  return Padding(
-    padding: const EdgeInsets.only(left:400, right:400, top: 50),
-    child: SingleChildScrollView(  // Adiciona o scroll
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildImagePicker(),
-              const SizedBox(width: 16),
-              Expanded(child: _buildTextFields()),
-            ],
-          ),
-          const SizedBox(height: 16),
-          _buildDropdowns(),
-          const SizedBox(height: 16),
-          _buildDateField(),
-          const SizedBox(height: 16),
-          _buildAddressField(),
-          const SizedBox(height: 16),
-          _buildSubmitButton(),
-        ],
+    return Padding(
+      padding: const EdgeInsets.only(left: 400, right: 400, top: 50),
+      child: SingleChildScrollView(
+        // Adiciona o scroll
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildImagePicker(),
+                const SizedBox(width: 16),
+                Expanded(child: _buildTextFields()),
+              ],
+            ),
+            const SizedBox(height: 16),
+            _buildDropdowns(),
+            const SizedBox(height: 16),
+            _buildDateField(),
+            const SizedBox(height: 16),
+            _buildAddressField(),
+            const SizedBox(height: 16),
+            _buildSubmitButton(),
+          ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   Widget _buildImagePicker() {
     return Container(
@@ -161,7 +163,7 @@ class _AddOpportunityScreenState extends State<CreateOpportunityScreen> {
               ? 'Por favor, insira uma descrição da oportunidade'
               : null,
           maxLines: 4, // Definindo o campo para aceitar até 6 linhas visíveis
-          keyboardType: TextInputType.multiline,// Necessário para multiline
+          keyboardType: TextInputType.multiline, // Necessário para multiline
         ),
         const SizedBox(height: 16),
         Row(
@@ -198,7 +200,7 @@ class _AddOpportunityScreenState extends State<CreateOpportunityScreen> {
     TextInputType keyboardType = TextInputType.text,
     required FormFieldSetter<String> onSaved,
     required FormFieldValidator<String> validator,
-    int? maxLines,// Adicionando o parâmetro
+    int? maxLines, // Adicionando o parâmetro
   }) {
     return TextFormField(
       decoration: InputDecoration(
@@ -210,7 +212,8 @@ class _AddOpportunityScreenState extends State<CreateOpportunityScreen> {
       validator: validator,
       onSaved: onSaved,
       maxLines: maxLines,
-      textAlign: TextAlign.start, // Usando maxLines para ajustar a altura do campo // Alinha o texto no topo da caixa
+      textAlign: TextAlign
+          .start, // Usando maxLines para ajustar a altura do campo // Alinha o texto no topo da caixa
     );
   }
 
@@ -350,4 +353,3 @@ class _AddOpportunityScreenState extends State<CreateOpportunityScreen> {
     print("Data: $_date");
   }
 }
-
