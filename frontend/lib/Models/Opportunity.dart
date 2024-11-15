@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:frontend/Enums/OppCategory.dart';
-import 'package:frontend/Enums/Location.dart';
+import 'package:frontend/Enums/OppLocation.dart';
 import 'package:frontend/Models/OpportunityImg.dart';
 
 class Opportunity {
@@ -11,7 +11,7 @@ class Opportunity {
   final bool isActive;
   final OppCategory category;
   final String description;
-  final Location location;
+  final OppLocation location;
   final String address;
   final int userId;
   final double reviewScore;
