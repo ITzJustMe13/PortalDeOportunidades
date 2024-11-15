@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/Components/on_the_rise_opportunity_card.dart';
+import 'package:frontend/Components/opportunity_card.dart';
 import 'package:frontend/Enums/Location.dart';
 import 'package:frontend/Enums/OppCategory.dart';
 import 'package:frontend/Models/Opportunity.dart';
@@ -101,6 +102,20 @@ class _HomePageState extends State<HomePage> {
         date: DateTime.now(),
         isImpulsed: false,
         opportunityImgs: []),
+    Opportunity(
+        name: "Oportunidade6",
+        price: 10.2,
+        vacancies: 1,
+        isActive: true,
+        category: OppCategory.AGRICULTURA,
+        description: "description",
+        location: Location.ACORES,
+        address: "address",
+        userId: 1,
+        reviewScore: 42,
+        date: DateTime.now(),
+        isImpulsed: false,
+        opportunityImgs: []),
   ];
 
   @override
@@ -121,30 +136,46 @@ class _HomePageState extends State<HomePage> {
               ? screenWidth * 0.6 // For large screens (e.g., desktop)
               : screenWidth * 1; // For smaller screens (e.g., mobile, tablet)
 
-          return Center(
-            // Add this Center widget to center the ListView
-            child: SizedBox(
-              width: componentWidth,
-              child: ListView(
-                padding: const EdgeInsets.all(padding),
-                children: [
-                  // For each opportunity, wrap in a SizedBox with width constraint
-                  for (var opportunity in opportunitiesOnTheRiseList)
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: OnTheRiseOpportunityCard(
-                        opportunity: opportunity,
-                      ),
-                    ),
-                  // For testing, you can also display the other list
-                  for (var opportunity in opportunitiesList)
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(opportunity.name),
-                    ),
-                ],
+          return ListView(
+            padding: const EdgeInsets.all(padding),
+            children: [
+              Center(
+                child: SizedBox(
+                    width: componentWidth,
+                    child: Column(
+                      children: [
+                        for (var opportunity in opportunitiesOnTheRiseList)
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: OnTheRiseOpportunityCard(
+                              opportunity: opportunity,
+                            ),
+                          ),
+                        SizedBox(height: padding),
+                        Divider(thickness: 1, color: Colors.black),
+                        SizedBox(height: padding),
+                        GridView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          gridDelegate:
+                              SliverGridDelegateWithMaxCrossAxisExtent(
+                            maxCrossAxisExtent: 400,
+                            crossAxisSpacing: 8.0,
+                            mainAxisSpacing: 8.0,
+                          ),
+                          itemCount: opportunitiesList.length,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: OpportunityCard(
+                                  opportunity: opportunitiesList[index]),
+                            );
+                          },
+                        ),
+                      ],
+                    )),
               ),
-            ),
+            ],
           );
         },
       ),

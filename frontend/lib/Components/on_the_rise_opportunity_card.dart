@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/Components/dynamic_details_button.dart';
 import 'package:frontend/Models/Opportunity.dart';
 
 class OnTheRiseOpportunityCard extends StatelessWidget {
@@ -52,7 +53,7 @@ class OnTheRiseOpportunityCard extends StatelessWidget {
         Image.network(
           'https://picsum.photos/200',
           fit: BoxFit.cover,
-          height: 100,
+          height: 125,
           width: double.infinity,
         ),
         Positioned(
@@ -93,20 +94,21 @@ class OnTheRiseOpportunityCard extends StatelessWidget {
                 ),
               ),
               SizedBox(width: 8),
-              TextButton(onPressed: null, child: Text("Detalhes")),
+              DynamicDetailsButton()
             ],
           ),
           SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text("${opportunity.price.toString()}€/Pessoa"),
+              Text("${opportunity.price.toString()}€ /Pessoa"),
               SizedBox(width: 8),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     opportunity.location.toString().split('.').last,
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(width: 8),
                   IconButton.filled(onPressed: null, icon: Icon(Icons.star)),

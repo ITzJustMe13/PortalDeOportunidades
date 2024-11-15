@@ -8,7 +8,7 @@
             "name": "frontend",
             "cwd": "frontend",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
         },
         {
             "name": "frontend (profile mode)",
