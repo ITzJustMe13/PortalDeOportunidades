@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/Components/opportunity_card.dart';
 import 'package:frontend/Components/paginated_opportunity_gallery.dart';
 import 'package:frontend/Enums/Location.dart';
 import 'package:frontend/Enums/OppCategory.dart';
 import 'package:frontend/Models/Opportunity.dart';
-
 import '../Components/on_the_rise_opportunities_carousel.dart';
 
 class HomePage extends StatefulWidget {

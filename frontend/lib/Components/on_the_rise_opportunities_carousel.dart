@@ -12,7 +12,7 @@ class OnTheRiseOpportunityCarousel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    final bool isPhone = screenWidth <600;
+    final bool isPhone = screenWidth < 600;
 
     return CarouselSlider(
       options: CarouselOptions(

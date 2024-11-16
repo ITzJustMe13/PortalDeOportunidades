@@ -97,23 +97,15 @@ class OpportunityCard extends StatelessWidget {
               crossAxisAlignment: WrapCrossAlignment.center,
               alignment: WrapAlignment.spaceBetween,
               children: [
-                Flexible(
-                  fit: FlexFit.loose,
-                  flex: 1,
-                  child: IconButton.filled(
-                    onPressed: null,
-                    icon: Icon(Icons.star),
-                    style: IconButton.styleFrom(
-                      padding: EdgeInsets.all(2),
-                    ),
+                IconButton.filled(
+                  onPressed: null,
+                  icon: Icon(Icons.star),
+                  style: IconButton.styleFrom(
+                    padding: EdgeInsets.all(2),
                   ),
                 ),
                 SizedBox(height: 8),
-                Flexible(
-                  fit: FlexFit.loose,
-                  flex: 1,
-                  child: DynamicDetailsButton(),
-                ),
+                DynamicDetailsButton(),
               ],
             ),
           )

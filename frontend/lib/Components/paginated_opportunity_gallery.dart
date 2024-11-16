@@ -6,7 +6,8 @@ import 'package:number_paginator/number_paginator.dart';
 class PaginatedOpportunityGallery extends StatefulWidget {
   final List<Opportunity> allOpportunities;
 
-  const PaginatedOpportunityGallery({super.key, required this.allOpportunities});
+  const PaginatedOpportunityGallery(
+      {super.key, required this.allOpportunities});
 
   @override
   State<PaginatedOpportunityGallery> createState() =>
@@ -27,7 +28,8 @@ class _PaginatedOpportunityGalleryState
 
   List<Opportunity> get _currentPageOpportunities {
     final startIndex = _currentPage * itemsPerPage;
-    final endIndex = (startIndex + itemsPerPage).clamp(0, widget.allOpportunities.length);
+    final endIndex =
+        (startIndex + itemsPerPage).clamp(0, widget.allOpportunities.length);
     return widget.allOpportunities.sublist(startIndex, endIndex);
   }
 
@@ -39,8 +41,8 @@ class _PaginatedOpportunityGalleryState
           child: Column(
             children: [
               GridView.builder(
-                shrinkWrap: true, 
-                physics: NeverScrollableScrollPhysics(), 
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
                 gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                   maxCrossAxisExtent: 400,
                   crossAxisSpacing: 8.0,
@@ -60,7 +62,8 @@ class _PaginatedOpportunityGalleryState
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: NumberPaginator(
-                  numberPages: _numPages,  // Now it dynamically reflects the number of pages
+                  numberPages:
+                      _numPages, // Now it dynamically reflects the number of pages
                   onPageChange: (int index) {
                     setState(() {
                       _currentPage = index;
