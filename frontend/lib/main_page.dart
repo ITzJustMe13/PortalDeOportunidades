@@ -30,6 +30,12 @@ class _MyWidgetState extends State<MainPage> {
         centerTitle: true,
         backgroundColor: const Color(0xFF50C878),
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(icon: const Icon(Icons.add),
+          onPressed:(){
+            Navigator.pushNamed(context, '/perfil');
+          })
+        ]
       ),
       body: FutureBuilder<Opportunity?>(
         future: opportunityApiHandler.getOpportunityByID(2), // Use the instance here
