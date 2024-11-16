@@ -13,7 +13,7 @@ dependencies:
   flutter_form_builder: ^9.5.0
   form_builder_validators: ^11.0.0
   flutter_map: ^7.0.2
-  geocoding: ^3.0.0
+  geocode: ^1.0.3
   latlong2: ^0.9.1
 
 dev_dependencies:

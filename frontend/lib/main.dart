@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/Screens/OpportunityDetailsScreen.dart';
+import 'package:frontend/Views/OpportunityDetailsScreen.dart';
 import 'package:frontend/main_page.dart';
 
 void main() {
