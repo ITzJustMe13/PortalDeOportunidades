@@ -15,15 +15,19 @@ class PaginatedOpportunityGallery extends StatefulWidget {
 
 class _PaginatedOpportunityGalleryState
     extends State<PaginatedOpportunityGallery> {
-  final int _numPages = 10;
   int _currentPage = 0;
 
   static const int itemsPerPage = 6;
 
+  // Calcular o total de páginas dinamicamente
+  int get _numPages {
+    final totalItems = widget.allOpportunities.length;
+    return (totalItems / itemsPerPage).ceil();
+  }
+
   List<Opportunity> get _currentPageOpportunities {
     final startIndex = _currentPage * itemsPerPage;
-    final endIndex =
-        (startIndex + itemsPerPage).clamp(0, widget.allOpportunities.length);
+    final endIndex = (startIndex + itemsPerPage).clamp(0, widget.allOpportunities.length);
     return widget.allOpportunities.sublist(startIndex, endIndex);
   }
 
@@ -31,15 +35,12 @@ class _PaginatedOpportunityGalleryState
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Wrapping the GridView in a SingleChildScrollView allows for scrolling
-        // while maintaining the flexibility of pagination
         SingleChildScrollView(
           child: Column(
             children: [
-              // GridView with shrinkWrap to limit the amount of space it takes
               GridView.builder(
-                shrinkWrap: true, // Makes the grid take only the required space
-                physics: NeverScrollableScrollPhysics(), // Disable scrolling on the GridView itself
+                shrinkWrap: true, 
+                physics: NeverScrollableScrollPhysics(), 
                 gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                   maxCrossAxisExtent: 400,
                   crossAxisSpacing: 8.0,
@@ -59,7 +60,7 @@ class _PaginatedOpportunityGalleryState
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: NumberPaginator(
-                  numberPages: _numPages,
+                  numberPages: _numPages,  // Now it dynamically reflects the number of pages
                   onPageChange: (int index) {
                     setState(() {
                       _currentPage = index;
