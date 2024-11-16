@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/Models/Opportunity.dart';
 import 'package:http/http.dart' as http;
 import 'Api/opportunity_api_handler.dart';
 

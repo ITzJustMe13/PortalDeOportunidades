@@ -5,7 +5,8 @@ import 'package:frontend/Models/Opportunity.dart';
 class OnTheRiseOpportunityCard extends StatelessWidget {
   final Opportunity opportunity;
 
-  OnTheRiseOpportunityCard({
+  const OnTheRiseOpportunityCard({
+    super.key,
     required this.opportunity,
   });
 
@@ -13,10 +14,10 @@ class OnTheRiseOpportunityCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        // Check if the screen is narrow (e.g., mobile) or wide (e.g., tablet/desktop)
-        bool isSmallScreen = constraints.maxWidth < 600;
+        bool isSmallScreen = constraints.maxWidth <450;
 
         return Container(
+          height: isSmallScreen ? 300 : 150,
           color: Color(0xFFCCFFE5),
           child: isSmallScreen
               ? Column(
@@ -53,7 +54,7 @@ class OnTheRiseOpportunityCard extends StatelessWidget {
         Image.network(
           'https://picsum.photos/200',
           fit: BoxFit.cover,
-          height: 125,
+          height: 150,
           width: double.infinity,
         ),
         Positioned(
@@ -107,7 +108,7 @@ class OnTheRiseOpportunityCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    opportunity.location.toString().split('.').last,
+                    opportunity.location.name,
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(width: 8),

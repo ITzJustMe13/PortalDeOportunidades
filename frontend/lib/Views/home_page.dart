@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/Components/on_the_rise_opportunity_card.dart';
 import 'package:frontend/Components/opportunity_card.dart';
+import 'package:frontend/Components/paginated_opportunity_gallery.dart';
 import 'package:frontend/Enums/Location.dart';
 import 'package:frontend/Enums/OppCategory.dart';
 import 'package:frontend/Models/Opportunity.dart';
+
+import '../Components/on_the_rise_opportunities_carousel.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -144,34 +146,14 @@ class _HomePageState extends State<HomePage> {
                     width: componentWidth,
                     child: Column(
                       children: [
-                        for (var opportunity in opportunitiesOnTheRiseList)
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: OnTheRiseOpportunityCard(
-                              opportunity: opportunity,
-                            ),
-                          ),
+                        OnTheRiseOpportunityCarousel(
+                            opportunitiesOnTheRiseList:
+                                opportunitiesOnTheRiseList),
                         SizedBox(height: padding),
                         Divider(thickness: 1, color: Colors.black),
                         SizedBox(height: padding),
-                        GridView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          gridDelegate:
-                              SliverGridDelegateWithMaxCrossAxisExtent(
-                            maxCrossAxisExtent: 400,
-                            crossAxisSpacing: 8.0,
-                            mainAxisSpacing: 8.0,
-                          ),
-                          itemCount: opportunitiesList.length,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: OpportunityCard(
-                                  opportunity: opportunitiesList[index]),
-                            );
-                          },
-                        ),
+                        PaginatedOpportunityGallery(
+                            allOpportunities: opportunitiesList)
                       ],
                     )),
               ),
