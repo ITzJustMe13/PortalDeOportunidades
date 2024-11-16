@@ -1,4 +1,4 @@
-enum OppLocation
+enum Location
 {
     VIANA_DO_CASTELO,
     BRAGA,
@@ -23,11 +23,11 @@ enum OppLocation
 }
 
 // Convert an integer (from the backend) to the corresponding Location enum
-OppLocation locationFromInt(int locationInt) {
-  return OppLocation.values[locationInt]; // This works because Flutter's enums are indexed
+Location locationFromInt(int locationInt) {
+  return Location.values[locationInt]; // This works because Flutter's enums are indexed
 }
 
 // Convert a Location enum to its integer value for sending to the backend
-int locationToInt(OppLocation location) {
+int locationToInt(Location location) {
   return location.index; // This gives the integer value of the enum
 }

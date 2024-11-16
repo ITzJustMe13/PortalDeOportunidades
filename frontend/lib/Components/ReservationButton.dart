@@ -73,8 +73,8 @@ class _ReservationButtonState extends State<ReservationButton> {
             ),
           ],
         ),
-        SizedBox(width: 20), // Space between the selector and the button
-        // Reserve Now Button
+        SizedBox(width: 15), // Space between the selector and the button
+        // Reserve Now Button with adjusted padding
         ElevatedButton(
           onPressed: _numberOfPersons > 0 && _numberOfPersons <= _availableVacancies
               ? widget.onPressed
@@ -82,7 +82,7 @@ class _ReservationButtonState extends State<ReservationButton> {
           style: ElevatedButton.styleFrom(
             backgroundColor: Color(0xFF50C878), // Button color
             foregroundColor: Colors.white, // Text color
-            padding: EdgeInsets.symmetric(vertical: 15, horizontal: 30), // Padding inside the button
+            padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20), // Reduce horizontal padding slightly
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(30), // Rounded corners
             ),
@@ -99,4 +99,5 @@ class _ReservationButtonState extends State<ReservationButton> {
       ],
     );
   }
+
 }

@@ -89,7 +89,7 @@ class OpportunityAdditionalInfo extends StatelessWidget {
         ),
         SizedBox(height: 10),
         Text(
-          'Coordenadas:',
+          'Mapa:',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
         ),
       ],
