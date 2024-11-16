@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
-import '../api/user_api_handler.dart';
+import '../Services/user_api_handler.dart';
 
 class LoginState with ChangeNotifier {
   final _storage = FlutterSecureStorage();
@@ -28,14 +28,6 @@ class LoginState with ChangeNotifier {
     notifyListeners();
 
     final loginResponse = await _apiHandler.login(email, password);
-
-    if (loginResponse != null) {
-      _token = loginResponse['token'];
-      await _storage.write(key: 'accessToken', value: _token);
-      _errorMessage = null;
-    } else {
-      _errorMessage = 'Login failed. Please check your credentials.';
-    }
 
     _isLoading = false;
     notifyListeners();

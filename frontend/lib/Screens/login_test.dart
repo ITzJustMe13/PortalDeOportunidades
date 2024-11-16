@@ -7,6 +7,8 @@ class login_test extends StatelessWidget {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
+  login_test({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
