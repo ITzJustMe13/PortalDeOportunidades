@@ -33,6 +33,12 @@ class _MyWidgetState extends State<MainPage> {
               onPressed: () {
                 //Navigator.pushNamed(context, '/add-opportunity');
                 Navigator.pushNamed(context, '/home');
+              }),
+          IconButton(
+              icon: const Icon(Icons.add),
+              onPressed: () {
+                //Navigator.pushNamed(context, '/add-opportunity');
+                Navigator.pushNamed(context, '/search');
               })
         ],
       ),

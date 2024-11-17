@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/Views/search_page.dart';
 import 'package:frontend/main_page.dart';
 
 import 'Views/home_page.dart';
@@ -17,6 +18,7 @@ class MainApp extends StatelessWidget {
       routes: {
         //'/add-opportunity': (context) => CreateOpportunityScreen(),
         '/home': (context) => HomePage(),
+        '/search': (context) => SearchPage(),
       },
     );
   }

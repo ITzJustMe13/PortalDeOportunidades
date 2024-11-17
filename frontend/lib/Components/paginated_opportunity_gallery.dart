@@ -18,18 +18,20 @@ class _PaginatedOpportunityGalleryState
     extends State<PaginatedOpportunityGallery> {
   int _currentPage = 0;
 
-  static const int itemsPerPage = 6;
+  int _itemsPerPage = 10; // Default items per page
+
+  List<int> _itemsPerPageOptions = [5, 10, 15, 20, 25];
 
   // Calcular o total de páginas dinamicamente
   int get _numPages {
     final totalItems = widget.allOpportunities.length;
-    return (totalItems / itemsPerPage).ceil();
+    return (totalItems / _itemsPerPage).ceil();
   }
 
   List<Opportunity> get _currentPageOpportunities {
-    final startIndex = _currentPage * itemsPerPage;
+    final startIndex = _currentPage * _itemsPerPage;
     final endIndex =
-        (startIndex + itemsPerPage).clamp(0, widget.allOpportunities.length);
+        (startIndex + _itemsPerPage).clamp(0, widget.allOpportunities.length);
     return widget.allOpportunities.sublist(startIndex, endIndex);
   }
 
@@ -70,6 +72,31 @@ class _PaginatedOpportunityGalleryState
                     });
                   },
                 ),
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              Text('Items per page:'),
+              SizedBox(width: 10),
+              DropdownButton<int>(
+                value: _itemsPerPage,
+                onChanged: (newValue) {
+                  setState(() {
+                    _itemsPerPage = newValue!;
+                    _currentPage =
+                        0; // Reset to first page when items per page changes
+                  });
+                },
+                items: _itemsPerPageOptions.map((int value) {
+                  return DropdownMenuItem<int>(
+                    value: value,
+                    child: Text(value.toString()),
+                  );
+                }).toList(),
               ),
             ],
           ),

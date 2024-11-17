@@ -9,7 +9,7 @@ class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
-  _HomePageState createState() => _HomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
@@ -249,9 +249,7 @@ class _HomePageState extends State<HomePage> {
     const double padding = 24.0;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Opportunities'),
-      ),
+      appBar: AppBar(title: Text("Home")),
       body: LayoutBuilder(
         builder: (context, constraints) {
           // Calculate the screen width based on parent constraints
@@ -277,7 +275,8 @@ class _HomePageState extends State<HomePage> {
                         Divider(thickness: 1, color: Colors.black),
                         SizedBox(height: padding),
                         PaginatedOpportunityGallery(
-                            allOpportunities: opportunitiesList)
+                          allOpportunities: opportunitiesList,
+                        )
                       ],
                     )),
               ),
