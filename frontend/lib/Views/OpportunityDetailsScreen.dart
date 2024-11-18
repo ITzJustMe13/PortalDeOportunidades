@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:frontend/Components/ReviewCard.dart';
+import 'package:frontend/Models/Review.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:frontend/Components/CustomAppBar.dart';
 import 'package:frontend/Components/CustomDrawer.dart';
@@ -25,6 +27,12 @@ class OpportunityDetailsScreen extends StatelessWidget {
   final String _time = '10:00/11:00';
   final DateTime _date = DateTime.now();
   final Location _location = Location.VILA_REAL;
+  final List<Review> _reviews = [
+      Review(reservationId: 101, rating: 4.5, description: 'Gostei Bastante!'),
+      Review(reservationId: 102, rating: 0.0, description: 'Não gostei e não recomendo.'),
+      Review(reservationId: 103, rating: 5.0, description: 'Adorei, incrivel!'),
+      Review(reservationId: 103, rating: 2.5, description: 'Foi ok.')
+      ];
   
   @override
   Widget build(BuildContext context) {
@@ -80,6 +88,17 @@ class OpportunityDetailsScreen extends StatelessWidget {
           ),
           SizedBox(height: 20),
           OpportunityLocationMap(address: _address,),
+          //REVIEWS
+          SizedBox(height: 20),
+          Text(
+          'Opiniões',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        SizedBox(height: 10),
+        ..._reviews.map((review) => ReviewCard(
+            rating: review.rating,
+            description: review.description ?? '',
+            )).toList(),
         ],
       ),
     );
@@ -136,6 +155,17 @@ class OpportunityDetailsScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 20),
                   OpportunityLocationMap(address: _address,),
+                  //REVIEWS
+                  SizedBox(height: 20),
+                  Text(
+                  'Opiniões',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 10),
+                  ..._reviews.map((review) => ReviewCard(
+                      rating: review.rating,
+                      description: review.description ?? '',
+                      )).toList(),
                 ],
               ),
             ),
@@ -197,6 +227,17 @@ class OpportunityDetailsScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 20),
                   OpportunityLocationMap(address: _address,),
+                  //REVIEWS
+                  SizedBox(height: 20),
+                  Text(
+                  'Opiniões',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 10),
+                  ..._reviews.map((review) => ReviewCard(
+                      rating: review.rating,
+                      description: review.description ?? '',
+                      )).toList(),
                 ],
               ),
             ),
