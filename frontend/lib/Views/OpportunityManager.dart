@@ -192,9 +192,9 @@ class OpportunityManager extends StatelessWidget {
             child: GridView.builder(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2, // Two cards per row
-                crossAxisSpacing: 10, // Space between columns
-                mainAxisSpacing: 20, // Space between rows
+                crossAxisCount: 2,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 20,
                 childAspectRatio: 1.5,
               ),
               itemCount: opportunities.length,
@@ -211,7 +211,7 @@ class OpportunityManager extends StatelessWidget {
 
 
 
-
+    // Desktop Layout (Vertical Scroll with Scrollbar)
     Widget _buildDesktopLayout(List<Opportunity> opportunities) {
     return Scrollbar(
       thumbVisibility: true,
