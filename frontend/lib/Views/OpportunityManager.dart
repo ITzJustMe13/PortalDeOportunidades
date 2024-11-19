@@ -79,6 +79,54 @@ class OpportunityManager extends StatelessWidget {
         isImpulsed: false,
         opportunityImgs: oppImgs,
       ),
+      Opportunity(
+        opportunityId: 4,
+        userId: 1, 
+        name: 'Opportunity 4', 
+        description: 'This is a very nice description Sou lindo', 
+        price: 14.99, 
+        vacancies: 2,
+        isActive: true,
+        category: OppCategory.COZINHA_TIPICA,
+        location: Location.BRAGA,
+        address: "Rua das Flores 21 Braga",
+        reviewScore: 2.5,
+        date: DateTime.now(),
+        isImpulsed: false,
+        opportunityImgs: oppImgs,
+      ),
+      Opportunity(
+        opportunityId: 5,
+        userId: 1, 
+        name: 'Opportunity 5', 
+        description: 'This is a very nice description Sou lindo', 
+        price: 14.99, 
+        vacancies: 2,
+        isActive: true,
+        category: OppCategory.DESPORTOS_ATIVIDADES_AO_AR_LIVRE,
+        location: Location.BRAGA,
+        address: "Rua das Flores 21 Braga",
+        reviewScore: 2.5,
+        date: DateTime.now(),
+        isImpulsed: false,
+        opportunityImgs: oppImgs,
+      ),
+      Opportunity(
+        opportunityId: 6,
+        userId: 1, 
+        name: 'Opportunity 6', 
+        description: 'This is a very nice description Sou lindo', 
+        price: 14.99, 
+        vacancies: 2,
+        isActive: true,
+        category: OppCategory.AGRICULTURA,
+        location: Location.BRAGA,
+        address: "Rua das Flores 21 Braga",
+        reviewScore: 2.5,
+        date: DateTime.now(),
+        isImpulsed: false,
+        opportunityImgs: oppImgs,
+      ),
     ];
 
     return Scaffold(
@@ -164,8 +212,7 @@ class OpportunityManager extends StatelessWidget {
 
 
 
-  // Desktop Layout (Both vertical and horizontal scroll with Scrollbar)
-  Widget _buildDesktopLayout(List<Opportunity> opportunities) {
+    Widget _buildDesktopLayout(List<Opportunity> opportunities) {
     return Scrollbar(
       thumbVisibility: true,
       child: SingleChildScrollView(
@@ -178,18 +225,22 @@ class OpportunityManager extends StatelessWidget {
               style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ...opportunities.map((opportunity) {
-                  return OpportunityManageCard(opportunity: opportunity);
-                }).toList(),
-              ],
-            )
+            GridView.builder(
+              shrinkWrap: true, // Ensures GridView doesn't take infinite height
+              physics: NeverScrollableScrollPhysics(), // Disables GridView scrolling
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3, // 3 items per row
+                crossAxisSpacing: 20.0, // Spacing between columns
+                mainAxisSpacing: 20.0, // Spacing between rows
+              ),
+              itemCount: opportunities.length,
+              itemBuilder: (context, index) {
+                return OpportunityManageCard(opportunity: opportunities[index]);
+              },
+            ),
           ],
         ),
       ),
     );
   }
-
 }
