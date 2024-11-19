@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:frontend/Enums/Gender.dart';
 import '../Models/User.dart';
 
-class PerfilScreen extends StatefulWidget {
+class ProfileScreen extends StatefulWidget {
   @override
-  _PerfilScreenState createState() => _PerfilScreenState();
+  _ProfileScreenState createState() => _ProfileScreenState();
 }
 
-class _PerfilScreenState extends State<PerfilScreen> {
+class _ProfileScreenState extends State<ProfileScreen> {
   User user = User(
       userId: 1,
       firstName: "Antonio",
@@ -63,7 +63,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
 
   Widget _buildTabletLayout() {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: EdgeInsets.only(left: 100.0, right: 25),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -99,7 +99,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
 
   Widget _buildDesktopLayout() {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.only(left: 200.0, right: 200, top: 200),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -154,8 +154,8 @@ class _PerfilScreenState extends State<PerfilScreen> {
   Widget _buildEditProfileButton() {
     return ElevatedButton(
       onPressed: () {
-        // Ação do botão "Editar Perfil"
-      },
+      Navigator.pushNamed(context, '/edit-profile');
+    },
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.green,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -199,7 +199,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
   Widget _buildHistoryButton() {
     return ElevatedButton(
       onPressed: () {
-        // Ação do botão "Histórico de Comentários"
+        Navigator.pushNamed(context, '/reviews-history');
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.green,
@@ -212,10 +212,31 @@ class _PerfilScreenState extends State<PerfilScreen> {
     );
   }
 
-  /// Método para construir informações extras (anos no portal)
+  /// Método para construir informações extras (anos, meses ou dias no portal)
   Widget _buildExtraInfo() {
+    final now = DateTime.now();
+    final duration = now.difference(user.registrationDate);
+
+    // Calcular a diferença em anos
+    final yearsOnPortal = duration.inDays ~/ 365;
+    final monthsOnPortal = duration.inDays ~/ 30;
+    final daysOnPortal = duration.inDays;
+
+    String displayText;
+
+    if (yearsOnPortal > 0) {
+      displayText =
+          '$yearsOnPortal ${yearsOnPortal == 1 ? "Ano" : "Anos"} no Portal de Oportunidades';
+    } else if (monthsOnPortal > 0) {
+      displayText =
+          '$monthsOnPortal ${monthsOnPortal == 1 ? "Mês" : "Meses"} no Portal de Oportunidades';
+    } else {
+      displayText =
+          '$daysOnPortal ${daysOnPortal == 1 ? "Dia" : "Dias"} no Portal de Oportunidades';
+    }
+
     return Text(
-      '3 Anos no Portal de Oportunidades',
+      displayText,
       style: const TextStyle(fontSize: 14, color: Colors.grey),
     );
   }

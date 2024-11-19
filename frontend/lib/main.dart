@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/Views/PerfilScreen.dart';
+import 'package:frontend/Views/EditProfileScreen.dart';
+import 'package:frontend/Views/ProfileScreen.dart';
+import 'package:frontend/Views/ReviewsHistoryScreen.dart';
 import 'package:frontend/main_page.dart';
 
 void main() {
@@ -14,7 +16,8 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       home: const MainPage(),
       routes: {
-        '/perfil': (context) => PerfilScreen(),
+        '/profile': (context) => ProfileScreen(),
+        '/edit-profile': (context) => EditProfileScreen(),
       },
     );
   }

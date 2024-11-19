@@ -33,7 +33,7 @@ class _MyWidgetState extends State<MainPage> {
         actions: [
           IconButton(icon: const Icon(Icons.add),
           onPressed:(){
-            Navigator.pushNamed(context, '/perfil');
+            Navigator.pushNamed(context, '/profile');
           })
         ]
       ),
