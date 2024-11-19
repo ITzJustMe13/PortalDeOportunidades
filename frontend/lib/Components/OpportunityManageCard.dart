@@ -89,7 +89,7 @@ class OpportunityManageCard extends StatelessWidget {
                 ),
                 SizedBox(height: 8),
 
-                // Details: Vacancies, Price, Date, Address
+                // Details
                 Text(
                   '${opportunity.vacancies} Vagas Disponíveis',
                   style: TextStyle(fontSize: 14),
@@ -119,7 +119,7 @@ class OpportunityManageCard extends StatelessWidget {
                     // Details Button
                     ElevatedButton(
                       onPressed: () {
-                        // Handle details action
+                        // HANDLE ACTION
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green,
@@ -131,7 +131,7 @@ class OpportunityManageCard extends StatelessWidget {
                     // Delete Button
                     ElevatedButton(
                       onPressed: () {
-                        // Handle delete action
+                        // HANDLE ACTION
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,
