@@ -27,7 +27,7 @@ class LoginState with ChangeNotifier {
     _isLoading = true;
     notifyListeners();
 
-    final loginResponse = await _apiHandler.login(email, password);
+    await _apiHandler.login(email, password);
 
     _isLoading = false;
     notifyListeners();

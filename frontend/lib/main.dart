@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/main_page.dart';
-import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../Screens/login_test.dart';
 import '../State/LoginState.dart';
