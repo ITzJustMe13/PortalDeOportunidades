@@ -18,6 +18,7 @@ class MainApp extends StatelessWidget {
       routes: {
         '/profile': (context) => ProfileScreen(),
         '/edit-profile': (context) => EditProfileScreen(),
+        '/reviews-history': (context) => ReviewsHistoryScreen()
       },
     );
   }
