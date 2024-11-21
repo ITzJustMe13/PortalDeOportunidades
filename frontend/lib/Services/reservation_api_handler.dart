@@ -204,7 +204,7 @@ class ReservationApiHandler {
         'Authorization': 'Bearer $accessToken',
       });
 
-      if (response.statusCode == 204) {
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
         print('Reservation deleted successfully.');
         return true;
       } else {

@@ -83,7 +83,7 @@ class ReviewApiHandler {
         'Authorization': 'Bearer $accessToken',
       });
 
-      if (response.statusCode == 204) {
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
         print('Review deleted successfully.');
         return true;
       } else {
@@ -110,7 +110,7 @@ class ReviewApiHandler {
         'Authorization': 'Bearer $accessToken',
       });
 
-      if (response.statusCode == 204) {
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
         print('Review updated successfully.');
         return true;
       } else {

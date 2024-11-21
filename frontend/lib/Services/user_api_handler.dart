@@ -29,7 +29,7 @@ class UserApiHandler {
         }),
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
         final data = jsonDecode(response.body);
         await storage.write(key: 'accessToken', value: data['token']);
         final authenticatedUser = User.fromJson(data['authenticatedUserDTO']);
@@ -62,7 +62,7 @@ class UserApiHandler {
         'Authorization': 'Bearer $accessToken',
       });
 
-      if (response.statusCode == 200) {
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
         final user = User.fromJson(jsonDecode(response.body));
         return user;
       } else if (response.statusCode == 404) {
@@ -91,7 +91,7 @@ class UserApiHandler {
         body: jsonEncode(user.toJson()),
       );
 
-      if (response.statusCode == 201) {
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
         final createdUser = User.fromJson(jsonDecode(response.body));
         return createdUser;
       } else {
@@ -122,7 +122,7 @@ class UserApiHandler {
         },
       );
 
-      if (response.statusCode == 204) {
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
         print('User deleted successfully.');
         return true;
       } else if (response.statusCode == 404) {
@@ -160,7 +160,7 @@ class UserApiHandler {
         body: jsonEncode(userJson),
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
         print('User updated successfully.');
         return true;
       } else if (response.statusCode == 404) {
@@ -196,7 +196,7 @@ class UserApiHandler {
         body: jsonEncode(favorite.toJson()),
       );
 
-      if (response.statusCode == 201) {
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
         final createdFavorite = Favorite.fromJson(jsonDecode(response.body));
         return createdFavorite;
       } else {
@@ -224,7 +224,7 @@ class UserApiHandler {
         'Authorization': 'Bearer $accessToken',
       });
 
-      if (response.statusCode == 200) {
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
         final favorite = Favorite.fromJson(jsonDecode(response.body));
         return favorite;
       } else if (response.statusCode == 404) {
@@ -256,7 +256,7 @@ class UserApiHandler {
         'Content-Type': 'application/json',
       });
 
-      if (response.statusCode == 200) {
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
         final List<dynamic> jsonList = jsonDecode(response.body);
         final favorites =
             jsonList.map((json) => Favorite.fromJson(json)).toList();
@@ -290,7 +290,7 @@ class UserApiHandler {
         'Content-Type': 'application/json',
       });
 
-      if (response.statusCode == 201) {
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
         final createdImpulse = Impulse.fromJson(jsonDecode(response.body));
         return createdImpulse;
       } else {
@@ -318,7 +318,7 @@ class UserApiHandler {
         'Content-Type': 'application/json',
       });
 
-      if (response.statusCode == 200) {
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
         final List<dynamic> jsonList = jsonDecode(response.body);
         final Opportunities =
             jsonList.map((json) => Opportunity.fromJson(json)).toList();

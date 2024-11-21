@@ -26,7 +26,7 @@ class OpportunityApiHandler {
         },
       ).timeout(timeout);
 
-      if (response.statusCode == 200) {
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
         final opportunity = Opportunity.fromJson(jsonDecode(response.body));
         return opportunity;
       } else {
@@ -45,7 +45,7 @@ class OpportunityApiHandler {
     try {
       final response = await client.get(uri).timeout(timeout);
 
-      if (response.statusCode == 200) {
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
         final List<dynamic> jsonList = jsonDecode(response.body);
         final opportunities =
             jsonList.map((json) => Opportunity.fromJson(json)).toList();
@@ -69,7 +69,7 @@ class OpportunityApiHandler {
     try {
       final response = await client.get(uri).timeout(timeout);
 
-      if (response.statusCode == 200) {
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
         final List<dynamic> jsonList = jsonDecode(response.body);
         final impulsedOpp =
             jsonList.map((json) => Opportunity.fromJson(json)).toList();
@@ -93,7 +93,7 @@ class OpportunityApiHandler {
     try {
       final response = await client.get(uri).timeout(timeout);
 
-      if (response.statusCode == 200) {
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
         final List<dynamic> jsonList = jsonDecode(response.body);
         final userOpp =
             jsonList.map((json) => Opportunity.fromJson(json)).toList();
@@ -124,7 +124,7 @@ class OpportunityApiHandler {
     try {
       final response = await client.get(uri).timeout(timeout);
 
-      if (response.statusCode == 200) {
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
         final List<dynamic> jsonList = jsonDecode(response.body);
         final searchedOpp =
             jsonList.map((json) => Opportunity.fromJson(json)).toList();
@@ -184,7 +184,7 @@ class OpportunityApiHandler {
         'Authorization': 'Bearer $accessToken',
       });
 
-      if (response.statusCode == 204) {
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
         print('Opportunity deleted successfully.');
         return true;
       } else {
