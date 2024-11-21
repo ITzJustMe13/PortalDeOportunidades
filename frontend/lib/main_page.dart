@@ -29,7 +29,12 @@ class _MyWidgetState extends State<MainPage> {
         title: const Text('Portal de Oportunidades'),
         centerTitle: true,
         backgroundColor: const Color(0xFF50C878),
-        foregroundColor: Colors.white,
+        foregroundColor: Colors.white,actions: [
+          IconButton(icon: const Icon(Icons.add),
+          onPressed:(){
+            Navigator.pushNamed(context, '/reservation-history');
+          })
+        ]
       ),
       body: FutureBuilder<Opportunity?>(
         future: opportunityApiHandler.getOpportunityByID(2), // Use the instance here
