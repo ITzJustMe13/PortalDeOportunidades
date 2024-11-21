@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:frontend/Models/Favorite.dart';
 import 'package:frontend/Models/Impulse.dart';
 import 'package:frontend/Models/Opportunity.dart';

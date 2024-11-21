@@ -3,19 +3,23 @@ import 'dart:ffi';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/Enums/Location.dart';
+
 import 'package:http/http.dart' as http;
 import '../Models/Opportunity.dart';
 
 class OpportunityApiHandler {
+
   final String baseUri = "https://localhost:7235/api/Opportunity";
 
   final http.Client client;
   final storage = FlutterSecureStorage();
   final timeout = const Duration(seconds: 30);
 
+
   OpportunityApiHandler(this.client);
 
   Future<Opportunity?> getOpportunityByID(int id) async {
+
     final uri = Uri.parse('$baseUri/$id');
 
     try {

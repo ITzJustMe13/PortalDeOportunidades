@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/Models/Opportunity.dart';
 import 'package:http/http.dart' as http;
+import 'Services/user_api_handler.dart';
 import 'Services/opportunity_api_handler.dart';
+import 'Api/opportunity_api_handler.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -75,6 +76,7 @@ class _MyWidgetState extends State<MainPage> {
             ),
           );
         },
+        actions: [],
       ),
     );
   }
