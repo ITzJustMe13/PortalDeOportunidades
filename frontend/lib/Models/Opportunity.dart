@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:frontend/Enums/OppCategory.dart';
 import 'package:frontend/Enums/Location.dart';
 import 'package:frontend/Models/OpportunityImg.dart';
