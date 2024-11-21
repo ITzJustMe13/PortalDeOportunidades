@@ -14,17 +14,15 @@ class OpportunityCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Expanded(
-              flex: 2,
-              child: _buildImageSection(),
-            ),
-            Expanded(
-              child: _buildDetailsSection(),
-            )
-          ],
+        return Card(
+          elevation: 4,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildImageSection(),
+              _buildDetailsSection(),
+            ],
+          ),
         );
       },
     );
@@ -36,7 +34,7 @@ class OpportunityCard extends StatelessWidget {
         Image.network(
           'https://picsum.photos/200',
           fit: BoxFit.cover,
-          height: double.infinity,
+          height: 250,
           width: double.infinity,
         ),
         Positioned(

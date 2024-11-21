@@ -1,3 +1,4 @@
+import 'package:dynamic_height_grid_view/dynamic_height_grid_view.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/Components/opportunity_card.dart';
 import 'package:frontend/Models/Opportunity.dart';
@@ -42,21 +43,30 @@ class _PaginatedOpportunityGalleryState
         SingleChildScrollView(
           child: Column(
             children: [
-              GridView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 400,
-                  crossAxisSpacing: 8.0,
-                  mainAxisSpacing: 8.0,
-                ),
-                itemCount: _currentPageOpportunities.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: OpportunityCard(
-                      opportunity: _currentPageOpportunities[index],
-                    ),
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  // Define the minimum width for each card
+                  const double minCardWidth = 200.0;
+
+                  // Calculate the number of items that can fit based on the available width
+                  int itemsPerRow =
+                      (constraints.maxWidth / minCardWidth).floor().clamp(1, 5);
+
+                  return DynamicHeightGridView(
+                    crossAxisCount: itemsPerRow,
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    crossAxisSpacing: 16.0,
+                    mainAxisSpacing: 20.0,
+                    itemCount: _currentPageOpportunities.length,
+                    builder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: OpportunityCard(
+                          opportunity: _currentPageOpportunities[index],
+                        ),
+                      );
+                    },
                   );
                 },
               ),
