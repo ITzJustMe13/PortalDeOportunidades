@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'Services/user_api_handler.dart';
+import 'Services/opportunity_api_handler.dart';
 import 'Api/opportunity_api_handler.dart';
 
 class MainPage extends StatefulWidget {
@@ -27,20 +29,7 @@ class _MyWidgetState extends State<MainPage> {
         centerTitle: true,
         backgroundColor: const Color(0xFF50C878),
         foregroundColor: Colors.white,
-        actions: [
-          IconButton(
-              icon: const Icon(Icons.add),
-              onPressed: () {
-                //Navigator.pushNamed(context, '/add-opportunity');
-                Navigator.pushNamed(context, '/home');
-              }),
-          IconButton(
-              icon: const Icon(Icons.add),
-              onPressed: () {
-                //Navigator.pushNamed(context, '/add-opportunity');
-                Navigator.pushNamed(context, '/search');
-              })
-        ],
+        actions: [],
       ),
     );
   }
