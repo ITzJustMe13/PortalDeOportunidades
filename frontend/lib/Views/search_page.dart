@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:frontend/Components/CustomAppBar.dart';
+import 'package:frontend/Components/CustomDrawer.dart';
 import 'package:frontend/Components/paginated_opportunity_gallery.dart';
 import 'package:frontend/Enums/Location.dart';
 import 'package:frontend/Enums/OppCategory.dart';
@@ -213,8 +215,7 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      appBar: AppBar(
-        title: Text("Opportunities"),
+      appBar:CustomAppBar(
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(50.0),
           child: Container(
@@ -240,18 +241,13 @@ class _SearchPageState extends State<SearchPage> {
                           style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold))),
-                  IconButton(
-                    icon: Icon(Icons.filter_list),
-                    onPressed: () {
-                      _scaffoldKey.currentState?.openDrawer();
-                    },
-                  ),
                 ],
               ),
             ),
           ),
         ),
       ),
+      endDrawer: CustomDrawer(),
       body: LayoutBuilder(
         builder: (context, constraints) {
           double screenWidth = constraints.maxWidth;

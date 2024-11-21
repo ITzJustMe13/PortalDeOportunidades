@@ -107,7 +107,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-
+  flutter_map:
+    dependency: "direct main"
+    description:
+      name: flutter_map
+      sha256: "2ecb34619a4be19df6f40c2f8dce1591675b4eff7a6857bd8f533706977385da"
+      url: "https://pub.dev"
+    source: hosted
+    version: "7.0.2"
   flutter_secure_storage:
     dependency: "direct main"
     description:
@@ -156,16 +163,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.2"
-
-  flutter_map:
-    dependency: "direct main"
-    description:
-      name: flutter_map
-      sha256: "2ecb34619a4be19df6f40c2f8dce1591675b4eff7a6857bd8f533706977385da"
-      url: "https://pub.dev"
-    source: hosted
-    version: "7.0.2"
-
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -224,7 +221,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.6.7"
-
   latlong2:
     dependency: "direct main"
     description:
@@ -233,7 +229,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.9.1"
-
   leak_tracker:
     dependency: transitive
     description:
@@ -306,16 +301,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.15.0"
-
-  nested:
-    dependency: transitive
-    description:
-      name: nested
-      sha256: "03bac4c528c64c95c722ec99280375a6f2fc708eec17c7b3f07253b626cd2a20"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.0"
-
   mgrs_dart:
     dependency: transitive
     description:
@@ -324,6 +309,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
+  nested:
+    dependency: transitive
+    description:
+      name: nested
+      sha256: "03bac4c528c64c95c722ec99280375a6f2fc708eec17c7b3f07253b626cd2a20"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
   number_paginator:
     dependency: "direct main"
     description:
@@ -332,7 +325,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.4.1"
-
   path:
     dependency: transitive
     description:
@@ -341,7 +333,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.9.0"
-
   path_provider:
     dependency: transitive
     description:
@@ -406,15 +397,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.8"
-  provider:
-    dependency: "direct main"
-    description:
-      name: provider
-      sha256: c8a055ee5ce3fd98d6fc872478b03823ffdb448699c6ebdbbc71d59b596fd48c
-      url: "https://pub.dev"
-    source: hosted
-    version: "6.1.2"
-
   polylabel:
     dependency: transitive
     description:
@@ -431,7 +413,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.0"
-
+  provider:
+    dependency: "direct main"
+    description:
+      name: provider
+      sha256: c8a055ee5ce3fd98d6fc872478b03823ffdb448699c6ebdbbc71d59b596fd48c
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.1.2"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -525,7 +514,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.0"
-
   win32:
     dependency: transitive
     description:
@@ -534,14 +522,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.8.0"
-  xdg_directories:
-    dependency: transitive
-    description:
-      name: xdg_directories
-      sha256: "7a3f37b05d989967cdddcbb571f1ea834867ae2faa29725fd085180e0883aa15"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.1.0"
   wkt_parser:
     dependency: transitive
     description:
@@ -550,6 +530,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
+  xdg_directories:
+    dependency: transitive
+    description:
+      name: xdg_directories
+      sha256: "7a3f37b05d989967cdddcbb571f1ea834867ae2faa29725fd085180e0883aa15"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.0"
 sdks:
   dart: ">=3.5.3 <4.0.0"
   flutter: ">=3.24.0"

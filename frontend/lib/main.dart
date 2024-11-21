@@ -7,8 +7,8 @@ import 'package:frontend/Views/ReviewsHistoryScreen.dart';
 import 'package:frontend/Views/CreateOpportunityScreen.dart';
 import 'package:frontend/Views/OpportunityDetailsScreen.dart';
 import 'package:frontend/Views/OpportunityManager.dart';
+import 'package:frontend/Views/favorites_page.dart';
 import 'package:frontend/Views/search_page.dart';
-import 'package:frontend/main_page.dart';
 
 
 import 'Views/home_page.dart';
@@ -28,12 +28,10 @@ class MainApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: OpportunityManager(),
-      initialRoute: '/',
+      home: HomePage(),
       routes: {
-        '/': (context) => const HomePage(),
         '/search': (context) => const SearchPage(),
-        '/profile': (context) => const ProfilePage(),
+       // '/profile': (context) => const ProfilePage(),
         '/favorites': (context) => const FavoritesPage(),
         '/create-opportunity': (context) => const CreateOpportunityPage(),
         '/your-opportunities': (context) => const YourOpportunitiesPage(),

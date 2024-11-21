@@ -8,7 +8,6 @@ import 'package:frontend/Enums/Location.dart';
 import 'package:frontend/Enums/OppCategory.dart';
 
 class OpportunityManager extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     // Define oppImgs here within the build method
@@ -16,27 +15,30 @@ class OpportunityManager extends StatelessWidget {
       OpportunityImg(
         imgId: 1,
         opportunityId: 1,
-        imageBase64: 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADUlEQVR42mP8/5+hHgAHggJ/pkT1aQAAAABJRU5ErkJggg==', // Red 1x1 PNG
+        imageBase64:
+            'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADUlEQVR42mP8/5+hHgAHggJ/pkT1aQAAAABJRU5ErkJggg==', // Red 1x1 PNG
       ),
       OpportunityImg(
         imgId: 2,
         opportunityId: 1,
-        imageBase64: 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADUlEQVR42mP8/5+hHgAHggJ/pkT1aQAAAABJRU5ErkJggg==', // Another red 1x1 PNG (example)
+        imageBase64:
+            'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADUlEQVR42mP8/5+hHgAHggJ/pkT1aQAAAABJRU5ErkJggg==', // Another red 1x1 PNG (example)
       ),
       OpportunityImg(
         imgId: 3,
         opportunityId: 1,
-        imageBase64: 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADUlEQVR42mP8/5+hHgAHggJ/pkT1aQAAAABJRU5ErkJggg==', // Another red 1x1 PNG
+        imageBase64:
+            'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADUlEQVR42mP8/5+hHgAHggJ/pkT1aQAAAABJRU5ErkJggg==', // Another red 1x1 PNG
       ),
     ];
 
     final List<Opportunity> _opportunities = [
       Opportunity(
         opportunityId: 1,
-        userId: 1, 
-        name: 'Opportunity 1', 
-        description: 'This is a very nice description Sou lindo', 
-        price: 14.99, 
+        userId: 1,
+        name: 'Opportunity 1',
+        description: 'This is a very nice description Sou lindo',
+        price: 14.99,
         vacancies: 2,
         isActive: true,
         category: OppCategory.COZINHA_TIPICA,
@@ -49,10 +51,10 @@ class OpportunityManager extends StatelessWidget {
       ),
       Opportunity(
         opportunityId: 2,
-        userId: 1, 
-        name: 'Opportunity 2', 
-        description: 'This is a very nice description Sou lindo', 
-        price: 14.99, 
+        userId: 1,
+        name: 'Opportunity 2',
+        description: 'This is a very nice description Sou lindo',
+        price: 14.99,
         vacancies: 2,
         isActive: true,
         category: OppCategory.AGRICULTURA,
@@ -65,10 +67,10 @@ class OpportunityManager extends StatelessWidget {
       ),
       Opportunity(
         opportunityId: 3,
-        userId: 1, 
-        name: 'Opportunity 3', 
-        description: 'This is a very nice description Sou lindo', 
-        price: 14.99, 
+        userId: 1,
+        name: 'Opportunity 3',
+        description: 'This is a very nice description Sou lindo',
+        price: 14.99,
         vacancies: 2,
         isActive: true,
         category: OppCategory.DESPORTOS_ATIVIDADES_AO_AR_LIVRE,
@@ -81,10 +83,10 @@ class OpportunityManager extends StatelessWidget {
       ),
       Opportunity(
         opportunityId: 4,
-        userId: 1, 
-        name: 'Opportunity 4', 
-        description: 'This is a very nice description Sou lindo', 
-        price: 14.99, 
+        userId: 1,
+        name: 'Opportunity 4',
+        description: 'This is a very nice description Sou lindo',
+        price: 14.99,
         vacancies: 2,
         isActive: true,
         category: OppCategory.COZINHA_TIPICA,
@@ -97,10 +99,10 @@ class OpportunityManager extends StatelessWidget {
       ),
       Opportunity(
         opportunityId: 5,
-        userId: 1, 
-        name: 'Opportunity 5', 
-        description: 'This is a very nice description Sou lindo', 
-        price: 14.99, 
+        userId: 1,
+        name: 'Opportunity 5',
+        description: 'This is a very nice description Sou lindo',
+        price: 14.99,
         vacancies: 2,
         isActive: true,
         category: OppCategory.DESPORTOS_ATIVIDADES_AO_AR_LIVRE,
@@ -113,10 +115,10 @@ class OpportunityManager extends StatelessWidget {
       ),
       Opportunity(
         opportunityId: 6,
-        userId: 1, 
-        name: 'Opportunity 6', 
-        description: 'This is a very nice description Sou lindo', 
-        price: 14.99, 
+        userId: 1,
+        name: 'Opportunity 6',
+        description: 'This is a very nice description Sou lindo',
+        price: 14.99,
         vacancies: 2,
         isActive: true,
         category: OppCategory.AGRICULTURA,
@@ -172,7 +174,6 @@ class OpportunityManager extends StatelessWidget {
     );
   }
 
-
   // Tablet Layout (Vertical Scroll with Scrollbar)
   Widget _buildTabletLayout(List<Opportunity> opportunities) {
     return Scrollbar(
@@ -208,11 +209,8 @@ class OpportunityManager extends StatelessWidget {
     );
   }
 
-
-
-
-    // Desktop Layout (Vertical Scroll with Scrollbar)
-    Widget _buildDesktopLayout(List<Opportunity> opportunities) {
+  // Desktop Layout (Vertical Scroll with Scrollbar)
+  Widget _buildDesktopLayout(List<Opportunity> opportunities) {
     return Scrollbar(
       thumbVisibility: true,
       child: SingleChildScrollView(
@@ -227,7 +225,8 @@ class OpportunityManager extends StatelessWidget {
             SizedBox(height: 20),
             GridView.builder(
               shrinkWrap: true, // Ensures GridView doesn't take infinite height
-              physics: NeverScrollableScrollPhysics(), // Disables GridView scrolling
+              physics:
+                  NeverScrollableScrollPhysics(), // Disables GridView scrolling
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 3, // 3 items per row
                 crossAxisSpacing: 20.0, // Spacing between columns

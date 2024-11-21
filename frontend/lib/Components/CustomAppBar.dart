@@ -2,25 +2,22 @@ import 'package:flutter/material.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final List<Widget>? actions;
+  final PreferredSizeWidget? bottom;
 
-  const CustomAppBar({Key? key, this.actions}) : super(key: key);
+  const CustomAppBar({Key? key, this.actions, this.bottom}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        if (constraints.maxWidth < 600) {
-          // Mobile layout
-          return _buildMobileAppBar(context);
-        } else if (constraints.maxWidth < 1200) {
-          // Tablet layout
-          return _buildTabletAppBar(context);
-        } else {
-          // Desktop layout
-          return _buildDesktopAppBar(context);
-        }
-      },
-    );
+    if (MediaQuery.of(context).size.width < 600) {
+      // Mobile layout
+      return _buildMobileAppBar(context);
+    } else if (MediaQuery.of(context).size.width < 1200) {
+      // Tablet layout
+      return _buildTabletAppBar(context);
+    } else {
+      // Desktop layout
+      return _buildDesktopAppBar(context);
+    }
   }
 
   // AppBar para dispositivos móveis
@@ -48,6 +45,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           },
         ),
       ],
+      bottom: bottom,
     );
   }
 
@@ -85,6 +83,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           },
         ),
       ],
+      bottom: bottom,
     );
   }
 
@@ -132,9 +131,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           },
         ),
       ],
+      bottom: bottom,
     );
   }
 
+  // Define o tamanho preferido da AppBar, considerando o bottom.
   @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+  Size get preferredSize {
+    final double bottomHeight = bottom?.preferredSize.height ?? 0.0;
+    return Size.fromHeight(kToolbarHeight + bottomHeight);
+  }
 }

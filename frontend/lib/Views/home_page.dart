@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/Components/CustomAppBar.dart';
+import 'package:frontend/Components/CustomDrawer.dart';
 import 'package:frontend/Components/paginated_opportunity_gallery.dart';
 import 'package:frontend/Enums/Location.dart';
 import 'package:frontend/Enums/OppCategory.dart';
@@ -249,7 +251,8 @@ class _HomePageState extends State<HomePage> {
     const double padding = 24.0;
 
     return Scaffold(
-      appBar: AppBar(title: Text("Home")),
+      appBar: CustomAppBar(),
+      endDrawer: CustomDrawer(),
       body: LayoutBuilder(
         builder: (context, constraints) {
           // Calculate the screen width based on parent constraints

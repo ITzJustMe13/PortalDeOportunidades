@@ -23,49 +23,54 @@ class CustomDrawer extends StatelessWidget {
             leading: const Icon(Icons.home),
             title: const Text('Início'),
             onTap: () {
-              Navigator.pop(context); // Close the drawer
+              Navigator.pushNamed(context, "/"); // Close the drawer
             },
           ),
           ListTile(
             leading: const Icon(Icons.search),
             title: const Text('Pesquisar'),
             onTap: () {
-              Navigator.pop(context); // Close the drawer
+              Navigator.pushNamed(context, "/search"); // Close the drawer
             },
           ),
           ListTile(
             leading: const Icon(Icons.person),
-            title: const Text('Perfil'),
+            title: const Text(
+              'Perfil',
+            ),
             onTap: () {
-              Navigator.pop(context); // Close the drawer
+              Navigator.pushNamed(context, "/profile"); // Close the drawer
             },
           ),
           ListTile(
             leading: const Icon(Icons.favorite),
             title: const Text('Favoritos'),
             onTap: () {
-              Navigator.pop(context); // Close the drawer
+              Navigator.pushNamed(context, "/favorites"); // Close the drawer
             },
           ),
           ListTile(
             leading: const Icon(Icons.plus_one),
             title: const Text('Crie uma Oportunidade'),
             onTap: () {
-              Navigator.pop(context); // Close the drawer
+              Navigator.pushNamed(
+                  context, "/create-opportunity"); // Close the drawer
             },
           ),
           ListTile(
             leading: const Icon(Icons.place),
             title: const Text('As suas Oportunidades'),
             onTap: () {
-              Navigator.pop(context); // Close the drawer
+              Navigator.pushNamed(
+                  context, "/your-opportunities"); // Close the drawer
             },
           ),
           ListTile(
             leading: const Icon(Icons.book),
             title: const Text('As suas Reservas'),
             onTap: () {
-              Navigator.pop(context); // Close the drawer
+              Navigator.pushNamed(
+                  context, "/your-reservations"); // Close the drawer
             },
           ),
         ],
