@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/Views/EditProfileScreen.dart';
+import 'package:frontend/Views/ProfileScreen.dart';
+import 'package:frontend/Views/ReviewsHistoryScreen.dart';
 import 'package:frontend/Views/CreateOpportunityScreen.dart';
 import 'package:frontend/Views/OpportunityDetailsScreen.dart';
 import 'package:frontend/Views/OpportunityManager.dart';
@@ -33,6 +36,9 @@ class MainApp extends StatelessWidget {
         '/your-opportunities': (context) => const YourOpportunitiesPage(),
         '/your-reservations': (context) => const YourReservationsPage(),
         '/add-opportunity': (context) => const CreateOpportunityScreen(),
+         '/profile': (context) => const ProfileScreen(),
+        '/edit-profile': (context) => const EditProfileScreen(),
+        '/reviews-history': (context) => const ReviewsHistoryScreen(),
       },
     );
   }
