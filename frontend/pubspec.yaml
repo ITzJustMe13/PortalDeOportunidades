@@ -1,6 +1,6 @@
 name: frontend
 description: "A new Flutter project."
-publish_to: 'none'
+publish_to: "none"
 version: 0.1.0
 
 environment:
@@ -15,7 +15,8 @@ dependencies:
   flutter_map: ^7.0.2
   geocode: ^1.0.3
   latlong2: ^0.9.1
-
+  carousel_slider: ^5.0.0
+  number_paginator: ^0.4.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/Views/OpportunityDetailsScreen.dart';
 import 'package:frontend/Views/OpportunityManager.dart';
+import 'package:frontend/Views/search_page.dart';
 import 'package:frontend/main_page.dart';
+
+import 'Views/home_page.dart';
 
 void main() {
   runApp(const MainApp());
@@ -19,7 +22,6 @@ class MainApp extends StatelessWidget {
         primarySwatch: Colors.green,
       ),
       home: OpportunityManager(),
-      /*
       initialRoute: '/',
       routes: {
         '/': (context) => const HomePage(),
@@ -30,7 +32,6 @@ class MainApp extends StatelessWidget {
         '/your-opportunities': (context) => const YourOpportunitiesPage(),
         '/your-reservations': (context) => const YourReservationsPage(),
       },
-      */
     );
   }
 }
