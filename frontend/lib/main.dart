@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/Views/OpportunityDetailsScreen.dart';
+import 'package:frontend/Views/OpportunityManager.dart';
 import 'package:frontend/main_page.dart';
 
 void main() {
@@ -17,7 +18,7 @@ class MainApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: OpportunityDetailsScreen(),
+      home: OpportunityManager(),
       /*
       initialRoute: '/',
       routes: {
