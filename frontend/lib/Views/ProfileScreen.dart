@@ -1,9 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/Components/CustomAppBar.dart';
+import 'package:frontend/Components/CustomDrawer.dart';
 import 'package:frontend/Enums/Gender.dart';
 import '../Models/User.dart';
 
 class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
+
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
 }
@@ -24,9 +28,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Perfil'),
-        ),
+        appBar: CustomAppBar(),
+        endDrawer: CustomDrawer(),
         body: LayoutBuilder(builder: (context, constraints) {
           if (constraints.maxWidth < 600) {
             // Layout para telas pequenas (smartphones)
@@ -154,8 +157,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _buildEditProfileButton() {
     return ElevatedButton(
       onPressed: () {
-      Navigator.pushNamed(context, '/edit-profile');
-    },
+        Navigator.pushNamed(context, '/edit-profile');
+      },
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.green,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

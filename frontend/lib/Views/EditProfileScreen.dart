@@ -1,9 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/Components/CustomAppBar.dart';
+import 'package:frontend/Components/CustomDrawer.dart';
 import 'package:frontend/Enums/Gender.dart';
 import '../Models/User.dart';
 
 class EditProfileScreen extends StatefulWidget {
+  const EditProfileScreen({super.key});
+
   @override
   _EditProfileScreenState createState() => _EditProfileScreenState();
 }
@@ -35,9 +39,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Editar Perfil'),
-      ),
+      appBar: CustomAppBar(),
+      endDrawer: CustomDrawer(),
       body: LayoutBuilder(
         builder: (context, constraints) {
           if (constraints.maxWidth < 600) {
@@ -96,36 +99,36 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Widget _buildDesktopLayout() {
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 200.0, vertical: 50.0),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Imagem do perfil
-        _buildProfileImage(),
-        const SizedBox(width: 32),
-        // Campos de entrada e botões
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Expanded(child: _buildEmailField()), // Campo de email
-                  const SizedBox(width: 16),          // Espaçamento
-                  _buildSaveButton(),                 // Botão de salvar
-                ],
-              ),
-              const Divider(height: 32, thickness: 1), // Divisor
-              _buildPhoneField(),                      // Campo de telefone
-            ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 200.0, vertical: 50.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Imagem do perfil
+          _buildProfileImage(),
+          const SizedBox(width: 32),
+          // Campos de entrada e botões
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(child: _buildEmailField()), // Campo de email
+                    const SizedBox(width: 16), // Espaçamento
+                    _buildSaveButton(), // Botão de salvar
+                  ],
+                ),
+                const Divider(height: 32, thickness: 1), // Divisor
+                _buildPhoneField(), // Campo de telefone
+              ],
+            ),
           ),
-        ),
-      ],
-    ),
-  );
-}
+        ],
+      ),
+    );
+  }
 
   // Widget para exibir a imagem do perfil com botão
   Widget _buildProfileImage() {
@@ -210,51 +213,51 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   // Lógica para salvar alterações
   void _saveChanges() {
-  // Validação de email e telefone
-  if (emailController.text.isEmpty || phoneController.text.isEmpty) {
+    // Validação de email e telefone
+    if (emailController.text.isEmpty || phoneController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Por favor, preencha todos os campos!'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    int? phoneNumber = int.tryParse(phoneController.text);
+    if (phoneNumber == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Número de telemóvel inválido!'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    // Atualização do estado
+    setState(() {
+      // Criar uma nova instância do User com as alterações
+      user = User(
+        userId: user.userId,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: emailController.text,
+        password: user.password,
+        birthDate: user.birthDate,
+        registrationDate: user.registrationDate,
+        cellPhoneNumber: phoneNumber,
+        gender: user.gender,
+        image: user.image,
+      );
+    });
+
+    // Feedback ao usuário
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Por favor, preencha todos os campos!'),
-        backgroundColor: Colors.red,
+        content: Text('Alterações gravadas com sucesso!'),
+        backgroundColor: Colors.green,
       ),
     );
-    return;
   }
-
-  int? phoneNumber = int.tryParse(phoneController.text);
-  if (phoneNumber == null) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Número de telemóvel inválido!'),
-        backgroundColor: Colors.red,
-      ),
-    );
-    return;
-  }
-
-  // Atualização do estado
-  setState(() {
-    // Criar uma nova instância do User com as alterações
-    user = User(
-      userId: user.userId,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: emailController.text,
-      password: user.password,
-      birthDate: user.birthDate,
-      registrationDate: user.registrationDate,
-      cellPhoneNumber: phoneNumber,
-      gender: user.gender,
-      image: user.image,
-    );
-  });
-
-  // Feedback ao usuário
-  ScaffoldMessenger.of(context).showSnackBar(
-    const SnackBar(
-      content: Text('Alterações gravadas com sucesso!'),
-      backgroundColor: Colors.green,
-    ),
-  );
-}
 }

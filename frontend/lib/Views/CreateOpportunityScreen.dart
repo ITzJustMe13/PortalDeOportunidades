@@ -1,10 +1,14 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/Components/CustomAppBar.dart';
+import 'package:frontend/Components/CustomDrawer.dart';
 import 'package:frontend/Enums/Location.dart';
 import 'package:frontend/Enums/OppCategory.dart';
 import 'package:frontend/Models/OpportunityImg.dart';
 
 class CreateOpportunityScreen extends StatefulWidget {
+  const CreateOpportunityScreen({super.key});
+
   @override
   _AddOpportunityScreenState createState() => _AddOpportunityScreenState();
 }
@@ -23,9 +27,8 @@ class _AddOpportunityScreenState extends State<CreateOpportunityScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Criar Oportunidade'),
-      ),
+      appBar: CustomAppBar(),
+      endDrawer: CustomDrawer(),
       body: LayoutBuilder(
         builder: (context, constraints) {
           if (constraints.maxWidth < 600) {

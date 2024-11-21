@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/Components/CustomAppBar.dart';
+import 'package:frontend/Components/CustomDrawer.dart';
 import 'package:frontend/Enums/Gender.dart';
 import 'package:frontend/Enums/Location.dart';
 import 'package:frontend/Enums/OppCategory.dart';
@@ -9,6 +11,8 @@ import 'package:frontend/Models/Review.dart';
 import '../Models/User.dart';
 
 class ReviewsHistoryScreen extends StatefulWidget {
+  const ReviewsHistoryScreen({super.key});
+
   @override
   _ReviewsHistoryScreenState createState() => _ReviewsHistoryScreenState();
 }
@@ -41,9 +45,8 @@ class _ReviewsHistoryScreenState extends State<ReviewsHistoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Reviews History'),
-      ),
+      appBar: CustomAppBar(),
+      endDrawer: CustomDrawer(),
       body: LayoutBuilder(
         builder: (context, constraints) {
           if (constraints.maxWidth < 600) {
