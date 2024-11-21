@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/Components/CustomAppBar.dart';
+import 'package:frontend/Components/CustomDrawer.dart';
 import 'package:frontend/Enums/Gender.dart';
 import '../Models/User.dart';
 
@@ -37,9 +39,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Editar Perfil'),
-      ),
+      appBar: CustomAppBar(),
+      endDrawer: CustomDrawer(),
       body: LayoutBuilder(
         builder: (context, constraints) {
           if (constraints.maxWidth < 600) {

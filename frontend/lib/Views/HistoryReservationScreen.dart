@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/Components/CustomAppBar.dart';
+import 'package:frontend/Components/CustomDrawer.dart';
 import 'package:frontend/Enums/OppCategory.dart';
 import 'package:frontend/Models/Reservation.dart';
 
 class HistoryReservationScreen extends StatefulWidget {
   const HistoryReservationScreen({super.key});
 
+  @override
   _HistoryReservationScreenState createState() =>
       _HistoryReservationScreenState();
 }
@@ -22,9 +25,8 @@ class _HistoryReservationScreenState extends State<HistoryReservationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Histórico de Reservas'),
-      ),
+      appBar: CustomAppBar(),
+      endDrawer: CustomDrawer(),
       body: LayoutBuilder(
         builder: (context, constraints) {
           if (constraints.maxWidth < 800) {

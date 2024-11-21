@@ -7,7 +7,15 @@ import 'package:frontend/Components/OpportunityManageCard.dart';
 import 'package:frontend/Enums/Location.dart';
 import 'package:frontend/Enums/OppCategory.dart';
 
-class OpportunityManager extends StatelessWidget {
+class OpportunityManagerScreen extends StatefulWidget {
+  const OpportunityManagerScreen({super.key});
+  
+  @override
+  _OpportunityManagerScreenState createState() => _OpportunityManagerScreenState();
+}
+
+
+class _OpportunityManagerScreenState extends State<OpportunityManagerScreen> {
   @override
   Widget build(BuildContext context) {
     // Define oppImgs here within the build method
