@@ -73,6 +73,14 @@ class CustomDrawer extends StatelessWidget {
                   context, "/your-reservations"); // Close the drawer
             },
           ),
+          ListTile(
+            leading: const Icon(Icons.book),
+            title: const Text('O seu Histórico de Reservas'),
+            onTap: () {
+              Navigator.pushNamed(
+                  context, "/reservation-history"); // Close the drawer
+            },
+          ),
         ],
       ),
     );

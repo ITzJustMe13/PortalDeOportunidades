@@ -193,7 +193,7 @@ class _HistoryReservationScreenState extends State<HistoryReservationScreen> {
             Stack(
               children: [
                 _buildCardImage(
-                    'https://via.placeholder.com/300'), // Imagem sem padding.
+                       'https://picsum.photos/200'), // Imagem sem padding.
                 Positioned(
                   top: 8,
                   left: 8,
