@@ -9,6 +9,8 @@ import 'package:frontend/Models/Review.dart';
 import '../Models/User.dart';
 
 class ReviewsHistoryScreen extends StatefulWidget {
+  const ReviewsHistoryScreen({super.key});
+
   @override
   _ReviewsHistoryScreenState createState() => _ReviewsHistoryScreenState();
 }

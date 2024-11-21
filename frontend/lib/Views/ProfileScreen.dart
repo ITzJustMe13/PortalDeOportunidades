@@ -4,6 +4,8 @@ import 'package:frontend/Enums/Gender.dart';
 import '../Models/User.dart';
 
 class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
+
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
 }
@@ -154,8 +156,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _buildEditProfileButton() {
     return ElevatedButton(
       onPressed: () {
-      Navigator.pushNamed(context, '/edit-profile');
-    },
+        Navigator.pushNamed(context, '/edit-profile');
+      },
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.green,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
