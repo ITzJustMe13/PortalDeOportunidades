@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/Views/CreateOpportunityScreen.dart';
 import 'package:frontend/Views/OpportunityDetailsScreen.dart';
 import 'package:frontend/Views/OpportunityManager.dart';
 import 'package:frontend/Views/search_page.dart';
@@ -31,6 +32,7 @@ class MainApp extends StatelessWidget {
         '/create-opportunity': (context) => const CreateOpportunityPage(),
         '/your-opportunities': (context) => const YourOpportunitiesPage(),
         '/your-reservations': (context) => const YourReservationsPage(),
+        '/add-opportunity': (context) => const CreateOpportunityScreen(),
       },
     );
   }
