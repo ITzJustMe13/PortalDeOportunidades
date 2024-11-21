@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:frontend/Views/HistoryReservationScreen.dart';
 import 'package:frontend/Views/EditProfileScreen.dart';
 import 'package:frontend/Views/ProfileScreen.dart';
@@ -9,10 +10,11 @@ import 'package:frontend/Views/OpportunityManager.dart';
 import 'package:frontend/Views/search_page.dart';
 import 'package:frontend/main_page.dart';
 
+
 import 'Views/home_page.dart';
 
 void main() {
-  runApp(const MainApp());
+  runApp(MainApp());
 }
 
 class MainApp extends StatelessWidget {
