@@ -6,6 +6,10 @@ namespace BackEnd.Services
 {
     public class EmailService
     {
+        /// <summary>
+        /// Function to send an activation email to the user after a user registration has been made
+        /// </summary>
+        /// <param name="user"></param>
         public static void SendActivationEmail(UserModel user)
         {
             var fromPassword = Environment.GetEnvironmentVariable("GMAIL_APP_PASSWORD");

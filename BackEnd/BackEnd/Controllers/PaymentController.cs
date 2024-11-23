@@ -16,7 +16,11 @@ namespace BackEnd.Controllers
             _context = context;
         }
 
-
+        /// <summary>
+        /// Endpoint that creates a checkout session using strip for paying for a reservation
+        /// </summary>
+        /// <param name="reservation"></param>
+        /// <returns></returns>
         [HttpPost("Checkout-Reservation")]
         public async Task<IActionResult> CreateReservationCheckoutSession([FromBody] Reservation reservation)
         {
@@ -86,7 +90,11 @@ namespace BackEnd.Controllers
 
 
 
-        // POST api/payment/Checkout-Impulse
+        /// <summary>
+        /// Endpoint that creates a checkout session using strip for paying for a Opportunity Impulse
+        /// </summary>
+        /// <param name="impulse"></param>
+        /// <returns></returns>
         [HttpPost("Checkout-Impulse")]
         public async Task<IActionResult> CreateImpulseCheckoutSession([FromBody] Impulse impulse)
         {

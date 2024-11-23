@@ -23,7 +23,10 @@ namespace BackEnd.Controllers
 
         public OpportunityController(ApplicationDbContext opportunityContext) => this._context = opportunityContext;
 
-        //GET api/Opportunity/
+        /// <summary>
+        /// Endpoint that gets all the Opportunities
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Opportunity>>> GetAllOpportunities()
         {
@@ -49,7 +52,10 @@ namespace BackEnd.Controllers
             }
         }
 
-        //GET api/Opportunity/Impulsed
+        /// <summary>
+        /// Endpoint that gets all the Impulsed Opportunities
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("Impulsed")]
         public async Task<ActionResult<IEnumerable<Opportunity>>> GetAllImpulsedOpportunities()
         {
@@ -76,7 +82,11 @@ namespace BackEnd.Controllers
             }
         }
 
-        //GET api/Opportunity/1
+        /// <summary>
+        /// Endpoint that gets an Opportunity by its id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<Opportunity>> GetOpportunityById(int id)
         {
@@ -107,7 +117,11 @@ namespace BackEnd.Controllers
             }
         }
 
-        //GET api/Opportunity/User/1
+        /// <summary>
+        /// Endpoint that gets all the Opportunities of a certain user by his id
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         [HttpGet("User/{userId}")]
         public async Task<ActionResult<IEnumerable<Opportunity>>> GetAllOpportunitiesByUserId(int userId)
         {
@@ -140,7 +154,16 @@ namespace BackEnd.Controllers
 
         }
 
-        // GET api/Opportunity/Search?keyword=event&vacancies=5&minPrice=10&maxPrice=100&category=conference&location=VilaReal
+        /// <summary>
+        /// Endpoint that searches Opportunities based on the parameteres given
+        /// </summary>
+        /// <param name="keyword"></param>
+        /// <param name="vacancies"></param>
+        /// <param name="minPrice"></param>
+        /// <param name="maxPrice"></param>
+        /// <param name="category"></param>
+        /// <param name="location"></param>
+        /// <returns></returns>
         [HttpGet("Search")]
         public async Task<ActionResult<IEnumerable<Opportunity>>> SearchOpportunities(
             [FromQuery] string? keyword,
@@ -197,7 +220,11 @@ namespace BackEnd.Controllers
             }
         }
 
-        //POST api/Opportunity/
+        /// <summary>
+        /// Endpoint that creates an Opportunity
+        /// </summary>
+        /// <param name="opportunity"></param>
+        /// <returns></returns>
         [HttpPost]
         //[Authorize]
         public async Task<ActionResult<Opportunity>> CreateOpportunity(Opportunity opportunity)
@@ -258,7 +285,11 @@ namespace BackEnd.Controllers
             }
         }
 
-        //DELETE api/Opportunity/1
+        /// <summary>
+        /// Endpoint that deletes an Opportunity by its id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         [Authorize]
         public async Task<ActionResult<Opportunity>> DeleteOpportunityById(int id)
@@ -294,7 +325,11 @@ namespace BackEnd.Controllers
             return NoContent();
         }
 
-        //PUT api/Opportunity/1/activate
+        /// <summary>
+        /// Endpoint that activates an Opportunity by its id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPut("{id}/activate")]
         [Authorize]
         public async Task<ActionResult<Opportunity>> ActivateOpportunityById(int id)
@@ -326,7 +361,11 @@ namespace BackEnd.Controllers
 
         }
 
-        //PUT api/Opportunity/1/deactivate
+        /// <summary>
+        /// Endpoint that deactivates an Opportunity by its id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPut("{id}/deactivate")]
         [Authorize]
         public async Task<ActionResult<Opportunity>> DeactivateOpportunityById(int id)
@@ -358,7 +397,20 @@ namespace BackEnd.Controllers
 
         }
 
-        // PUT api/Opportunity/1/Edit?name=event&description=description&price=10&vacancies=2&category=agricultura&location=VilaReal&address=RuaTeste&date=10/02/2025&newImages=["img1","img2"]
+        /// <summary>
+        /// Endpoints that edits an Opportunity by its id using the given parameters
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="name"></param>
+        /// <param name="description"></param>
+        /// <param name="price"></param>
+        /// <param name="vacancies"></param>
+        /// <param name="category"></param>
+        /// <param name="location"></param>
+        /// <param name="address"></param>
+        /// <param name="date"></param>
+        /// <param name="newImageUrls"></param>
+        /// <returns></returns>
         [HttpPut("{id}/Edit")]
         [Authorize]
         public async Task<ActionResult<Opportunity>> EditOpportunityById(

@@ -7,7 +7,11 @@ namespace BackEnd.Models.Mappers
 {
     public class OpportunityMapper
     {
-        // Method to map OpportunityModel to Opportunity(Dto)
+        /// <summary>
+        /// Function that maps OpportunityModel parameters to Opportunity parameters
+        /// </summary>
+        /// <param name="opportunityModel"></param>
+        /// <returns>Returns a Dto with the Model info</returns>
         public static Opportunity MapToDto(OpportunityModel opportunityModel)
         {
             if (opportunityModel == null)
@@ -38,7 +42,11 @@ namespace BackEnd.Models.Mappers
             };
         }
 
-        // Method to map Opportunity(Dto) to OpportunityModel
+        /// <summary>
+        /// Function that maps Opportunity parameters to OpportunityModel parameters
+        /// </summary>
+        /// <param name="opportunity"></param>
+        /// <returns>Returns a Model with the Dto info</returns>
         public static OpportunityModel MapToModel(Opportunity opportunity)
         {
             if (opportunity == null)
@@ -70,7 +78,11 @@ namespace BackEnd.Models.Mappers
             return opportunityModel;
         }
 
-        // Método para validar o modelo através das DataAnnotations
+        /// <summary>
+        /// Function that validates if the mapping parameters are correct with each other
+        /// </summary>
+        /// <param name="model"></param>
+        /// <exception cref="ValidationException"></exception>
         private static void ValidateModel(object model)
         {
             var context = new ValidationContext(model);

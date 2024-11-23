@@ -23,8 +23,12 @@ namespace BackEnd.Controllers
 
         private EmailService emailService;
 
-        // GET: api/User/{id}
         
+        /// <summary>
+        /// Endpoint that gets the user by his id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         [Authorize]
         public async Task<ActionResult<User>> GetUserByID(int id)
@@ -42,7 +46,11 @@ namespace BackEnd.Controllers
             return Ok(u);
         }
 
-        // POST: api/User
+        /// <summary>
+        /// Endpoint that creates a new user
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult<User>> CreateNewUser(User user)
         {
@@ -121,8 +129,12 @@ namespace BackEnd.Controllers
             }
         }
 
-        //DELETE: api/User/2
         
+        /// <summary>
+        /// Endpoint that deletes a user by his id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         [Authorize]
         public async Task<ActionResult> DeleteUser(int id)
@@ -151,8 +163,13 @@ namespace BackEnd.Controllers
 
 
 
-        //PUT: api/User/1
         
+        /// <summary>
+        /// Endpoint that edits a user by his id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="updatedUser"></param>
+        /// <returns></returns>
         [HttpPut("{id}")]
         [Authorize]
         public async Task<ActionResult<User>> EditUser(int id, User updatedUser)
@@ -228,7 +245,11 @@ namespace BackEnd.Controllers
             }
         }
 
-        // POST: api/user/add-favorite
+        /// <summary>
+        /// Endpoint that adds a Favorite to a user
+        /// </summary>
+        /// <param name="favorite"></param>
+        /// <returns></returns>
         [Authorize]
         [HttpPost("favorite")]
         public async Task<ActionResult<Favorite>> AddFavorite(Favorite favorite)
@@ -255,7 +276,12 @@ namespace BackEnd.Controllers
             return CreatedAtAction(nameof(GetFavoriteById), new { favorite.userId, favorite.opportunityId }, favorite);
         }
 
-        // GET: api/user/{userId}/{opportunityId}
+        /// <summary>
+        /// Endpoint that gets a User Favorite by its id
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="opportunityId"></param>
+        /// <returns></returns>
         [Authorize]
         [HttpGet("favorite/{userId}/{opportunityId}")]
         public async Task<ActionResult<Favorite>> GetFavoriteById(int userId, int opportunityId)
@@ -278,7 +304,11 @@ namespace BackEnd.Controllers
             return Ok(favorite);
         }
 
-        // GET: api/user/{id}/favorites
+        /// <summary>
+        /// Endpoint that gets all User Favorites by User id
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         [Authorize]
         [HttpGet("favorites/{userId}")]
         public async Task<ActionResult<Favorite[]>> GetFavorites(int userId)
@@ -308,7 +338,11 @@ namespace BackEnd.Controllers
             return Ok(favoriteDTOs);
         }
 
-        // POST: api/user/impulse
+        /// <summary>
+        /// Endpoint that makes an Opportunity impulsed
+        /// </summary>
+        /// <param name="impulse"></param>
+        /// <returns></returns>
         [Authorize]
         [HttpPost("impulse")]
         public ActionResult<Impulse> ImpulseOportunity(Impulse impulse)
@@ -361,7 +395,11 @@ namespace BackEnd.Controllers
         
         }
 
-        // GET: api/User/created-opportunities/{id}
+        /// <summary>
+        /// Endpoint that gets all the created Opportunities of a User by his id
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         [Authorize]
         [HttpGet("created-opportunities/{userId}")]
         public async Task<ActionResult<Favorite[]>> GetCreatedOpportunities(int userId)
@@ -390,6 +428,11 @@ namespace BackEnd.Controllers
             return Ok(opportunitiesDTOs);
         }
 
+        /// <summary>
+        /// Endpoint responsible for the User login
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
@@ -432,7 +475,7 @@ namespace BackEnd.Controllers
 
             }
         }
-
+        // \/\/\/ PASSAR A SERVIÇO ISTO AQUI \/\/\/
         private async Task<Boolean> IsEmailAvailable(string email)
         {
 
@@ -442,6 +485,12 @@ namespace BackEnd.Controllers
             return !await dbContext.Users.AnyAsync(user => user.Email == email);
         }
 
+
+        /// <summary>
+        /// Endpoint that gets if the email is available or not
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
         [HttpGet("get-email-availability/{email}")]
         public async Task<IActionResult> GetEmailAvailability(string email)
         {
@@ -453,6 +502,11 @@ namespace BackEnd.Controllers
             return Ok( emailAvailable );
         }
 
+        /// <summary>
+        /// Endpoint that activates User account
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
         [HttpGet("activate")]
         public async Task<IActionResult> ActivateAccount([FromQuery]string token)
         {
@@ -479,6 +533,12 @@ namespace BackEnd.Controllers
             return Ok("Account activated successfully.");
         }
 
+        /// <summary>
+        /// Endpoint for using google auth
+        /// </summary>
+        /// <param name="googleToken"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
         [HttpPost("auth/google")]
         public async Task<IActionResult> GoogleLogin([FromBody] string googleToken)
         {

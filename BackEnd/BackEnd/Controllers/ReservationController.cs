@@ -16,7 +16,11 @@ namespace BackEnd.Controllers
 
         public ReservationController(ApplicationDbContext reservationContext) => this.dbContext = reservationContext;
 
-        //GET para obter todas as reservas ativas do user
+        /// <summary>
+        /// Endpoint that gets all the active Reservations of a certain User by his id
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         [Authorize]
         [HttpGet("{userId}/AllActiveReservations")]
         public async Task<ActionResult<IEnumerable<Reservation>>> GetAllActiveReservationsByUserId(int userId)
@@ -44,7 +48,11 @@ namespace BackEnd.Controllers
             }
         }
 
-        // Método para obter todas as reservas de um usuário
+        /// <summary>
+        /// Endpoint that gets all the Reservations (active and inactive) of a certain User by his id
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         [HttpGet("{userId}/AllReservations")]
         [Authorize]
         public async Task<ActionResult<IEnumerable<Reservation>>> GetAllReservationByUserId(int userId)
@@ -73,7 +81,11 @@ namespace BackEnd.Controllers
             
         }
 
-        //GET para obter uma reserva pelo ID
+        /// <summary>
+        /// Endpoint to get a specific Reservation by its id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         [Authorize]
         public async Task<ActionResult<Reservation>> GetReservationById(int id)
@@ -103,7 +115,11 @@ namespace BackEnd.Controllers
          
         }
 
-        //POST para criar uma nova Reserva
+        /// <summary>
+        /// Endpoint that creates a new Reservation
+        /// </summary>
+        /// <param name="reservation"></param>
+        /// <returns></returns>
         [HttpPost]
         [Authorize]
         public async Task<ActionResult<Reservation>> CreateNewReservation(Reservation reservation)
@@ -163,7 +179,11 @@ namespace BackEnd.Controllers
             }
         }
 
-        //PUT api/Opportunity/1/deactivate
+        /// <summary>
+        /// Endpoint that deactivates a Reservation by its id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPut("{id}/deactivate")]
         [Authorize]
         public async Task<ActionResult<Reservation>> DeactivateReservationById(int id)
@@ -191,7 +211,12 @@ namespace BackEnd.Controllers
 
         }
 
-        //PUT para atualizar uma reserva
+        /// <summary>
+        /// Endpoint that updates the Reservation
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="reservation"></param>
+        /// <returns></returns>
         [HttpPut("{id}")]
         [Authorize]
         public async Task<ActionResult<Reservation>> UpdateReservation(int id, Reservation reservation)
@@ -230,7 +255,11 @@ namespace BackEnd.Controllers
             return Ok();
         }
 
-        //DELETE para apagar uma reserva
+        /// <summary>
+        /// Endpoint that deletes the reservation by its id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         [Authorize]
         public async Task<ActionResult> DeleteReservation(int id)

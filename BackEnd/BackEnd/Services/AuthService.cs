@@ -10,6 +10,11 @@ namespace BackEnd.Services;
 
 public class AuthService
 {
+    /// <summary>
+    /// Function that Generates a Token using Jwt and adds an expiration date to it
+    /// </summary>
+    /// <param name="user"></param>
+    /// <returns>Returns the token in a String form</returns>
     public static string GenerateToken(UserModel user)
     {
         var handler = new JwtSecurityTokenHandler();

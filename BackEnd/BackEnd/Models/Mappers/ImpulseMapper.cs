@@ -6,7 +6,11 @@ namespace BackEnd.Models.Mappers
 {
     public class ImpulseMapper
     {
-        // Method to map ImpulseModel to Impulse(Dto)
+        /// <summary>
+        /// Function that maps ImpulseModel parameters to Impulse parameters
+        /// </summary>
+        /// <param name="impulseModel"></param>
+        /// <returns>Returns a Dto with the Model info</returns>
         public static Impulse? MapToDto(ImpulseModel impulseModel)
         {
             if (impulseModel == null)
@@ -24,7 +28,11 @@ namespace BackEnd.Models.Mappers
             };
         }
 
-        // Method to map Impulse(Dto) to ImpulseModel
+        /// <summary>
+        /// Function that maps Impulse parameters to ImpulseModel parameters
+        /// </summary>
+        /// <param name="impulse"></param>
+        /// <returns>Returns a Model with the Dto info</returns>
         public static ImpulseModel? MapToModel(Impulse impulse)
         {
             if (impulse == null)
@@ -45,7 +53,11 @@ namespace BackEnd.Models.Mappers
             return impulseModel;
         }
 
-        // Método para validar o modelo usando DataAnnotations
+        /// <summary>
+        /// Function that validates if the mapping parameters are correct with each other
+        /// </summary>
+        /// <param name="model"></param>
+        /// <exception cref="ValidationException"></exception>
         private static void ValidateModel(object model)
         {
             var context = new ValidationContext(model);

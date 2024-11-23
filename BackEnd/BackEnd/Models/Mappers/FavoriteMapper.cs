@@ -6,7 +6,11 @@ namespace BackEnd.Models.Mappers
 {
     public class FavoriteMapper
     {
-        // Method to map FavoritesModel to Favorite(Dto)
+        /// <summary>
+        /// Function that maps FavoritesModel parameters to Favorite parameters
+        /// </summary>
+        /// <param name="favoriteModel"></param>
+        /// <returns>Returns a Dto with the Model info</returns>
         public static Favorite? MapToDto(FavoritesModel favoriteModel)
         {
             if (favoriteModel == null)
@@ -22,7 +26,11 @@ namespace BackEnd.Models.Mappers
             };
         }
 
-        // Method to map Favorite(Dto) to FavoritesModel
+        /// <summary>
+        /// Function that maps Favorites parameters to FavoriteModel parameters
+        /// </summary>
+        /// <param name="favorite"></param>
+        /// <returns>Returns a Model with the Dto info</returns>
         public static FavoritesModel? MapToModel(Favorite favorite)
         {
             if (favorite == null)
@@ -38,7 +46,11 @@ namespace BackEnd.Models.Mappers
             return favoriteModel;
         }
 
-        // Método para validar o modelo usando DataAnnotations
+        /// <summary>
+        /// Function that validates if the mapping parameters are correct with each other
+        /// </summary>
+        /// <param name="model"></param>
+        /// <exception cref="ValidationException"></exception>
         private static void ValidateModel(object model)
         {
             var context = new ValidationContext(model);

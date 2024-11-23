@@ -4,6 +4,15 @@ namespace BackEnd.Services
 {
     public class OpportunityService
     {
+        /// <summary>
+        /// Function to validate search parameters for Opportunities
+        /// </summary>
+        /// <param name="vacancies"></param>
+        /// <param name="minPrice"></param>
+        /// <param name="maxPrice"></param>
+        /// <param name="category"></param>
+        /// <param name="location"></param>
+        /// <returns>A list of strings with the errors if it has any</returns>
         public static List<string> ValidateSearchParameters(int? vacancies, decimal? minPrice, decimal? maxPrice, Category? category, Location? location)
         {
             var errors = new List<string>();
@@ -33,7 +42,19 @@ namespace BackEnd.Services
 
             return errors;
         }
-
+        /// <summary>
+        /// Function to validate parameters for creating and editing Opportunities
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="description"></param>
+        /// <param name="price"></param>
+        /// <param name="vacancies"></param>
+        /// <param name="category"></param>
+        /// <param name="location"></param>
+        /// <param name="address"></param>
+        /// <param name="date"></param>
+        /// <param name="isCreation"></param>
+        /// <returns>A list of strings with the errors if it has any</returns>
         public static List<string> ValidateOpportunityParameters(
            string? name,
            string? description,

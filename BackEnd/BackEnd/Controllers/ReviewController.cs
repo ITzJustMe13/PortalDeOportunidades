@@ -17,7 +17,11 @@ namespace BackEnd.Controllers
 
         public ReviewController(ApplicationDbContext reviewContext) => this._context = reviewContext;
 
-        //GET api/Review/1
+        /// <summary>
+        /// Endpoint that gets the specific Review by Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         [Authorize]
         public async Task<ActionResult<Review>> GetReviewById(int id)
@@ -42,7 +46,11 @@ namespace BackEnd.Controllers
             }
         }
 
-        //POST api/Review
+        /// <summary>
+        /// Endpoint that creates a review
+        /// </summary>
+        /// <param name="review"></param>
+        /// <returns></returns>
         [HttpPost]
         [Authorize]
         public async Task<ActionResult<Review>> CreateReview(Review review)
@@ -111,7 +119,11 @@ namespace BackEnd.Controllers
             }
         }
 
-        //DELETE api/Review/1
+        /// <summary>
+        /// Endpoint that deletes a review by its id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         [Authorize]
         public async Task<ActionResult<Review>> DeleteReviewById(int id)
@@ -132,7 +144,13 @@ namespace BackEnd.Controllers
             return NoContent();
         }
 
-        //PUT api/Review/1/Edit?score=2.5&desc=teste123
+        /// <summary>
+        /// Endpoint that edits a review by it id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="score"></param>
+        /// <param name="desc"></param>
+        /// <returns></returns>
         [HttpPut("{id}/Edit")]
         [Authorize]
         public async Task<ActionResult<Review>> EditReviewById(int id, [FromQuery]float score, [FromQuery]string? desc)

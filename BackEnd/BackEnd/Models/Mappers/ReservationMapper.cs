@@ -6,7 +6,12 @@ namespace BackEnd.Models.Mappers
 {
         public class ReservationMapper
         {
-            public static Reservation? MapToDto(ReservationModel reservationModel) 
+        /// <summary>
+        /// Function that maps ReservationModel parameters to Reservation parameters
+        /// </summary>
+        /// <param name="reservationModel"></param>
+        /// <returns>Returns a Dto with the Model info</returns>
+        public static Reservation? MapToDto(ReservationModel reservationModel) 
             {
             if (reservationModel == null)
                 return null;
@@ -27,8 +32,12 @@ namespace BackEnd.Models.Mappers
                     fixedPrice = reservationModel.fixedPrice
                 };
             }
-
-            public static ReservationModel? MapToModel(Reservation reservation)
+        /// <summary>
+        /// Function that maps Reservation parameters to ReservationModel parameters
+        /// </summary>
+        /// <param name="reservation"></param>
+        /// <returns>Returns a Model with the Dto info</returns>
+        public static ReservationModel? MapToModel(Reservation reservation)
             {
                 if (reservation == null)
                     return null;
@@ -52,7 +61,11 @@ namespace BackEnd.Models.Mappers
             return reservationModel;
             }
 
-        // Método para validar o modelo usando DataAnnotations
+        /// <summary>
+        /// Function that validates if the mapping parameters are correct with each other
+        /// </summary>
+        /// <param name="model"></param>
+        /// <exception cref="ValidationException"></exception>
         private static void ValidateModel(object model)
         {
             var context = new ValidationContext(model);
