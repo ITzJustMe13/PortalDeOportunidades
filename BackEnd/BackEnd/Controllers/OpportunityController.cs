@@ -199,7 +199,7 @@ namespace BackEnd.Controllers
 
         //POST api/Opportunity/
         [HttpPost]
-        //[Authorize]
+        [Authorize]
         public async Task<ActionResult<Opportunity>> CreateOpportunity(Opportunity opportunity)
         {
             if (_context == null)

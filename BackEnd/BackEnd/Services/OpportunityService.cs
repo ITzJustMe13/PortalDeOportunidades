@@ -1,10 +1,11 @@
 ﻿using BackEnd.Enums;
+using BackEnd.Interfaces;
 
 namespace BackEnd.Services
 {
-    public class OpportunityService
+    public class OpportunityService : IOpportunityService
     {
-        public static List<string> ValidateSearchParameters(int? vacancies, decimal? minPrice, decimal? maxPrice, Category? category, Location? location)
+        public List<string> ValidateSearchParameters(int? vacancies, decimal? minPrice, decimal? maxPrice, Category? category, Location? location)
         {
             var errors = new List<string>();
 
@@ -34,7 +35,7 @@ namespace BackEnd.Services
             return errors;
         }
 
-        public static List<string> ValidateOpportunityParameters(
+        public List<string> ValidateOpportunityParameters(
            string? name,
            string? description,
            decimal? price,

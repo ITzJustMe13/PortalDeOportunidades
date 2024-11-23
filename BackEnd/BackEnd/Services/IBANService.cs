@@ -1,10 +1,11 @@
-﻿using IbanNet;
+﻿using BackEnd.Interfaces;
+using IbanNet;
 
 namespace BackEnd.Services
 {
-    public class IBANService
+    public class IBANService : IIBanService
     {
-        public static bool ValidateIBAN (string IBAN)
+        public bool ValidateIBAN (string IBAN)
         {
             IIbanValidator validator = new IbanValidator();
             ValidationResult validationResult = validator.Validate(IBAN);
