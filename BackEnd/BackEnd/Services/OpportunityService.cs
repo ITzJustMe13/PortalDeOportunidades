@@ -1,10 +1,23 @@
-﻿using BackEnd.Enums;
+﻿using BackEnd.Controllers.Data;
+using BackEnd.Enums;
+using BackEnd.GenericClasses;
 using BackEnd.Interfaces;
+using BackEnd.Models.FrontEndModels;
+using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace BackEnd.Services
 {
     public class OpportunityService : IOpportunityService
     {
+        private readonly ApplicationDbContext dbContext;
+
+        public OpportunityService(ApplicationDbContext context)
+        {
+            dbContext = context;
+        }
+
+        
         public List<string> ValidateSearchParameters(int? vacancies, decimal? minPrice, decimal? maxPrice, Category? category, Location? location)
         {
             var errors = new List<string>();

@@ -8,6 +8,8 @@ using BackEnd.Models.Mappers;
 using Microsoft.AspNetCore.Http.HttpResults;
 using System.Net;
 using DotNetEnv;
+using BackEnd.Interfaces;
+using Moq;
 
 namespace BackEnd.Test
 {
@@ -16,6 +18,7 @@ namespace BackEnd.Test
     {
         private OpportunityController _controller;
         private ApplicationDbContext _context;
+        private Mock<IOpportunityService> _mockOpportunityService;
 
         [SetUp]
         public void Setup()
@@ -26,7 +29,12 @@ namespace BackEnd.Test
                 .Options;
 
             _context = new ApplicationDbContext(options);
-            _controller = new OpportunityController(_context);
+
+            // Create a mock for the IOpportunityService
+            _mockOpportunityService = new Mock<IOpportunityService>();
+
+            // Inject the ApplicationDbContext and the mocked service into the controller
+            _controller = new OpportunityController(_context, _mockOpportunityService.Object);
         }
 
         [TearDown]
@@ -85,7 +93,8 @@ namespace BackEnd.Test
         public async Task GetAllOpportunities_NotFoundObjectResult_DBContextMissing()
         {
             // Arrange
-            var controller = new OpportunityController(null);
+            var mockOpportunityService = new Mock<IOpportunityService>();
+            var controller = new OpportunityController(null, mockOpportunityService.Object);
 
             // Act
             var response = await controller.GetAllOpportunities();
@@ -154,7 +163,8 @@ namespace BackEnd.Test
         public async Task GetAllImpulsedOpportunities_NotFoundObjectResult_DBContextMissing()
         {
             // Arrange
-            var controller = new OpportunityController(null);
+            var mockOpportunityService = new Mock<IOpportunityService>();
+            var controller = new OpportunityController(null, mockOpportunityService.Object);
 
             // Act
             var response = await controller.GetAllImpulsedOpportunities();
@@ -242,7 +252,8 @@ namespace BackEnd.Test
         public async Task GetOpportunityById_ReturnsNotFoundObjectResult_DBContextMissing()
         {
             // Arrange
-            var controller = new OpportunityController(null);
+            var mockOpportunityService = new Mock<IOpportunityService>();
+            var controller = new OpportunityController(null, mockOpportunityService.Object);
 
             var opportunityId = 1;
             var opportunityModel = new OpportunityModel { OpportunityId = 2, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "a description", Date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
@@ -346,7 +357,8 @@ namespace BackEnd.Test
         public async Task GetAllOpportunitiesByUserId_returnsNotFoundObjectResults_DBContextMissing()
         {
             // Arrange
-            var controller = new OpportunityController(null);
+            var mockOpportunityService = new Mock<IOpportunityService>();
+            var controller = new OpportunityController(null, mockOpportunityService.Object);
 
             var userId = 2;
 
@@ -612,7 +624,8 @@ namespace BackEnd.Test
         {
 
             // Arrange
-            var controller = new OpportunityController(null);
+            var mockOpportunityService = new Mock<IOpportunityService>();
+            var controller = new OpportunityController(null, mockOpportunityService.Object);
 
 
             var opportunity = new OpportunityModel { OpportunityId = 1, Price = 1, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "um sitio", Date = DateTime.Now.AddDays(30), Vacancies = 1, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = true };
@@ -1193,7 +1206,8 @@ namespace BackEnd.Test
         public async Task CreateOpportunity_ReturnsNotFoundObjectResult_DBContextMissing()
         {
             // Arrange
-            var controller = new OpportunityController(null);
+            var mockOpportunityService = new Mock<IOpportunityService>();
+            var controller = new OpportunityController(null, mockOpportunityService.Object);
 
             var user = new UserModel
             {
@@ -1342,7 +1356,8 @@ namespace BackEnd.Test
         public async Task DeleteOpportunityById_ReturnsNotFoundObjectResult_DBContextMissing()
         {
             // Arrange
-            var controller = new OpportunityController(null);
+            var mockOpportunityService = new Mock<IOpportunityService>();
+            var controller = new OpportunityController(null, mockOpportunityService.Object);
 
             var opportunityId = 1;
 
@@ -1458,7 +1473,8 @@ namespace BackEnd.Test
         public async Task ActivateOpportunityById_ReturnsNotFoundObjectResult_DBContextMissing()
         {
             // Arrange
-            var controller = new OpportunityController(null);
+            var mockOpportunityService = new Mock<IOpportunityService>();
+            var controller = new OpportunityController(null, mockOpportunityService.Object);
 
             var opportunityId = 1;
             var opportunity = new OpportunityModel { OpportunityId = 1, Price = 1, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "um sitio", Date = DateTime.Now.AddDays(30), Vacancies = 1, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = true };
@@ -1573,7 +1589,8 @@ namespace BackEnd.Test
         public async Task DeactivateOpportunityById_ReturnsNotFoundObjectResult_DBContextMissing()
         {
             // Arrange
-            var controller = new OpportunityController(null);
+            var mockOpportunityService = new Mock<IOpportunityService>();
+            var controller = new OpportunityController(null, mockOpportunityService.Object);
 
             var opportunityId = 1;
             var opportunity = new OpportunityModel { OpportunityId = 1, Price = 1, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "um sitio", Date = DateTime.Now.AddDays(30), Vacancies = 1, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = true };
@@ -1924,7 +1941,8 @@ namespace BackEnd.Test
         public async Task EditOpportunityById_ReturnsNotFoundObjectResult_DBContextMissing()
         {
             // Arrange
-            var controller = new OpportunityController(null);
+            var mockOpportunityService = new Mock<IOpportunityService>();
+            var controller = new OpportunityController(null, mockOpportunityService.Object);
 
             var opportunityId = 1;
             var opportunityModel = new OpportunityModel { OpportunityId = opportunityId, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "a description", Date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
