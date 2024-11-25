@@ -3,9 +3,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using BackEnd.Controllers;
 using BackEnd.Controllers.Data;
+using BackEnd.Interfaces;
 using BackEnd.Models.BackEndModels;
 using BackEnd.Models.FrontEndModels;
 using BackEnd.Models.Mappers;
+using BackEnd.Services;
+using DotNetEnv;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
@@ -16,7 +19,8 @@ namespace BackEnd.Test
     public class ReviewControllerTests
     {
         private ReviewController _controller;
-        private ApplicationDbContext _context; 
+        private ApplicationDbContext _context;
+        private IReviewService _reviewService;
 
         [SetUp]
         public void Setup()
@@ -27,7 +31,8 @@ namespace BackEnd.Test
                 .Options;
 
             _context = new ApplicationDbContext(options);
-            _controller = new ReviewController(_context);
+            _reviewService = new ReviewService(_context);
+            _controller = new ReviewController(_reviewService);
         }
 
         [TearDown]
@@ -51,9 +56,9 @@ namespace BackEnd.Test
             var response = await _controller.GetReviewById(reviewId);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<OkObjectResult>(), "Expected OkObjectResult for valid review ID");
+            Assert.That(response, Is.TypeOf<OkObjectResult>(), "Expected OkObjectResult for valid review ID");
 
-            var okResult = response.Result as OkObjectResult;
+            var okResult = response as OkObjectResult;
             Assert.That(okResult, Is.Not.Null, "OkObjectResult should not be null");
 
             var returnedReview = okResult.Value as BackEnd.Models.FrontEndModels.Review;
@@ -74,9 +79,9 @@ namespace BackEnd.Test
             var response = await _controller.GetReviewById(reviewId);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<NotFoundObjectResult>(), "Expected NotFoundObjectResult for nonexistent review ID");
+            Assert.That(response, Is.TypeOf<NotFoundObjectResult>(), "Expected NotFoundObjectResult for nonexistent review ID");
 
-            var notFoundResult = response.Result as NotFoundObjectResult;
+            var notFoundResult = response as NotFoundObjectResult;
             Assert.That(notFoundResult, Is.Not.Null, "NotFoundObjectResult should not be null");
             Assert.That(notFoundResult?.Value, Is.EqualTo($"Review with id {reviewId} not found."), "Error message should match the expected not found message");
         }
@@ -86,16 +91,17 @@ namespace BackEnd.Test
         public async Task GetReviewById_ReturnsNotFoundObjectResult_DBContextMissing()
         {
             // Arrange
-            var controller = new ReviewController(null);
+            var reviewService = new ReviewService(null);
+            var controller = new ReviewController(reviewService);
             var reviewId = 1;
 
             // Act
             var response = await controller.GetReviewById(reviewId);
 
             // Assert
-            Assert.That(response.Result, Is.InstanceOf<NotFoundObjectResult>());
-            var notFoundResult = response.Result as NotFoundObjectResult;
-            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
+            Assert.That(response, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = response as NotFoundObjectResult;
+            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing."));
         }
 
         [Test]
@@ -115,9 +121,9 @@ namespace BackEnd.Test
             var response = await _controller.CreateReview(reviewDto);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>());
+            Assert.That(response, Is.TypeOf<BadRequestObjectResult>());
 
-            var badRequestResult = response.Result as BadRequestObjectResult;
+            var badRequestResult = response as BadRequestObjectResult;
             Assert.That(badRequestResult, Is.Not.Null);
             Assert.That(badRequestResult?.Value, Is.EqualTo("Invalid Reservation ID. Reservation does not exist."));
         }
@@ -197,8 +203,8 @@ namespace BackEnd.Test
 
             // Assert
    
-            Assert.That(response.Result, Is.TypeOf<CreatedAtActionResult>());
-            var createdAtResult = response.Result as CreatedAtActionResult;
+            Assert.That(response, Is.TypeOf<CreatedAtActionResult>());
+            var createdAtResult = response as CreatedAtActionResult;
             Assert.That(createdAtResult, Is.Not.Null);
             Assert.That(createdAtResult?.ActionName, Is.EqualTo(nameof(ReviewController.GetReviewById)));
 
@@ -214,7 +220,8 @@ namespace BackEnd.Test
         public async Task CreateReview_ReturnsNotFoundt_DBContextMissing()
         {
             // Arrange
-            var controller = new ReviewController(null);
+            var reviewService = new ReviewService(null);
+            var controller = new ReviewController(reviewService);
             byte[] userImg = new byte[]
             {
         137, 80, 78, 71, 13, 10, 26, 10,
@@ -285,9 +292,9 @@ namespace BackEnd.Test
 
             // Assert
 
-            Assert.That(response.Result, Is.InstanceOf<NotFoundObjectResult>());
-            var notFoundResult = response.Result as NotFoundObjectResult;
-            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
+            Assert.That(response, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = response as NotFoundObjectResult;
+            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing."));
         }
 
 
@@ -332,8 +339,8 @@ namespace BackEnd.Test
             var response = await _controller.CreateReview(duplicateReviewDto);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>());
-            var badRequestResult = response.Result as BadRequestObjectResult;
+            Assert.That(response, Is.TypeOf<BadRequestObjectResult>());
+            var badRequestResult = response as BadRequestObjectResult;
             Assert.That(badRequestResult, Is.Not.Null);
             Assert.That(badRequestResult?.Value, Is.EqualTo("A review for this reservation already exists."));
         }
@@ -356,11 +363,11 @@ namespace BackEnd.Test
             var response = await _controller.CreateReview(reviewDto);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>());
+            Assert.That(response, Is.TypeOf<BadRequestObjectResult>());
 
-            var badRequestResult = response.Result as BadRequestObjectResult;
+            var badRequestResult = response as BadRequestObjectResult;
             Assert.That(badRequestResult, Is.Not.Null);
-            Assert.That(badRequestResult?.Value, Is.EqualTo("Rating can't be below 0 or bigger than 5"));
+            Assert.That(badRequestResult?.Value, Is.EqualTo("Rating must be between 0 and 5."));
         }
 
         [Test]
@@ -374,9 +381,9 @@ namespace BackEnd.Test
             var response = await _controller.CreateReview(reviewDto);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>());
+            Assert.That(response, Is.TypeOf<BadRequestObjectResult>());
 
-            var badRequestResult = response.Result as BadRequestObjectResult;
+            var badRequestResult = response as BadRequestObjectResult;
             Assert.That(badRequestResult, Is.Not.Null);
             Assert.That(badRequestResult?.Value, Is.EqualTo("Review data is required."));
         }
@@ -397,8 +404,8 @@ namespace BackEnd.Test
             var response = await _controller.DeleteReviewById(invalidReservationId);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<NotFoundObjectResult>());
-            var notFoundResult = response.Result as NotFoundObjectResult;
+            Assert.That(response, Is.TypeOf<NotFoundObjectResult>());
+            var notFoundResult = response as NotFoundObjectResult;
             Assert.That(notFoundResult, Is.Not.Null);
             Assert.That(notFoundResult?.Value, Is.EqualTo($"Review with id {invalidReservationId} not found."));
         }
@@ -417,7 +424,7 @@ namespace BackEnd.Test
             var response = await _controller.DeleteReviewById(reservationId);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<NoContentResult>());
+            Assert.That(response, Is.TypeOf<NoContentResult>());
         }
 
         [Test]
@@ -425,7 +432,9 @@ namespace BackEnd.Test
         public async Task DeleteReview_ReturnsNotFound_ForDBContextMissing()
         {
             // Arrange
-            var controller = new ReviewController(null);
+            var reviewService = new ReviewService(null);
+            var controller = new ReviewController(reviewService);
+
             var reservationId = 1;
             var reviewModel = new ReviewModel { ReservationId = reservationId, Rating = 4.5f, Desc = "Test review" };
             _context.Reviews.Add(reviewModel);
@@ -435,9 +444,9 @@ namespace BackEnd.Test
             var response = await controller.DeleteReviewById(reservationId);
 
             // Assert
-            Assert.That(response.Result, Is.InstanceOf<NotFoundObjectResult>());
-            var notFoundResult = response.Result as NotFoundObjectResult;
-            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
+            Assert.That(response, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = response as NotFoundObjectResult;
+            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing."));
         }
 
         [Test]
@@ -455,8 +464,8 @@ namespace BackEnd.Test
             var response = await _controller.EditReviewById(2, 4.5F, "Great test");
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<NotFoundObjectResult>());
-            var notFoundResult = response.Result as NotFoundObjectResult;
+            Assert.That(response, Is.TypeOf<NotFoundObjectResult>());
+            var notFoundResult = response as NotFoundObjectResult;
             Assert.That(notFoundResult, Is.Not.Null);
             Assert.That(notFoundResult?.Value, Is.EqualTo($"Review with id {invalidReservationId} not found."));
         }
@@ -467,19 +476,25 @@ namespace BackEnd.Test
         {
             // Arrange
             var reservationId = 1;
-            var reviewModel = new ReviewModel { ReservationId = reservationId, Rating = 4.5f, Desc = "Test review" };
+
+            var reviewModel = new ReviewModel { 
+                ReservationId = reservationId, 
+                Rating = 4.5f, 
+                Desc = "Test review" 
+            };
+
             _context.Reviews.Add(reviewModel);
             await _context.SaveChangesAsync();
 
             // Act
-            var response = await _controller.EditReviewById(1, 2.5F, "Great test");
+            var response = await _controller.EditReviewById(reservationId, 2.5F, "Great test");
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<OkObjectResult>());
-            var okResult = response.Result as OkObjectResult;
+            Assert.That(response, Is.TypeOf<OkObjectResult>());
+            var okResult = response as OkObjectResult; // Conversão direta
             Assert.That(okResult, Is.Not.Null);
 
-            var returnedReview = okResult.Value as BackEnd.Models.FrontEndModels.Review;
+            var returnedReview = okResult.Value as Review; // Obter o valor dentro do OkObjectResult
             Assert.That(returnedReview, Is.Not.Null);
             Assert.That(returnedReview.reservationId, Is.EqualTo(reservationId));
             Assert.That(returnedReview.rating, Is.EqualTo(2.5f));
@@ -500,10 +515,10 @@ namespace BackEnd.Test
             var response = await _controller.EditReviewById(1, -1, "Great test");
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>());
-            var badRequestResult = response.Result as BadRequestObjectResult;
+            Assert.That(response, Is.TypeOf<BadRequestObjectResult>());
+            var badRequestResult = response as BadRequestObjectResult;
             Assert.That(badRequestResult, Is.Not.Null);
-            Assert.That(badRequestResult?.Value, Is.EqualTo("Rating can't be below 0 or bigger than 5"));
+            Assert.That(badRequestResult?.Value, Is.EqualTo("Rating must be between 0 and 5."));
         }
 
         [Test]
@@ -511,7 +526,9 @@ namespace BackEnd.Test
         public async Task EditReview_ReturnsNotFound_ForDBContextMissing()
         {
             // Arrange
-            var controller = new ReviewController(null);
+            var reviewService = new ReviewService(null);
+            var controller = new ReviewController(reviewService);
+
             var reservationId = 1;
             var reviewModel = new ReviewModel { ReservationId = reservationId, Rating = 4.5f, Desc = "Test review" };
             _context.Reviews.Add(reviewModel);
@@ -521,9 +538,9 @@ namespace BackEnd.Test
             var response = await controller.EditReviewById(1, 2.5F, "Great test");
 
             // Assert
-            Assert.That(response.Result, Is.InstanceOf<NotFoundObjectResult>());
-            var notFoundResult = response.Result as NotFoundObjectResult;
-            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
+            Assert.That(response, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = response as NotFoundObjectResult;
+            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing."));
         }
     }
 }

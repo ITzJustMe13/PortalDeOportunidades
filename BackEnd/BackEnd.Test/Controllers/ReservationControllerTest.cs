@@ -627,8 +627,8 @@ namespace BackEnd.Test
             var result = await _controller.DeactivateReservationById(reservation.reservationID);
 
             // Assert
-            Assert.That(result.Result, Is.TypeOf<OkObjectResult>());
-            var okResult = result.Result as OkObjectResult;
+            Assert.That(result, Is.TypeOf<OkObjectResult>());
+            var okResult = result as OkObjectResult;
             Assert.That(okResult, Is.Not.Null);
 
         }
@@ -660,8 +660,8 @@ namespace BackEnd.Test
             var result = await controller.DeactivateReservationById(reservation.reservationID);
 
             // Assert
-            Assert.That(result.Result, Is.InstanceOf<NotFoundObjectResult>());
-            var notFoundResult = result.Result as NotFoundObjectResult;
+            Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = result as NotFoundObjectResult;
             Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing."));
 
         }
@@ -680,8 +680,8 @@ namespace BackEnd.Test
             var result = await _controller.DeactivateReservationById(reservationID);
 
             // Assert
-            Assert.That(result.Result, Is.TypeOf<NotFoundObjectResult>());
-            var notFoundResult = result.Result as NotFoundObjectResult;
+            Assert.That(result, Is.TypeOf<NotFoundObjectResult>());
+            var notFoundResult = result as NotFoundObjectResult;
             Assert.That(notFoundResult.Value, Is.EqualTo($"Reservation with id {reservationID} not found."));
 
         }
@@ -709,8 +709,8 @@ namespace BackEnd.Test
             var result = await _controller.DeactivateReservationById(reservation.reservationID);
 
             // Assert
-            Assert.That(result.Result, Is.TypeOf<BadRequestObjectResult>());
-            var BadResult = result.Result as BadRequestObjectResult;
+            Assert.That(result, Is.TypeOf<BadRequestObjectResult>());
+            var BadResult = result as BadRequestObjectResult;
             Assert.That(BadResult.Value, Is.EqualTo("Reservation is impossible to deactivate"));
 
         }
@@ -752,7 +752,7 @@ namespace BackEnd.Test
             var result = await _controller.UpdateReservation(reservation.reservationID, reservationDTO);
 
             // Assert
-            Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
+            Assert.That(result, Is.InstanceOf<OkObjectResult>());
             
         }
 
@@ -797,8 +797,8 @@ namespace BackEnd.Test
             var result = await controller.UpdateReservation(reservation.reservationID, reservationDTO);
 
             // Assert
-            Assert.That(result.Result, Is.InstanceOf<NotFoundObjectResult>());
-            var notFoundResult = result.Result as NotFoundObjectResult;
+            Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = result as NotFoundObjectResult;
             Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing."));
         }
 
@@ -825,8 +825,8 @@ namespace BackEnd.Test
             var result = await _controller.UpdateReservation(reservationid, reservationDTO);
 
             // Assert
-            Assert.That(result.Result, Is.InstanceOf<NotFoundObjectResult>());
-            var NotFoundResult = result.Result as NotFoundObjectResult;
+            Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
+            var NotFoundResult = result as NotFoundObjectResult;
             Assert.That(NotFoundResult.Value, Is.EqualTo("Reservation not found."));
 
         }
@@ -868,8 +868,8 @@ namespace BackEnd.Test
             var result = await _controller.UpdateReservation(reservation.reservationID, reservationDTO);
 
             // Assert
-            Assert.That(result.Result, Is.TypeOf<BadRequestObjectResult>());
-            var BadResult = result.Result as BadRequestObjectResult;
+            Assert.That(result, Is.TypeOf<BadRequestObjectResult>());
+            var BadResult = result as BadRequestObjectResult;
             Assert.That(BadResult.Value, Is.EqualTo("The value Number Of People must be valid."));
 
 
@@ -912,8 +912,8 @@ namespace BackEnd.Test
             var result = await _controller.UpdateReservation(reservation.reservationID, reservationDTO);
 
             // Assert
-            Assert.That(result.Result, Is.TypeOf<BadRequestObjectResult>());
-            var BadResult = result.Result as BadRequestObjectResult;
+            Assert.That(result, Is.TypeOf<BadRequestObjectResult>());
+            var BadResult = result as BadRequestObjectResult;
             Assert.That(BadResult.Value, Is.EqualTo("The numberOfPeople is bigger than number of vacancies."));
 
 

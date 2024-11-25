@@ -19,8 +19,6 @@ namespace BackEnd.Models.Mappers
             if (reservationModel == null)
                 return null;
 
-            ValidateModel(reservationModel);
-
             var registrationDate = reservationModel.reservationDate == default ? DateTime.Now : reservationModel.reservationDate;
 
             return new Reservation

@@ -22,7 +22,7 @@ namespace BackEnd.Controllers
         //GET para obter todas as reservas ativas do user
         [Authorize]
         [HttpGet("{userId}/AllActiveReservations")]
-        public async Task<ActionResult> GetAllActiveReservationsByUserId(int userId)
+        public async Task<IActionResult> GetAllActiveReservationsByUserId(int userId)
         {
             var serviceResponse = await _reservationService.GetAllActiveReservationsByUserIdAsync(userId);
 
@@ -43,7 +43,7 @@ namespace BackEnd.Controllers
         // Método para obter todas as reservas de um usuário
         [HttpGet("{userId}/AllReservations")]
         [Authorize]
-        public async Task<ActionResult> GetAllReservationByUserId(int userId)
+        public async Task<IActionResult> GetAllReservationByUserId(int userId)
         {
             var serviceResponse = await _reservationService.GetAllReservationsByUserIdAsync(userId);
 
@@ -64,7 +64,7 @@ namespace BackEnd.Controllers
         //GET para obter uma reserva pelo ID
         [HttpGet("{id}")]
         [Authorize]
-        public async Task<ActionResult> GetReservationById(int id)
+        public async Task<IActionResult> GetReservationById(int id)
         {
             var serviceResponse = await _reservationService.GetReservationByIdAsync(id);
 
@@ -85,7 +85,7 @@ namespace BackEnd.Controllers
         //POST para criar uma nova Reserva
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult> CreateNewReservation(Reservation reservation)
+        public async Task<IActionResult> CreateNewReservation(Reservation reservation)
         {
             var serviceResponse = await _reservationService.CreateNewReservationAsync(reservation);
 
@@ -106,7 +106,7 @@ namespace BackEnd.Controllers
         //PUT api/Opportunity/1/deactivate
         [HttpPut("{id}/deactivate")]
         [Authorize]
-        public async Task<ActionResult<Reservation>> DeactivateReservationById(int id)
+        public async Task<IActionResult> DeactivateReservationById(int id)
         {
             var serviceResponse = await _reservationService.DeactivateReservationByIdAsync(id);
 
@@ -127,7 +127,7 @@ namespace BackEnd.Controllers
         //PUT para atualizar uma reserva
         [HttpPut("{id}")]
         [Authorize]
-        public async Task<ActionResult<Reservation>> UpdateReservation(int id, Reservation reservation)
+        public async Task<IActionResult> UpdateReservation(int id, Reservation reservation)
         {
             var serviceResponse = await _reservationService.UpdateReservationAsync(id, reservation);
 
@@ -148,7 +148,7 @@ namespace BackEnd.Controllers
         //DELETE para apagar uma reserva
         [HttpDelete("{id}")]
         [Authorize]
-        public async Task<ActionResult> DeleteReservation(int id)
+        public async Task<IActionResult> DeleteReservation(int id)
         {
             var serviceResponse = await _reservationService.DeleteReservationAsync(id);
 

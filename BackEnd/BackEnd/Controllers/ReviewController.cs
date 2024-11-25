@@ -1,7 +1,9 @@
 ﻿using BackEnd.Controllers.Data;
+using BackEnd.Interfaces;
 using BackEnd.Models.BackEndModels;
 using BackEnd.Models.FrontEndModels;
 using BackEnd.Models.Mappers;
+using BackEnd.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,121 +15,69 @@ namespace BackEnd.Controllers
     [ApiController]
     public class ReviewController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IReviewService _reviewService;
 
-        public ReviewController(ApplicationDbContext reviewContext) => this._context = reviewContext;
+        public ReviewController(IReviewService reviewService) 
+        {
+            _reviewService = reviewService ?? throw new ArgumentNullException(nameof(reviewService));
+        }
 
         //GET api/Review/1
         [HttpGet("{id}")]
         [Authorize]
-        public async Task<ActionResult<Review>> GetReviewById(int id)
+        public async Task<IActionResult> GetReviewById(int id)
         {
+            var serviceResponse = await _reviewService.GetReviewByIdAsync(id);
 
-            if (_context == null)
-                return NotFound("DB context missing");
+            if (!serviceResponse.Success)
+            {
+                return serviceResponse.Type switch
+                {
+                    "BadRequest" => BadRequest(serviceResponse.Message),
+                    "NotFound" => NotFound(serviceResponse.Message),
+                    _ => StatusCode(500, "An unexpected error occurred.")
+                };
+            }
 
-            var reviewModel = await _context.Reviews.FindAsync(id);
-            if (reviewModel == null)
-            {
-                return NotFound($"Review with id {id} not found.");
-            }
-            try
-            {
-                var reviewDto = ReviewMapper.MapToDto(reviewModel);
-                return Ok(reviewDto);
-            }
-            catch (ValidationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return Ok(serviceResponse.Data);
         }
 
         //POST api/Review
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult<Review>> CreateReview(Review review)
+        public async Task<IActionResult> CreateReview(Review review)
         {
-            if (_context == null)
-                return NotFound("DB context missing");
+            var serviceResponse = await _reviewService.CreateReviewAsync(review);
 
-            if (review == null)
+            if (!serviceResponse.Success)
             {
-                return BadRequest("Review data is required.");
-            }
-            if(review.reservationId == null || review.reservationId <= 0)
-            {
-                return BadRequest("Invalid Review id");
-            }
-            if (review.rating < 0 || review.rating > 5)
-            {
-                return BadRequest("Rating can't be below 0 or bigger than 5");
-            }
-            var reservationExists = await _context.Reservations.AnyAsync(r => r.reservationID == review.reservationId);
-            if (!reservationExists)
-            {
-                return BadRequest("Invalid Reservation ID. Reservation does not exist.");
-            }
-
-            var reviewExists = await _context.Reviews.AnyAsync(r => r.ReservationId == review.reservationId);
-            if (reviewExists)
-            {
-                return BadRequest("A review for this reservation already exists.");
-            }
-
-            try
-            {
-                //Creates review to DB
-                var reviewModel = ReviewMapper.MapToModel(review);
-                await _context.Reviews.AddAsync(reviewModel);
-                await _context.SaveChangesAsync();
-
-                //Go get the reservation of the review for the OppID
-                var reservation = await _context.Reservations
-                    .Include(r => r.Opportunity)
-                    .FirstOrDefaultAsync(r => r.reservationID == review.reservationId);
-
-                if (reservation?.Opportunity == null)
+                return serviceResponse.Type switch
                 {
-                    return BadRequest("Reservation or associated Opportunity not found.");
-                }
-
-                // Calculate the new average score for the opportunity
-                var opportunityId = reservation.Opportunity.OpportunityId;
-                var averageScore = await _context.Reviews
-                    .Where(r => r.Reservation.opportunityID == opportunityId)
-                    .AverageAsync(r => (float?)r.Rating) ?? 0.0F; //Calculates the avg score of all the reviews and takes care of when there is no review
-
-                // Update the opportunity review score
-                reservation.Opportunity.Score = averageScore;
-                await _context.SaveChangesAsync();
-
-
-                var createdReviewDto = ReviewMapper.MapToDto(reviewModel);
-                return CreatedAtAction(nameof(GetReviewById), new { id = createdReviewDto.reservationId }, createdReviewDto);
+                    "BadRequest" => BadRequest(serviceResponse.Message),
+                    "NotFound" => NotFound(serviceResponse.Message),
+                    _ => StatusCode(500, "An unexpected error occurred.")
+                };
             }
-            catch (ValidationException ex) 
-            {
-                return BadRequest(ex.Message);
-            }
+
+            return CreatedAtAction(nameof(GetReviewById), new { id = serviceResponse.Data.reservationId }, serviceResponse.Data);
         }
 
         //DELETE api/Review/1
         [HttpDelete("{id}")]
         [Authorize]
-        public async Task<ActionResult<Review>> DeleteReviewById(int id)
+        public async Task<IActionResult> DeleteReviewById(int id)
         {
-            if (_context == null)
-                return NotFound("DB context missing");
+            var serviceResponse = await _reviewService.DeleteReviewByIdAsync(id);
 
-            var reviewModel = await _context.Reviews.FindAsync(id);
-
-            if(reviewModel == null)
+            if (!serviceResponse.Success)
             {
-                return NotFound($"Review with id {id} not found.");
+                return serviceResponse.Type switch
+                {
+                    "NotFound" => NotFound(serviceResponse.Message),
+                    "BadRequest" => BadRequest(serviceResponse.Message),
+                    _ => StatusCode(500, "An unexpected error occurred.")
+                };
             }
-
-            _context.Reviews.Remove(reviewModel);
-            await _context.SaveChangesAsync();
 
             return NoContent();
         }
@@ -135,40 +85,21 @@ namespace BackEnd.Controllers
         //PUT api/Review/1/Edit?score=2.5&desc=teste123
         [HttpPut("{id}/Edit")]
         [Authorize]
-        public async Task<ActionResult<Review>> EditReviewById(int id, [FromQuery]float score, [FromQuery]string? desc)
+        public async Task<IActionResult> EditReviewById(int id, [FromQuery]float score, [FromQuery]string? desc)
         {
-            if (_context == null)
-                return NotFound("DB context missing");
+            var serviceResponse = await _reviewService.EditReviewByIdAsync(id, score, desc);
 
-            var reviewModel = await _context.Reviews.FindAsync(id);
-
-            if(reviewModel == null)
+            if (!serviceResponse.Success)
             {
-                return NotFound($"Review with id {id} not found.");
-            }
-
-            if (!string.IsNullOrWhiteSpace(desc))
-            {
-                reviewModel.Desc = desc;
-            }
-            if (score >= 0 || score > 5) 
-            {
-                reviewModel.Rating = score;
-            } else
-            {
-                return BadRequest("Rating can't be below 0 or bigger than 5");
+                return serviceResponse.Type switch
+                {
+                    "NotFound" => NotFound(serviceResponse.Message),
+                    "BadRequest" => BadRequest(serviceResponse.Message),
+                    _ => StatusCode(500, serviceResponse.Message)
+                };
             }
 
-            await _context.SaveChangesAsync();
-            try
-            {
-                var reviewDto = ReviewMapper.MapToDto(reviewModel);
-                return Ok(reviewDto);
-            }
-            catch (ValidationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return Ok(serviceResponse.Data);
         }
 
     }
