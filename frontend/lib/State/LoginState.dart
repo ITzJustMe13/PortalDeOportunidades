@@ -6,7 +6,7 @@ import '../Services/user_api_handler.dart';
 
 class LoginState with ChangeNotifier {
   final _storage = FlutterSecureStorage();
-  final _apiHandler = UserApiHandler(http.Client());
+  final _apiHandler = UserApiHandler(http.Client(), null);
 
   String? _token;
   String? _errorMessage;

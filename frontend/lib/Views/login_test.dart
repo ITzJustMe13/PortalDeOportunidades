@@ -1,13 +1,24 @@
-// lib/screens/login_screen.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../State/LoginState.dart';
 
-class login_test extends StatelessWidget {
+class LoginTest extends StatefulWidget {
+  const LoginTest({super.key});
+
+  @override
+  State<LoginTest> createState() => _LoginTestState();
+}
+
+class _LoginTestState extends State<LoginTest> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  login_test({super.key});
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +55,7 @@ class login_test extends StatelessWidget {
                     child: Text('Login'),
                   ),
                 SizedBox(height: 16.0),
-                if (loginState.errorMessage != null)
+                if (loginState.errorMessage!= null)
                   Text(
                     loginState.errorMessage!,
                     style: TextStyle(color: Colors.red),

@@ -11,8 +11,8 @@ class UserApiHandler {
   final String baseUri = "https://localhost:7235/api/User";
   final http.Client client;
   final storage = FlutterSecureStorage();
-
-  UserApiHandler(this.client);
+  User? currentUser;
+  UserApiHandler(this.client, this.currentUser);
 
   // Login method
   Future<User?> login(String email, String password) async {
@@ -33,7 +33,8 @@ class UserApiHandler {
       if (response.statusCode >= 200 && response.statusCode <= 299) {
         final data = jsonDecode(response.body);
         await storage.write(key: 'accessToken', value: data['token']);
-        final authenticatedUser = User.fromJson(data['authenticatedUserDTO']);
+        final authenticatedUser = User.fromJson(data['user']);
+        currentUser = authenticatedUser;
         return authenticatedUser;
       } else if (response.statusCode == 401) {
         print('Unauthorized: ${response.body}');
@@ -46,6 +47,10 @@ class UserApiHandler {
       print('Exception occurred: $e');
       return null;
     }
+  }
+
+  Future<User?> getCurrentUser() async {
+    return currentUser;
   }
 
   /// Get user by ID

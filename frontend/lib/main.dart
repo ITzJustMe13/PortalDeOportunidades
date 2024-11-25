@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/State/LoginState.dart';
+import 'package:frontend/Views/login_test.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:frontend/Views/HistoryReservationScreen.dart';
@@ -23,11 +25,18 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
-        Provider<OpportunityApiHandler>(create: (_) => OpportunityApiHandler(http.Client())),
-        Provider<UserApiHandler>(create: (_) => UserApiHandler(http.Client())),
-        Provider<ReservationApiHandler>(create: (_) => ReservationApiHandler(http.Client())),
-        Provider<ReviewApiHandler>(create: (_) => ReviewApiHandler(http.Client())),
-        Provider<PaymentApiHandler>(create: (_) => PaymentApiHandler(http.Client())),
+        Provider<OpportunityApiHandler>(
+            create: (_) => OpportunityApiHandler(http.Client())),
+        Provider<UserApiHandler>(
+            create: (_) => UserApiHandler(http.Client(), null)),
+        Provider<ReservationApiHandler>(
+            create: (_) => ReservationApiHandler(http.Client())),
+        Provider<ReviewApiHandler>(
+            create: (_) => ReviewApiHandler(http.Client())),
+        Provider<PaymentApiHandler>(
+            create: (_) => PaymentApiHandler(http.Client())),
+        ChangeNotifierProvider<LoginState>(
+            create: (_) => LoginState()), // Crie o LoginState
       ],
       child: MainApp(),
     ),
@@ -35,7 +44,6 @@ void main() {
 }
 
 class MainApp extends StatelessWidget {
-  
   const MainApp({super.key});
 
   @override
@@ -57,6 +65,7 @@ class MainApp extends StatelessWidget {
         '/edit-profile': (context) => const EditProfileScreen(),
         '/reviews-history': (context) => const ReviewsHistoryScreen(),
         '/reservation-history': (context) => const HistoryReservationScreen(),
+        '/login': (context) => LoginTest(),
       },
     );
   }
