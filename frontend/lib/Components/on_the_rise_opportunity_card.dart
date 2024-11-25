@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/Components/dynamic_details_button.dart';
 import 'package:frontend/Models/Opportunity.dart';
+import 'package:frontend/Views/OpportunityDetailsScreen.dart';
+import 'dart:convert';
 
 class OnTheRiseOpportunityCard extends StatelessWidget {
   final Opportunity opportunity;
@@ -22,40 +24,67 @@ class OnTheRiseOpportunityCard extends StatelessWidget {
           child: isSmallScreen
               ? Column(
                   children:
-                      _buildColumnContent(), // Stack image and details vertically
+                      _buildColumnContent(context), // Stack image and details vertically
                 )
               : Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children:
-                      _buildRowContent(), // Place image and details side-by-side
+                      _buildRowContent(context), // Place image and details side-by-side
                 ),
         );
       },
     );
   }
 
-  List<Widget> _buildColumnContent() {
-    return [_buildImageSection(), _buildDetailsSection()];
+  List<Widget> _buildColumnContent(BuildContext context) {
+    return [_buildImageSection(), _buildDetailsSection(context)];
   }
 
-  List<Widget> _buildRowContent() {
+  List<Widget> _buildRowContent(BuildContext context){
     return [
       Expanded(
         flex: 1,
         child: _buildImageSection(),
       ),
-      Expanded(flex: 1, child: _buildDetailsSection()),
+      Expanded(flex: 1, child: _buildDetailsSection(context)),
     ];
   }
 
   Widget _buildImageSection() {
     return Stack(
       children: [
-        Image.network(
-          'https://picsum.photos/200',
+        opportunity.opportunityImgs.isNotEmpty
+      ? Image.memory(
+          base64Decode(opportunity.opportunityImgs.first.imageBase64),
           fit: BoxFit.cover,
           height: 150,
           width: double.infinity,
+          errorBuilder: (context, error, stackTrace) {
+            // Fallback in case the image fails to load
+            return Container(
+              height: 150,
+              width: double.infinity,
+              color: Colors.grey,
+              child: Center(
+                child: Icon(
+                  Icons.broken_image,
+                  color: Colors.white,
+                ),
+              ),
+            );
+          },
+        )
+      : Container(
+          // Fallback if there are no images
+          height: 150,
+          width: double.infinity,
+          color: Colors.grey,
+          child: Center(
+            child: Icon(
+              Icons.image_not_supported,
+              color: Colors.white,
+            ),
+          ),
         ),
         Positioned(
           top: 0,
@@ -76,7 +105,7 @@ class OnTheRiseOpportunityCard extends StatelessWidget {
     );
   }
 
-  Widget _buildDetailsSection() {
+  Widget _buildDetailsSection(BuildContext context) {
     return Padding(
       padding: EdgeInsets.all(8.0),
       child: Column(
@@ -95,7 +124,16 @@ class OnTheRiseOpportunityCard extends StatelessWidget {
                 ),
               ),
               SizedBox(width: 8),
-              DynamicDetailsButton()
+              DynamicDetailsButton(
+                onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => OpportunityDetailsScreen(opportunity: opportunity),
+                      ),
+                    );
+                  },
+              )
             ],
           ),
           SizedBox(height: 8),

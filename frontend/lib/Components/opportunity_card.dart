@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/Components/dynamic_details_button.dart';
 import 'package:frontend/Models/Opportunity.dart';
 import 'package:frontend/Views/OpportunityDetailsScreen.dart';
+import 'dart:convert';
 
 class OpportunityCard extends StatelessWidget {
   final Opportunity opportunity;
@@ -32,11 +33,38 @@ class OpportunityCard extends StatelessWidget {
   Widget _buildImageSection() {
     return Stack(
       children: [
-        Image.network(
-          'https://picsum.photos/200',
+        opportunity.opportunityImgs.isNotEmpty
+      ? Image.memory(
+          base64Decode(opportunity.opportunityImgs.first.imageBase64),
           fit: BoxFit.cover,
-          height: 250,
+          height: 150,
           width: double.infinity,
+          errorBuilder: (context, error, stackTrace) {
+            // Fallback in case the image fails to load
+            return Container(
+              height: 150,
+              width: double.infinity,
+              color: Colors.grey,
+              child: Center(
+                child: Icon(
+                  Icons.broken_image,
+                  color: Colors.white,
+                ),
+              ),
+            );
+          },
+        )
+      : Container(
+          // Fallback if there are no images
+          height: 150,
+          width: double.infinity,
+          color: Colors.grey,
+          child: Center(
+            child: Icon(
+              Icons.image_not_supported,
+              color: Colors.white,
+            ),
+          ),
         ),
         Positioned(
           top: 0,

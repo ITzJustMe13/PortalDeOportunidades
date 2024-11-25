@@ -36,7 +36,6 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen>{
   @override
   void initState() {
     super.initState();
-    // Fetch the owner based on the userId in the passed Opportunity
     _ownerFuture = Provider.of<UserApiHandler>(context, listen: false)
         .getUserByID(widget.opportunity.userId);
   }
@@ -49,6 +48,7 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen>{
       body: FutureBuilder<User?>(
         future: _ownerFuture,
         builder: (context, snapshot) {
+          /*
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
@@ -56,20 +56,22 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen>{
           } else if (!snapshot.hasData || snapshot.data == null) {
             return Center(child: Text('Owner not found'));
           }
-
-          final owner = snapshot.data!;
+          
+          final owner = null;//snapshot.data!;
+          */
           final opportunity = widget.opportunity;
           final DateTime dateTime = opportunity.date;
           final String formattedTime = DateFormat('HH:mm').format(dateTime);
 
+          //FALTA OWNER DEVIDO A FALTA DE TOKEN PRA API HANDLER
           return LayoutBuilder(
             builder: (context, constraints) {
               if (constraints.maxWidth < 600) {
-                return _buildMobileLayout(opportunity, owner, formattedTime);
+                return _buildMobileLayout(opportunity, formattedTime);
               } else if (constraints.maxWidth < 1200) {
-                return _buildTabletLayout(opportunity, owner, formattedTime);
+                return _buildTabletLayout(opportunity, formattedTime);
               } else {
-                return _buildDesktopLayout(opportunity, owner, formattedTime);
+                return _buildDesktopLayout(opportunity, formattedTime);
               }
             },
           );
@@ -80,7 +82,7 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen>{
 
 
   // Mobile layout (Vertical scroll)
-  Widget _buildMobileLayout(Opportunity opportunity, User user, String time) {
+  Widget _buildMobileLayout(Opportunity opportunity, String time) {
     return SingleChildScrollView(
       controller: verticalScrollController,
       padding: const EdgeInsets.all(20.0),
@@ -104,8 +106,8 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen>{
             location: opportunity.location,
             address: opportunity.address,
             vacancies: opportunity.vacancies,
-            firstName: user.firstName,
-            lastName: user.lastName,
+            firstName: "teste",
+            lastName: "teste",
             time: time,
             date: opportunity.date,
           ),
@@ -130,7 +132,7 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen>{
   }
 
   // Tablet layout (Vertical scroll with Scrollbar)
-    Widget _buildTabletLayout(Opportunity opportunity, User user, String time) {
+    Widget _buildTabletLayout(Opportunity opportunity, String time) {
     return Scrollbar(
       thumbVisibility: true,
       controller: verticalScrollController,
@@ -173,8 +175,8 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen>{
                     location: opportunity.location,
                     address: opportunity.address,
                     vacancies: opportunity.vacancies,
-                    firstName: user.firstName,
-                    lastName: user.lastName,
+                    firstName: "teste",
+                    lastName: "teste",
                     time: time,
                     date: opportunity.date,
                   ),
@@ -203,7 +205,7 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen>{
   }
 
  // Desktop layout (Both vertical and horizontal scroll with Scrollbar)
-  Widget _buildDesktopLayout(Opportunity opportunity, User user, String time) {
+  Widget _buildDesktopLayout(Opportunity opportunity, String time) {
     return Scrollbar(
       thumbVisibility: true,
       controller: verticalScrollController,
@@ -247,8 +249,8 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen>{
                     location: opportunity.location,
                     address: opportunity.address,
                     vacancies: opportunity.vacancies,
-                    firstName: user.firstName,
-                    lastName: user.lastName,
+                    firstName: "teste",
+                    lastName: "teste",
                     time: time,
                     date: opportunity.date,
                   ),
