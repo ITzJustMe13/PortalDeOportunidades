@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.ComponentModel.DataAnnotations;
 using System.Security;
 using BackEnd.Services;
+using BackEnd.Interfaces;
 
 namespace BackEnd.Controllers
 {
@@ -19,9 +20,15 @@ namespace BackEnd.Controllers
     public class OpportunityController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-        
+        private IOpportunityService _opportunityService;
 
-        public OpportunityController(ApplicationDbContext opportunityContext) => this._context = opportunityContext;
+        public OpportunityController(ApplicationDbContext dbContext, IOpportunityService opportunityService)
+        {
+            _context = dbContext;
+            _opportunityService = opportunityService ?? throw new ArgumentNullException(nameof(opportunityService));
+        }
+
+
 
         /// <summary>
         /// Endpoint that gets all the Opportunities
@@ -177,7 +184,7 @@ namespace BackEnd.Controllers
             if (_context == null)
                 return NotFound("DB context missing");
 
-            var errors = OpportunityService.ValidateSearchParameters(vacancies, minPrice, maxPrice, category, location);
+            var errors = _opportunityService.ValidateSearchParameters(vacancies, minPrice, maxPrice, category, location);
             if (errors.Any())
             {
                 return BadRequest(string.Join("; ", errors));
@@ -226,13 +233,13 @@ namespace BackEnd.Controllers
         /// <param name="opportunity"></param>
         /// <returns></returns>
         [HttpPost]
-        //[Authorize]
+        [Authorize]
         public async Task<ActionResult<Opportunity>> CreateOpportunity(Opportunity opportunity)
         {
             if (_context == null)
                 return NotFound("DB context missing");
 
-            var errors = OpportunityService.ValidateOpportunityParameters(
+            var errors = _opportunityService.ValidateOpportunityParameters(
                 opportunity.name,
                 opportunity.description,
                 opportunity.price,
@@ -443,7 +450,7 @@ namespace BackEnd.Controllers
                 return BadRequest($"Opportunity with id {id} not found.");
             }
 
-            var errors = OpportunityService.ValidateOpportunityParameters(
+            var errors = _opportunityService.ValidateOpportunityParameters(
                 name,
                 description,
                 price,

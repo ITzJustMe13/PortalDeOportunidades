@@ -1,9 +1,28 @@
-﻿using BackEnd.Enums;
+﻿using BackEnd.Controllers.Data;
+using BackEnd.Enums;
+using BackEnd.GenericClasses;
+using BackEnd.Interfaces;
+using BackEnd.Models.FrontEndModels;
+using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace BackEnd.Services
 {
-    public class OpportunityService
+    /// <summary>
+    /// The class is responsible for the logic of Opportunities of the program
+    /// Has a constructor that receives the DBContext and makes the bridge between the endpoint and the db
+    /// </summary>
+    public class OpportunityService : IOpportunityService
     {
+        
+        
+        private readonly ApplicationDbContext dbContext;
+
+        public OpportunityService(ApplicationDbContext context)
+        {
+            dbContext = context;
+        }
+
         /// <summary>
         /// Function to validate search parameters for Opportunities
         /// </summary>
@@ -13,7 +32,7 @@ namespace BackEnd.Services
         /// <param name="category"></param>
         /// <param name="location"></param>
         /// <returns>A list of strings with the errors if it has any</returns>
-        public static List<string> ValidateSearchParameters(int? vacancies, decimal? minPrice, decimal? maxPrice, Category? category, Location? location)
+        public List<string> ValidateSearchParameters(int? vacancies, decimal? minPrice, decimal? maxPrice, Category? category, Location? location)
         {
             var errors = new List<string>();
 
@@ -42,6 +61,7 @@ namespace BackEnd.Services
 
             return errors;
         }
+
         /// <summary>
         /// Function to validate parameters for creating and editing Opportunities
         /// </summary>
@@ -55,7 +75,7 @@ namespace BackEnd.Services
         /// <param name="date"></param>
         /// <param name="isCreation"></param>
         /// <returns>A list of strings with the errors if it has any</returns>
-        public static List<string> ValidateOpportunityParameters(
+        public List<string> ValidateOpportunityParameters(
            string? name,
            string? description,
            decimal? price,

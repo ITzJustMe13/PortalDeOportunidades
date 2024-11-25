@@ -1,16 +1,17 @@
 ﻿using BackEnd.Models.BackEndModels;
 using System.Net.Mail;
 using System.Net;
+using BackEnd.Interfaces;
 
 namespace BackEnd.Services
 {
-    public class EmailService
+    public class EmailService : IEmailService
     {
         /// <summary>
         /// Function to send an activation email to the user after a user registration has been made
         /// </summary>
         /// <param name="user"></param>
-        public static void SendActivationEmail(UserModel user)
+        public void SendActivationEmail(UserModel user)
         {
             var fromPassword = Environment.GetEnvironmentVariable("GMAIL_APP_PASSWORD");
             var activationLink = $"https://localhost:7235/api/User/activate?token={user.Token}";

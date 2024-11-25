@@ -21,8 +21,6 @@ namespace BackEnd.Models.Mappers
                 return null;
             }
 
-            ValidateModel(userModel);
-
             // Preenchimento do campo RegistrationDate se não estiver definido
             var registrationDate = userModel.RegistrationDate == default ? DateTime.Now : userModel.RegistrationDate;
 

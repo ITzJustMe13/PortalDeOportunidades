@@ -17,7 +17,6 @@ namespace BackEnd.Models.Mappers
             {
                 return null;
             }
-            ValidateModel(favoriteModel);
             return new Favorite
             {
                 userId = favoriteModel.UserId,
@@ -42,6 +41,7 @@ namespace BackEnd.Models.Mappers
                 UserId = favorite.userId,
                 OpportunityId = favorite.opportunityId
             };
+
             ValidateModel(favoriteModel);
             return favoriteModel;
         }
