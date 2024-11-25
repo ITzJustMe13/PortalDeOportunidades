@@ -96,7 +96,7 @@ class ReviewApiHandler {
     }
   }
 
-  Future<bool> editReview(int id, Double score, String? desc) async {
+  Future<bool> editReview(int id, double score, String? desc) async {
     final uri = Uri.parse('$baseUri/$id/Edit?score=$score&desc=$desc');
     final String? accessToken = await storage.read(key: 'accessToken');
 

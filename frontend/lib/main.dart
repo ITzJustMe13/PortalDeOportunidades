@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 import 'package:frontend/Views/HistoryReservationScreen.dart';
 import 'package:frontend/Views/EditProfileScreen.dart';
@@ -10,14 +11,31 @@ import 'package:frontend/Views/OpportunityManager.dart';
 import 'package:frontend/Views/favorites_page.dart';
 import 'package:frontend/Views/search_page.dart';
 
-
 import 'Views/home_page.dart';
+import 'package:provider/provider.dart';
+import 'package:frontend/Services/payment_api_handler.dart';
+import 'package:frontend/Services/opportunity_api_handler.dart';
+import 'package:frontend/Services/user_api_handler.dart';
+import 'package:frontend/Services/reservation_api_handler.dart';
+import 'package:frontend/Services/review_api_handler.dart';
 
 void main() {
-  runApp(MainApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        Provider<OpportunityApiHandler>(create: (_) => OpportunityApiHandler(http.Client())),
+        Provider<UserApiHandler>(create: (_) => UserApiHandler(http.Client())),
+        Provider<ReservationApiHandler>(create: (_) => ReservationApiHandler(http.Client())),
+        Provider<ReviewApiHandler>(create: (_) => ReviewApiHandler(http.Client())),
+        Provider<PaymentApiHandler>(create: (_) => PaymentApiHandler(http.Client())),
+      ],
+      child: MainApp(),
+    ),
+  );
 }
 
 class MainApp extends StatelessWidget {
+  
   const MainApp({super.key});
 
   @override

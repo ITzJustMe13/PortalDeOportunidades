@@ -1,8 +1,9 @@
 import 'dart:convert';
-import 'dart:ffi';
+//import 'dart:ffi';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/Enums/Location.dart';
+import 'package:frontend/Enums/OppCategory.dart';
 
 import 'package:http/http.dart' as http;
 import '../Models/Opportunity.dart';
@@ -118,9 +119,9 @@ class OpportunityApiHandler {
   Future<List<Opportunity>?> SearchOpportunities(
       String? keyword,
       int? vacancies,
-      Double? minPrice,
-      Double? maxPrice,
-      Category? category,
+      double? minPrice,
+      double? maxPrice,
+      OppCategory? category,
       Location? location) async {
     final uri = Uri.parse(
         '$baseUri/Search?keyword=$keyword&vacancies=$vacancies&minPrice=$minPrice&maxPrice=$maxPrice&category=$category&location=$location');
