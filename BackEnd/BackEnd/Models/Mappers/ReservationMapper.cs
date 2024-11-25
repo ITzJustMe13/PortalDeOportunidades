@@ -4,8 +4,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BackEnd.Models.Mappers
 {
-        public class ReservationMapper
-        {
+
+    /// <summary>
+    /// class that maps ReservationModel to Dto and vice-versa
+    /// </summary>
+    public class ReservationMapper
+    {
         /// <summary>
         /// Function that maps ReservationModel parameters to Reservation parameters
         /// </summary>
@@ -32,6 +36,7 @@ namespace BackEnd.Models.Mappers
                     fixedPrice = reservationModel.fixedPrice
                 };
             }
+
         /// <summary>
         /// Function that maps Reservation parameters to ReservationModel parameters
         /// </summary>

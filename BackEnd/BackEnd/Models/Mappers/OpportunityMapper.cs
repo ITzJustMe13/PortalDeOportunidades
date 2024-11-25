@@ -5,6 +5,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BackEnd.Models.Mappers
 {
+    /// <summary>
+    /// class that maps OpportunityModel to Dto and vice-versa
+    /// </summary>
     public class OpportunityMapper
     {
         /// <summary>

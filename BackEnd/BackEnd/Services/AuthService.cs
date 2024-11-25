@@ -9,13 +9,17 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace BackEnd.Services;
 
+/// <summary>
+/// This class is responsible for generating the autentication token from Jwt to allow the User to login
+/// and implements the IAuthService Interface
+/// </summary>
 public class AuthService : IAuthService
 {
     /// <summary>
-    /// Function that Generates a Token using Jwt and adds an expiration date to it
+    /// Function that generates a Jwt Token with a expiration date
     /// </summary>
     /// <param name="user"></param>
-    /// <returns>Returns the token in a String form</returns>
+    /// <returns>Returns the token as a string</returns>
     public string GenerateToken(UserModel user)
     {
         var handler = new JwtSecurityTokenHandler();

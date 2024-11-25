@@ -7,6 +7,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BackEnd.Services
 {
+    /// <summary>
+    /// This class is responsible for the Favorite logic of the program
+    /// and implements the IFavoriteService interface
+    /// Has a constructor that receives a DBContext
+    /// </summary>
     public class FavoritesService : IFavoritesService
     {
         private readonly ApplicationDbContext dbContext;
@@ -16,6 +21,12 @@ namespace BackEnd.Services
         {
             this.dbContext = dbContext;
         }
+        /// <summary>
+        /// Function responsible to add a Favorite to the DB
+        /// </summary>
+        /// <param name="favorite"></param>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true, the Favorite Dto and a sucesseful mensage</returns>
         public async Task<ServiceResponse<Favorite>> AddFavoriteAsync(Favorite favorite)
         {
             var response = new ServiceResponse<Favorite>();
@@ -72,6 +83,13 @@ namespace BackEnd.Services
             return response;
         }
 
+        /// <summary>
+        /// Function that gets the Favorite by its id
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="opportunityId"></param>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true,the Favorite Dto and a sucesseful mensage</returns>
         public async Task<ServiceResponse<Favorite>> GetFavoriteByIdAsync(int userId, int opportunityId)
         {
             var response = new ServiceResponse<Favorite>();
@@ -125,6 +143,13 @@ namespace BackEnd.Services
             return response;
         }
 
+        /// <summary>
+        /// Function that gets all the User Favorites by his id
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true,the array of Favorite Dto 
+        /// and a sucesseful mensage</returns>
         public async Task<ServiceResponse<Favorite[]>> GetFavoritesAsync(int userId)
         {
             var response = new ServiceResponse<Favorite[]>();
@@ -181,6 +206,13 @@ namespace BackEnd.Services
             return response;
         }
 
+        /// <summary>
+        /// Function that gets all the created Opportunities of a User by his id
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true,the array of Opportunity Dto 
+        /// and a sucesseful mensage</returns>
         public async Task<ServiceResponse<Favorite[]>> GetCreatedOpportunitiesAsync(int userId)
         {
             var response = new ServiceResponse<Favorite[]>();

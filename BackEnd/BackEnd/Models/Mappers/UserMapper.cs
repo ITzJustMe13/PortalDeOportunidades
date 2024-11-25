@@ -7,6 +7,9 @@ using BackEnd.Models.FrontEndModels;
 
 namespace BackEnd.Models.Mappers
 {
+    /// <summary>
+    /// class that maps UserModel to Dto and vice-versa
+    /// </summary>
     public class UserMapper
     {
         /// <summary>

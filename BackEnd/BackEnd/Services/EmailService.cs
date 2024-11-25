@@ -5,10 +5,13 @@ using BackEnd.Interfaces;
 
 namespace BackEnd.Services
 {
+    /// <summary>
+    /// This class is responsible for the email management logic of the program
+    /// </summary>
     public class EmailService : IEmailService
     {
         /// <summary>
-        /// Function to send an activation email to the user after a user registration has been made
+        /// Function that sends an Activation Email to the user's email
         /// </summary>
         /// <param name="user"></param>
         public void SendActivationEmail(UserModel user)

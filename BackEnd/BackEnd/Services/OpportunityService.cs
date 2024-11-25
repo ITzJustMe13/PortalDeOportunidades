@@ -9,8 +9,9 @@ using System;
 namespace BackEnd.Services
 {
     /// <summary>
-    /// The class is responsible for the logic of Opportunities of the program
-    /// Has a constructor that receives the DBContext and makes the bridge between the endpoint and the db
+    /// This class is responsible for the Opportunity logic of the program
+    /// and implements the IOpportunityService Interface
+    /// Has a constructor that receives a DBContext
     /// </summary>
     public class OpportunityService : IOpportunityService
     {
@@ -24,14 +25,15 @@ namespace BackEnd.Services
         }
 
         /// <summary>
-        /// Function to validate search parameters for Opportunities
+        /// Function that validates the opportunity search parameters
         /// </summary>
         /// <param name="vacancies"></param>
         /// <param name="minPrice"></param>
         /// <param name="maxPrice"></param>
         /// <param name="category"></param>
         /// <param name="location"></param>
-        /// <returns>A list of strings with the errors if it has any</returns>
+        /// <returns>Returns a List of Strings (errors) or a empty List based 
+        /// of the validation of the parameters </returns>
         public List<string> ValidateSearchParameters(int? vacancies, decimal? minPrice, decimal? maxPrice, Category? category, Location? location)
         {
             var errors = new List<string>();
@@ -63,7 +65,7 @@ namespace BackEnd.Services
         }
 
         /// <summary>
-        /// Function to validate parameters for creating and editing Opportunities
+        /// Function that validates the Opportunity parameters for creating or editing an Opportunity
         /// </summary>
         /// <param name="name"></param>
         /// <param name="description"></param>
@@ -74,7 +76,8 @@ namespace BackEnd.Services
         /// <param name="address"></param>
         /// <param name="date"></param>
         /// <param name="isCreation"></param>
-        /// <returns>A list of strings with the errors if it has any</returns>
+        /// <returns>Returns a List of Strings (errors) or a empty List based 
+        /// of the validation of the parameters </returns>
         public List<string> ValidateOpportunityParameters(
            string? name,
            string? description,

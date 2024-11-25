@@ -4,6 +4,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BackEnd.Models.Mappers
 {
+    /// <summary>
+    /// class that maps FavoriteModel to Dto and vice-versa
+    /// </summary>
     public class FavoriteMapper
     {
         /// <summary>

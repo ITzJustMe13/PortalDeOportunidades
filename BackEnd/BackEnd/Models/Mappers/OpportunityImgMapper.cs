@@ -4,6 +4,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BackEnd.Models.Mappers
 {
+    /// <summary>
+    /// class that maps OpportunityImgModel to Dto and vice-versa
+    /// </summary>
     public class OpportunityImgMapper
     {
         /// <summary>

@@ -15,6 +15,10 @@ using BackEnd.GenericClasses;
 
 namespace BackEnd.Controllers
 {
+    /// <summary>
+    /// Controller responsible for all endpoints relating to User
+    /// Has a constructor that receives an IUserService and an IFavoritesService instance
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
@@ -27,11 +31,12 @@ namespace BackEnd.Controllers
             _favoritesService = favoritesService ?? throw new ArgumentNullException(nameof(favoritesService));
         }
 
+        
         /// <summary>
-        /// Endpoint that gets the user by his id
+        /// Endpoint that gets a certain User by his id
         /// </summary>
         /// <param name="id"></param>
-        /// <returns></returns>
+        /// <returns>Returns NotFound() if is not sucessefully or OK() with the User Dto if it is</returns>
         [HttpGet("{id}")]
         [Authorize]
         public async Task<IActionResult> GetUserByID(int id)
@@ -45,10 +50,12 @@ namespace BackEnd.Controllers
         }
 
         /// <summary>
-        /// Endpoint that creates a new user
+        /// Endpoint that creates a new User
         /// </summary>
         /// <param name="user"></param>
-        /// <returns></returns>
+        /// <returns>Returns BadRequest() if userService responds "BadRequest", 
+        /// NotFound() if userService responds "NotFound", or CreatedAtAction()
+        /// with the path for the newly created user</returns>
         [HttpPost]
         public async Task<IActionResult> CreateNewUser(User user)
         {
@@ -68,10 +75,12 @@ namespace BackEnd.Controllers
         }
 
         /// <summary>
-        /// Endpoint that deletes a user by his id
+        /// Endpoint that deletes the User by his id
         /// </summary>
         /// <param name="id"></param>
-        /// <returns></returns>
+        /// <returns>Returns BadRequest() if userService responds "BadRequest", 
+        /// NotFound() if userService responds "NotFound", or NoContent() if
+        /// user is correctly deleted from the system</returns>
         [HttpDelete("{id}")]
         [Authorize]
         public async Task<IActionResult> DeleteUser(int id)
@@ -93,13 +102,14 @@ namespace BackEnd.Controllers
             }
         }
 
-        
         /// <summary>
-        /// Endpoint that edits a user by his id
+        /// Endpoint that edits the user based on an updated dto that it receives by his id
         /// </summary>
         /// <param name="id"></param>
         /// <param name="updatedUser"></param>
-        /// <returns></returns>
+        /// <returns>Returns BadRequest() if userService responds "BadRequest", 
+        /// NotFound() if userService responds "NotFound", or Ok() with
+        /// updated User dto if updated correctly</returns>
         [HttpPut("{id}")]
         [Authorize]
         public async Task<IActionResult> EditUser(int id, User updatedUser)
@@ -120,10 +130,13 @@ namespace BackEnd.Controllers
         }
 
         /// <summary>
-        /// Endpoint that adds a Favorite to a user
+        /// Endpoint that adds a Favorite Opportunity to Users favorites
         /// </summary>
         /// <param name="favorite"></param>
-        /// <returns></returns>
+        /// <returns>Returns BadRequest() if userService responds "BadRequest", 
+        /// NotFound() if userService responds "NotFound", Conflict() if
+        /// userService responds "Conflict" or CreatedAtAction() if
+        /// the Favorite is correctly created</returns>
         [Authorize]
         [HttpPost("favorite")]
         public async Task<IActionResult> AddFavorite(Favorite favorite)
@@ -149,11 +162,13 @@ namespace BackEnd.Controllers
         }
 
         /// <summary>
-        /// Endpoint that gets a User Favorite by its id
+        /// Endpoint that gets a Favorite by his composed id (userId + opportunityId)
         /// </summary>
         /// <param name="userId"></param>
         /// <param name="opportunityId"></param>
-        /// <returns></returns>
+        /// <returns>Returns BadRequest() if userService responds "BadRequest", 
+        /// NotFound() if userService responds "NotFound", or Ok() with
+        /// the Favorite dto</returns>
         [Authorize]
         [HttpGet("favorite/{userId}/{opportunityId}")]
         public async Task<IActionResult> GetFavoriteById(int userId, int opportunityId)
@@ -174,10 +189,12 @@ namespace BackEnd.Controllers
         }
 
         /// <summary>
-        /// Endpoint that gets all User Favorites by User id
+        /// Endpoint that gets all favorites of a User by his id
         /// </summary>
         /// <param name="userId"></param>
-        /// <returns></returns>
+        /// <returns>Returns BadRequest() if userService responds "BadRequest", 
+        /// NotFound() if userService responds "NotFound", or Ok() with
+        /// all the user's favorites</returns>
         [Authorize]
         [HttpGet("favorites/{userId}")]
         public async Task<IActionResult> GetFavorites(int userId)
@@ -199,10 +216,12 @@ namespace BackEnd.Controllers
         }
 
         /// <summary>
-        /// Endpoint that makes an Opportunity impulsed
+        /// Endpoint that adds an Impulse to a User's Opportunity
         /// </summary>
         /// <param name="impulse"></param>
-        /// <returns></returns>
+        /// <returns>Returns BadRequest() if userService responds "BadRequest", 
+        /// NotFound() if userService responds "NotFound", or CreatedAtAction()
+        /// if the Impulse is created correctly</returns>
         [Authorize]
         [HttpPost("impulse")]
         public async Task<IActionResult> ImpulseOportunity(Impulse impulse)
@@ -229,10 +248,12 @@ namespace BackEnd.Controllers
         }
 
         /// <summary>
-        /// Endpoint that gets all the created Opportunities of a User by his id
+        /// Endpoint that gets all the Opportunities created by a User by his id
         /// </summary>
         /// <param name="userId"></param>
-        /// <returns></returns>
+        /// <returns>Returns BadRequest() if userService responds "BadRequest", 
+        /// NotFound() if userService responds "NotFound", or Ok() with
+        /// all the Opportunities created by the User</returns>
         [Authorize]
         [HttpGet("created-opportunities/{userId}")]
         public async Task<IActionResult> GetCreatedOpportunities(int userId)
@@ -253,10 +274,13 @@ namespace BackEnd.Controllers
         }
 
         /// <summary>
-        /// Endpoint responsible for the User login
+        /// Endpoint that makes the Login of the User
         /// </summary>
         /// <param name="request"></param>
-        /// <returns></returns>
+        /// <returns>Returns BadRequest() if userService responds "BadRequest", 
+        /// NotFound() if userService responds "NotFound", Unauthorized if
+        /// userService responds with "Unauthorized or Ok() with the
+        /// User's Jwt Token and Info</returns>
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
@@ -281,12 +305,13 @@ namespace BackEnd.Controllers
 
         }
 
-
         /// <summary>
-        /// Endpoint that gets if the email is available or not
+        /// Endpoint that informs the user if his email is already registered in the plataform
         /// </summary>
         /// <param name="email"></param>
-        /// <returns></returns>
+        /// <returns>Returns BadRequest() if userService responds "BadRequest", 
+        /// NotFound() if userService responds "NotFound", or Ok() with
+        /// a message according with if the user's email is already registered or not</returns>
         [HttpGet("get-email-availability/{email}")]
         public async Task<IActionResult> GetEmailAvailability(string email)
         {
@@ -311,10 +336,11 @@ namespace BackEnd.Controllers
         }
 
         /// <summary>
-        /// Endpoint that activates User account
+        /// Endpoint that activates User's account on the DB and plataform
         /// </summary>
         /// <param name="token"></param>
-        /// <returns></returns>
+        /// <returns>Returns BadRequest() if userService responds "BadRequest", 
+        /// or Ok() with a sucesseful mensage</returns>
         [HttpGet("activate")]
         public async Task<IActionResult> ActivateAccount([FromQuery]string token)
         {
@@ -334,7 +360,7 @@ namespace BackEnd.Controllers
         }
 
         /// <summary>
-        /// Endpoint for using google auth
+        /// Endpoint that lets the User use Google Auth to autenticate in the plataform
         /// </summary>
         /// <param name="googleToken"></param>
         /// <returns></returns>
