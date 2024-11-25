@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Stripe.Checkout;
 using Stripe;
 using BackEnd.Controllers.Data;
+using BackEnd.Interfaces;
+using BackEnd.Services;
 
 namespace BackEnd.Controllers
 {
@@ -10,80 +12,34 @@ namespace BackEnd.Controllers
     [ApiController]
     public class PaymentController : ControllerBase
     {
+        private readonly IPaymentService _paymentService;
         private readonly ApplicationDbContext _context;
-        public PaymentController(ApplicationDbContext context)
+
+
+        public PaymentController(IPaymentService paymentService)
         {
-            _context = context;
+            _paymentService = paymentService ?? throw new ArgumentNullException(nameof(paymentService));
         }
 
 
         [HttpPost("Checkout-Reservation")]
         public async Task<IActionResult> CreateReservationCheckoutSession([FromBody] Reservation reservation)
         {
-            if (_context == null)
-                return NotFound("DB context missing");
+            var serviceResponse = await _paymentService.CreateReservationCheckoutSessionAsync(reservation);
 
-            if (reservation == null || reservation.fixedPrice <= 0)
+            if (!serviceResponse.Success)
             {
-                return BadRequest("Invalid reservation data.");
-            }
-
-
-            // User information
-            var user = await _context.Users.FindAsync(reservation.userId);
-            if (user == null)
-            {
-                return NotFound("User not found.");
-            }
-
-            // Opportunity information
-            var opportunity = await _context.Opportunities.FindAsync(reservation.opportunityId);
-            if (opportunity == null)
-            {
-                return NotFound("Opportunity not found.");
-            }
-
-
-            var options = new SessionCreateOptions
-            {
-                PaymentMethodTypes = new List<string> { "card" },
-                LineItems = new List<SessionLineItemOptions>
-        {
-            new SessionLineItemOptions
-            {
-                PriceData = new SessionLineItemPriceDataOptions
+                return serviceResponse.Type switch
                 {
-                    ProductData = new SessionLineItemPriceDataProductDataOptions
-                    {
-                        Name = $"Reserva para {reservation.numOfPeople} pessoas para {opportunity.Name} ({opportunity.OpportunityId})",
-                    },
-                    UnitAmount = (long)(reservation.fixedPrice * 100), // Price of the reservation in cents for stripe
-                    Currency = "eur",
-                },
-                Quantity = reservation.numOfPeople,
-            },
-        },
-                Mode = "payment",
-                SuccessUrl = "https://localhost:7235/success", // UPDATE WITH FRONTEND
-                CancelUrl = "https://localhost:7235/cancel", // UPDATE WITH FRONTEND
-                CustomerEmail = user.Email, // For sending the receipt to the user
-            };
-
-            var service = new SessionService();
-            Session session;
-            try
-            {
-                session = await service.CreateAsync(options);
-            }
-            catch (StripeException ex)
-            {
-                return BadRequest($"Stripe error: {ex.Message}");
+                    "NotFound" => NotFound(serviceResponse.Message),
+                    "BadRequest" => BadRequest(serviceResponse.Message),
+                    "InternalServerError" => StatusCode(500, serviceResponse.Message),
+                    _ => StatusCode(500, serviceResponse.Message)
+                };
             }
 
-            return Ok(new { sessionId = session.Id });
+            return Ok(new { sessionId = serviceResponse.Data }); // Return the session ID
         }
-
-
 
 
         // POST api/payment/Checkout-Impulse

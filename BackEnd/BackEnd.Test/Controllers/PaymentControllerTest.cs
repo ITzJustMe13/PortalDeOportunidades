@@ -13,6 +13,8 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 using Stripe;
 using DotNetEnv;
 using Sprache;
+using BackEnd.Interfaces;
+using BackEnd.Services;
 
 
 namespace BackEnd.Test
@@ -22,6 +24,7 @@ namespace BackEnd.Test
     {
         private PaymentController _controller;
         private ApplicationDbContext _context;
+        private IPaymentService _paymentService;
         private string stripeKey;
 
         [SetUp]
@@ -33,7 +36,8 @@ namespace BackEnd.Test
                 .Options;
 
             _context = new ApplicationDbContext(options);
-            _controller = new PaymentController(_context);
+            _paymentService = new PaymentService(_context);
+            _controller = new PaymentController(_paymentService);
 
             string envTestPath = Path.GetFullPath("../../../../BackEnd/.env");
             Console.WriteLine("Resolved.env Path: " + envTestPath);

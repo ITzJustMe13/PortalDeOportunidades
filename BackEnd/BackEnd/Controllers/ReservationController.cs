@@ -1,4 +1,5 @@
 ﻿using BackEnd.Controllers.Data;
+using BackEnd.Interfaces;
 using BackEnd.Models.FrontEndModels;
 using BackEnd.Models.Mappers;
 using Microsoft.AspNetCore.Authorization;
@@ -12,155 +13,94 @@ namespace BackEnd.Controllers
     [ApiController]
     public class ReservationController : ControllerBase
     {
-        private readonly ApplicationDbContext dbContext;
-
-        public ReservationController(ApplicationDbContext reservationContext) => this.dbContext = reservationContext;
+        private readonly IReservationService _reservationService;
+        public ReservationController(IReservationService reservationService)
+        {
+            _reservationService = reservationService ?? throw new ArgumentNullException(nameof(reservationService));
+        }
 
         //GET para obter todas as reservas ativas do user
         [Authorize]
         [HttpGet("{userId}/AllActiveReservations")]
-        public async Task<ActionResult<IEnumerable<Reservation>>> GetAllActiveReservationsByUserId(int userId)
+        public async Task<ActionResult> GetAllActiveReservationsByUserId(int userId)
         {
-            if (dbContext == null)
-                return NotFound("DB context missing");
+            var serviceResponse = await _reservationService.GetAllActiveReservationsByUserIdAsync(userId);
 
-            var reservations = await dbContext.Reservations
-                .Where(r => r.userID == userId && r.isActive)
-                .ToListAsync();
-
-            if (!reservations.Any())
+            if (!serviceResponse.Success)
             {
-                return NotFound("No active reservations found for the specified user.");
+                return serviceResponse.Type switch
+                {
+                    "NotFound" => NotFound(serviceResponse.Message),
+                    "BadRequest" => BadRequest(serviceResponse.Message),
+                    "InternalServerError" => StatusCode(500, serviceResponse.Message),
+                    _ => StatusCode(500, serviceResponse.Message)
+                };
             }
 
-            try
-            {
-                var reservationDtos = reservations.Select(r => ReservationMapper.MapToDto(r));
-                return Ok(reservationDtos);
-            }
-            catch (ValidationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return Ok(serviceResponse.Data);
         }
 
         // Método para obter todas as reservas de um usuário
         [HttpGet("{userId}/AllReservations")]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<Reservation>>> GetAllReservationByUserId(int userId)
+        public async Task<ActionResult> GetAllReservationByUserId(int userId)
         {
-            if (dbContext == null)
-                return NotFound("DB context missing");
+            var serviceResponse = await _reservationService.GetAllReservationsByUserIdAsync(userId);
 
-            var reservations = await dbContext.Reservations
-                .Where(r => r.userID == userId)
-                .ToListAsync();
-
-            if (!reservations.Any())
+            if (!serviceResponse.Success)
             {
-                return NotFound("No reservations found for the specified user.");
+                return serviceResponse.Type switch
+                {
+                    "NotFound" => NotFound(serviceResponse.Message),
+                    "BadRequest" => BadRequest(serviceResponse.Message),
+                    "InternalServerError" => StatusCode(500,  serviceResponse.Message),
+                    _ => StatusCode(500, "Unknown error.")
+                };
             }
 
-            try
-            {
-                var reservationDtos = reservations.Select(r => ReservationMapper.MapToDto(r));
-                return Ok(reservationDtos);
-            }
-            catch(ValidationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            
+            return Ok(serviceResponse.Data);
         }
 
         //GET para obter uma reserva pelo ID
         [HttpGet("{id}")]
         [Authorize]
-        public async Task<ActionResult<Reservation>> GetReservationById(int id)
+        public async Task<ActionResult> GetReservationById(int id)
         {
-            if (dbContext == null)
-                return NotFound("DB context missing");
+            var serviceResponse = await _reservationService.GetReservationByIdAsync(id);
 
-            // Busca a reserva pelo ID fornecido
-            var reservation = await dbContext.Reservations.FindAsync(id);
-
-            if (reservation == null)
+            if (!serviceResponse.Success)
             {
-                return NotFound("Reservation not found.");
+                return serviceResponse.Type switch
+                {
+                    "NotFound" => NotFound(serviceResponse.Message),
+                    "BadRequest" => BadRequest(serviceResponse.Message),
+                    "InternalServerError" => StatusCode(500,  serviceResponse.Message),
+                    _ => StatusCode(500, serviceResponse.Message)
+                };
             }
 
-            // Mapeia o modelo para o DTO
-            try
-            {
-                var reservationDto = ReservationMapper.MapToDto(reservation);
-                return Ok(reservationDto);
-
-            }
-            catch(ValidationException ex) 
-            {
-                return BadRequest(ex.Message);
-            }
-         
+            return Ok(serviceResponse.Data);
         }
 
         //POST para criar uma nova Reserva
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult<Reservation>> CreateNewReservation(Reservation reservation)
+        public async Task<ActionResult> CreateNewReservation(Reservation reservation)
         {
-            // Validação
-            if (reservation == null || reservation.opportunityId == 0 || reservation.userId == 0 || !ModelState.IsValid)
+            var serviceResponse = await _reservationService.CreateNewReservationAsync(reservation);
+
+            if (!serviceResponse.Success)
             {
-                return BadRequest("Some required fields are missing or invalid.");
+                return serviceResponse.Type switch
+                {
+                    "NotFound" => NotFound(serviceResponse.Message),
+                    "BadRequest" => BadRequest(serviceResponse.Message),
+                    "InternalServerError" => StatusCode(500, serviceResponse.Message),
+                    _ => StatusCode(500, serviceResponse.Message)
+                };
             }
 
-            if (dbContext == null)
-                return NotFound("DB context missing");
-
-            // Verifica se a oportunidade e o usuário existem
-            var opportunity = await dbContext.Opportunities.FindAsync(reservation.opportunityId);
-            var user = await dbContext.Users.FindAsync(reservation.userId);
-
-            if (opportunity == null)
-            {
-                return NotFound("Opportunity not found.");
-            }
-
-            if (user == null)
-            {
-                return NotFound("User not found.");
-            }
-
-            if(reservation.numOfPeople < 0)
-            {
-                return BadRequest("The value Number Of People must be valid");
-            }
-
-            if (reservation.numOfPeople > opportunity.Vacancies)
-            {
-                return BadRequest("The numberOfPeople is bigger than number of vacancies");
-            }
-
-
-            reservation.reservationDate = DateTime.Now;
-            reservation.checkInDate = opportunity.Date;
-            reservation.isActive = true;
-            reservation.fixedPrice = ((float)(reservation.numOfPeople * opportunity.Price));
-
-            try
-            {
-                // Mapear DTO para o modelo
-                var reservationModel = ReservationMapper.MapToModel(reservation);
-                dbContext.Reservations.Add(reservationModel);
-
-                await dbContext.SaveChangesAsync();
-
-                return CreatedAtAction(nameof(CreateNewReservation), new { id = reservationModel.reservationID }, reservation);
-            }
-            catch (ValidationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return CreatedAtAction(nameof(CreateNewReservation), new { id = serviceResponse.Data.reservationId }, serviceResponse.Data);
         }
 
         //PUT api/Opportunity/1/deactivate
@@ -168,27 +108,20 @@ namespace BackEnd.Controllers
         [Authorize]
         public async Task<ActionResult<Reservation>> DeactivateReservationById(int id)
         {
-            if (dbContext == null)
-                return NotFound("DB context missing");
+            var serviceResponse = await _reservationService.DeactivateReservationByIdAsync(id);
 
-            var reservationModel = await dbContext.Reservations.FindAsync(id);
-            if (reservationModel == null)
+            if (!serviceResponse.Success)
             {
-                return NotFound($"Reservation with id {id} not found.");
+                return serviceResponse.Type switch
+                {
+                    "NotFound" => NotFound(serviceResponse.Message),
+                    "BadRequest" => BadRequest(serviceResponse.Message),
+                    "InternalServerError" => StatusCode(500, serviceResponse.Message),
+                    _ => StatusCode(500, serviceResponse.Message)
+                };
             }
 
-            if (reservationModel.checkInDate > DateTime.Now && reservationModel.isActive)
-            {
-                reservationModel.isActive = false;
-                await dbContext.SaveChangesAsync();
-                return Ok();
-
-            }
-            else
-            {
-                return BadRequest("Reservation is impossible to deactivate");
-            }
-
+            return Ok(serviceResponse.Message);
         }
 
         //PUT para atualizar uma reserva
@@ -196,38 +129,20 @@ namespace BackEnd.Controllers
         [Authorize]
         public async Task<ActionResult<Reservation>> UpdateReservation(int id, Reservation reservation)
         {
-            if (dbContext == null)
-                return NotFound("DB context missing");
+            var serviceResponse = await _reservationService.UpdateReservationAsync(id, reservation);
 
-            // Busca a reserva e a oportunidade associada
-            var existingReservation = await dbContext.Reservations.FindAsync(id);
-            var opportunity = await dbContext.Opportunities.FindAsync(reservation.opportunityId);
-
-            if (existingReservation == null)
+            if (!serviceResponse.Success)
             {
-                return NotFound("Reservation Not Found");
+                return serviceResponse.Type switch
+                {
+                    "NotFound" => NotFound(serviceResponse.Message),
+                    "BadRequest" => BadRequest(serviceResponse.Message),
+                    "InternalServerError" => StatusCode(500, serviceResponse.Message),
+                    _ => StatusCode(500, serviceResponse.Message)
+                };
             }
 
-            if (reservation.numOfPeople < 0)
-            {
-                return BadRequest("The value Number Of People must be valid");
-            }
-
-            if (reservation.numOfPeople > opportunity.Vacancies)
-            {
-                return BadRequest("The numberOfPeople is bigger than number of vacancies");
-            }
-
-
-            // Atualiza as propriedades da reserva
-            existingReservation.numOfPeople = reservation.numOfPeople;
-            existingReservation.fixedPrice = ((float)(reservation.numOfPeople * opportunity.Price));
-
-            dbContext.Entry(existingReservation).State = EntityState.Modified;
-
-            await dbContext.SaveChangesAsync();
-
-            return Ok();
+            return Ok(serviceResponse.Message);
         }
 
         //DELETE para apagar uma reserva
@@ -235,20 +150,19 @@ namespace BackEnd.Controllers
         [Authorize]
         public async Task<ActionResult> DeleteReservation(int id)
         {
-            if (dbContext == null)
-                return NotFound("DB context missing");
+            var serviceResponse = await _reservationService.DeleteReservationAsync(id);
 
-            var reservationToDelete = await dbContext.Reservations.FindAsync(id);
-
-            if (reservationToDelete == null)
+            if (!serviceResponse.Success)
             {
-                return NotFound("Reservation Not Found!");
+                return serviceResponse.Type switch
+                {
+                    "NotFound" => NotFound(serviceResponse.Message),
+                    "InternalServerError" => StatusCode(500, serviceResponse.Message),
+                    _ => StatusCode(500, serviceResponse.Message)
+                };
             }
 
-            dbContext.Reservations.Remove(reservationToDelete);
-            await dbContext.SaveChangesAsync();
-
-            return Ok();
+            return Ok(serviceResponse.Message);
         }
     }
 }
