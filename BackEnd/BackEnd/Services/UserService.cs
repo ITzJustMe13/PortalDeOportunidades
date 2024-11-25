@@ -17,6 +17,7 @@ namespace BackEnd.Services
 {
     /// <summary>
     /// The class is responsible for the logic of Users of the program
+    /// and implements the IUserService Interface
     /// Has a constructor that receives a DBContext an IEmailService and an IIbanService
     /// </summary>
     public class UserService : IUserService

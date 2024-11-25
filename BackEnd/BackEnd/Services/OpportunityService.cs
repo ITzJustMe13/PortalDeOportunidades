@@ -8,6 +8,11 @@ using System;
 
 namespace BackEnd.Services
 {
+    /// <summary>
+    /// This class is responsible for the Opportunity logic of the program
+    /// and implements the IOpportunityService Interface
+    /// Has a constructor that receives a DBContext
+    /// </summary>
     public class OpportunityService : IOpportunityService
     {
         private readonly ApplicationDbContext dbContext;
@@ -17,7 +22,16 @@ namespace BackEnd.Services
             dbContext = context;
         }
 
-        
+        /// <summary>
+        /// Function that validates the opportunity search parameters
+        /// </summary>
+        /// <param name="vacancies"></param>
+        /// <param name="minPrice"></param>
+        /// <param name="maxPrice"></param>
+        /// <param name="category"></param>
+        /// <param name="location"></param>
+        /// <returns>Returns a List of Strings (errors) or a empty List based 
+        /// of the validation of the parameters </returns>
         public List<string> ValidateSearchParameters(int? vacancies, decimal? minPrice, decimal? maxPrice, Category? category, Location? location)
         {
             var errors = new List<string>();
@@ -48,6 +62,20 @@ namespace BackEnd.Services
             return errors;
         }
 
+        /// <summary>
+        /// Function that validates the Opportunity parameters for creating or editing an Opportunity
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="description"></param>
+        /// <param name="price"></param>
+        /// <param name="vacancies"></param>
+        /// <param name="category"></param>
+        /// <param name="location"></param>
+        /// <param name="address"></param>
+        /// <param name="date"></param>
+        /// <param name="isCreation"></param>
+        /// <returns>Returns a List of Strings (errors) or a empty List based 
+        /// of the validation of the parameters </returns>
         public List<string> ValidateOpportunityParameters(
            string? name,
            string? description,
