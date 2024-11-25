@@ -19,137 +19,92 @@ namespace BackEnd.Controllers
     [ApiController]
     public class OpportunityController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
         private IOpportunityService _opportunityService;
 
-        public OpportunityController(ApplicationDbContext dbContext, IOpportunityService opportunityService)
+        public OpportunityController(IOpportunityService opportunityService)
         {
-            _context = dbContext;
             _opportunityService = opportunityService ?? throw new ArgumentNullException(nameof(opportunityService));
         }
 
-
-
         //GET api/Opportunity/
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Opportunity>>> GetAllOpportunities()
+        public async Task<ActionResult> GetAllOpportunities()
         {
-            if (_context == null)
-                return NotFound("DB context missing");
+            var serviceResponse = await _opportunityService.GetAllOpportunitiesAsync();
 
-            var opportunityModels = await _context.Opportunities
-                .Include(o => o.OpportunityImgs) // Include images
-                .ToListAsync();
+            if (!serviceResponse.Success)
+            {
+                return serviceResponse.Type switch
+                {
+                    "NotFound" => NotFound(serviceResponse.Message),
+                    "BadRequest" => BadRequest( serviceResponse.Message),
+                    _ => StatusCode(500, serviceResponse.Message ) // Default for unexpected errors
+                };
+            }
 
-            if (!opportunityModels.Any())
-            {
-                return NotFound("No Opportunities were found.");
-            }
-            try
-            {
-                var opportunityDtos = opportunityModels.Select(OpportunityMapper.MapToDto).ToList();
-                return Ok(opportunityDtos);
-            }
-            catch (ValidationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return Ok(serviceResponse.Data);
         }
 
         //GET api/Opportunity/Impulsed
         [HttpGet("Impulsed")]
-        public async Task<ActionResult<IEnumerable<Opportunity>>> GetAllImpulsedOpportunities()
+        public async Task<ActionResult> GetAllImpulsedOpportunities()
         {
-            if (_context == null)
-                return NotFound("DB context missing");
+            var serviceResponse = await _opportunityService.GetAllImpulsedOpportunitiesAsync();
 
-            var opportunityModels = await _context.Opportunities
-                .Where(o => o.IsImpulsed == true)
-                .Include(o => o.OpportunityImgs)
-                .ToListAsync();
+            if (!serviceResponse.Success)
+            {
+                return serviceResponse.Type switch
+                {
+                    "NotFound" => NotFound(serviceResponse.Message),
+                    "BadRequest" => BadRequest(serviceResponse.Message ),
+                    _ => StatusCode(500, serviceResponse.Message) // Default for unexpected errors
+                };
+            }
 
-            if (!opportunityModels.Any())
-            {
-                return NotFound("No Opportunities were found.");
-            }
-            try
-            {
-                var opportunityDtos = opportunityModels.Select(OpportunityMapper.MapToDto).ToList();
-                return Ok(opportunityDtos);
-            }
-            catch (ValidationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return Ok(serviceResponse.Data);
         }
 
         //GET api/Opportunity/1
         [HttpGet("{id}")]
-        public async Task<ActionResult<Opportunity>> GetOpportunityById(int id)
+        public async Task<ActionResult> GetOpportunityById(int id)
         {
-            if (_context == null)
-                return NotFound("DB context missing");
+            var serviceResponse = await _opportunityService.GetOpportunityByIdAsync(id);
 
-            if (id <= 0)
+            if (!serviceResponse.Success)
             {
-                return BadRequest("Given opportunityId is invalid, it should be greater than 0.");
+                return serviceResponse.Type switch
+                {
+                    "NotFound" => NotFound(serviceResponse.Message),
+                    "BadRequest" => BadRequest(serviceResponse.Message ),
+                    _ => StatusCode(500,  serviceResponse.Message ) // InternalServerError
+                };
             }
 
-            var opportunity = await _context.Opportunities
-                .Include(o => o.OpportunityImgs)
-                .FirstOrDefaultAsync(o => o.OpportunityId == id);
-
-            if (opportunity == null)
-            {
-                return NotFound($"Opportunity with id {id} not found.");
-            }
-            try
-            {
-                var opportunityDto = OpportunityMapper.MapToDto(opportunity);
-                return Ok(opportunityDto);
-            }
-            catch (ValidationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return Ok(serviceResponse.Data);
         }
 
         //GET api/Opportunity/User/1
         [HttpGet("User/{userId}")]
-        public async Task<ActionResult<IEnumerable<Opportunity>>> GetAllOpportunitiesByUserId(int userId)
+        public async Task<ActionResult> GetAllOpportunitiesByUserId(int userId)
         {
-            if (_context == null)
-                return NotFound("DB context missing");
+            var serviceResponse = await _opportunityService.GetAllOpportunitiesByUserIdAsync(userId);
 
-            if (userId <= 0)
+            if (!serviceResponse.Success)
             {
-                return BadRequest("Given userId is invalid, it should be greater than 0.");
+                return serviceResponse.Type switch
+                {
+                    "NotFound" => NotFound(serviceResponse.Message),
+                    "BadRequest" => BadRequest(serviceResponse.Message ),
+                    _ => StatusCode(500,  serviceResponse.Message) // InternalServerError
+                };
             }
 
-            var opportunities = await _context.Opportunities
-                .Where(e => e.UserID == userId)
-                .Include(o => o.OpportunityImgs)
-                .ToListAsync();
-
-            if (!opportunities.Any())
-            {
-                return NotFound($"Opportunity with userId {userId} not found.");
-            }
-            try
-            {
-                var opportunityDtos = opportunities.Select(OpportunityMapper.MapToDto).ToList();
-                return Ok(opportunityDtos);
-            }
-            catch (ValidationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-
+            return Ok(serviceResponse.Data);
         }
 
         // GET api/Opportunity/Search?keyword=event&vacancies=5&minPrice=10&maxPrice=100&category=conference&location=VilaReal
         [HttpGet("Search")]
-        public async Task<ActionResult<IEnumerable<Opportunity>>> SearchOpportunities(
+        public async Task<ActionResult> SearchOpportunities(
             [FromQuery] string? keyword,
             [FromQuery] int? vacancies,
             [FromQuery] decimal? minPrice,
@@ -158,145 +113,61 @@ namespace BackEnd.Controllers
             [FromQuery] Location? location
         )
         {
-            if (_context == null)
-                return NotFound("DB context missing");
+            var serviceResponse = await _opportunityService.SearchOpportunitiesAsync(keyword, vacancies, minPrice, maxPrice, category, location);
 
-            var errors = _opportunityService.ValidateSearchParameters(vacancies, minPrice, maxPrice, category, location);
-            if (errors.Any())
+            if (!serviceResponse.Success)
             {
-                return BadRequest(string.Join("; ", errors));
+                return serviceResponse.Type switch
+                {
+                    "NotFound" => NotFound(serviceResponse.Message),
+                    "BadRequest" => BadRequest( serviceResponse.Message ),
+                    _ => StatusCode(500, serviceResponse.Message) // InternalServerError
+                };
             }
 
-            var query = _context.Opportunities.AsQueryable();
-
-            // Apply filters based on provided parameters
-            if (!string.IsNullOrEmpty(keyword))
-                query = query.Where(o => o.Name.Contains(keyword) || (o.Description != null && o.Description.Contains(keyword)));
-            if (vacancies.HasValue)
-                query = query.Where(o => o.Vacancies >= vacancies.Value);
-
-            if (minPrice.HasValue)
-                query = query.Where(o => o.Price >= minPrice.Value);
-
-            if (maxPrice.HasValue)
-                query = query.Where(o => o.Price <= maxPrice.Value);
-
-            if (category.HasValue)
-                query = query.Where(o => o.Category == category.Value);
-
-            if (location.HasValue)
-                query = query.Where(o => o.Location == location.Value);
-
-
-            // Execute the query and return the results
-
-            var opportunitiesModels = await query
-                .Include(o => o.OpportunityImgs)
-                .ToListAsync();
-            try
-            {
-                var opportunityDtos = opportunitiesModels.Select(OpportunityMapper.MapToDto).ToList();
-                return Ok(opportunityDtos);
-            }
-            catch (ValidationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return Ok(serviceResponse.Data);
         }
 
         //POST api/Opportunity/
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult<Opportunity>> CreateOpportunity(Opportunity opportunity)
+        public async Task<ActionResult> CreateOpportunity(Opportunity opportunity)
         {
-            if (_context == null)
-                return NotFound("DB context missing");
+            var serviceResponse = await _opportunityService.CreateOpportunityAsync(opportunity);
 
-            var errors = _opportunityService.ValidateOpportunityParameters(
-                opportunity.name,
-                opportunity.description,
-                opportunity.price,
-                opportunity.vacancies,
-                opportunity.category,
-                opportunity.location,
-                opportunity.address,
-                opportunity.date,
-                true // This is a creation request
-            );
-
-            if (errors.Any())
+            if (!serviceResponse.Success)
             {
-                return BadRequest(string.Join("; ", errors));
-            }
-
-            var userExists = await _context.Users.AnyAsync(u => u.UserId == opportunity.userId);
-            if (!userExists)
-            {
-                return BadRequest("Invalid User ID. User does not exist.");
-            }
-
-            try
-            {
-                // Initialize review score
-                opportunity.reviewScore = 0.0F;
-
-                var opportunityModel = OpportunityMapper.MapToModel(opportunity);
-
-                // If the opportunity has imgs map them to the model
-                if (opportunity.OpportunityImgs != null && opportunity.OpportunityImgs.Any())
+                return serviceResponse.Type switch
                 {
-                    opportunityModel.OpportunityImgs = opportunity.OpportunityImgs
-                        .Select(OpportunityImgMapper.MapToModel)
-                        .ToList();
-                }
-
-                await _context.Opportunities.AddAsync(opportunityModel);
-
-                await _context.SaveChangesAsync();
-
-                // Map the created model back to DTO
-                var createdOpportunityDto = OpportunityMapper.MapToDto(opportunityModel);
-
-                return CreatedAtAction(nameof(GetOpportunityById), new { id = createdOpportunityDto.opportunityId }, createdOpportunityDto);
+                    "NotFound" => NotFound(serviceResponse.Message),
+                    "BadRequest" => BadRequest(serviceResponse.Message),
+                    _ => StatusCode(500,  serviceResponse.Message) // InternalServerError
+                };
             }
-            catch (ValidationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+
+            return CreatedAtAction(
+                nameof(GetOpportunityById),
+                new { id = serviceResponse.Data.opportunityId },
+                serviceResponse.Data
+            );
         }
 
         //DELETE api/Opportunity/1
         [HttpDelete("{id}")]
         [Authorize]
-        public async Task<ActionResult<Opportunity>> DeleteOpportunityById(int id)
+        public async Task<ActionResult> DeleteOpportunityById(int id)
         {
-            if (_context == null)
-                return NotFound("DB context missing");
+            var serviceResponse = await _opportunityService.DeleteOpportunityByIdAsync(id);
 
-            if (id <= 0)
+            if (!serviceResponse.Success)
             {
-                return BadRequest("Given opportunityId is invalid, it should be greater than 0.");
+                return serviceResponse.Type switch
+                {
+                    "NotFound" => NotFound(serviceResponse.Message),
+                    "BadRequest" => BadRequest(serviceResponse.Message),
+                    _ => StatusCode(500,  serviceResponse.Message) // InternalServerError
+                };
             }
-
-            var opportunityModel = await _context.Opportunities.FindAsync(id);
-
-            if (opportunityModel == null)
-            {
-                return NotFound($"Opportunity with id {id} not found.");
-            }
-
-            bool hasActiveReservations = await _context.Reservations
-                .AnyAsync(r => r.opportunityID == id && r.isActive);
-
-            if (hasActiveReservations)
-            {
-                // Has active reservations, not safe to delete
-                return BadRequest("This Opportunity still has active reservations attached.");
-            }
-
-            // No active reservations, safe to delete
-            _context.Opportunities.Remove(opportunityModel);
-            await _context.SaveChangesAsync();
 
             return NoContent();
         }
@@ -304,33 +175,21 @@ namespace BackEnd.Controllers
         //PUT api/Opportunity/1/activate
         [HttpPut("{id}/activate")]
         [Authorize]
-        public async Task<ActionResult<Opportunity>> ActivateOpportunityById(int id)
+        public async Task<ActionResult> ActivateOpportunityById(int id)
         {
-            if (_context == null)
-                return NotFound("DB context missing");
+            var serviceResponse = await _opportunityService.ActivateOpportunityByIdAsync(id);
 
-            if (id <= 0)
+            if (!serviceResponse.Success)
             {
-                return BadRequest("Given opportunityId is invalid, it should be greater than 0.");
+                return serviceResponse.Type switch
+                {
+                    "NotFound" => NotFound(serviceResponse.Message),
+                    "BadRequest" => BadRequest(serviceResponse.Message),
+                    _ => StatusCode(500,  serviceResponse.Message) // InternalServerError
+                };
             }
 
-            var opportunityModel = await _context.Opportunities.FindAsync(id);
-            if (opportunityModel == null)
-            {
-                return NotFound($"Opportunity with id {id} not found.");
-            }
-            if (!opportunityModel.IsActive)
-            {
-                opportunityModel.IsActive = true;
-                await _context.SaveChangesAsync();
-                return NoContent();
-
-            }
-            else
-            {
-                return BadRequest("Opportunity is Already Active");
-            }
-
+            return NoContent();
         }
 
         //PUT api/Opportunity/1/deactivate
@@ -338,37 +197,25 @@ namespace BackEnd.Controllers
         [Authorize]
         public async Task<ActionResult<Opportunity>> DeactivateOpportunityById(int id)
         {
-            if (_context == null)
-                return NotFound("DB context missing");
+            var serviceResponse = await _opportunityService.DeactivateOpportunityByIdAsync(id);
 
-            if (id <= 0)
+            if (!serviceResponse.Success)
             {
-                return BadRequest("Given opportunityId is invalid, it should be greater than 0.");
+                return serviceResponse.Type switch
+                {
+                    "NotFound" => NotFound(serviceResponse.Message),
+                    "BadRequest" => BadRequest(serviceResponse.Message),
+                    _ => StatusCode(500,  serviceResponse.Message) // InternalServerError
+                };
             }
 
-            var opportunityModel = await _context.Opportunities.FindAsync(id);
-            if (opportunityModel == null)
-            {
-                return NotFound($"Opportunity with id {id} not found.");
-            }
-            if (opportunityModel.IsActive)
-            {
-                opportunityModel.IsActive = false;
-                await _context.SaveChangesAsync();
-                return NoContent();
-
-            }
-            else
-            {
-                return BadRequest("Opportunity is Already Inactive");
-            }
-
+            return NoContent();
         }
 
         // PUT api/Opportunity/1/Edit?name=event&description=description&price=10&vacancies=2&category=agricultura&location=VilaReal&address=RuaTeste&date=10/02/2025&newImages=["img1","img2"]
         [HttpPut("{id}/Edit")]
         [Authorize]
-        public async Task<ActionResult<Opportunity>> EditOpportunityById(
+        public async Task<ActionResult> EditOpportunityById(
             int id,
             [FromQuery] string? name,
             [FromQuery] string? description,
@@ -381,24 +228,8 @@ namespace BackEnd.Controllers
             [FromBody] List<byte[]>? newImageUrls
         )
         {
-            if (_context == null)
-                return NotFound("DB context missing");
-
-            if (id <= 0)
-            {
-                return BadRequest("Given opportunityId is invalid, it should be greater than 0.");
-            }
-
-            var opportunityModel = await _context.Opportunities
-                .Include(o => o.OpportunityImgs)
-                .FirstOrDefaultAsync(o => o.OpportunityId == id);
-
-            if (opportunityModel == null)
-            {
-                return BadRequest($"Opportunity with id {id} not found.");
-            }
-
-            var errors = _opportunityService.ValidateOpportunityParameters(
+            var serviceResponse = await _opportunityService.EditOpportunityByIdAsync(
+                id,
                 name,
                 description,
                 price,
@@ -407,50 +238,20 @@ namespace BackEnd.Controllers
                 location,
                 address,
                 date,
-                false // Indicate that is a edit and not creating request
+                newImageUrls
             );
 
-            if (errors.Any())
+            if (!serviceResponse.Success)
             {
-                return BadRequest(string.Join("; ", errors));
-            }
-
-            // Update fields only if they have valid values
-            if (!string.IsNullOrEmpty(name)) opportunityModel.Name = name;
-            if (!string.IsNullOrEmpty(description)) opportunityModel.Description = description;
-            if (price.HasValue) opportunityModel.Price = price.Value;
-            if (vacancies.HasValue) opportunityModel.Vacancies = vacancies.Value;
-            if (category.HasValue) opportunityModel.Category = category.Value;
-            if (location.HasValue) opportunityModel.Location = location.Value;
-            if (!string.IsNullOrEmpty(address)) opportunityModel.Address = address;
-            if (date.HasValue) opportunityModel.Date = date.Value;
-
-            if (newImageUrls != null)
-            {
-                // Remove existing images
-                _context.OpportunityImgs.RemoveRange(opportunityModel.OpportunityImgs);
-
-                // Add new images
-                var newImages = newImageUrls.Select(url => new OpportunityImgModel
+                return serviceResponse.Type switch
                 {
-                    Image = url,
-                    OpportunityId = opportunityModel.OpportunityId
-                }).ToList();
-
-                await _context.OpportunityImgs.AddRangeAsync(newImages);
+                    "NotFound" => NotFound(serviceResponse.Message),
+                    "BadRequest" => BadRequest(serviceResponse.Message),
+                    _ => StatusCode(500, serviceResponse.Message)
+                };
             }
 
-
-            await _context.SaveChangesAsync();
-            try
-            {
-                var opportunityDto = OpportunityMapper.MapToDto(opportunityModel);
-                return Ok(opportunityDto);
-            }
-            catch (ValidationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return Ok(serviceResponse.Data); // Return the updated opportunity DTO
         }
     }
 }

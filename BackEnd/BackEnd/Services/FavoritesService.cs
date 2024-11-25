@@ -137,7 +137,6 @@ namespace BackEnd.Services
                 response.Success = false;
                 response.Message = "An error occurred while retrieving the favorite.";
                 response.Type = "BadRequest";
-                response.Errors = new List<string> { ex.Message };
             }
 
             return response;

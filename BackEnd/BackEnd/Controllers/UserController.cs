@@ -320,11 +320,7 @@ namespace BackEnd.Controllers
             var serviceResponse = await _userService.CheckEmailAvailabilityAsync(email);
 
             if (!serviceResponse.Success && serviceResponse.Type.Equals("BadRequest"))
-            {
-                if (serviceResponse.Errors != null && serviceResponse.Errors.Any())
-                {
-                    return BadRequest(serviceResponse.Message);
-                }
+            { 
 
                 return BadRequest(serviceResponse.Message);
             }
@@ -350,10 +346,6 @@ namespace BackEnd.Controllers
 
             if (!serviceResponse.Success)
             {
-                if (serviceResponse.Errors != null && serviceResponse.Errors.Any())
-                {
-                    return BadRequest(serviceResponse.Message);
-                }
 
                 return BadRequest(serviceResponse.Message);
             }

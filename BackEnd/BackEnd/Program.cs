@@ -30,11 +30,12 @@ builder.Services
     });
 builder.Services.AddAuthorization();
 
-builder.Services.AddScoped<AuthService>();
-builder.Services.AddScoped<EmailService>();
-builder.Services.AddScoped<IBANService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IIBanService, IBANService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IFavoritesService, FavoritesService>();
+builder.Services.AddScoped<IOpportunityService, OpportunityService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("PortalOportunidadesDB"))
