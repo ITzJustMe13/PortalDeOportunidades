@@ -4,9 +4,16 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BackEnd.Models.Mappers
 {
+    /// <summary>
+    /// class that maps OpportunityImgModel to Dto and vice-versa
+    /// </summary>
     public class OpportunityImgMapper
     {
-        // Method to map OpportunityImgModel to OpportunityImg(Dto)
+        /// <summary>
+        /// Function that maps OpportunityImgModel parameters to OpportunityImg parameters
+        /// </summary>
+        /// <param name="opportunityImgModel"></param>
+        /// <returns>Returns a Dto with the Model info</returns>
         public static OpportunityImg MapToDto(OpportunityImgModel opportunityImgModel)
         {
             if (opportunityImgModel == null)
@@ -23,7 +30,11 @@ namespace BackEnd.Models.Mappers
             };
         }
 
-        // Method to map OpportunityImg(Dto) to OpportunityImgModel
+        /// <summary>
+        /// Function that maps OpportunityImg parameters to OpportunityImgModel parameters
+        /// </summary>
+        /// <param name="opportunityImg"></param>
+        /// <returns>Returns a Model with the Dto info</returns>
         public static OpportunityImgModel MapToModel(OpportunityImg opportunityImg)
         {
             if (opportunityImg == null)
@@ -41,7 +52,11 @@ namespace BackEnd.Models.Mappers
             return opportunityImgModel;
         }
 
-        // Método para validar o modelo através das DataAnnotations
+        /// <summary>
+        /// Function that validates if the mapping parameters are correct with each other
+        /// </summary>
+        /// <param name="model"></param>
+        /// <exception cref="ValidationException"></exception>
         private static void ValidateModel(object model)
         {
             var context = new ValidationContext(model);

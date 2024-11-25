@@ -4,9 +4,16 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BackEnd.Models.Mappers
 {
+    /// <summary>
+    /// class that maps ReviewModel to Dto and vice-versa
+    /// </summary>
     public class ReviewMapper
     {
-        // Method to map ReviewModel to Review(Dto)
+        /// <summary>
+        /// Function that maps ReviewModel parameters to Review parameters
+        /// </summary>
+        /// <param name="reviewModel"></param>
+        /// <returns>Returns a Dto with the Model info</returns>
         public static Review MapToDto(ReviewModel reviewModel)
         {
             if (reviewModel == null)
@@ -23,7 +30,11 @@ namespace BackEnd.Models.Mappers
             };
         }
 
-        // Method to map Review(Dto) to ReviewModel
+        /// <summary>
+        /// Function that maps Reservation parameters to ReservationModel parameters
+        /// </summary>
+        /// <param name="review"></param>
+        /// <returns>Returns a Model with the Dto info</returns>
         public static ReviewModel MapToModel(Review review)
         {
             if (review == null)
@@ -41,7 +52,11 @@ namespace BackEnd.Models.Mappers
             return reviewModel;
         }
 
-        // Método para validar o modelo através das DataAnnotations
+        /// <summary>
+        /// Function that validates if the mapping parameters are correct with each other
+        /// </summary>
+        /// <param name="model"></param>
+        /// <exception cref="ValidationException"></exception>
         private static void ValidateModel(object model)
         {
             var context = new ValidationContext(model);

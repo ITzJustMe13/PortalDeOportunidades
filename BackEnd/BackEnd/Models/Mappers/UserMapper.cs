@@ -7,9 +7,16 @@ using BackEnd.Models.FrontEndModels;
 
 namespace BackEnd.Models.Mappers
 {
+    /// <summary>
+    /// class that maps UserModel to Dto and vice-versa
+    /// </summary>
     public class UserMapper
     {
-        // Método para mapear UserModel para User (Dto), com validação e preenchimento automático de campos
+        /// <summary>
+        /// Function that maps UserModel parameters to User parameters
+        /// </summary>
+        /// <param name="userModel"></param>
+        /// <returns>Returns a Dto with the Model info</returns>
         public static User? MapToDto(UserModel userModel)
         {
             if (userModel == null)
@@ -37,7 +44,11 @@ namespace BackEnd.Models.Mappers
             };
         }
 
-        // Método para mapear User (Dto) para UserModel, incluindo preenchimento de campos automáticos
+        /// <summary>
+        /// Function that maps User parameters to UserModel parameters
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns>Returns a Model with the Dto info</returns>
         public static UserModel? MapToModel(User user)
         {
             if (user == null)
@@ -71,7 +82,11 @@ namespace BackEnd.Models.Mappers
             return userModel;
         }
 
-        // Método para validar o modelo usando DataAnnotations
+        /// <summary>
+        /// Function that validates if the mapping parameters are correct with each other
+        /// </summary>
+        /// <param name="model"></param>
+        /// <exception cref="ValidationException"></exception>
         private static void ValidateModel(object model)
         {
             var context = new ValidationContext(model);
