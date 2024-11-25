@@ -4,7 +4,6 @@ import 'package:frontend/Components/CustomAppBar.dart';
 import 'package:frontend/Components/CustomDrawer.dart';
 import 'package:frontend/Components/OpportunityManageCard.dart';
 import 'package:frontend/Services/opportunity_api_handler.dart';
-import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
 class OpportunityManagerScreen extends StatefulWidget {

@@ -6,6 +6,8 @@ import 'package:frontend/Enums/Location.dart';
 import 'package:frontend/Enums/OppCategory.dart';
 import 'package:frontend/Models/Opportunity.dart';
 import '../Components/on_the_rise_opportunities_carousel.dart';
+import 'package:frontend/Services/opportunity_api_handler.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,236 +17,17 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  var opportunitiesOnTheRiseList = [
-    Opportunity(
-        name: "Oportunidade1",
-        price: 10.2,
-        vacancies: 1,
-        isActive: true,
-        category: OppCategory.AGRICULTURA,
-        description: "description",
-        location: Location.ACORES,
-        address: "address",
-        userId: 1,
-        reviewScore: 42,
-        date: DateTime.now(),
-        isImpulsed: true,
-        opportunityImgs: []),
-    Opportunity(
-        name:
-            "Oportunidade2 asdadddddddddddd dddddddddddddddddd ddddddddddddddddddddddddddddddddddddddddd ddddddddddddddddddddddddddddd",
-        price: 10.2,
-        vacancies: 1,
-        isActive: true,
-        category: OppCategory.AGRICULTURA,
-        description: "description",
-        location: Location.ACORES,
-        address: "address",
-        userId: 1,
-        reviewScore: 42,
-        date: DateTime.now(),
-        isImpulsed: true,
-        opportunityImgs: []),
-    Opportunity(
-        name: "Oportunidade3",
-        price: 10.2,
-        vacancies: 1,
-        isActive: true,
-        category: OppCategory.AGRICULTURA,
-        description: "description",
-        location: Location.ACORES,
-        address: "address",
-        userId: 1,
-        reviewScore: 42,
-        date: DateTime.now(),
-        isImpulsed: true,
-        opportunityImgs: []),
-  ];
+  late Future<List<Opportunity>?> _opportunitiesFuture;
+  late Future<List<Opportunity>?> _impulsedOpportunitiesFuture;
 
-  var opportunitiesList = [
-    Opportunity(
-        name: "Oportunidade4",
-        price: 10.2,
-        vacancies: 1,
-        isActive: true,
-        category: OppCategory.AGRICULTURA,
-        description: "description",
-        location: Location.ACORES,
-        address: "address",
-        userId: 1,
-        reviewScore: 42,
-        date: DateTime.now(),
-        isImpulsed: false,
-        opportunityImgs: []),
-    Opportunity(
-        name: "Oportunidade5",
-        price: 10.2,
-        vacancies: 1,
-        isActive: true,
-        category: OppCategory.AGRICULTURA,
-        description: "description",
-        location: Location.ACORES,
-        address: "address",
-        userId: 1,
-        reviewScore: 42,
-        date: DateTime.now(),
-        isImpulsed: false,
-        opportunityImgs: []),
-    Opportunity(
-        name: "Oportunidade6",
-        price: 10.2,
-        vacancies: 1,
-        isActive: true,
-        category: OppCategory.AGRICULTURA,
-        description: "description",
-        location: Location.ACORES,
-        address: "address",
-        userId: 1,
-        reviewScore: 42,
-        date: DateTime.now(),
-        isImpulsed: false,
-        opportunityImgs: []),
-    Opportunity(
-        name: "Oportunidade7",
-        price: 10.2,
-        vacancies: 1,
-        isActive: true,
-        category: OppCategory.AGRICULTURA,
-        description: "description",
-        location: Location.ACORES,
-        address: "address",
-        userId: 1,
-        reviewScore: 42,
-        date: DateTime.now(),
-        isImpulsed: false,
-        opportunityImgs: []),
-    Opportunity(
-        name: "Oportunidade8",
-        price: 10.2,
-        vacancies: 1,
-        isActive: true,
-        category: OppCategory.AGRICULTURA,
-        description: "description",
-        location: Location.ACORES,
-        address: "address",
-        userId: 1,
-        reviewScore: 42,
-        date: DateTime.now(),
-        isImpulsed: false,
-        opportunityImgs: []),
-    Opportunity(
-        name: "Oportunidade9",
-        price: 10.2,
-        vacancies: 1,
-        isActive: true,
-        category: OppCategory.AGRICULTURA,
-        description: "description",
-        location: Location.ACORES,
-        address: "address",
-        userId: 1,
-        reviewScore: 42,
-        date: DateTime.now(),
-        isImpulsed: false,
-        opportunityImgs: []),
-    Opportunity(
-        name: "Oportunidade10",
-        price: 10.2,
-        vacancies: 1,
-        isActive: true,
-        category: OppCategory.AGRICULTURA,
-        description: "description",
-        location: Location.ACORES,
-        address: "address",
-        userId: 1,
-        reviewScore: 42,
-        date: DateTime.now(),
-        isImpulsed: false,
-        opportunityImgs: []),
-    Opportunity(
-        name: "Oportunidade11",
-        price: 10.2,
-        vacancies: 1,
-        isActive: true,
-        category: OppCategory.AGRICULTURA,
-        description: "description",
-        location: Location.ACORES,
-        address: "address",
-        userId: 1,
-        reviewScore: 42,
-        date: DateTime.now(),
-        isImpulsed: false,
-        opportunityImgs: []),
-    Opportunity(
-        name: "Oportunidade12",
-        price: 10.2,
-        vacancies: 1,
-        isActive: true,
-        category: OppCategory.AGRICULTURA,
-        description: "description",
-        location: Location.ACORES,
-        address: "address",
-        userId: 1,
-        reviewScore: 42,
-        date: DateTime.now(),
-        isImpulsed: false,
-        opportunityImgs: []),
-    Opportunity(
-        name: "Oportunidade13",
-        price: 10.2,
-        vacancies: 1,
-        isActive: true,
-        category: OppCategory.AGRICULTURA,
-        description: "description",
-        location: Location.ACORES,
-        address: "address",
-        userId: 1,
-        reviewScore: 42,
-        date: DateTime.now(),
-        isImpulsed: false,
-        opportunityImgs: []),
-    Opportunity(
-        name: "Oportunidade14",
-        price: 10.2,
-        vacancies: 1,
-        isActive: true,
-        category: OppCategory.AGRICULTURA,
-        description: "description",
-        location: Location.ACORES,
-        address: "address",
-        userId: 1,
-        reviewScore: 42,
-        date: DateTime.now(),
-        isImpulsed: false,
-        opportunityImgs: []),
-    Opportunity(
-        name: "Oportunidade15",
-        price: 10.2,
-        vacancies: 1,
-        isActive: true,
-        category: OppCategory.AGRICULTURA,
-        description: "description",
-        location: Location.ACORES,
-        address: "address",
-        userId: 1,
-        reviewScore: 42,
-        date: DateTime.now(),
-        isImpulsed: false,
-        opportunityImgs: []),
-    Opportunity(
-        name: "Oportunidade16",
-        price: 10.2,
-        vacancies: 1,
-        isActive: true,
-        category: OppCategory.AGRICULTURA,
-        description: "description",
-        location: Location.ACORES,
-        address: "address",
-        userId: 1,
-        reviewScore: 42,
-        date: DateTime.now(),
-        isImpulsed: false,
-        opportunityImgs: []),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _opportunitiesFuture = Provider.of<OpportunityApiHandler>(context, listen: false)
+        .getAllOpportunities();
+    _impulsedOpportunitiesFuture = Provider.of<OpportunityApiHandler>(context, listen: false)
+        .getAllImpulsedOpportunities();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -271,15 +54,45 @@ class _HomePageState extends State<HomePage> {
                     width: componentWidth,
                     child: Column(
                       children: [
-                        OnTheRiseOpportunityCarousel(
-                            opportunitiesOnTheRiseList:
-                                opportunitiesOnTheRiseList),
+                        //FutureBuilder for 'impulsed opportunities'
+                        FutureBuilder<List<Opportunity>?>(
+                          future: _impulsedOpportunitiesFuture,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return const CircularProgressIndicator();
+                            } else if (snapshot.hasError) {
+                              return Text('Error: ${snapshot.error}');
+                            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                              return const Text('No opportunities on the rise.');
+                            } else {
+                              List<Opportunity> opportunitiesOnTheRiseList = snapshot.data!;
+                              return OnTheRiseOpportunityCarousel(
+                                  opportunitiesOnTheRiseList: opportunitiesOnTheRiseList);
+                            }
+                          },
+                        ),
                         SizedBox(height: padding),
                         Divider(thickness: 1, color: Colors.black),
                         SizedBox(height: padding),
-                        PaginatedOpportunityGallery(
-                          allOpportunities: opportunitiesList,
-                        )
+                        
+                        // FutureBuilder for 'all opportunities'
+                        FutureBuilder<List<Opportunity>?>(
+                          future: _opportunitiesFuture,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return const CircularProgressIndicator();
+                            } else if (snapshot.hasError) {
+                              return Text('Error: ${snapshot.error}');
+                            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                              return const Text('No opportunities available.');
+                            } else {
+                              List<Opportunity> opportunitiesList = snapshot.data!;
+                              return PaginatedOpportunityGallery(
+                                allOpportunities: opportunitiesList,
+                              );
+                            }
+                          },
+                        ),
                       ],
                     )),
               ),
