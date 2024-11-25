@@ -19,8 +19,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: specificOrgins,
         policy =>
         {
-            // Allow any origin starting with "https://localhost:" which will cover any port on localhost with HTTPS
-            policy.WithOrigins("https://localhost:*")
+            policy.WithOrigins("http://localhost:50394", "https://localhost:50394")
                   .AllowAnyMethod()
                   .AllowAnyHeader()
                   .AllowCredentials();
@@ -124,10 +123,14 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+app.UseCors("AppOrigins");
+
 app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+
 
 app.MapControllerRoute(
     name: "default",
