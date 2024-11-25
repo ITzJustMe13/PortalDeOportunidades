@@ -15,7 +15,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BackEnd.Services
 {
-
+    /// <summary>
+    /// The class is responsible for the logic of Users of the program
+    /// Has a constructor that receives a DBContext an IEmailService and an IIbanService
+    /// </summary>
     public class UserService : IUserService
     {
         private readonly ApplicationDbContext dbContext;
@@ -34,6 +37,13 @@ namespace BackEnd.Services
             this.authService = authService ?? throw new ArgumentNullException(nameof(authService));
             this.ibanService = ibanService ?? throw new ArgumentNullException(nameof(ibanService)) ;
         }
+
+        /// <summary>
+        /// Function responsible to get from the db a Users info by his id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true and the User Dto</returns>
         public async Task<ServiceResponse<User>> GetUserByIDAsync(int id)
         {
             if (dbContext == null)
@@ -63,6 +73,12 @@ namespace BackEnd.Services
             };
         }
 
+        /// <summary>
+        /// Function that creates a new User in the DB
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true and the created User dto</returns>
         public async Task<ServiceResponse<User>> CreateNewUserAsync(User user)
         {
             var response = new ServiceResponse<User>();
@@ -173,6 +189,12 @@ namespace BackEnd.Services
             return response;
         }
 
+        /// <summary>
+        /// Function that deletes the user from the DB by his id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true and a sucess mensage</returns>
         public async Task<ServiceResponse<string>> DeleteUserAsync(int id)
         {
             var response = new ServiceResponse<string>();
@@ -223,6 +245,13 @@ namespace BackEnd.Services
             return response;
         }
 
+        /// <summary>
+        /// Function that updates the user based on the updatedUser dto that it receives
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="updatedUser"></param>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true and a sucess mensage</returns>
         public async Task<ServiceResponse<User>> EditUserAsync(int id, User updatedUser)
         {
             var response = new ServiceResponse<User>();
@@ -332,6 +361,13 @@ namespace BackEnd.Services
             return response;
         }
 
+        /// <summary>
+        /// Function that makes the User login
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true with a sucess mensage and a
+        /// LoginResponse with a jwt token and the user dto it belongs to</returns>
         public async Task<ServiceResponse<LoginResponse>> LoginAsync(LoginRequest request)
         {
             var response = new ServiceResponse<LoginResponse>();
@@ -415,7 +451,12 @@ namespace BackEnd.Services
             return response;
         }
 
-
+        /// <summary>
+        /// Function that checks if an email is available to use, that is, is not present in the DB
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns>Returns false if already exists a similar email on the DB or the email parameter
+        /// is null or empty or returns true if the email doesn't exist on the DB</returns>
         private async Task<Boolean> IsEmailAvailable(string email)
         {
 
@@ -425,6 +466,14 @@ namespace BackEnd.Services
             return !await dbContext.Users.AnyAsync(user => user.Email == email);
         }
 
+        /// <summary>
+        /// Function that exists with the purpose of informing the user if his email is already registered
+        /// on the plataform
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true and a mensage informing the user
+        /// about his choice of email availability accordingly </returns>
         public async Task<ServiceResponse<bool>> CheckEmailAvailabilityAsync(string email)
 
         {
@@ -466,6 +515,12 @@ namespace BackEnd.Services
             return response;
         }
 
+        /// <summary>
+        /// Function that activates the User account on the DB and plataform
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true and a sucess mensage</returns>
         public async Task<ServiceResponse<string>> ActivateAccountAsync(string token)
         {
             var response = new ServiceResponse<string>();
@@ -524,6 +579,12 @@ namespace BackEnd.Services
             return response;
         }
 
+        /// <summary>
+        /// Function that activates an Impulse on a User's Opportunity
+        /// </summary>
+        /// <param name="impulse"></param>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true, a sucess mensage and the Impulse Dto</returns>
         public async Task<ServiceResponse<Impulse>> ImpulseOpportunityAsync(Impulse impulse)
         {
             var response = new ServiceResponse<Impulse>();
