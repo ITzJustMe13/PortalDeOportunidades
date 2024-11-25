@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/Components/dynamic_details_button.dart';
 import 'package:frontend/Models/Opportunity.dart';
+import 'package:frontend/Views/OpportunityDetailsScreen.dart';
 
 class OpportunityCard extends StatelessWidget {
   final Opportunity opportunity;
@@ -20,7 +21,7 @@ class OpportunityCard extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               _buildImageSection(),
-              _buildDetailsSection(),
+              _buildDetailsSection(context),
             ],
           ),
         );
@@ -74,7 +75,7 @@ class OpportunityCard extends StatelessWidget {
     );
   }
 
-  Widget _buildDetailsSection() {
+  Widget _buildDetailsSection(BuildContext context) {
     return Container(
       color: Color(0xFFD9D9D9),
       padding: EdgeInsets.all(8.0),
@@ -103,7 +104,16 @@ class OpportunityCard extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 8),
-                DynamicDetailsButton(),
+                DynamicDetailsButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => OpportunityDetailsScreen(opportunity: opportunity),
+                      ),
+                    );
+                  },
+                ),
               ],
             ),
           )

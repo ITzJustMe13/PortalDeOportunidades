@@ -1,21 +1,32 @@
+import 'dart:convert'; // Import for base64 decoding
 import 'package:flutter/material.dart';
+import 'package:frontend/Models/Opportunity.dart';
 
 class OpportunityImages extends StatefulWidget {
+  final Opportunity opportunity;
+
+  const OpportunityImages({super.key, required this.opportunity});
+
   @override
   _OpportunityImagesState createState() => _OpportunityImagesState();
 }
 
 class _OpportunityImagesState extends State<OpportunityImages> {
-  final List<String> _imagePaths = [
-    'assets/images/opp.jpg',
-    'assets/images/opp.jpg',
-    'assets/images/opp.jpg',
-  ];
+  late final List<String> _imageBase64Strings;
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
+  @override
+  void initState() {
+    super.initState();
+    // Extract the base64 strings from the opportunity's images
+    _imageBase64Strings = widget.opportunity.opportunityImgs
+        .map((img) => img.imageBase64)
+        .toList();
+  }
+
   void _nextPage() {
-    if (_currentPage < _imagePaths.length - 1) {
+    if (_currentPage < _imageBase64Strings.length - 1) {
       setState(() {
         _currentPage++;
         _pageController.nextPage(
@@ -48,17 +59,18 @@ class _OpportunityImagesState extends State<OpportunityImages> {
               height: 400,
               child: PageView.builder(
                 controller: _pageController,
-                itemCount: _imagePaths.length,
+                itemCount: _imageBase64Strings.length,
                 onPageChanged: (int index) {
                   setState(() {
                     _currentPage = index;
                   });
                 },
                 itemBuilder: (context, index) {
+                  final bytes = base64Decode(_imageBase64Strings[index]);
                   return ClipRRect(
                     borderRadius: BorderRadius.circular(10.0),
-                    child: Image.asset(
-                      _imagePaths[index],
+                    child: Image.memory(
+                      bytes,
                       fit: BoxFit.cover,
                     ),
                   );
@@ -86,7 +98,7 @@ class _OpportunityImagesState extends State<OpportunityImages> {
         SizedBox(height: 10), // Space between images and indicator
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(_imagePaths.length, (index) {
+          children: List.generate(_imageBase64Strings.length, (index) {
             return AnimatedContainer(
               duration: Duration(milliseconds: 300),
               margin: EdgeInsets.symmetric(horizontal: 5),

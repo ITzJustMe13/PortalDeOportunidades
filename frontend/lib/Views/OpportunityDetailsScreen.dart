@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:frontend/Components/ReviewCard.dart';
 import 'package:frontend/Models/Review.dart';
+import 'package:frontend/Models/User.dart';
+import 'package:frontend/Services/user_api_handler.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:frontend/Components/CustomAppBar.dart';
 import 'package:frontend/Components/CustomDrawer.dart';
@@ -12,62 +14,83 @@ import 'package:frontend/Components/OpportunityAdditionalInfo.dart';
 import 'package:frontend/Components/ReservationButton.dart';
 import 'package:frontend/Enums/OppCategory.dart';
 import 'package:frontend/Enums/Location.dart';
+import 'package:provider/provider.dart';
+import 'package:frontend/Services/opportunity_api_handler.dart';
+import 'package:frontend/Models/Opportunity.dart';
+import 'package:intl/intl.dart';
 
-class OpportunityDetailsScreen extends StatelessWidget {
+class OpportunityDetailsScreen extends StatefulWidget {
+  final Opportunity opportunity;
+
+  const OpportunityDetailsScreen({super.key, required this.opportunity});
+
+  @override
+  _OpportunityManagerScreenState createState() => _OpportunityManagerScreenState();
+}
+
+class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen>{
   final ScrollController verticalScrollController = ScrollController();
   final ScrollController horizontalScrollController = ScrollController();
-  //MOCK INFO
-  final String _name = 'Venha Aprender a Fazer Posta à Transmontana';
-  final String _description = 'Venha aprender a arte tradicional de Trás-os-Montes.\nVenha aprender a arte tradicional de Trás-os-Montes.\nVenha aprender a arte tradicional de Trás-os-Montes.\nVenha aprender a arte tradicional de Trás-os-Montes.';
-  final String _address = 'R. Silvestre Vaz 38 Vila Real';
-  final double _price = 14.99;
-  final int _vacancies = 2;
-  final String _firstName = 'António';
-  final String _lastName = 'Sousa';
-  final String _time = '10:00/11:00';
-  final DateTime _date = DateTime.now();
-  final Location _location = Location.VILA_REAL;
-  final List<Review> _reviews = [
-      Review(reservationId: 101, rating: 4.5, description: 'Gostei Bastante!'),
-      Review(reservationId: 102, rating: 0.0, description: 'Não gostei e não recomendo.'),
-      Review(reservationId: 103, rating: 5.0, description: 'Adorei, incrivel!'),
-      Review(reservationId: 103, rating: 2.5, description: 'Foi ok.')
-      ];
-  
+  late Future<User?> _ownerFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    // Fetch the owner based on the userId in the passed Opportunity
+    _ownerFuture = Provider.of<UserApiHandler>(context, listen: false)
+        .getUserByID(widget.opportunity.userId);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(),
       endDrawer: CustomDrawer(),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          if (constraints.maxWidth < 600) {
-            // Layout for small screens (smartphones)
-            return _buildMobileLayout();
-          } else if (constraints.maxWidth < 1200) {
-            // Layout for medium screens (tablets)
-            return _buildTabletLayout();
-          } else {
-            // Layout for large screens (desktops)
-            return _buildDesktopLayout();
+      body: FutureBuilder<User?>(
+        future: _ownerFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data == null) {
+            return Center(child: Text('Owner not found'));
           }
+
+          final owner = snapshot.data!;
+          final opportunity = widget.opportunity;
+          final DateTime dateTime = opportunity.date;
+          final String formattedTime = DateFormat('HH:mm').format(dateTime);
+
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              if (constraints.maxWidth < 600) {
+                return _buildMobileLayout(opportunity, owner, formattedTime);
+              } else if (constraints.maxWidth < 1200) {
+                return _buildTabletLayout(opportunity, owner, formattedTime);
+              } else {
+                return _buildDesktopLayout(opportunity, owner, formattedTime);
+              }
+            },
+          );
         },
       ),
     );
   }
 
+
   // Mobile layout (Vertical scroll)
-  Widget _buildMobileLayout() {
+  Widget _buildMobileLayout(Opportunity opportunity, User user, String time) {
     return SingleChildScrollView(
       controller: verticalScrollController,
       padding: const EdgeInsets.all(20.0),
       child: Column(
         children: [
-          OpportunityImages(),
+          OpportunityImages(opportunity: opportunity),
           SizedBox(height: 20),
           OpportunityDetails(
-            name: _name,
-            description: _description,),
+            name: opportunity.name,
+            description: opportunity.description,),
           SizedBox(height: 20),
           ReservationButton(
             availableVacancies: 2,
@@ -77,17 +100,18 @@ class OpportunityDetailsScreen extends StatelessWidget {
           ),
           SizedBox(height: 20),
           OpportunityAdditionalInfo(
-            price: _price,
-            location: _location,
-            address: _address,
-            vacancies: _vacancies,
-            firstName: _firstName,
-            lastName: _lastName,
-            time: _time,
-            date: _date,
+            price: opportunity.price,
+            location: opportunity.location,
+            address: opportunity.address,
+            vacancies: opportunity.vacancies,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            time: time,
+            date: opportunity.date,
           ),
           SizedBox(height: 20),
-          OpportunityLocationMap(address: _address,),
+          OpportunityLocationMap(address: opportunity.address,),
+          /*
           //REVIEWS
           SizedBox(height: 20),
           Text(
@@ -99,13 +123,14 @@ class OpportunityDetailsScreen extends StatelessWidget {
             rating: review.rating,
             description: review.description ?? '',
             )).toList(),
+            */
         ],
       ),
     );
   }
 
   // Tablet layout (Vertical scroll with Scrollbar)
-    Widget _buildTabletLayout() {
+    Widget _buildTabletLayout(Opportunity opportunity, User user, String time) {
     return Scrollbar(
       thumbVisibility: true,
       controller: verticalScrollController,
@@ -121,13 +146,13 @@ class OpportunityDetailsScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  OpportunityImages(),
+                  OpportunityImages(opportunity: opportunity),
                   OpportunityDetails(
-                    name: _name,
-                    description: _description,
+                    name: opportunity.name,
+                    description: opportunity.description,
                   ),
                   ReservationButton(
-                    availableVacancies: 2,
+                    availableVacancies: opportunity.vacancies,
                     onPressed: () {
                       print('Reservation button pressed!');
                     },
@@ -144,17 +169,18 @@ class OpportunityDetailsScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   OpportunityAdditionalInfo(
-                    price: _price,
-                    location: _location,
-                    address: _address,
-                    vacancies: _vacancies,
-                    firstName: _firstName,
-                    lastName: _lastName,
-                    time: _time,
-                    date: _date,
+                    price: opportunity.price,
+                    location: opportunity.location,
+                    address: opportunity.address,
+                    vacancies: opportunity.vacancies,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    time: time,
+                    date: opportunity.date,
                   ),
                   SizedBox(height: 20),
-                  OpportunityLocationMap(address: _address,),
+                  OpportunityLocationMap(address: opportunity.address,),
+                  /*
                   //REVIEWS
                   SizedBox(height: 20),
                   Text(
@@ -166,6 +192,7 @@ class OpportunityDetailsScreen extends StatelessWidget {
                       rating: review.rating,
                       description: review.description ?? '',
                       )).toList(),
+                      */
                 ],
               ),
             ),
@@ -176,7 +203,7 @@ class OpportunityDetailsScreen extends StatelessWidget {
   }
 
  // Desktop layout (Both vertical and horizontal scroll with Scrollbar)
-  Widget _buildDesktopLayout() {
+  Widget _buildDesktopLayout(Opportunity opportunity, User user, String time) {
     return Scrollbar(
       thumbVisibility: true,
       controller: verticalScrollController,
@@ -194,10 +221,10 @@ class OpportunityDetailsScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: 20),
-                  OpportunityImages(),
+                  OpportunityImages(opportunity: opportunity),
                   OpportunityDetails(
-                    name: _name,
-                    description: _description,),
+                    name: opportunity.name,
+                    description: opportunity.description,),
                   SizedBox(height: 20),
                   ReservationButton(
                     availableVacancies: 2,
@@ -216,17 +243,18 @@ class OpportunityDetailsScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   OpportunityAdditionalInfo(
-                    price: _price,
-                    location: _location,
-                    address: _address,
-                    vacancies: _vacancies,
-                    firstName: _firstName,
-                    lastName: _lastName,
-                    time: _time,
-                    date: _date,
+                    price: opportunity.price,
+                    location: opportunity.location,
+                    address: opportunity.address,
+                    vacancies: opportunity.vacancies,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    time: time,
+                    date: opportunity.date,
                   ),
                   SizedBox(height: 20),
-                  OpportunityLocationMap(address: _address,),
+                  OpportunityLocationMap(address: opportunity.address,),
+                  /*
                   //REVIEWS
                   SizedBox(height: 20),
                   Text(
@@ -238,6 +266,7 @@ class OpportunityDetailsScreen extends StatelessWidget {
                       rating: review.rating,
                       description: review.description ?? '',
                       )).toList(),
+                      */
                 ],
               ),
             ),
@@ -247,3 +276,4 @@ class OpportunityDetailsScreen extends StatelessWidget {
     );
   }
 }
+

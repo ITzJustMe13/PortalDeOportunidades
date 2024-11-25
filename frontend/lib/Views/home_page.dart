@@ -63,7 +63,7 @@ class _HomePageState extends State<HomePage> {
                             } else if (snapshot.hasError) {
                               return Text('Error: ${snapshot.error}');
                             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                              return const Text('No opportunities on the rise.');
+                              return const Text('Sem oportunidades em Destaque');
                             } else {
                               List<Opportunity> opportunitiesOnTheRiseList = snapshot.data!;
                               return OnTheRiseOpportunityCarousel(
@@ -84,7 +84,7 @@ class _HomePageState extends State<HomePage> {
                             } else if (snapshot.hasError) {
                               return Text('Error: ${snapshot.error}');
                             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                              return const Text('No opportunities available.');
+                              return const Text('Sem Oportunidades Disponiveis');
                             } else {
                               List<Opportunity> opportunitiesList = snapshot.data!;
                               return PaginatedOpportunityGallery(
