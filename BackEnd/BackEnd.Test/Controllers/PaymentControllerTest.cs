@@ -149,7 +149,8 @@ namespace BackEnd.Test
         public async Task CreateReservationCheckoutSession_ReturnsNotFound_ForDBContextMissing()
         {
             // Arrange
-            var controller = new PaymentController(null);
+            var paymentService = new PaymentService(null);
+            var controller = new PaymentController(paymentService);
             StripeConfiguration.ApiKey = stripeKey;
 
             byte[] userImg = new byte[]
@@ -215,7 +216,7 @@ namespace BackEnd.Test
             // Assert
             Assert.That(response, Is.InstanceOf<NotFoundObjectResult>());
             var notFoundResult = response as NotFoundObjectResult;
-            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
+            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing."));
         }
 
         [Test]
@@ -717,7 +718,8 @@ namespace BackEnd.Test
         public async Task CreateImpulseCheckoutSession_ReturnsNotFound_ForDBContextMissing()
         {
             // Arrange
-            var controller = new PaymentController(null);
+            var paymentService = new PaymentService(null);
+            var controller = new PaymentController(paymentService);
             StripeConfiguration.ApiKey = stripeKey;
             byte[] userImg = new byte[]
             {
@@ -781,7 +783,7 @@ namespace BackEnd.Test
 
             Assert.That(response, Is.InstanceOf<NotFoundObjectResult>());
             var notFoundResult = response as NotFoundObjectResult;
-            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
+            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing."));
         }
 
         [Test]

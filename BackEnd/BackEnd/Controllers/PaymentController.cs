@@ -13,7 +13,6 @@ namespace BackEnd.Controllers
     public class PaymentController : ControllerBase
     {
         private readonly IPaymentService _paymentService;
-        private readonly ApplicationDbContext _context;
 
 
         public PaymentController(IPaymentService paymentService)
@@ -46,67 +45,20 @@ namespace BackEnd.Controllers
         [HttpPost("Checkout-Impulse")]
         public async Task<IActionResult> CreateImpulseCheckoutSession([FromBody] Impulse impulse)
         {
+            var serviceResponse = await _paymentService.CreateImpulseCheckoutSessionAsync(impulse);
 
-            if (impulse == null || impulse.value <= 0 || impulse.expireDate <= DateTime.Today)
+            if (!serviceResponse.Success)
             {
-                return BadRequest("Invalid impulse data.");
-            }
-
-            if (_context == null)
-                return NotFound("DB context missing");
-
-            // Find the User
-            var user = await _context.Users.FindAsync(impulse.userId);
-            if (user == null)
-            {
-                return NotFound("User not found.");
-            }
-
-            // Find the Opportunity
-            var opportunity = await _context.Opportunities.FindAsync(impulse.opportunityId);
-            if (opportunity == null)
-            {
-                return NotFound("Opportunity not found.");
-            }
-
-            var options = new SessionCreateOptions
-            {
-                PaymentMethodTypes = new List<string> { "card" },
-                LineItems = new List<SessionLineItemOptions>
-        {
-            new SessionLineItemOptions
-            {
-                PriceData = new SessionLineItemPriceDataOptions
+                return serviceResponse.Type switch
                 {
-                    ProductData = new SessionLineItemPriceDataProductDataOptions
-                    {
-                        Name = $"Impulso para a visibiliade de {opportunity.Name} até ao dia {impulse.expireDate} .",
-                    },
-                    UnitAmount = (long)(impulse.value * 100), // Convert to cents for stripe
-                    Currency = "eur",
-                },
-                Quantity = 1,
-            },
-        },
-                Mode = "payment",
-                SuccessUrl = "https://localhost:7235/success",  // UPDATE WITH FRONTEND
-                CancelUrl = "https://localhost:7235/cancel",    // UPDATE WITH FRONTEND
-                CustomerEmail = user.Email, // For sending the receipt to the user
-            };
-
-            var service = new SessionService();
-            Session session;
-
-            try
-            {
-                session = await service.CreateAsync(options); // Create the session for checkout
-            }
-            catch (StripeException ex)
-            {
-                return BadRequest($"Stripe error: {ex.Message}"); // Handle any Stripe exceptions
+                    "BadRequest" => BadRequest(serviceResponse.Message),
+                    "NotFound" => NotFound(serviceResponse.Message),
+                    "InternalServerError" => StatusCode(500, serviceResponse.Message),
+                    _ => StatusCode(500, "Unknown error.")
+                };
             }
 
-            return Ok(new { sessionId = session.Id }); // Return sessionId for frontend redirection to Stripe
+            return Ok(new { sessionId = serviceResponse.Data });
         }
 
     }

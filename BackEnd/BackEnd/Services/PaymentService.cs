@@ -107,5 +107,96 @@ namespace BackEnd.Services
 
             return response;
         }
+
+        public async Task<ServiceResponse<string>> CreateImpulseCheckoutSessionAsync(Impulse impulse)
+        {
+            var response = new ServiceResponse<string>();
+
+            try
+            {
+                if (impulse == null || impulse.value <= 0 || impulse.expireDate <= DateTime.Today)
+                {
+                    response.Success = false;
+                    response.Message = "Invalid impulse data.";
+                    response.Type = "BadRequest";
+                    return response;
+                }
+
+                if (dbContext == null)
+                {
+                    response.Success = false;
+                    response.Message = "DB context missing.";
+                    response.Type = "NotFound";
+                    return response;
+                }
+
+                // Find the User
+                var user = await dbContext.Users.FindAsync(impulse.userId);
+                if (user == null)
+                {
+                    response.Success = false;
+                    response.Message = "User not found.";
+                    response.Type = "NotFound";
+                    return response;
+                }
+
+                // Find the Opportunity
+                var opportunity = await dbContext.Opportunities.FindAsync(impulse.opportunityId);
+                if (opportunity == null)
+                {
+                    response.Success = false;
+                    response.Message = "Opportunity not found.";
+                    response.Type = "NotFound";
+                    return response;
+                }
+
+                var options = new SessionCreateOptions
+                {
+                    PaymentMethodTypes = new List<string> { "card" },
+                    LineItems = new List<SessionLineItemOptions>
+            {
+                new SessionLineItemOptions
+                {
+                    PriceData = new SessionLineItemPriceDataOptions
+                    {
+                        ProductData = new SessionLineItemPriceDataProductDataOptions
+                        {
+                            Name = $"Impulso para a visibilidade de {opportunity.Name} até ao dia {impulse.expireDate}.",
+                        },
+                        UnitAmount = (long)(impulse.value * 100), // Convert to cents for stripe
+                        Currency = "eur",
+                    },
+                    Quantity = 1,
+                },
+            },
+                    Mode = "payment",
+                    SuccessUrl = "https://localhost:7235/success", // UPDATE WITH FRONTEND
+                    CancelUrl = "https://localhost:7235/cancel",  // UPDATE WITH FRONTEND
+                    CustomerEmail = user.Email, // For sending the receipt to the user
+                };
+
+                var service = new SessionService();
+                Session session = await service.CreateAsync(options); // Create the session for checkout
+
+                response.Data = session.Id;
+                response.Success = true;
+                response.Message = "Stripe session created successfully.";
+                response.Type = "Ok";
+            }
+            catch (StripeException ex)
+            {
+                response.Success = false;
+                response.Message = $"Stripe error: {ex.Message}";
+                response.Type = "BadRequest";
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = "An unexpected error occurred while creating the payment session.";
+                response.Type = "InternalServerError";
+            }
+
+            return response;
+        }
     }
 }
