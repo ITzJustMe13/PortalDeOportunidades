@@ -10,6 +10,7 @@ using System.Net;
 using DotNetEnv;
 using BackEnd.Interfaces;
 using Moq;
+using BackEnd.Services;
 
 namespace BackEnd.Test
 {
@@ -17,24 +18,22 @@ namespace BackEnd.Test
     public class OpportunityControllerTest
     {
         private OpportunityController _controller;
+        private IOpportunityService _opportunityService;
         private ApplicationDbContext _context;
-        private Mock<IOpportunityService> _mockOpportunityService;
 
         [SetUp]
         public void Setup()
         {
-            // Use in-memory database for ApplicationDbContext
+
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase(databaseName: "TestDatabase")
-                .Options;
+        .UseInMemoryDatabase("TestDatabase")
+        .Options;
 
             _context = new ApplicationDbContext(options);
+            _opportunityService = new OpportunityService(_context);
 
-            // Create a mock for the IOpportunityService
-            _mockOpportunityService = new Mock<IOpportunityService>();
+            _controller = new OpportunityController(_opportunityService);
 
-            // Inject the ApplicationDbContext and the mocked service into the controller
-            _controller = new OpportunityController(_context, _mockOpportunityService.Object);
         }
 
         [TearDown]
@@ -62,9 +61,9 @@ namespace BackEnd.Test
             var response = await _controller.GetAllOpportunities();
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<OkObjectResult>(), "Expected OkObjectResult if there are opportunities");
+            Assert.That(response, Is.TypeOf<OkObjectResult>(), "Expected OkObjectResult if there are opportunities");
 
-            var okResult = response.Result as OkObjectResult;
+            var okResult = response as OkObjectResult;
             Assert.That(okResult, Is.Not.Null, "OkObjectResult should not be null");
 
             var returnedList = okResult.Value as IEnumerable<Opportunity>;
@@ -81,9 +80,9 @@ namespace BackEnd.Test
             var response = await _controller.GetAllOpportunities();
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<NotFoundObjectResult>(), "Expected NotFoundObjectResult if there are no opportunities");
+            Assert.That(response, Is.TypeOf<NotFoundObjectResult>(), "Expected NotFoundObjectResult if there are no opportunities");
 
-            var notFoundResult = response.Result as NotFoundObjectResult;
+            var notFoundResult = response as NotFoundObjectResult;
             Assert.That(notFoundResult, Is.Not.Null, "NotFoundObjectResult should not be null");
             Assert.That(notFoundResult?.Value, Is.EqualTo("No Opportunities were found."), "Error message should match the expected not found message");
         }
@@ -93,16 +92,17 @@ namespace BackEnd.Test
         public async Task GetAllOpportunities_NotFoundObjectResult_DBContextMissing()
         {
             // Arrange
-            var mockOpportunityService = new Mock<IOpportunityService>();
-            var controller = new OpportunityController(null, mockOpportunityService.Object);
+            var opportunityService = new OpportunityService(null);
+
+            var controller = new OpportunityController(opportunityService);
 
             // Act
             var response = await controller.GetAllOpportunities();
 
             // Assert
-            Assert.That(response.Result, Is.InstanceOf<NotFoundObjectResult>());
-            var notFoundResult = response.Result as NotFoundObjectResult;
-            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
+            Assert.That(response, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = response as NotFoundObjectResult;
+            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing."));
         }
 
         [Test]
@@ -124,9 +124,9 @@ namespace BackEnd.Test
             var response = await _controller.GetAllImpulsedOpportunities();
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<OkObjectResult>(), "Expected OkObjectResult if there are impulsed opportunities");
+            Assert.That(response, Is.TypeOf<OkObjectResult>(), "Expected OkObjectResult if there are impulsed opportunities");
 
-            var okResult = response.Result as OkObjectResult;
+            var okResult = response as OkObjectResult;
             Assert.That(okResult, Is.Not.Null, "OkObjectResult should not be null");
 
             var returnedList = okResult.Value as IEnumerable<Opportunity>;
@@ -151,11 +151,11 @@ namespace BackEnd.Test
             var response = await _controller.GetAllImpulsedOpportunities();
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<NotFoundObjectResult>(), "Expected NotFoundObjectResult if there are no impulsed opportunities");
+            Assert.That(response, Is.TypeOf<NotFoundObjectResult>(), "Expected NotFoundObjectResult if there are no impulsed opportunities");
 
-            var notFoundResult = response.Result as NotFoundObjectResult;
+            var notFoundResult = response as NotFoundObjectResult;
             Assert.That(notFoundResult, Is.Not.Null, "NotFoundObjectResult should not be null");
-            Assert.That(notFoundResult?.Value, Is.EqualTo("No Opportunities were found."), "Error message should match the expected not found message");
+            Assert.That(notFoundResult?.Value, Is.EqualTo("No impulsed opportunities were found."), "Error message should match the expected not found message");
         }
 
         [Test]
@@ -163,16 +163,17 @@ namespace BackEnd.Test
         public async Task GetAllImpulsedOpportunities_NotFoundObjectResult_DBContextMissing()
         {
             // Arrange
-            var mockOpportunityService = new Mock<IOpportunityService>();
-            var controller = new OpportunityController(null, mockOpportunityService.Object);
+            var opportunityService = new OpportunityService(null);
+
+            var controller = new OpportunityController(opportunityService);
 
             // Act
             var response = await controller.GetAllImpulsedOpportunities();
 
             // Assert
-            Assert.That(response.Result, Is.InstanceOf<NotFoundObjectResult>());
-            var notFoundResult = response.Result as NotFoundObjectResult;
-            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
+            Assert.That(response, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = response as NotFoundObjectResult;
+            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing."));
         }
 
         [Test]
@@ -190,9 +191,9 @@ namespace BackEnd.Test
             var response = await _controller.GetOpportunityById(opportunityId);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<OkObjectResult>(), "Expected OkObjectResult for valid opportunity ID");
+            Assert.That(response, Is.TypeOf<OkObjectResult>(), "Expected OkObjectResult for valid opportunity ID");
 
-            var okResult = response.Result as OkObjectResult;
+            var okResult = response as OkObjectResult;
             Assert.That(okResult, Is.Not.Null, "OkObjectResult should not be null");
 
             var returnedOpportunity = okResult.Value as Opportunity;
@@ -215,12 +216,12 @@ namespace BackEnd.Test
             var response = await _controller.GetOpportunityById(opportunityId);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult for invalid opportunity ID");
+            Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult for invalid opportunity ID");
 
-            var okResult = response.Result as BadRequestObjectResult;
+            var okResult = response as BadRequestObjectResult;
             Assert.That(okResult, Is.Not.Null, "BadRequestObjectResult should not be null");
 
-            var badRequestResult = response.Result as BadRequestObjectResult;
+            var badRequestResult = response as BadRequestObjectResult;
             Assert.That(badRequestResult, Is.Not.Null, "BadRequestObjectResult should not be null");
             Assert.That(badRequestResult?.Value, Is.EqualTo($"Given opportunityId is invalid, it should be greater than 0."), "Error message should match the expected bad request message");
         }
@@ -240,9 +241,9 @@ namespace BackEnd.Test
             var response = await _controller.GetOpportunityById(opportunityId);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<NotFoundObjectResult>(), "Expected NotFoundObjectResult for nonexistent opportunity ID");
+            Assert.That(response, Is.TypeOf<NotFoundObjectResult>(), "Expected NotFoundObjectResult for nonexistent opportunity ID");
 
-            var notFoundResult = response.Result as NotFoundObjectResult;
+            var notFoundResult = response as NotFoundObjectResult;
             Assert.That(notFoundResult, Is.Not.Null, "NotFoundObjectResult should not be null");
             Assert.That(notFoundResult?.Value, Is.EqualTo($"Opportunity with id {opportunityId} not found."), "Error message should match the expected not found message");
         }
@@ -252,8 +253,9 @@ namespace BackEnd.Test
         public async Task GetOpportunityById_ReturnsNotFoundObjectResult_DBContextMissing()
         {
             // Arrange
-            var mockOpportunityService = new Mock<IOpportunityService>();
-            var controller = new OpportunityController(null, mockOpportunityService.Object);
+            var opportunityService = new OpportunityService(null);
+
+            var controller = new OpportunityController(opportunityService);
 
             var opportunityId = 1;
             var opportunityModel = new OpportunityModel { OpportunityId = 2, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "a description", Date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
@@ -265,9 +267,9 @@ namespace BackEnd.Test
             var response = await controller.GetOpportunityById(opportunityId);
 
             // Assert
-            Assert.That(response.Result, Is.InstanceOf<NotFoundObjectResult>());
-            var notFoundResult = response.Result as NotFoundObjectResult;
-            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
+            Assert.That(response, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = response as NotFoundObjectResult;
+            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context is missing."));
         }
 
         [Test]
@@ -292,9 +294,9 @@ namespace BackEnd.Test
             var response = await _controller.GetAllOpportunitiesByUserId(userId);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<OkObjectResult>(), "Expected OkObjectResult if there are opportunities created by given userId");
+            Assert.That(response, Is.TypeOf<OkObjectResult>(), "Expected OkObjectResult if there are opportunities created by given userId");
 
-            var okResult = response.Result as OkObjectResult;
+            var okResult = response as OkObjectResult;
             Assert.That(okResult, Is.Not.Null, "OkObjectResult should not be null");
 
             var returnedList = okResult.Value as IEnumerable<Opportunity>;
@@ -316,12 +318,12 @@ namespace BackEnd.Test
             var response = await _controller.GetAllOpportunitiesByUserId(opportunityId);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult for invalid opportunity ID");
+            Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult for invalid opportunity ID");
 
-            var okResult = response.Result as BadRequestObjectResult;
+            var okResult = response as BadRequestObjectResult;
             Assert.That(okResult, Is.Not.Null, "BadRequestObjectResult should not be null");
 
-            var badRequestResult = response.Result as BadRequestObjectResult;
+            var badRequestResult = response as BadRequestObjectResult;
             Assert.That(badRequestResult, Is.Not.Null, "BadRequestObjectResult should not be null");
             Assert.That(badRequestResult?.Value, Is.EqualTo($"Given userId is invalid, it should be greater than 0."), "Error message should match the expected bad request message");
         }
@@ -345,11 +347,11 @@ namespace BackEnd.Test
             var response = await _controller.GetAllOpportunitiesByUserId(userId);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<NotFoundObjectResult>(), "Expected NotFoundObjectResult if there are no opportunities created by given user");
+            Assert.That(response, Is.TypeOf<NotFoundObjectResult>(), "Expected NotFoundObjectResult if there are no opportunities created by given user");
 
-            var notFoundResult = response.Result as NotFoundObjectResult;
+            var notFoundResult = response as NotFoundObjectResult;
             Assert.That(notFoundResult, Is.Not.Null, "NotFoundObjectResult should not be null");
-            Assert.That(notFoundResult?.Value, Is.EqualTo($"Opportunity with userId {userId} not found."), "Error message should match the expected not found message");
+            Assert.That(notFoundResult?.Value, Is.EqualTo($"Opportunities with userId {userId} not found."), "Error message should match the expected not found message");
         }
 
         [Test]
@@ -357,8 +359,9 @@ namespace BackEnd.Test
         public async Task GetAllOpportunitiesByUserId_returnsNotFoundObjectResults_DBContextMissing()
         {
             // Arrange
-            var mockOpportunityService = new Mock<IOpportunityService>();
-            var controller = new OpportunityController(null, mockOpportunityService.Object);
+            var opportunityService = new OpportunityService(null);
+
+            var controller = new OpportunityController(opportunityService);
 
             var userId = 2;
 
@@ -374,9 +377,9 @@ namespace BackEnd.Test
             var response = await controller.GetAllOpportunitiesByUserId(userId);
 
             // Assert
-            Assert.That(response.Result, Is.InstanceOf<NotFoundObjectResult>());
-            var notFoundResult = response.Result as NotFoundObjectResult;
-            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
+            Assert.That(response, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = response as NotFoundObjectResult;
+            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context is missing."));
         }
 
         [Test]
@@ -405,9 +408,9 @@ namespace BackEnd.Test
             var response = await _controller.SearchOpportunities(keyword, vacancies, minPrice, maxPrice, category, location);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<OkObjectResult>(), "Expected OkObjectResult if there are opportunities within given parameters");
+            Assert.That(response, Is.TypeOf<OkObjectResult>(), "Expected OkObjectResult if there are opportunities within given parameters");
 
-            var okResult = response.Result as OkObjectResult;
+            var okResult = response as OkObjectResult;
             Assert.That(okResult, Is.Not.Null, "OkObjectResult should not be null");
 
             var returnedList = okResult.Value as IEnumerable<Opportunity>;
@@ -437,9 +440,9 @@ namespace BackEnd.Test
             var response = await _controller.SearchOpportunities(keyword, vacancies, minPrice, null, null, null);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<OkObjectResult>(), "Expected OkObjectResult if there are opportunities within given parameters");
+            Assert.That(response, Is.TypeOf<OkObjectResult>(), "Expected OkObjectResult if there are opportunities within given parameters");
 
-            var okResult = response.Result as OkObjectResult;
+            var okResult = response as OkObjectResult;
             Assert.That(okResult, Is.Not.Null, "OkObjectResult should not be null");
 
             var returnedList = okResult.Value as IEnumerable<Opportunity>;
@@ -465,9 +468,9 @@ namespace BackEnd.Test
             var response = await _controller.SearchOpportunities(null, null, null, null, null, null);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<OkObjectResult>(), "Expected OkObjectResult if there are opportunities");
+            Assert.That(response, Is.TypeOf<OkObjectResult>(), "Expected OkObjectResult if there are opportunities");
 
-            var okResult = response.Result as OkObjectResult;
+            var okResult = response as OkObjectResult;
             Assert.That(okResult, Is.Not.Null, "OkObjectResult should not be null");
 
             var returnedList = okResult.Value as IEnumerable<Opportunity>;
@@ -491,11 +494,11 @@ namespace BackEnd.Test
             var response = await _controller.SearchOpportunities(null, vacancies, null, null, null, null);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>(), "Expected OkObjectResult if there are opportunities");
+            Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected OkObjectResult if there are opportunities");
 
-            var badRequestResult = response.Result as BadRequestObjectResult;
+            var badRequestResult = response as BadRequestObjectResult;
             Assert.That(badRequestResult, Is.Not.Null, "BadRequestObjectResult should not be null");
-            Assert.That(badRequestResult?.Value, Is.EqualTo("Vacancies must be greater than zero."), "Error message should match the expected bad request message");
+            Assert.That(badRequestResult?.Value, Is.EqualTo("Invalid search parameters."), "Error message should match the expected bad request message");
         }
 
         [Test]
@@ -515,11 +518,11 @@ namespace BackEnd.Test
             var response = await _controller.SearchOpportunities(null, null, minPrice, null, null, null);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>(), "Expected OkObjectResult if there are opportunities");
+            Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected OkObjectResult if there are opportunities");
 
-            var badRequestResult = response.Result as BadRequestObjectResult;
+            var badRequestResult = response as BadRequestObjectResult;
             Assert.That(badRequestResult, Is.Not.Null, "BadRequestObjectResult should not be null");
-            Assert.That(badRequestResult?.Value, Is.EqualTo("MinPrice should be greater than 0.01."), "Error message should match the expected bad request message");
+            Assert.That(badRequestResult?.Value, Is.EqualTo("Invalid search parameters."), "Error message should match the expected bad request message");
         }
 
         [Test]
@@ -539,11 +542,11 @@ namespace BackEnd.Test
             var response = await _controller.SearchOpportunities(null, null, null, maxPrice, null, null);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>(), "Expected OkObjectResult if there are opportunities");
+            Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected OkObjectResult if there are opportunities");
 
-            var badRequestResult = response.Result as BadRequestObjectResult;
+            var badRequestResult = response as BadRequestObjectResult;
             Assert.That(badRequestResult, Is.Not.Null, "BadRequestObjectResult should not be null");
-            Assert.That(badRequestResult?.Value, Is.EqualTo("MaxPrice should be greater than 0.01."), "Error message should match the expected bad request message");
+            Assert.That(badRequestResult?.Value, Is.EqualTo("Invalid search parameters."), "Error message should match the expected bad request message");
         }
 
         [Test]
@@ -564,11 +567,11 @@ namespace BackEnd.Test
             var response = await _controller.SearchOpportunities(null, null, minPrice, maxPrice, null, null);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>(), "Expected OkObjectResult if there are opportunities");
+            Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected OkObjectResult if there are opportunities");
 
-            var badRequestResult = response.Result as BadRequestObjectResult;
+            var badRequestResult = response as BadRequestObjectResult;
             Assert.That(badRequestResult, Is.Not.Null, "BadRequestObjectResult should not be null");
-            Assert.That(badRequestResult?.Value, Is.EqualTo("MaxPrice should be greater than MinPrice."), "Error message should match the expected bad request message");
+            Assert.That(badRequestResult?.Value, Is.EqualTo("Invalid search parameters."), "Error message should match the expected bad request message");
         }
 
         [Test]
@@ -587,11 +590,11 @@ namespace BackEnd.Test
             var response = await _controller.SearchOpportunities(null, null, null, null, (Enums.Category?)-1, null);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>(), "Expected OkObjectResult if there are opportunities");
+            Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected OkObjectResult if there are opportunities");
 
-            var badRequestResult = response.Result as BadRequestObjectResult;
+            var badRequestResult = response as BadRequestObjectResult;
             Assert.That(badRequestResult, Is.Not.Null, "BadRequestObjectResult should not be null");
-            Assert.That(badRequestResult?.Value, Is.EqualTo("Invalid category specified."), "Error message should match the expected bad request message");
+            Assert.That(badRequestResult?.Value, Is.EqualTo("Invalid search parameters."), "Error message should match the expected bad request message");
         }
 
         [Test]
@@ -610,11 +613,11 @@ namespace BackEnd.Test
             var response = await _controller.SearchOpportunities(null, null, null, null, null, (Enums.Location?)-1);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>(), "Expected OkObjectResult if there are opportunities");
+            Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected OkObjectResult if there are opportunities");
 
-            var badRequestResult = response.Result as BadRequestObjectResult;
+            var badRequestResult = response as BadRequestObjectResult;
             Assert.That(badRequestResult, Is.Not.Null, "BadRequestObjectResult should not be null");
-            Assert.That(badRequestResult?.Value, Is.EqualTo("Invalid location specified."), "Error message should match the expected bad request message");
+            Assert.That(badRequestResult?.Value, Is.EqualTo("Invalid search parameters."), "Error message should match the expected bad request message");
         }
 
 
@@ -624,8 +627,9 @@ namespace BackEnd.Test
         {
 
             // Arrange
-            var mockOpportunityService = new Mock<IOpportunityService>();
-            var controller = new OpportunityController(null, mockOpportunityService.Object);
+            var opportunityService = new OpportunityService(null);
+
+            var controller = new OpportunityController(opportunityService);
 
 
             var opportunity = new OpportunityModel { OpportunityId = 1, Price = 1, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "um sitio", Date = DateTime.Now.AddDays(30), Vacancies = 1, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = true };
@@ -638,9 +642,9 @@ namespace BackEnd.Test
             var response = await controller.SearchOpportunities(null, null, null, null, null, null);
 
             // Assert
-            Assert.That(response.Result, Is.InstanceOf<NotFoundObjectResult>());
-            var notFoundResult = response.Result as NotFoundObjectResult;
-            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
+            Assert.That(response, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = response as NotFoundObjectResult;
+            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context is missing."));
         }
 
         [Test]
@@ -685,9 +689,9 @@ namespace BackEnd.Test
             var response = await _controller.CreateOpportunity(opportunity);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<CreatedAtActionResult>(), "Expected CreatedAtActionResult if opportunity is valid");
+            Assert.That(response, Is.TypeOf<CreatedAtActionResult>(), "Expected CreatedAtActionResult if opportunity is valid");
 
-            var createdAtActionResult = response.Result as CreatedAtActionResult;
+            var createdAtActionResult = response as CreatedAtActionResult;
             Assert.That(createdAtActionResult, Is.Not.Null, "CreatedAtActionResult should not be null");
 
             var returnedOpportunity = createdAtActionResult.Value as Opportunity;
@@ -721,9 +725,9 @@ namespace BackEnd.Test
             var response = await _controller.CreateOpportunity(opportunity);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if user id is nonexistent");
+            Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if user id is nonexistent");
 
-            var badRequestResult = response.Result as BadRequestObjectResult;
+            var badRequestResult = response as BadRequestObjectResult;
             Assert.That(badRequestResult, Is.Not.Null, "BadRequestObjectResult should not be null");
             Assert.That(badRequestResult?.Value, Is.EqualTo("Invalid User ID. User does not exist."), "Error message should match the expected bad request message");
         }
@@ -769,11 +773,11 @@ namespace BackEnd.Test
             var response = await _controller.CreateOpportunity(opportunity);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if name is empty");
+            Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if name is empty");
 
-            var badRequestResult = response.Result as BadRequestObjectResult;
+            var badRequestResult = response as BadRequestObjectResult;
             Assert.That(badRequestResult, Is.Not.Null, "BadRequestObjectResult should not be null");
-            Assert.That(badRequestResult?.Value, Is.EqualTo("Name cannot be empty."), "Error message should match the expected bad request message");
+            Assert.That(badRequestResult?.Value, Is.EqualTo("Validation failed."), "Error message should match the expected bad request message");
         }
 
         [Test]
@@ -817,11 +821,11 @@ namespace BackEnd.Test
             var response = await _controller.CreateOpportunity(opportunity);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if name is larger than accepted");
+            Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if name is larger than accepted");
 
-            var badRequestResult = response.Result as BadRequestObjectResult;
+            var badRequestResult = response as BadRequestObjectResult;
             Assert.That(badRequestResult, Is.Not.Null, "BadRequestObjectResult should not be null");
-            Assert.That(badRequestResult?.Value, Is.EqualTo("Name should be 100 characters or less."), "Error message should match the expected bad request message");
+            Assert.That(badRequestResult?.Value, Is.EqualTo("Validation failed."), "Error message should match the expected bad request message");
         }
 
         [Test]
@@ -864,11 +868,11 @@ namespace BackEnd.Test
             var response = await _controller.CreateOpportunity(opportunity);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if description is empty");
+            Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if description is empty");
 
-            var badRequestResult = response.Result as BadRequestObjectResult;
+            var badRequestResult = response as BadRequestObjectResult;
             Assert.That(badRequestResult, Is.Not.Null, "BadRequestObjectResult should not be null");
-            Assert.That(badRequestResult?.Value, Is.EqualTo("Description cannot be empty."), "Error message should match the expected bad request message");
+            Assert.That(badRequestResult?.Value, Is.EqualTo("Validation failed."), "Error message should match the expected bad request message");
         }
 
         [Test]
@@ -912,11 +916,11 @@ namespace BackEnd.Test
             var response = await _controller.CreateOpportunity(opportunity);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if description is larger than accepted");
+            Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if description is larger than accepted");
 
-            var badRequestResult = response.Result as BadRequestObjectResult;
+            var badRequestResult = response as BadRequestObjectResult;
             Assert.That(badRequestResult, Is.Not.Null, "BadRequestObjectResult should not be null");
-            Assert.That(badRequestResult?.Value, Is.EqualTo("Description should be 1000 characters or less."), "Error message should match the expected bad request message");
+            Assert.That(badRequestResult?.Value, Is.EqualTo("Validation failed."), "Error message should match the expected bad request message");
         }
 
         [Test]
@@ -959,11 +963,11 @@ namespace BackEnd.Test
             var response = await _controller.CreateOpportunity(opportunity);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if description is empty");
+            Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if description is empty");
 
-            var badRequestResult = response.Result as BadRequestObjectResult;
+            var badRequestResult = response as BadRequestObjectResult;
             Assert.That(badRequestResult, Is.Not.Null, "BadRequestObjectResult should not be null");
-            Assert.That(badRequestResult?.Value, Is.EqualTo("Price should be at least 0.01."), "Error message should match the expected bad request message");
+            Assert.That(badRequestResult?.Value, Is.EqualTo("Validation failed."), "Error message should match the expected bad request message");
         }
 
         [Test]
@@ -1006,11 +1010,11 @@ namespace BackEnd.Test
             var response = await _controller.CreateOpportunity(opportunity);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if description is empty");
+            Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if description is empty");
 
-            var badRequestResult = response.Result as BadRequestObjectResult;
+            var badRequestResult = response as BadRequestObjectResult;
             Assert.That(badRequestResult, Is.Not.Null, "BadRequestObjectResult should not be null");
-            Assert.That(badRequestResult?.Value, Is.EqualTo("Vacancies should be at least one."), "Error message should match the expected bad request message");
+            Assert.That(badRequestResult?.Value, Is.EqualTo("Validation failed."), "Error message should match the expected bad request message");
         }
 
         [Test]
@@ -1053,11 +1057,11 @@ namespace BackEnd.Test
             var response = await _controller.CreateOpportunity(opportunity);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if description is empty");
+            Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if description is empty");
 
-            var badRequestResult = response.Result as BadRequestObjectResult;
+            var badRequestResult = response as BadRequestObjectResult;
             Assert.That(badRequestResult, Is.Not.Null, "BadRequestObjectResult should not be null");
-            Assert.That(badRequestResult?.Value, Is.EqualTo("Category is not valid."), "Error message should match the expected bad request message");
+            Assert.That(badRequestResult?.Value, Is.EqualTo("Validation failed."), "Error message should match the expected bad request message");
         }
 
         [Test]
@@ -1100,11 +1104,11 @@ namespace BackEnd.Test
             var response = await _controller.CreateOpportunity(opportunity);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if description is empty");
+            Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if description is empty");
 
-            var badRequestResult = response.Result as BadRequestObjectResult;
+            var badRequestResult = response as BadRequestObjectResult;
             Assert.That(badRequestResult, Is.Not.Null, "BadRequestObjectResult should not be null");
-            Assert.That(badRequestResult?.Value, Is.EqualTo("Location is not valid."), "Error message should match the expected bad request message");
+            Assert.That(badRequestResult?.Value, Is.EqualTo("Validation failed."), "Error message should match the expected bad request message");
         }
 
         [Test]
@@ -1147,11 +1151,11 @@ namespace BackEnd.Test
             var response = await _controller.CreateOpportunity(opportunity);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if description is empty");
+            Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if description is empty");
 
-            var badRequestResult = response.Result as BadRequestObjectResult;
+            var badRequestResult = response as BadRequestObjectResult;
             Assert.That(badRequestResult, Is.Not.Null, "BadRequestObjectResult should not be null");
-            Assert.That(badRequestResult?.Value, Is.EqualTo("Address should be 200 characters or less."), "Error message should match the expected bad request message");
+            Assert.That(badRequestResult?.Value, Is.EqualTo("Validation failed."), "Error message should match the expected bad request message");
         }
 
         [Test]
@@ -1194,11 +1198,11 @@ namespace BackEnd.Test
             var response = await _controller.CreateOpportunity(opportunity);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if description is empty");
+            Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if description is empty");
 
-            var badRequestResult = response.Result as BadRequestObjectResult;
+            var badRequestResult = response as BadRequestObjectResult;
             Assert.That(badRequestResult, Is.Not.Null, "BadRequestObjectResult should not be null");
-            Assert.That(badRequestResult?.Value, Is.EqualTo("Date must be in the future."), "Error message should match the expected bad request message");
+            Assert.That(badRequestResult?.Value, Is.EqualTo("Validation failed."), "Error message should match the expected bad request message");
         }
 
         [Test]
@@ -1206,8 +1210,9 @@ namespace BackEnd.Test
         public async Task CreateOpportunity_ReturnsNotFoundObjectResult_DBContextMissing()
         {
             // Arrange
-            var mockOpportunityService = new Mock<IOpportunityService>();
-            var controller = new OpportunityController(null, mockOpportunityService.Object);
+            var opportunityService = new OpportunityService(null);
+
+            var controller = new OpportunityController(opportunityService);
 
             var user = new UserModel
             {
@@ -1244,9 +1249,9 @@ namespace BackEnd.Test
             var response = await controller.CreateOpportunity(opportunity);
 
             // Assert
-            Assert.That(response.Result, Is.InstanceOf<NotFoundObjectResult>());
-            var notFoundResult = response.Result as NotFoundObjectResult;
-            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
+            Assert.That(response, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = response as NotFoundObjectResult;
+            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context is missing."));
         }
 
         [Test]
@@ -1266,7 +1271,7 @@ namespace BackEnd.Test
             var response = await _controller.DeleteOpportunityById(opportunityId);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<NoContentResult>(), "Expected NoContentResult if the opportunity id is valid");
+            Assert.That(response, Is.TypeOf<NoContentResult>(), "Expected NoContentResult if the opportunity id is valid");
         }
 
         [Test]
@@ -1286,9 +1291,9 @@ namespace BackEnd.Test
             var response = await _controller.DeleteOpportunityById(opportunityId);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<NotFoundObjectResult>(), "Expected NotFoundObjectResult if the id is non existent");
+            Assert.That(response, Is.TypeOf<NotFoundObjectResult>(), "Expected NotFoundObjectResult if the id is non existent");
 
-            var notFoundResult = response.Result as NotFoundObjectResult;
+            var notFoundResult = response as NotFoundObjectResult;
             Assert.That(notFoundResult, Is.Not.Null, "NotFoundObjectResult should not be null");
             Assert.That(notFoundResult?.Value, Is.EqualTo($"Opportunity with id {opportunityId} not found."), "Error message should match the expected not found message");
         }
@@ -1310,9 +1315,9 @@ namespace BackEnd.Test
             var response = await _controller.DeleteOpportunityById(opportunityId);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if the id is invalid");
+            Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if the id is invalid");
 
-            var badRequestResult = response.Result as BadRequestObjectResult;
+            var badRequestResult = response as BadRequestObjectResult;
             Assert.That(badRequestResult, Is.Not.Null, "BadRequestObjectResult should not be null");
             Assert.That(badRequestResult?.Value, Is.EqualTo("Given opportunityId is invalid, it should be greater than 0."), "Error message should match the expected bad request message");
         }
@@ -1344,9 +1349,9 @@ namespace BackEnd.Test
             var response = await _controller.DeleteOpportunityById(opportunityId);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if the opportunity has active reservations");
+            Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if the opportunity has active reservations");
 
-            var badRequestResult = response.Result as BadRequestObjectResult;
+            var badRequestResult = response as BadRequestObjectResult;
             Assert.That(badRequestResult, Is.Not.Null, "BadRequestObjectResult should not be null");
             Assert.That(badRequestResult?.Value, Is.EqualTo("This Opportunity still has active reservations attached."), "Error message should match the expected bad request message");
         }
@@ -1356,8 +1361,9 @@ namespace BackEnd.Test
         public async Task DeleteOpportunityById_ReturnsNotFoundObjectResult_DBContextMissing()
         {
             // Arrange
-            var mockOpportunityService = new Mock<IOpportunityService>();
-            var controller = new OpportunityController(null, mockOpportunityService.Object);
+            var opportunityService = new OpportunityService(null);
+
+            var controller = new OpportunityController(opportunityService);
 
             var opportunityId = 1;
 
@@ -1371,9 +1377,9 @@ namespace BackEnd.Test
             var response = await controller.DeleteOpportunityById(opportunityId);
 
             // Assert
-            Assert.That(response.Result, Is.InstanceOf<NotFoundObjectResult>());
-            var notFoundResult = response.Result as NotFoundObjectResult;
-            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
+            Assert.That(response, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = response as NotFoundObjectResult;
+            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context is missing."));
         }
 
         [Test]
@@ -1393,7 +1399,7 @@ namespace BackEnd.Test
             var response = await _controller.ActivateOpportunityById(opportunityId);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<NoContentResult>(), "Expected NoContentResult if the opportunity id is valid");
+            Assert.That(response, Is.TypeOf<NoContentResult>(), "Expected NoContentResult if the opportunity id is valid");
         }
 
         [Test]
@@ -1413,9 +1419,9 @@ namespace BackEnd.Test
             var response = await _controller.ActivateOpportunityById(opportunityId);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<NotFoundObjectResult>(), "Expected NotFoundObjectResult if the id is non existent");
+            Assert.That(response, Is.TypeOf<NotFoundObjectResult>(), "Expected NotFoundObjectResult if the id is non existent");
 
-            var notFoundResult = response.Result as NotFoundObjectResult;
+            var notFoundResult = response as NotFoundObjectResult;
             Assert.That(notFoundResult, Is.Not.Null, "NotFoundObjectResult should not be null");
             Assert.That(notFoundResult?.Value, Is.EqualTo($"Opportunity with id {opportunityId} not found."), "Error message should match the expected not found message");
         }
@@ -1437,9 +1443,9 @@ namespace BackEnd.Test
             var response = await _controller.ActivateOpportunityById(opportunityId);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if the id is invalid");
+            Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if the id is invalid");
 
-            var badRequestResult = response.Result as BadRequestObjectResult;
+            var badRequestResult = response as BadRequestObjectResult;
             Assert.That(badRequestResult, Is.Not.Null, "BadRequestObjectResult should not be null");
             Assert.That(badRequestResult?.Value, Is.EqualTo("Given opportunityId is invalid, it should be greater than 0."), "Error message should match the expected bad request message");
         }
@@ -1461,11 +1467,11 @@ namespace BackEnd.Test
             var response = await _controller.ActivateOpportunityById(opportunityId);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if the opportunity is already activated");
+            Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if the opportunity is already activated");
 
-            var badRequestResult = response.Result as BadRequestObjectResult;
+            var badRequestResult = response as BadRequestObjectResult;
             Assert.That(badRequestResult, Is.Not.Null, "BadRequestObjectResult should not be null");
-            Assert.That(badRequestResult?.Value, Is.EqualTo("Opportunity is Already Active"), "Error message should match the expected bad request message");
+            Assert.That(badRequestResult?.Value, Is.EqualTo("Opportunity is already active."), "Error message should match the expected bad request message");
         }
 
         [Test]
@@ -1473,8 +1479,9 @@ namespace BackEnd.Test
         public async Task ActivateOpportunityById_ReturnsNotFoundObjectResult_DBContextMissing()
         {
             // Arrange
-            var mockOpportunityService = new Mock<IOpportunityService>();
-            var controller = new OpportunityController(null, mockOpportunityService.Object);
+            var opportunityService = new OpportunityService(null);
+
+            var controller = new OpportunityController(opportunityService);
 
             var opportunityId = 1;
             var opportunity = new OpportunityModel { OpportunityId = 1, Price = 1, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "um sitio", Date = DateTime.Now.AddDays(30), Vacancies = 1, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = true };
@@ -1487,9 +1494,9 @@ namespace BackEnd.Test
             var response = await controller.ActivateOpportunityById(opportunityId);
 
             // Assert
-            Assert.That(response.Result, Is.InstanceOf<NotFoundObjectResult>());
-            var notFoundResult = response.Result as NotFoundObjectResult;
-            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
+            Assert.That(response, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = response as NotFoundObjectResult;
+            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context is missing."));
         }
 
         [Test]
@@ -1581,7 +1588,7 @@ namespace BackEnd.Test
 
             var badRequestResult = response.Result as BadRequestObjectResult;
             Assert.That(badRequestResult, Is.Not.Null, "BadRequestObjectResult should not be null");
-            Assert.That(badRequestResult?.Value, Is.EqualTo("Opportunity is Already Inactive"), "Error message should match the expected bad request message");
+            Assert.That(badRequestResult?.Value, Is.EqualTo("Opportunity is already inactive."), "Error message should match the expected bad request message");
         }
 
         [Test]
@@ -1589,8 +1596,9 @@ namespace BackEnd.Test
         public async Task DeactivateOpportunityById_ReturnsNotFoundObjectResult_DBContextMissing()
         {
             // Arrange
-            var mockOpportunityService = new Mock<IOpportunityService>();
-            var controller = new OpportunityController(null, mockOpportunityService.Object);
+            var opportunityService = new OpportunityService(null);
+
+            var controller = new OpportunityController(opportunityService);
 
             var opportunityId = 1;
             var opportunity = new OpportunityModel { OpportunityId = 1, Price = 1, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "um sitio", Date = DateTime.Now.AddDays(30), Vacancies = 1, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = true };
@@ -1605,7 +1613,7 @@ namespace BackEnd.Test
             // Assert
             Assert.That(response.Result, Is.InstanceOf<NotFoundObjectResult>());
             var notFoundResult = response.Result as NotFoundObjectResult;
-            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
+            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context is missing."));
         }
 
         [Test]
@@ -1635,9 +1643,9 @@ namespace BackEnd.Test
             var response = await _controller.EditOpportunityById(opportunityId, name, description, price, vacancies, category, location, address, date, newImageUrls);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<OkObjectResult>(), "Expected OkObjectResult for valid opportunity ID and valid values");
+            Assert.That(response, Is.TypeOf<OkObjectResult>(), "Expected OkObjectResult for valid opportunity ID and valid values");
 
-            var okResult = response.Result as OkObjectResult;
+            var okResult = response as OkObjectResult;
             Assert.That(okResult, Is.Not.Null, "OkObjectResult should not be null");
 
             var returnedOpportunity = okResult.Value as Opportunity;
@@ -1689,9 +1697,9 @@ namespace BackEnd.Test
             var response = await _controller.EditOpportunityById(opportunityId, name, description, price, vacancies, category, location, address, date, newImageUrls);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if the id is invalid");
+            Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if the id is invalid");
 
-            var badRequestResult = response.Result as BadRequestObjectResult;
+            var badRequestResult = response as BadRequestObjectResult;
             Assert.That(badRequestResult, Is.Not.Null, "BadRequestObjectResult should not be null");
             Assert.That(badRequestResult?.Value, Is.EqualTo("Given opportunityId is invalid, it should be greater than 0."), "Error message should match the expected bad request message");
         }
@@ -1724,9 +1732,9 @@ namespace BackEnd.Test
             var response = await _controller.EditOpportunityById(opportunityId, name, description, price, vacancies, category, location, address, date, newImageUrls);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if the id is non existent");
+            Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if the id is non existent");
 
-            var badRequestResult = response.Result as BadRequestObjectResult;
+            var badRequestResult = response as BadRequestObjectResult;
             Assert.That(badRequestResult, Is.Not.Null, "BadRequestObjectResult should not be null");
             Assert.That(badRequestResult?.Value, Is.EqualTo($"Opportunity with id {opportunityId} not found."), "Error message should match the expected bad request message");
         }
@@ -1758,9 +1766,9 @@ namespace BackEnd.Test
             var response = await _controller.EditOpportunityById(opportunityId, name, description, price, vacancies, category, location, address, date, newImageUrls);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if the id is valid and the price is invalid");
+            Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if the id is valid and the price is invalid");
 
-            var badRequestResult = response.Result as BadRequestObjectResult;
+            var badRequestResult = response as BadRequestObjectResult;
             Assert.That(badRequestResult, Is.Not.Null, "BadRequestObjectResult should not be null");
             Assert.That(badRequestResult?.Value, Is.EqualTo("Price should be at least 0.01."), "Error message should match the expected bad request message");
         }
@@ -1792,9 +1800,9 @@ namespace BackEnd.Test
             var response = await _controller.EditOpportunityById(opportunityId, name, description, price, vacancies, category, location, address, date, newImageUrls);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if the id is valid and the vacancies is invalid");
+            Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if the id is valid and the vacancies is invalid");
 
-            var badRequestResult = response.Result as BadRequestObjectResult;
+            var badRequestResult = response as BadRequestObjectResult;
             Assert.That(badRequestResult, Is.Not.Null, "BadRequestObjectResult should not be null");
             Assert.That(badRequestResult?.Value, Is.EqualTo("Vacancies should be at least one."), "Error message should match the expected bad request message");
         }
@@ -1826,9 +1834,9 @@ namespace BackEnd.Test
             var response = await _controller.EditOpportunityById(opportunityId, name, description, price, vacancies, category, location, address, date, newImageUrls);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if the id is valid and the Category is invalid");
+            Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if the id is valid and the Category is invalid");
 
-            var badRequestResult = response.Result as BadRequestObjectResult;
+            var badRequestResult = response as BadRequestObjectResult;
             Assert.That(badRequestResult, Is.Not.Null, "BadRequestObjectResult should not be null");
             Assert.That(badRequestResult?.Value, Is.EqualTo("Category is not valid."), "Error message should match the expected bad request message");
         }
@@ -1860,9 +1868,9 @@ namespace BackEnd.Test
             var response = await _controller.EditOpportunityById(opportunityId, name, description, price, vacancies, category, location, address, date, newImageUrls);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if the id is valid and the Location is invalid");
+            Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if the id is valid and the Location is invalid");
 
-            var badRequestResult = response.Result as BadRequestObjectResult;
+            var badRequestResult = response as BadRequestObjectResult;
             Assert.That(badRequestResult, Is.Not.Null, "BadRequestObjectResult should not be null");
             Assert.That(badRequestResult?.Value, Is.EqualTo("Location is not valid."), "Error message should match the expected bad request message");
         }
@@ -1894,9 +1902,9 @@ namespace BackEnd.Test
             var response = await _controller.EditOpportunityById(opportunityId, name, description, price, vacancies, category, location, address, date, newImageUrls);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if the id is valid and the Address is invalid");
+            Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if the id is valid and the Address is invalid");
 
-            var badRequestResult = response.Result as BadRequestObjectResult;
+            var badRequestResult = response as BadRequestObjectResult;
             Assert.That(badRequestResult, Is.Not.Null, "BadRequestObjectResult should not be null");
             Assert.That(badRequestResult?.Value, Is.EqualTo("Address should be 200 characters or less."), "Error message should match the expected bad request message");
         }
@@ -1928,9 +1936,9 @@ namespace BackEnd.Test
             var response = await _controller.EditOpportunityById(opportunityId, name, description, price, vacancies, category, location, address, date, newImageUrls);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if the id is valid and the Location is invalid");
+            Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if the id is valid and the Location is invalid");
 
-            var badRequestResult = response.Result as BadRequestObjectResult;
+            var badRequestResult = response as BadRequestObjectResult;
             Assert.That(badRequestResult, Is.Not.Null, "BadRequestObjectResult should not be null");
             Assert.That(badRequestResult?.Value, Is.EqualTo("Date must be in the future."), "Error message should match the expected bad request message");
         }
@@ -1941,8 +1949,9 @@ namespace BackEnd.Test
         public async Task EditOpportunityById_ReturnsNotFoundObjectResult_DBContextMissing()
         {
             // Arrange
-            var mockOpportunityService = new Mock<IOpportunityService>();
-            var controller = new OpportunityController(null, mockOpportunityService.Object);
+            var opportunityService = new OpportunityService(null);
+
+            var controller = new OpportunityController(opportunityService);
 
             var opportunityId = 1;
             var opportunityModel = new OpportunityModel { OpportunityId = opportunityId, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "a description", Date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
@@ -1956,9 +1965,9 @@ namespace BackEnd.Test
             var response = await controller.EditOpportunityById(opportunityId, name, null, null, null, null, null, null, null, null);
 
             // Assert
-            Assert.That(response.Result, Is.InstanceOf<NotFoundObjectResult>());
-            var notFoundResult = response.Result as NotFoundObjectResult;
-            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
+            Assert.That(response, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = response as NotFoundObjectResult;
+            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context is missing."));
         }
     }
 }

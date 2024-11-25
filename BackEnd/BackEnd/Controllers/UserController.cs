@@ -59,19 +59,19 @@ namespace BackEnd.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateNewUser(User user)
         {
-            var response = await _userService.CreateNewUserAsync(user);
+            var serviceResponse = await _userService.CreateNewUserAsync(user);
 
-            if (!response.Success && response.Type.Equals("BadRequest"))
+            if (!serviceResponse.Success)
             {
-                return BadRequest(response.Message);
+                return serviceResponse.Type switch
+                {
+                    "NotFound" => NotFound(serviceResponse.Message),
+                    "BadRequest" => BadRequest(serviceResponse.Message),
+                    _ => StatusCode(500, serviceResponse.Message) // InternalServerError
+                };
             }
 
-            if (!response.Success && response.Type.Equals("NotFound"))
-            {
-                return NotFound(response.Message);
-            }
-
-         return CreatedAtAction(nameof(GetUserByID), new { id = response.Data.userId }, response.Data);
+            return CreatedAtAction(nameof(GetUserByID), new { id = serviceResponse.Data.userId }, serviceResponse.Data);
         }
 
 
@@ -89,17 +89,17 @@ namespace BackEnd.Controllers
             {
                 var serviceResponse = await _userService.DeleteUserAsync(id);
 
-                if (!serviceResponse.Success && serviceResponse.Type.Equals("BadRequest"))
+                if (!serviceResponse.Success)
                 {
-                    return BadRequest(serviceResponse.Message);
+                    return serviceResponse.Type switch
+                    {
+                        "NotFound" => NotFound(serviceResponse.Message),
+                        "BadRequest" => BadRequest(serviceResponse.Message),
+                        _ => StatusCode(500, serviceResponse.Message) // InternalServerError
+                    };
                 }
 
-                if (!serviceResponse.Success && serviceResponse.Type.Equals("NotFound"))
-                {
-                    return NotFound(serviceResponse.Message);
-                }
-
-             return NoContent();
+                return NoContent();
             }
         }
 
@@ -119,14 +119,14 @@ namespace BackEnd.Controllers
         {
             var serviceResponse = await _userService.EditUserAsync(id, updatedUser);
 
-            if (!serviceResponse.Success && serviceResponse.Type.Equals("BadRequest"))
+            if (!serviceResponse.Success)
             {
-                return BadRequest(serviceResponse.Message);
-            }
-
-            if (!serviceResponse.Success && serviceResponse.Type.Equals("NotFound"))
-            {
-                return NotFound(serviceResponse.Message);
+                return serviceResponse.Type switch
+                {
+                    "NotFound" => NotFound(serviceResponse.Message),
+                    "BadRequest" => BadRequest(serviceResponse.Message),
+                    _ => StatusCode(500, serviceResponse.Message) // InternalServerError
+                };
             }
 
             return Ok(serviceResponse.Data);
@@ -146,19 +146,15 @@ namespace BackEnd.Controllers
         {
             var serviceResponse = await _favoritesService.AddFavoriteAsync(favorite);
 
-            if (!serviceResponse.Success && serviceResponse.Type.Equals("BadRequest"))
+            if (!serviceResponse.Success)
             {
-                return BadRequest(serviceResponse.Message);
-            }
-
-            if (!serviceResponse.Success && serviceResponse.Type.Equals("NotFound"))
-            {
-                return NotFound(serviceResponse.Message);
-            }
-
-            if (!serviceResponse.Success && serviceResponse.Type.Equals("Conflict"))
-            {
-                return Conflict(serviceResponse.Message);
+                return serviceResponse.Type switch
+                {
+                    "NotFound" => NotFound(serviceResponse.Message),
+                    "BadRequest" => BadRequest(serviceResponse.Message),
+                    "Conflict" => Conflict(serviceResponse.Message),
+                    _ => StatusCode(500, serviceResponse.Message) // InternalServerError
+                };
             }
 
             return CreatedAtAction(nameof(GetFavoriteById), new { userId = favorite.userId, opportunityId = favorite.opportunityId }, serviceResponse.Data);
@@ -178,14 +174,14 @@ namespace BackEnd.Controllers
         {
             var serviceResponse = await _favoritesService.GetFavoriteByIdAsync(userId, opportunityId);
 
-            if (!serviceResponse.Success && serviceResponse.Type.Equals("BadRequest"))
+            if (!serviceResponse.Success)
             {
-              return BadRequest(serviceResponse.Message);
-            }
-
-            if (!serviceResponse.Success && serviceResponse.Type.Equals("NotFound"))
-            {
-                return NotFound(serviceResponse.Message);
+                return serviceResponse.Type switch
+                {
+                    "NotFound" => NotFound(serviceResponse.Message),
+                    "BadRequest" => BadRequest(serviceResponse.Message),
+                    _ => StatusCode(500, serviceResponse.Message) // InternalServerError
+                };
             }
 
             return Ok(serviceResponse.Data);
@@ -204,14 +200,14 @@ namespace BackEnd.Controllers
         {
             var serviceResponse = await _favoritesService.GetFavoritesAsync(userId);
 
-            if (!serviceResponse.Success && serviceResponse.Type.Equals("BadRequest"))
+            if (!serviceResponse.Success)
             {
-              return BadRequest(serviceResponse.Message);
-            }
-
-            if (!serviceResponse.Success && serviceResponse.Type.Equals("NotFound"))
-            {
-                return NotFound(serviceResponse.Message);
+                return serviceResponse.Type switch
+                {
+                    "NotFound" => NotFound(serviceResponse.Message),
+                    "BadRequest" => BadRequest(serviceResponse.Message),
+                    _ => StatusCode(500, serviceResponse.Message) // InternalServerError
+                };
             }
 
 
@@ -231,16 +227,14 @@ namespace BackEnd.Controllers
         {
             var serviceResponse = await _userService.ImpulseOpportunityAsync(impulse);
 
-            if (!serviceResponse.Success && serviceResponse.Type.Equals("BadRequest"))
+            if (!serviceResponse.Success)
             {
-                 return BadRequest(serviceResponse.Message);
-
-            }
-
-            if (!serviceResponse.Success && serviceResponse.Type.Equals("NotFound"))
-            {
-                return NotFound(serviceResponse.Message);
-
+                return serviceResponse.Type switch
+                {
+                    "NotFound" => NotFound(serviceResponse.Message),
+                    "BadRequest" => BadRequest(serviceResponse.Message),
+                    _ => StatusCode(500, serviceResponse.Message) // InternalServerError
+                };
             }
 
             return CreatedAtAction(nameof(ImpulseOportunity), new
@@ -263,17 +257,17 @@ namespace BackEnd.Controllers
         {
             var serviceResponse = await _favoritesService.GetCreatedOpportunitiesAsync(userId);
 
-            if (!serviceResponse.Success && serviceResponse.Type.Equals("BadRequest"))
+            if (!serviceResponse.Success)
             {
-             return BadRequest(serviceResponse.Message);
+                return serviceResponse.Type switch
+                {
+                    "NotFound" => NotFound(serviceResponse.Message),
+                    "BadRequest" => BadRequest(serviceResponse.Message),
+                    _ => StatusCode(500, serviceResponse.Message) // InternalServerError
+                };
             }
 
-            if (!serviceResponse.Success && serviceResponse.Type.Equals("NotFound"))
-            {
-             return NotFound(serviceResponse.Message);
-            }
-
-         return Ok(serviceResponse.Data);
+            return Ok(serviceResponse.Data);
         }
 
         /// <summary>
@@ -289,19 +283,15 @@ namespace BackEnd.Controllers
         {
            var serviceResponse = await _userService.LoginAsync(request);
 
-           if (!serviceResponse.Success && serviceResponse.Type.Equals("BadRequest"))
-           {
-                return BadRequest(serviceResponse.Message);
-           }
-
-            if (!serviceResponse.Success && serviceResponse.Type.Equals("NotFound"))
+            if (!serviceResponse.Success)
             {
-                return NotFound(serviceResponse.Message);
-            }
-
-            if (!serviceResponse.Success && serviceResponse.Type.Equals("Unauthorized"))
-            {
-                return Unauthorized(serviceResponse.Message);
+                return serviceResponse.Type switch
+                {
+                    "NotFound" => NotFound(serviceResponse.Message),
+                    "BadRequest" => BadRequest(serviceResponse.Message),
+                    "Unauthorized" => Unauthorized(serviceResponse.Message),
+                    _ => StatusCode(500, serviceResponse.Message) // InternalServerError
+                };
             }
 
             return Ok(serviceResponse.Data);
@@ -319,18 +309,17 @@ namespace BackEnd.Controllers
         {
             var serviceResponse = await _userService.CheckEmailAvailabilityAsync(email);
 
-            if (!serviceResponse.Success && serviceResponse.Type.Equals("BadRequest"))
-            { 
-
-                return BadRequest(serviceResponse.Message);
-            }
-
-            if (!serviceResponse.Success && serviceResponse.Type.Equals("NotFound"))
+            if (!serviceResponse.Success)
             {
-                return NotFound(serviceResponse.Message);
+                return serviceResponse.Type switch
+                {
+                    "NotFound" => NotFound(serviceResponse.Message),
+                    "BadRequest" => BadRequest(serviceResponse.Message),
+                    _ => StatusCode(500, serviceResponse.Message) // InternalServerError
+                };
             }
 
-         return Ok(serviceResponse.Data);
+            return Ok(serviceResponse.Data);
         }
 
         /// <summary>
@@ -366,8 +355,6 @@ namespace BackEnd.Controllers
 
             throw new NotImplementedException();
         }
-
-
 
     }
 }
