@@ -206,6 +206,13 @@ namespace BackEnd.Services
             return response;
         }
 
+        /// <summary>
+        /// Function that gets all the created Opportunities of a User by his id
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true,the array of Opportunity Dto 
+        /// and a sucesseful mensage</returns>
         public async Task<ServiceResponse<Favorite[]>> GetCreatedOpportunitiesAsync(int userId)
         {
             var response = new ServiceResponse<Favorite[]>();
