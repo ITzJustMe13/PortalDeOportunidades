@@ -1,4 +1,4 @@
-﻿using BackEnd.GenericClasses;
+﻿using BackEnd.ServiceResponses;
 using BackEnd.Interfaces;
 using BackEnd.Models.FrontEndModels;
 using Microsoft.EntityFrameworkCore;

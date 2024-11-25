@@ -1,6 +1,6 @@
 ﻿using BackEnd.Controllers.Data;
 using BackEnd.Enums;
-using BackEnd.GenericClasses;
+using BackEnd.ServiceResponses;
 using BackEnd.Interfaces;
 using BackEnd.Models.BackEndModels;
 using BackEnd.Models.FrontEndModels;

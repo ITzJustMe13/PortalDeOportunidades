@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using BackEnd.Services;
 using BackEnd.Interfaces;
-using BackEnd.GenericClasses;
+using BackEnd.ServiceResponses;
 
 namespace BackEnd.Controllers
 {

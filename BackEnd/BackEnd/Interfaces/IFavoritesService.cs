@@ -1,4 +1,4 @@
-﻿using BackEnd.GenericClasses;
+﻿using BackEnd.ServiceResponses;
 using BackEnd.Models.FrontEndModels;
 
 namespace BackEnd.Interfaces

@@ -1,4 +1,4 @@
-﻿namespace BackEnd.GenericClasses
+﻿namespace BackEnd.ServiceResponses
 {
     public class ServiceResponse<T>
     {
