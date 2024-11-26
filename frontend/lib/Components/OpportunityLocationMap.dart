@@ -6,7 +6,7 @@ import 'package:geocode/geocode.dart';
 class OpportunityLocationMap extends StatefulWidget {
   final String address;
 
-  const OpportunityLocationMap({Key? key, required this.address}) : super(key: key);
+  const OpportunityLocationMap({super.key, required this.address});
 
   @override
   _OpportunityLocationMapState createState() => _OpportunityLocationMapState();
@@ -49,7 +49,7 @@ class _OpportunityLocationMapState extends State<OpportunityLocationMap> {
     double initialLatitude = latitude ?? 0.0;
     double initialLongitude = longitude ?? 0.0;
 
-    return Container(
+    return SizedBox(
       height: 250,
       child: latitude == null || longitude == null
           ? Center(child: CircularProgressIndicator()) // Show loading until coordinates are fetched

@@ -19,13 +19,12 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: specificOrgins,
         policy =>
         {
-            policy.WithOrigins("http://localhost:50394", "https://localhost:50394")
+            policy.SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost")
                   .AllowAnyMethod()
                   .AllowAnyHeader()
                   .AllowCredentials();
         });
 });
-
 
 builder.Services
     .AddAuthentication(x =>

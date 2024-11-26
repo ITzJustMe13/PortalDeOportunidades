@@ -14,6 +14,11 @@ class UserApiHandler {
 
   UserApiHandler(this.client);
 
+  void logout() {
+    storage.delete(key: 'accessToken');
+    storage.delete(key: 'currentUser');
+  }
+
   // Login method
   Future<User?> login(String email, String password) async {
     final uri = Uri.parse('$baseUri/login');
@@ -33,17 +38,31 @@ class UserApiHandler {
       if (response.statusCode >= 200 && response.statusCode <= 299) {
         final data = jsonDecode(response.body);
         await storage.write(key: 'accessToken', value: data['token']);
-        final authenticatedUser = User.fromJson(data['authenticatedUserDTO']);
+        final authenticatedUser = User.fromJson(data['user']);
+        await storage.write(
+            key: 'currentUser', value: authenticatedUser.userId.toString());
         return authenticatedUser;
-      } else if (response.statusCode == 401) {
-        print('Unauthorized: ${response.body}');
-        return null;
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return null;
       }
     } catch (e) {
-      print('Exception occurred: $e');
+      print('Error: ${e.toString()}');
+      return null;
+    }
+  }
+
+  Future<User?> getStoredUser() async {
+    final String? storedUser = await storage.read(key: 'currentUser');
+
+    try {
+      if (storedUser != null) {
+        User? user = await getUserByID(int.parse(storedUser));
+        if (user != null) {
+          return user;
+        }
+      }
+      return null;
+    } catch (e) {
       return null;
     }
   }

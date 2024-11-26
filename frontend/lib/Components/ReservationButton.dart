@@ -5,10 +5,10 @@ class ReservationButton extends StatefulWidget {
   final VoidCallback onPressed; // Callback when the button is pressed
 
   const ReservationButton({
-    Key? key,
+    super.key,
     required this.availableVacancies,
     required this.onPressed,
-  }) : super(key: key);
+  });
 
   @override
   _ReservationButtonState createState() => _ReservationButtonState();

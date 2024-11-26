@@ -1,6 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/State/DrawerState.dart';
+import 'package:http/http.dart' as http;
 
-class CustomDrawer extends StatelessWidget {
+class CustomDrawer extends StatefulWidget {
+  const CustomDrawer({super.key});
+
+  @override
+  State<CustomDrawer> createState() => _CustomDrawerState();
+}
+
+class _CustomDrawerState extends State<CustomDrawer> {
+  late CustomDrawerState _drawerState;
+
+  @override
+  void initState() {
+    super.initState();
+    _drawerState = CustomDrawerState(
+        httpClient: http.Client(), token: null); // Adjust token as needed
+  }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -23,14 +41,15 @@ class CustomDrawer extends StatelessWidget {
             leading: const Icon(Icons.home),
             title: const Text('Início'),
             onTap: () {
-              Navigator.pushNamed(context, "/"); // Close the drawer
+              _drawerState.navigateToRoute(context, "/"); // Close the drawer
             },
           ),
           ListTile(
             leading: const Icon(Icons.search),
             title: const Text('Pesquisar'),
             onTap: () {
-              Navigator.pushNamed(context, "/search"); // Close the drawer
+              _drawerState.navigateToRoute(
+                  context, "/search"); // Close the drawer
             },
           ),
           ListTile(
@@ -39,21 +58,23 @@ class CustomDrawer extends StatelessWidget {
               'Perfil',
             ),
             onTap: () {
-              Navigator.pushNamed(context, "/profile"); // Close the drawer
+              _drawerState.ensureUserLoggedIn(
+                  context, "/profile"); // Close the drawer
             },
           ),
           ListTile(
             leading: const Icon(Icons.favorite),
             title: const Text('Favoritos'),
             onTap: () {
-              Navigator.pushNamed(context, "/favorites"); // Close the drawer
+              _drawerState.ensureUserLoggedIn(
+                  context, "/favorites"); // Close the drawer
             },
           ),
           ListTile(
             leading: const Icon(Icons.plus_one),
             title: const Text('Crie uma Oportunidade'),
             onTap: () {
-              Navigator.pushNamed(
+              _drawerState.ensureUserLoggedIn(
                   context, "/create-opportunity"); // Close the drawer
             },
           ),
@@ -61,7 +82,7 @@ class CustomDrawer extends StatelessWidget {
             leading: const Icon(Icons.place),
             title: const Text('As suas Oportunidades'),
             onTap: () {
-              Navigator.pushNamed(
+              _drawerState.ensureUserLoggedIn(
                   context, "/your-opportunities"); // Close the drawer
             },
           ),
@@ -69,7 +90,7 @@ class CustomDrawer extends StatelessWidget {
             leading: const Icon(Icons.book),
             title: const Text('As suas Reservas'),
             onTap: () {
-              Navigator.pushNamed(
+              _drawerState.ensureUserLoggedIn(
                   context, "/your-reservations"); // Close the drawer
             },
           ),
@@ -77,8 +98,16 @@ class CustomDrawer extends StatelessWidget {
             leading: const Icon(Icons.book),
             title: const Text('O seu Histórico de Reservas'),
             onTap: () {
-              Navigator.pushNamed(
+              _drawerState.ensureUserLoggedIn(
                   context, "/reservation-history"); // Close the drawer
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.logout),
+            title: const Text('Logout'),
+            onTap: () {
+              _drawerState.logout(
+                  context, "/"); // Close the drawer
             },
           ),
         ],

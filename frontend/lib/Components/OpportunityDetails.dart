@@ -5,10 +5,10 @@ class OpportunityDetails extends StatelessWidget {
   final String description;
 
   const OpportunityDetails({
-    Key? key,
+    super.key,
     required this.name,
     required this.description
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

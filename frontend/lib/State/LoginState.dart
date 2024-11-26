@@ -1,6 +1,8 @@
-// lib/state/login_state.dart
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:frontend/Models/User.dart';
 import 'package:http/http.dart' as http;
 import '../Services/user_api_handler.dart';
 
@@ -17,20 +19,31 @@ class LoginState with ChangeNotifier {
   bool get isLoading => _isLoading;
 
   // Function to login
-  Future<void> login(String email, String password) async {
+  Future<bool> login(
+      String email, String password, BuildContext context) async {
     if (email.isEmpty || password.isEmpty) {
-      _errorMessage = 'Email and password cannot be empty';
+      _errorMessage = 'O email e a password não podem estar vazios';
       notifyListeners();
-      return;
+      return false;
     }
 
     _isLoading = true;
     notifyListeners();
 
-    await _apiHandler.login(email, password);
-
+    var response = await _apiHandler.login(email, password);
     _isLoading = false;
+    print(response);
+
+    if (response == null) {
+      _errorMessage =
+          'O email ou a password estão incorretos. Ou a conta ainda não foi ativada.';
+      notifyListeners();
+      return false;
+    }
+    Navigator.pushNamed(context, '/');
     notifyListeners();
+
+    return true;
   }
 
   // Function to logout and remove token
