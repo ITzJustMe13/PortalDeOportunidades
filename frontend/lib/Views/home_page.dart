@@ -63,7 +63,7 @@ class _HomePageState extends State<HomePage> {
                             } else if (snapshot.hasError) {
                               return Text('Error: ${snapshot.error}');
                             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                              return const Text('Sem oportunidades em Destaque');
+                              return const Text('Sem Oportunidades em Destaque');
                             } else {
                               List<Opportunity> opportunitiesOnTheRiseList = snapshot.data!;
                               return OnTheRiseOpportunityCarousel(

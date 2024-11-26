@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/Components/dynamic_active_inactive_button.dart';
+import 'package:frontend/Components/dynamic_details_button.dart';
+import 'package:frontend/Components/dynamic_delete_button.dart';
+import 'package:frontend/Components/dynamic_edit_button.dart';
 import 'package:frontend/Models/Opportunity.dart';
 import 'dart:convert'; // For Base64 decoding
+import 'package:frontend/Views/OpportunityDetailsScreen.dart';
+import 'package:frontend/Views/EditOpportunityScreen.dart';
+import 'package:intl/intl.dart';
 
 class OpportunityManageCard extends StatelessWidget {
   final Opportunity opportunity;
@@ -9,6 +16,7 @@ class OpportunityManageCard extends StatelessWidget {
     Key? key,
     required this.opportunity,
   }) : super(key: key);
+
 
   @override
   Widget build(BuildContext context) {
@@ -117,28 +125,37 @@ class OpportunityManageCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     // Details Button
-                    ElevatedButton(
+                    DynamicDetailsButton(
                       onPressed: () {
-                        // HANDLE ACTION
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        foregroundColor: Colors.white,
-                      ),
-                      child: Text("Detalhes"),
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => OpportunityDetailsScreen(opportunity: opportunity),
+                        ),
+                      );
+                    },
                     ),
 
-                    // Delete Button
-                    ElevatedButton(
+                    DynamicEditButton(
                       onPressed: () {
-                        // HANDLE ACTION
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,
-                        foregroundColor: Colors.white,
-                      ),
-                      child: Text("Apagar"),
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EditOpportunityScreen(opportunity: opportunity),
+                        ),
+                      );
+                    },
                     ),
+
+                    DynamicActiveInactiveButton(isActive: true, onPressed: (){
+                      
+                    },),
+                    // Delete Button
+                    DynamicDeleteButton(
+                      onPressed: () {
+                       
+                    },
+                    )
                   ],
                 ),
               ],
