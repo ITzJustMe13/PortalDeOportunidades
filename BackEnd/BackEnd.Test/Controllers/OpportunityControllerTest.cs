@@ -1516,7 +1516,7 @@ namespace BackEnd.Test
             var response = await _controller.DeactivateOpportunityById(opportunityId);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<NoContentResult>(), "Expected NoContentResult if the opportunity id is valid");
+            Assert.That(response, Is.TypeOf<NoContentResult>(), "Expected NoContentResult if the opportunity id is valid");
         }
 
         [Test]
@@ -1536,9 +1536,9 @@ namespace BackEnd.Test
             var response = await _controller.DeactivateOpportunityById(opportunityId);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<NotFoundObjectResult>(), "Expected NotFoundObjectResult if the id is non existent");
+            Assert.That(response, Is.TypeOf<NotFoundObjectResult>(), "Expected NotFoundObjectResult if the id is non existent");
 
-            var notFoundResult = response.Result as NotFoundObjectResult;
+            var notFoundResult = response as NotFoundObjectResult;
             Assert.That(notFoundResult, Is.Not.Null, "NotFoundObjectResult should not be null");
             Assert.That(notFoundResult?.Value, Is.EqualTo($"Opportunity with id {opportunityId} not found."), "Error message should match the expected not found message");
         }
@@ -1560,9 +1560,9 @@ namespace BackEnd.Test
             var response = await _controller.DeactivateOpportunityById(opportunityId);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if the id is invalid");
+            Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if the id is invalid");
 
-            var badRequestResult = response.Result as BadRequestObjectResult;
+            var badRequestResult = response as BadRequestObjectResult;
             Assert.That(badRequestResult, Is.Not.Null, "BadRequestObjectResult should not be null");
             Assert.That(badRequestResult?.Value, Is.EqualTo("Given opportunityId is invalid, it should be greater than 0."), "Error message should match the expected bad request message");
         }
@@ -1584,9 +1584,9 @@ namespace BackEnd.Test
             var response = await _controller.DeactivateOpportunityById(opportunityId);
 
             // Assert
-            Assert.That(response.Result, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if the opportunity is already deactivated");
+            Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if the opportunity is already deactivated");
 
-            var badRequestResult = response.Result as BadRequestObjectResult;
+            var badRequestResult = response as BadRequestObjectResult;
             Assert.That(badRequestResult, Is.Not.Null, "BadRequestObjectResult should not be null");
             Assert.That(badRequestResult?.Value, Is.EqualTo("Opportunity is already inactive."), "Error message should match the expected bad request message");
         }
@@ -1611,8 +1611,8 @@ namespace BackEnd.Test
             var response = await controller.DeactivateOpportunityById(opportunityId);
 
             // Assert
-            Assert.That(response.Result, Is.InstanceOf<NotFoundObjectResult>());
-            var notFoundResult = response.Result as NotFoundObjectResult;
+            Assert.That(response, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = response as NotFoundObjectResult;
             Assert.That(notFoundResult?.Value, Is.EqualTo("DB context is missing."));
         }
 

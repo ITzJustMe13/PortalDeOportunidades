@@ -11,7 +11,7 @@ namespace BackEnd.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ReservationController : ControllerBase
+    public class ReservationController : BaseController
     {
         private readonly IReservationService _reservationService;
         public ReservationController(IReservationService reservationService)
@@ -26,18 +26,7 @@ namespace BackEnd.Controllers
         {
             var serviceResponse = await _reservationService.GetAllActiveReservationsByUserIdAsync(userId);
 
-            if (!serviceResponse.Success)
-            {
-                return serviceResponse.Type switch
-                {
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "BadRequest" => BadRequest(serviceResponse.Message),
-                    "InternalServerError" => StatusCode(500, serviceResponse.Message),
-                    _ => StatusCode(500, serviceResponse.Message)
-                };
-            }
-
-            return Ok(serviceResponse.Data);
+            return HandleResponse(serviceResponse);
         }
 
         // Método para obter todas as reservas de um usuário
@@ -47,18 +36,7 @@ namespace BackEnd.Controllers
         {
             var serviceResponse = await _reservationService.GetAllReservationsByUserIdAsync(userId);
 
-            if (!serviceResponse.Success)
-            {
-                return serviceResponse.Type switch
-                {
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "BadRequest" => BadRequest(serviceResponse.Message),
-                    "InternalServerError" => StatusCode(500,  serviceResponse.Message),
-                    _ => StatusCode(500, "Unknown error.")
-                };
-            }
-
-            return Ok(serviceResponse.Data);
+            return HandleResponse(serviceResponse);
         }
 
         //GET para obter uma reserva pelo ID
@@ -68,18 +46,7 @@ namespace BackEnd.Controllers
         {
             var serviceResponse = await _reservationService.GetReservationByIdAsync(id);
 
-            if (!serviceResponse.Success)
-            {
-                return serviceResponse.Type switch
-                {
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "BadRequest" => BadRequest(serviceResponse.Message),
-                    "InternalServerError" => StatusCode(500,  serviceResponse.Message),
-                    _ => StatusCode(500, serviceResponse.Message)
-                };
-            }
-
-            return Ok(serviceResponse.Data);
+            return HandleResponse(serviceResponse);
         }
 
         //POST para criar uma nova Reserva
@@ -91,16 +58,10 @@ namespace BackEnd.Controllers
 
             if (!serviceResponse.Success)
             {
-                return serviceResponse.Type switch
-                {
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "BadRequest" => BadRequest(serviceResponse.Message),
-                    "InternalServerError" => StatusCode(500, serviceResponse.Message),
-                    _ => StatusCode(500, serviceResponse.Message)
-                };
+                return HandleResponse(serviceResponse);
             }
 
-            return CreatedAtAction(nameof(CreateNewReservation), new { id = serviceResponse.Data.reservationId }, serviceResponse.Data);
+            return HandleCreatedAtAction(serviceResponse, nameof(CreateNewReservation), new { id = serviceResponse.Data.reservationId });
         }
 
         //PUT api/Opportunity/1/deactivate
@@ -110,18 +71,7 @@ namespace BackEnd.Controllers
         {
             var serviceResponse = await _reservationService.DeactivateReservationByIdAsync(id);
 
-            if (!serviceResponse.Success)
-            {
-                return serviceResponse.Type switch
-                {
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "BadRequest" => BadRequest(serviceResponse.Message),
-                    "InternalServerError" => StatusCode(500, serviceResponse.Message),
-                    _ => StatusCode(500, serviceResponse.Message)
-                };
-            }
-
-            return Ok(serviceResponse.Message);
+            return HandleResponse(serviceResponse);
         }
 
         //PUT para atualizar uma reserva
@@ -131,18 +81,7 @@ namespace BackEnd.Controllers
         {
             var serviceResponse = await _reservationService.UpdateReservationAsync(id, reservation);
 
-            if (!serviceResponse.Success)
-            {
-                return serviceResponse.Type switch
-                {
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "BadRequest" => BadRequest(serviceResponse.Message),
-                    "InternalServerError" => StatusCode(500, serviceResponse.Message),
-                    _ => StatusCode(500, serviceResponse.Message)
-                };
-            }
-
-            return Ok(serviceResponse.Message);
+            return HandleResponse(serviceResponse);
         }
 
         //DELETE para apagar uma reserva
@@ -152,17 +91,7 @@ namespace BackEnd.Controllers
         {
             var serviceResponse = await _reservationService.DeleteReservationAsync(id);
 
-            if (!serviceResponse.Success)
-            {
-                return serviceResponse.Type switch
-                {
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "InternalServerError" => StatusCode(500, serviceResponse.Message),
-                    _ => StatusCode(500, serviceResponse.Message)
-                };
-            }
-
-            return Ok(serviceResponse.Message);
+            return HandleResponse(serviceResponse);
         }
     }
 }

@@ -1746,8 +1746,8 @@ namespace BackEnd.Test
             var response = await controller.ActivateAccount("token");
 
             // Assert
-            Assert.That(response, Is.InstanceOf<BadRequestObjectResult>());
-            var notFoundResult = response as BadRequestObjectResult;
+            Assert.That(response, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = response as NotFoundObjectResult;
             Assert.That(notFoundResult?.Value, Is.EqualTo("DB context is missing."));
         }
 

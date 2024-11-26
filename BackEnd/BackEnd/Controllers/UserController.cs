@@ -21,7 +21,7 @@ namespace BackEnd.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class UserController : BaseController
     {
         private readonly IUserService _userService;
         private readonly IFavoritesService _favoritesService;
@@ -41,12 +41,9 @@ namespace BackEnd.Controllers
         [Authorize]
         public async Task<IActionResult> GetUserByID(int id)
         {
-            var response = await _userService.GetUserByIDAsync(id);
+            var serviceResponse = await _userService.GetUserByIDAsync(id);
 
-            if (!response.Success)
-                return NotFound(response.Message);
-
-            return Ok(response.Data);
+            return HandleResponse(serviceResponse);
         }
 
         /// <summary>
@@ -63,15 +60,10 @@ namespace BackEnd.Controllers
 
             if (!serviceResponse.Success)
             {
-                return serviceResponse.Type switch
-                {
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "BadRequest" => BadRequest(serviceResponse.Message),
-                    _ => StatusCode(500, serviceResponse.Message) // InternalServerError
-                };
+                return HandleResponse(serviceResponse);
             }
 
-            return CreatedAtAction(nameof(GetUserByID), new { id = serviceResponse.Data.userId }, serviceResponse.Data);
+            return HandleCreatedAtAction(serviceResponse, nameof(GetUserByID), new { id = serviceResponse.Data.userId });
         }
 
 
@@ -89,17 +81,7 @@ namespace BackEnd.Controllers
             {
                 var serviceResponse = await _userService.DeleteUserAsync(id);
 
-                if (!serviceResponse.Success)
-                {
-                    return serviceResponse.Type switch
-                    {
-                        "NotFound" => NotFound(serviceResponse.Message),
-                        "BadRequest" => BadRequest(serviceResponse.Message),
-                        _ => StatusCode(500, serviceResponse.Message) // InternalServerError
-                    };
-                }
-
-                return NoContent();
+                return HandleResponse(serviceResponse);
             }
         }
 
@@ -119,17 +101,7 @@ namespace BackEnd.Controllers
         {
             var serviceResponse = await _userService.EditUserAsync(id, updatedUser);
 
-            if (!serviceResponse.Success)
-            {
-                return serviceResponse.Type switch
-                {
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "BadRequest" => BadRequest(serviceResponse.Message),
-                    _ => StatusCode(500, serviceResponse.Message) // InternalServerError
-                };
-            }
-
-            return Ok(serviceResponse.Data);
+            return HandleResponse(serviceResponse);
         }
 
         /// <summary>
@@ -148,16 +120,10 @@ namespace BackEnd.Controllers
 
             if (!serviceResponse.Success)
             {
-                return serviceResponse.Type switch
-                {
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "BadRequest" => BadRequest(serviceResponse.Message),
-                    "Conflict" => Conflict(serviceResponse.Message),
-                    _ => StatusCode(500, serviceResponse.Message) // InternalServerError
-                };
+                return HandleResponse(serviceResponse);
             }
 
-            return CreatedAtAction(nameof(GetFavoriteById), new { userId = favorite.userId, opportunityId = favorite.opportunityId }, serviceResponse.Data);
+            return HandleCreatedAtAction(serviceResponse, nameof(GetFavoriteById), new { userId = favorite.userId, opportunityId = favorite.opportunityId });
         }
 
         /// <summary>
@@ -174,17 +140,7 @@ namespace BackEnd.Controllers
         {
             var serviceResponse = await _favoritesService.GetFavoriteByIdAsync(userId, opportunityId);
 
-            if (!serviceResponse.Success)
-            {
-                return serviceResponse.Type switch
-                {
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "BadRequest" => BadRequest(serviceResponse.Message),
-                    _ => StatusCode(500, serviceResponse.Message) // InternalServerError
-                };
-            }
-
-            return Ok(serviceResponse.Data);
+            return HandleResponse(serviceResponse);
         }
 
         /// <summary>
@@ -200,18 +156,7 @@ namespace BackEnd.Controllers
         {
             var serviceResponse = await _favoritesService.GetFavoritesAsync(userId);
 
-            if (!serviceResponse.Success)
-            {
-                return serviceResponse.Type switch
-                {
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "BadRequest" => BadRequest(serviceResponse.Message),
-                    _ => StatusCode(500, serviceResponse.Message) // InternalServerError
-                };
-            }
-
-
-            return Ok(serviceResponse.Data);
+            return HandleResponse(serviceResponse);
         }
 
         /// <summary>
@@ -229,19 +174,14 @@ namespace BackEnd.Controllers
 
             if (!serviceResponse.Success)
             {
-                return serviceResponse.Type switch
-                {
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "BadRequest" => BadRequest(serviceResponse.Message),
-                    _ => StatusCode(500, serviceResponse.Message) // InternalServerError
-                };
+                return HandleResponse(serviceResponse);
             }
 
-            return CreatedAtAction(nameof(ImpulseOportunity), new
+            return HandleCreatedAtAction(serviceResponse, nameof(ImpulseOportunity), new
             {
                 serviceResponse.Data.userId,
                 serviceResponse.Data.opportunityId
-            }, serviceResponse.Data);
+            });
         }
 
         /// <summary>
@@ -257,17 +197,7 @@ namespace BackEnd.Controllers
         {
             var serviceResponse = await _favoritesService.GetCreatedOpportunitiesAsync(userId);
 
-            if (!serviceResponse.Success)
-            {
-                return serviceResponse.Type switch
-                {
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "BadRequest" => BadRequest(serviceResponse.Message),
-                    _ => StatusCode(500, serviceResponse.Message) // InternalServerError
-                };
-            }
-
-            return Ok(serviceResponse.Data);
+            return HandleResponse(serviceResponse);
         }
 
         /// <summary>
@@ -283,18 +213,7 @@ namespace BackEnd.Controllers
         {
            var serviceResponse = await _userService.LoginAsync(request);
 
-            if (!serviceResponse.Success)
-            {
-                return serviceResponse.Type switch
-                {
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "BadRequest" => BadRequest(serviceResponse.Message),
-                    "Unauthorized" => Unauthorized(serviceResponse.Message),
-                    _ => StatusCode(500, serviceResponse.Message) // InternalServerError
-                };
-            }
-
-            return Ok(serviceResponse.Data);
+            return HandleResponse(serviceResponse);
         }
 
         /// <summary>
@@ -309,17 +228,7 @@ namespace BackEnd.Controllers
         {
             var serviceResponse = await _userService.CheckEmailAvailabilityAsync(email);
 
-            if (!serviceResponse.Success)
-            {
-                return serviceResponse.Type switch
-                {
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "BadRequest" => BadRequest(serviceResponse.Message),
-                    _ => StatusCode(500, serviceResponse.Message) // InternalServerError
-                };
-            }
-
-            return Ok(serviceResponse.Data);
+            return HandleResponse(serviceResponse);
         }
 
         /// <summary>
@@ -333,13 +242,7 @@ namespace BackEnd.Controllers
         {
             var serviceResponse = await _userService.ActivateAccountAsync(token);
 
-            if (!serviceResponse.Success)
-            {
-
-                return BadRequest(serviceResponse.Message);
-            }
-
-            return Ok(serviceResponse.Data);
+            return HandleResponse(serviceResponse);
         }
 
         /// <summary>

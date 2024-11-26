@@ -53,6 +53,7 @@ namespace BackEnd.Services
                 response.Data = reviewDto;
                 response.Success = true;
                 response.Message = "Review retrieved successfully.";
+                response.Type = "Ok";
             }
             catch (ValidationException ex)
             {
@@ -153,6 +154,7 @@ namespace BackEnd.Services
                 response.Data = createdReviewDto;
                 response.Success = true;
                 response.Message = "Review created successfully.";
+                response.Type = "Created";
             }
             catch (ValidationException ex)
             {
@@ -190,9 +192,11 @@ namespace BackEnd.Services
             {
                 dbContext.Reviews.Remove(reviewModel);
                 await dbContext.SaveChangesAsync();
+
                 response.Success = true;
                 response.Message = "Review deleted successfully.";
                 response.Data = true;
+                response.Type = "NoContent";
             }
             catch (Exception ex)
             {
@@ -252,6 +256,7 @@ namespace BackEnd.Services
                 response.Success = true;
                 response.Data = reviewDto;
                 response.Message = "Review updated successfully.";
+                response.Type = "Ok";
             }
             catch (Exception ex)
             {

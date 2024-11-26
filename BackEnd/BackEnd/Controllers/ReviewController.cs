@@ -13,7 +13,7 @@ namespace BackEnd.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ReviewController : ControllerBase
+    public class ReviewController : BaseController
     {
         private readonly IReviewService _reviewService;
 
@@ -29,17 +29,7 @@ namespace BackEnd.Controllers
         {
             var serviceResponse = await _reviewService.GetReviewByIdAsync(id);
 
-            if (!serviceResponse.Success)
-            {
-                return serviceResponse.Type switch
-                {
-                    "BadRequest" => BadRequest(serviceResponse.Message),
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    _ => StatusCode(500, "An unexpected error occurred.")
-                };
-            }
-
-            return Ok(serviceResponse.Data);
+            return HandleResponse(serviceResponse);
         }
 
         //POST api/Review
@@ -51,15 +41,10 @@ namespace BackEnd.Controllers
 
             if (!serviceResponse.Success)
             {
-                return serviceResponse.Type switch
-                {
-                    "BadRequest" => BadRequest(serviceResponse.Message),
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    _ => StatusCode(500, "An unexpected error occurred.")
-                };
+                return HandleResponse(serviceResponse);
             }
 
-            return CreatedAtAction(nameof(GetReviewById), new { id = serviceResponse.Data.reservationId }, serviceResponse.Data);
+            return HandleCreatedAtAction(serviceResponse, nameof(GetReviewById), new {id = serviceResponse.Data.reservationId});
         }
 
         //DELETE api/Review/1
@@ -69,17 +54,7 @@ namespace BackEnd.Controllers
         {
             var serviceResponse = await _reviewService.DeleteReviewByIdAsync(id);
 
-            if (!serviceResponse.Success)
-            {
-                return serviceResponse.Type switch
-                {
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "BadRequest" => BadRequest(serviceResponse.Message),
-                    _ => StatusCode(500, "An unexpected error occurred.")
-                };
-            }
-
-            return NoContent();
+            return HandleResponse(serviceResponse);
         }
 
         //PUT api/Review/1/Edit?score=2.5&desc=teste123
@@ -89,17 +64,7 @@ namespace BackEnd.Controllers
         {
             var serviceResponse = await _reviewService.EditReviewByIdAsync(id, score, desc);
 
-            if (!serviceResponse.Success)
-            {
-                return serviceResponse.Type switch
-                {
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "BadRequest" => BadRequest(serviceResponse.Message),
-                    _ => StatusCode(500, serviceResponse.Message)
-                };
-            }
-
-            return Ok(serviceResponse.Data);
+            return HandleResponse(serviceResponse);
         }
 
     }

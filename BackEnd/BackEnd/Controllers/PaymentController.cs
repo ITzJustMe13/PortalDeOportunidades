@@ -10,7 +10,7 @@ namespace BackEnd.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PaymentController : ControllerBase
+    public class PaymentController : BaseController
     {
         private readonly IPaymentService _paymentService;
 
@@ -26,18 +26,7 @@ namespace BackEnd.Controllers
         {
             var serviceResponse = await _paymentService.CreateReservationCheckoutSessionAsync(reservation);
 
-            if (!serviceResponse.Success)
-            {
-                return serviceResponse.Type switch
-                {
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "BadRequest" => BadRequest(serviceResponse.Message),
-                    "InternalServerError" => StatusCode(500, serviceResponse.Message),
-                    _ => StatusCode(500, serviceResponse.Message)
-                };
-            }
-
-            return Ok(new { sessionId = serviceResponse.Data }); // Return the session ID
+            return HandleResponse(serviceResponse);
         }
 
 
@@ -47,18 +36,7 @@ namespace BackEnd.Controllers
         {
             var serviceResponse = await _paymentService.CreateImpulseCheckoutSessionAsync(impulse);
 
-            if (!serviceResponse.Success)
-            {
-                return serviceResponse.Type switch
-                {
-                    "BadRequest" => BadRequest(serviceResponse.Message),
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "InternalServerError" => StatusCode(500, serviceResponse.Message),
-                    _ => StatusCode(500, "Unknown error.")
-                };
-            }
-
-            return Ok(new { sessionId = serviceResponse.Data });
+            return HandleResponse(serviceResponse);
         }
 
     }

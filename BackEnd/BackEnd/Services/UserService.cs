@@ -71,7 +71,8 @@ namespace BackEnd.Services
             return new ServiceResponse<User>
             {
                 Success = true,
-                Data = u
+                Data = u,
+                Type = "Ok"
             };
         }
 
@@ -180,6 +181,7 @@ namespace BackEnd.Services
                 response.Data = createdUserDTO;
                 response.Success = true;
                 response.Message = "User successfully created";
+                response.Type = "Created";
             }
             catch (Exception ex)
             {
@@ -236,6 +238,7 @@ namespace BackEnd.Services
                 response.Success = true;
                 response.Message = "User and related data deleted successfully.";
                 response.Data = $"User with ID {id} deleted.";
+                response.Type = "NoContent";
             }
             catch (Exception ex)
             {
@@ -347,11 +350,13 @@ namespace BackEnd.Services
                 response.Data = userDTO;
                 response.Success = true;
                 response.Message = "User updated successfully.";
+                response.Type = "Ok";
             }
             catch (ValidationException ve)
             {
                 response.Success = false;
                 response.Message = ve.Message;
+                response.Type = "BadRequest";
             }
             catch (Exception ex)
             {
@@ -436,6 +441,7 @@ namespace BackEnd.Services
                 };
                 response.Success = true;
                 response.Message = "Login successful.";
+                response.Type = "Ok";
             }
             catch (ValidationException ex)
             {
@@ -507,11 +513,13 @@ namespace BackEnd.Services
                 response.Message = emailAvailable
                 ? "Email is available."
                 : "Email is already in use.";
+                response.Type = "Ok"; 
             }
             catch (Exception ex)
             {
                 response.Success = false;
                 response.Message = "An error occurred while checking email availability.";
+                response.Type = "BadRequest";
             }
 
             return response;
@@ -533,6 +541,7 @@ namespace BackEnd.Services
                 {
                     response.Success = false;
                     response.Message = "DB context is missing.";
+                    response.Type = "NotFound";
                     return response;
                 }
 
@@ -540,6 +549,7 @@ namespace BackEnd.Services
                 {
                     response.Success = false;
                     response.Message = "Token cannot be null or empty.";
+                    response.Type = "BadRequest";
                     return response;
                 }
 
@@ -550,6 +560,7 @@ namespace BackEnd.Services
                 {
                     response.Success = false;
                     response.Message = "Invalid activation token.";
+                    response.Type = "BadRequest";
                     return response;
                 }
 
@@ -557,6 +568,7 @@ namespace BackEnd.Services
                 {
                     response.Success = false;
                     response.Message = "The activation token has expired.";
+                    response.Type = "BadRequest";
                     return response;
                 }
 
@@ -571,11 +583,13 @@ namespace BackEnd.Services
                 response.Success = true;
                 response.Message = "Account activated successfully.";
                 response.Data = response.Message;
+                response.Type = "Ok";
             }
             catch (Exception ex)
             {
                 response.Success = false;
                 response.Message = "An error occurred while activating the account.";
+                response.Type = "BadRequest";
             }
 
             return response;
@@ -676,6 +690,7 @@ namespace BackEnd.Services
                 response.Data = impulseDTO;
                 response.Success = true;
                 response.Message = "Impulse successfully created.";
+                response.Message = "Created";
             }
             catch (Exception ex)
             {

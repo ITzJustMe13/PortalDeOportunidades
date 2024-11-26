@@ -131,6 +131,7 @@ namespace BackEnd.Services
                 response.Data = favoriteDTO;
                 response.Success = true;
                 response.Message = "Favorite retrieved successfully.";
+                response.Type = "Ok";
             }
             catch (Exception ex)
             {
@@ -194,6 +195,7 @@ namespace BackEnd.Services
                 response.Data = favoriteDTOs;
                 response.Success = true;
                 response.Message = "Favorites retrieved successfully.";
+                response.Type = "Ok";
             }
             catch (Exception ex)
             {
@@ -253,6 +255,7 @@ namespace BackEnd.Services
                 response.Data = opportunitiesDTOs;
                 response.Success = true;
                 response.Message = "Opportunities retrieved successfully.";
+                response.Type = "Ok";
             }
             catch (Exception ex)
             {

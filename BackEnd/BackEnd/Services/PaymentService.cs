@@ -88,7 +88,7 @@ namespace BackEnd.Services
                 Session session = await service.CreateAsync(options);
 
                 response.Success = true;
-                response.Data = session.Id; // Returning the session ID
+                response.Data = "sessiondId=" + session.Id; // Returning the session ID
                 response.Message = "Checkout session created successfully.";
                 response.Type = "Ok";
             }
