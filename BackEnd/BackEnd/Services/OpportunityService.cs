@@ -749,13 +749,13 @@ namespace BackEnd.Services
             }
 
             // Validate category
-            if (opportunity.category == null || !Enum.IsDefined(typeof(Category), opportunity.category.Value))
+            if (opportunity.category == null || !Enum.IsDefined(typeof(Category), opportunity.category))
             {
                 errors.Add("Category is not valid.");
             }
 
             // Validate location
-            if (opportunity.location == null || !Enum.IsDefined(typeof(Location), opportunity.location.Value))
+            if (opportunity.location == null || !Enum.IsDefined(typeof(Location), opportunity.location))
             {
                 errors.Add("Location is not valid.");
             }
