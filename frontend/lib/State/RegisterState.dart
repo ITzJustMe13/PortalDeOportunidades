@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import '../Services/user_api_handler.dart';
 
 class RegisterState with ChangeNotifier {
-  final _apiHandler = UserApiHandler(http.Client(), null);
+  final _apiHandler = UserApiHandler(http.Client());
 
   String? _errorMessage;
   bool _isLoading = false;
@@ -13,11 +13,17 @@ class RegisterState with ChangeNotifier {
   bool get isLoading => _isLoading;
 
   // Function to register
-  Future<void> register(User user) async {
+  Future<void> register(User user, BuildContext context) async {
     _isLoading = true;
     notifyListeners();
 
-    await _apiHandler.createUser(user);
+    User? createUser = await _apiHandler.createUser(user);
+
+    if (createUser != null) {
+      Navigator.pushNamed(context, '/login');
+    } else {
+      _errorMessage = 'Erro ao criar conta';
+    }
 
     _isLoading = false;
     notifyListeners();

@@ -14,7 +14,7 @@ class OpportunityAdditionalInfo extends StatelessWidget {
 
   // Constructor to accept values as parameters
   const OpportunityAdditionalInfo({
-    Key? key,
+    super.key,
     required this.price,
     required this.vacancies,
     required this.firstName,
@@ -23,7 +23,7 @@ class OpportunityAdditionalInfo extends StatelessWidget {
     required this.date,
     required this.location,
     required this.address,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

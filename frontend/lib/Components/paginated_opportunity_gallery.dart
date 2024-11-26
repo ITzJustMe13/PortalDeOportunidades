@@ -21,7 +21,7 @@ class _PaginatedOpportunityGalleryState
 
   int _itemsPerPage = 10; // Default items per page
 
-  List<int> _itemsPerPageOptions = [5, 10, 15, 20, 25];
+  final List<int> _itemsPerPageOptions = [5, 10, 15, 20, 25];
 
   // Calcular o total de páginas dinamicamente
   int get _numPages {

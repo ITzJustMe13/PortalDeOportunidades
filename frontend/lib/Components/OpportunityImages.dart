@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class OpportunityImages extends StatefulWidget {
+  const OpportunityImages({super.key});
+
   @override
   _OpportunityImagesState createState() => _OpportunityImagesState();
 }

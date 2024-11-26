@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/State/AppBarState.dart';
 import 'package:frontend/State/LoginState.dart';
 import 'package:frontend/State/RegisterState.dart';
 import 'package:frontend/Views/LoginScreen.dart';
@@ -10,7 +11,6 @@ import 'package:frontend/Views/EditProfileScreen.dart';
 import 'package:frontend/Views/ProfileScreen.dart';
 import 'package:frontend/Views/ReviewsHistoryScreen.dart';
 import 'package:frontend/Views/CreateOpportunityScreen.dart';
-import 'package:frontend/Views/OpportunityDetailsScreen.dart';
 import 'package:frontend/Views/OpportunityManager.dart';
 import 'package:frontend/Views/favorites_page.dart';
 import 'package:frontend/Views/search_page.dart';
@@ -30,7 +30,7 @@ void main() {
         Provider<OpportunityApiHandler>(
             create: (_) => OpportunityApiHandler(http.Client())),
         Provider<UserApiHandler>(
-            create: (_) => UserApiHandler(http.Client(), null)),
+            create: (_) => UserApiHandler(http.Client())),
         Provider<ReservationApiHandler>(
             create: (_) => ReservationApiHandler(http.Client())),
         Provider<ReviewApiHandler>(
@@ -39,6 +39,8 @@ void main() {
             create: (_) => PaymentApiHandler(http.Client())),
         ChangeNotifierProvider<LoginState>(create: (_) => LoginState()),
         ChangeNotifierProvider<RegisterState>(create: (_) => RegisterState()),
+        ChangeNotifierProvider<CustomAppBarState>(
+            create: (_) => CustomAppBarState()),
       ],
       child: MainApp(),
     ),

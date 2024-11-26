@@ -11,8 +11,13 @@ class UserApiHandler {
   final String baseUri = "https://localhost:7235/api/User";
   final http.Client client;
   final storage = FlutterSecureStorage();
-  User? currentUser;
-  UserApiHandler(this.client, this.currentUser);
+
+  UserApiHandler(this.client);
+
+  void logout() {
+    storage.delete(key: 'accessToken');
+    storage.delete(key: 'currentUser');
+  }
 
   // Login method
   Future<User?> login(String email, String password) async {
@@ -34,23 +39,32 @@ class UserApiHandler {
         final data = jsonDecode(response.body);
         await storage.write(key: 'accessToken', value: data['token']);
         final authenticatedUser = User.fromJson(data['user']);
-        currentUser = authenticatedUser;
+        await storage.write(
+            key: 'currentUser', value: authenticatedUser.userId.toString());
         return authenticatedUser;
-      } else if (response.statusCode == 401) {
-        print('Unauthorized: ${response.body}');
-        return null;
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return null;
       }
     } catch (e) {
-      print('Exception occurred: $e');
+      print('Error: ${e.toString()}');
       return null;
     }
   }
 
-  Future<User?> getCurrentUser() async {
-    return currentUser;
+  Future<User?> getStoredUser() async {
+    final String? storedUser = await storage.read(key: 'currentUser');
+
+    try {
+      if (storedUser != null) {
+        User? user = await getUserByID(int.parse(storedUser));
+        if (user != null) {
+          return user;
+        }
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
   }
 
   /// Get user by ID

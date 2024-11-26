@@ -6,9 +6,9 @@ class OpportunityManageCard extends StatelessWidget {
   final Opportunity opportunity;
 
   const OpportunityManageCard({
-    Key? key,
+    super.key,
     required this.opportunity,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
