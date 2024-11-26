@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/Components/CustomAppBar.dart';
+import 'package:frontend/Components/CustomDrawer.dart';
 import 'package:provider/provider.dart';
 import '../State/LoginState.dart';
 
-class LoginTest extends StatefulWidget {
-  const LoginTest({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
   @override
-  State<LoginTest> createState() => _LoginTestState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginTestState extends State<LoginTest> {
+class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
@@ -23,7 +25,8 @@ class _LoginTestState extends State<LoginTest> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Login')),
+      appBar: CustomAppBar(),
+      endDrawer: CustomDrawer(),
       body: Consumer<LoginState>(
         builder: (context, loginState, child) {
           return Padding(
@@ -55,7 +58,7 @@ class _LoginTestState extends State<LoginTest> {
                     child: Text('Login'),
                   ),
                 SizedBox(height: 16.0),
-                if (loginState.errorMessage!= null)
+                if (loginState.errorMessage != null)
                   Text(
                     loginState.errorMessage!,
                     style: TextStyle(color: Colors.red),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/State/LoginState.dart';
-import 'package:frontend/Views/login_test.dart';
+import 'package:frontend/State/RegisterState.dart';
+import 'package:frontend/Views/LoginScreen.dart';
+import 'package:frontend/Views/RegisterScreen.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:frontend/Views/HistoryReservationScreen.dart';
@@ -35,8 +37,8 @@ void main() {
             create: (_) => ReviewApiHandler(http.Client())),
         Provider<PaymentApiHandler>(
             create: (_) => PaymentApiHandler(http.Client())),
-        ChangeNotifierProvider<LoginState>(
-            create: (_) => LoginState()), // Crie o LoginState
+        ChangeNotifierProvider<LoginState>(create: (_) => LoginState()),
+        ChangeNotifierProvider<RegisterState>(create: (_) => RegisterState()),
       ],
       child: MainApp(),
     ),
@@ -65,7 +67,8 @@ class MainApp extends StatelessWidget {
         '/edit-profile': (context) => const EditProfileScreen(),
         '/reviews-history': (context) => const ReviewsHistoryScreen(),
         '/reservation-history': (context) => const HistoryReservationScreen(),
-        '/login': (context) => LoginTest(),
+        '/login': (context) => LoginScreen(),
+        '/register': (context) => RegisterScreen(),
       },
     );
   }
