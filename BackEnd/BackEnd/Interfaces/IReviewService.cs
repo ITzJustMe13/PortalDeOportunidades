@@ -12,6 +12,6 @@ namespace BackEnd.Interfaces
 
         Task<ServiceResponse<bool>> DeleteReviewByIdAsync(int id);
 
-        Task<ServiceResponse<Review>> EditReviewByIdAsync(int id, float? score, string? desc);
+        Task<ServiceResponse<Review>> EditReviewByIdAsync(int id, Review updatedReview);
     }
 }

@@ -31,17 +31,6 @@ namespace BackEnd.Interfaces
 
         Task<ServiceResponse<bool>> DeactivateOpportunityByIdAsync(int id);
 
-        Task<ServiceResponse<Opportunity>> EditOpportunityByIdAsync(
-            int id,
-            string? name,
-            string? description,
-            decimal? price,
-            int? vacancies,
-            Category? category,
-            Location? location,
-            string? address,
-            DateTime? date,
-            List<byte[]>? newImageUrls
-        );
+        Task<ServiceResponse<Opportunity>> EditOpportunityByIdAsync(int id,Opportunity opportunity);
     }
 }

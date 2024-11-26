@@ -60,9 +60,9 @@ namespace BackEnd.Controllers
         //PUT api/Review/1/Edit?score=2.5&desc=teste123
         [HttpPut("{id}/Edit")]
         [Authorize]
-        public async Task<IActionResult> EditReviewById(int id, [FromQuery]float score, [FromQuery]string? desc)
+        public async Task<IActionResult> EditReviewById(int id, Review updatedReview)
         {
-            var serviceResponse = await _reviewService.EditReviewByIdAsync(id, score, desc);
+            var serviceResponse = await _reviewService.EditReviewByIdAsync(id, updatedReview);
 
             return HandleResponse(serviceResponse);
         }

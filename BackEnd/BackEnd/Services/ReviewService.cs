@@ -208,7 +208,7 @@ namespace BackEnd.Services
             return response;
         }
 
-        public async Task<ServiceResponse<Review>> EditReviewByIdAsync(int id, float? score, string? desc)
+        public async Task<ServiceResponse<Review>> EditReviewByIdAsync(int id, Review updatedReview)
         {
             var response = new ServiceResponse<Review>();
 
@@ -230,23 +230,24 @@ namespace BackEnd.Services
                 return response;
             }
 
-            if (score.HasValue)
+            if (updatedReview.rating != null)
             {
-                if (score.Value < 0 || score.Value > 5)
+                if (updatedReview.rating < 0 || updatedReview.rating > 5)
                 {
                     response.Success = false;
                     response.Message = "Rating must be between 0 and 5.";
                     response.Type = "BadRequest";
                     return response;
                 }
-                reviewModel.Rating = score.Value;
+                reviewModel.Rating = updatedReview.rating;
             }
 
-            if (!string.IsNullOrWhiteSpace(desc))
+            if (!string.IsNullOrWhiteSpace(updatedReview.desc))
             {
-                reviewModel.Desc = desc;
+                reviewModel.Desc = updatedReview.desc;
             }
 
+            dbContext.Reviews.Update(reviewModel);
             await dbContext.SaveChangesAsync();
 
             try

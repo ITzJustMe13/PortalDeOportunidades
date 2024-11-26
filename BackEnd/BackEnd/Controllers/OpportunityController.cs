@@ -131,28 +131,12 @@ namespace BackEnd.Controllers
         [Authorize]
         public async Task<IActionResult> EditOpportunityById(
             int id,
-            [FromQuery] string? name,
-            [FromQuery] string? description,
-            [FromQuery] decimal? price,
-            [FromQuery] int? vacancies,
-            [FromQuery] Category? category,
-            [FromQuery] Location? location,
-            [FromQuery] string? address,
-            [FromQuery] DateTime? date,
-            [FromBody] List<byte[]>? newImageUrls
+            Opportunity updatedOpportunity
         )
         {
             var serviceResponse = await _opportunityService.EditOpportunityByIdAsync(
                 id,
-                name,
-                description,
-                price,
-                vacancies,
-                category,
-                location,
-                address,
-                date,
-                newImageUrls
+                updatedOpportunity
             );
 
             return HandleResponse(serviceResponse);
