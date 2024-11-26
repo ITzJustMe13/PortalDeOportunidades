@@ -455,3 +455,5 @@ app.*.map.json
 /android/app/release
 
 frontend/build
+frontend/.flutter-plugins
+frontend/.dart_tool/package_config_subset
