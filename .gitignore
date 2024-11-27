@@ -477,3 +477,4 @@ frontend/.flutter-plugins-dependencies
 frontend/.flutter-plugins
 frontend/.dart_tool/package_config_subset
 frontend/.dart_tool/package_config.json
+/frontend/.dart_tool/
