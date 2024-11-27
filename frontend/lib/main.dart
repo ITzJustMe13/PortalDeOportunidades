@@ -12,10 +12,10 @@ import 'package:frontend/Views/ProfileScreen.dart';
 import 'package:frontend/Views/ReviewsHistoryScreen.dart';
 import 'package:frontend/Views/CreateOpportunityScreen.dart';
 import 'package:frontend/Views/OpportunityManager.dart';
-import 'package:frontend/Views/favorites_page.dart';
-import 'package:frontend/Views/search_page.dart';
+import 'package:frontend/Views/FavoritesPage.dart';
+import 'package:frontend/Views/SearchPage.dart';
 
-import 'Views/home_page.dart';
+import 'Views/HomePage.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend/Services/payment_api_handler.dart';
 import 'package:frontend/Services/opportunity_api_handler.dart';
