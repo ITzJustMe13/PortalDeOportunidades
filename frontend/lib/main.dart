@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/State/ActivationState.dart';
 import 'package:frontend/State/AppBarState.dart';
 import 'package:frontend/State/LoginState.dart';
 import 'package:frontend/State/RegisterState.dart';
@@ -41,6 +42,8 @@ void main() {
         ChangeNotifierProvider<RegisterState>(create: (_) => RegisterState()),
         ChangeNotifierProvider<CustomAppBarState>(
             create: (_) => CustomAppBarState()),
+        ChangeNotifierProvider<ActivationState>(
+            create: (_) => ActivationState())
       ],
       child: MainApp(),
     ),
@@ -71,7 +74,6 @@ class MainApp extends StatelessWidget {
         '/reservation-history': (context) => const HistoryReservationScreen(),
         '/login': (context) => LoginScreen(),
         '/register': (context) => RegisterScreen(),
-        '/activate-account': (context) => const ActivationSuccessPage(),
       },
       onGenerateRoute: (settings) {
         Uri? uri = Uri.tryParse(settings.name ?? '');

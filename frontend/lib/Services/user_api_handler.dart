@@ -355,4 +355,24 @@ class UserApiHandler {
       return null;
     }
   }
+
+  Future<bool> activateAccount(String token) async {
+    final uri = Uri.parse('$baseUri/activate?token=$token');
+
+    try {
+      final response = await client.get(uri, headers: {
+        'Content-Type': 'application/json',
+      });
+
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
+        final dynamic jsonResponse = response.body;
+        if (jsonResponse == "Account activated successfully.") {
+          return true;
+        }
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
+  }
 }
