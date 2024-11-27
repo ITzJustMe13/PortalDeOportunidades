@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/State/AppBarState.dart';
 import 'package:frontend/State/LoginState.dart';
 import 'package:frontend/State/RegisterState.dart';
+import 'package:frontend/Views/ActivationSucessScreen.dart';
 import 'package:frontend/Views/LoginScreen.dart';
 import 'package:frontend/Views/RegisterScreen.dart';
 import 'package:http/http.dart' as http;
@@ -29,8 +30,7 @@ void main() {
       providers: [
         Provider<OpportunityApiHandler>(
             create: (_) => OpportunityApiHandler(http.Client())),
-        Provider<UserApiHandler>(
-            create: (_) => UserApiHandler(http.Client())),
+        Provider<UserApiHandler>(create: (_) => UserApiHandler(http.Client())),
         Provider<ReservationApiHandler>(
             create: (_) => ReservationApiHandler(http.Client())),
         Provider<ReviewApiHandler>(
@@ -71,6 +71,21 @@ class MainApp extends StatelessWidget {
         '/reservation-history': (context) => const HistoryReservationScreen(),
         '/login': (context) => LoginScreen(),
         '/register': (context) => RegisterScreen(),
+        '/activate-account': (context) => const ActivationSuccessPage(),
+      },
+      onGenerateRoute: (settings) {
+        Uri? uri = Uri.tryParse(settings.name ?? '');
+
+        // Check for deep link path
+        if (uri != null && uri.path == '/activate-account') {
+          String? token = uri.queryParameters['token'];
+          return MaterialPageRoute(
+            builder: (context) => ActivationSuccessPage(token: token),
+          );
+        }
+
+        // Default route
+        return MaterialPageRoute(builder: (context) => HomePage());
       },
     );
   }

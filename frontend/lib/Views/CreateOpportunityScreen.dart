@@ -280,10 +280,12 @@ class _AddOpportunityScreenState extends State<CreateOpportunityScreen> {
           lastDate: DateTime(2101),
         );
 
-        setState(() {
-          _date = pickedDate;
-        });
-            },
+        if (pickedDate != null) {
+          setState(() {
+            _date = pickedDate;
+          });
+        }
+      },
       controller: TextEditingController(
         text: '${_date.toLocal()}'.split(' ')[0],
       ),
