@@ -8,6 +8,10 @@ using BackEnd.Services;
 
 namespace BackEnd.Controllers
 {
+    /// <summary>
+    /// Controller Responsible for Payments
+    /// Has a constructor that receives an IPaymentService
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class PaymentController : BaseController
@@ -20,7 +24,11 @@ namespace BackEnd.Controllers
             _paymentService = paymentService ?? throw new ArgumentNullException(nameof(paymentService));
         }
 
-
+        /// <summary>
+        /// Endpoint that creates a Checkout Session for a User Reservation
+        /// </summary>
+        /// <param name="reservation"></param>
+        /// <returns></returns>
         [HttpPost("Checkout-Reservation")]
         public async Task<IActionResult> CreateReservationCheckoutSession([FromBody] Reservation reservation)
         {
@@ -30,7 +38,11 @@ namespace BackEnd.Controllers
         }
 
 
-        // POST api/payment/Checkout-Impulse
+        /// <summary>
+        /// Endpoint that creates a Checkout Session for a Opportunity Impulse payment
+        /// </summary>
+        /// <param name="impulse"></param>
+        /// <returns></returns>
         [HttpPost("Checkout-Impulse")]
         public async Task<IActionResult> CreateImpulseCheckoutSession([FromBody] Impulse impulse)
         {

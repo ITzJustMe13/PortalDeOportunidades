@@ -3,8 +3,12 @@ using BackEnd.Models.FrontEndModels;
 
 namespace BackEnd.Interfaces
 {
+    /// <summary>
+    /// This interface is responsibile for all the functions of the logic part of Reservations
+    /// </summary>
     public interface IReservationService
     {
+
         Task<ServiceResponse<IEnumerable<Reservation>>> GetAllActiveReservationsByUserIdAsync(int userId);
 
         Task<ServiceResponse<IEnumerable<Reservation>>> GetAllReservationsByUserIdAsync(int userId);

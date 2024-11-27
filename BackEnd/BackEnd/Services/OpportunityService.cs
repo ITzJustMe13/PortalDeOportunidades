@@ -85,6 +85,11 @@ namespace BackEnd.Services
             return response;
         }
 
+        /// <summary>
+        /// Function that gets all the Opportunities that are Impulsed
+        /// </summary>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true and gets all the Dtos Impulsed Opportunities</returns>
         public async Task<ServiceResponse<IEnumerable<Opportunity>>> GetAllImpulsedOpportunitiesAsync()
         {
             var response = new ServiceResponse<IEnumerable<Opportunity>>();
@@ -135,6 +140,12 @@ namespace BackEnd.Services
             return response;
         }
 
+        /// <summary>
+        /// Function that gets an Opportunity by its id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true and sends the Opportunity Dto</returns>
         public async Task<ServiceResponse<Opportunity>> GetOpportunityByIdAsync(int id)
         {
             var response = new ServiceResponse<Opportunity>();
@@ -250,6 +261,17 @@ namespace BackEnd.Services
             return response;
         }
 
+        /// <summary>
+        /// Function that searches Opportunities in the DB by certain filters
+        /// </summary>
+        /// <param name="keyword"></param>
+        /// <param name="vacancies"></param>
+        /// <param name="minPrice"></param>
+        /// <param name="maxPrice"></param>
+        /// <param name="category"></param>
+        /// <param name="location"></param>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true and returns the search results</returns>
         public async Task<ServiceResponse<List<Opportunity>>> SearchOpportunitiesAsync(
             string? keyword,
             int? vacancies,
@@ -329,6 +351,13 @@ namespace BackEnd.Services
             return response;
         }
 
+        /// <summary>
+        /// Function thate creates a Opportunity
+        /// </summary>
+        /// <param name="opportunityDto">Opportunity Dto</param>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true, creates the Opportunity and 
+        /// returns the new Dto</returns>
         public async Task<ServiceResponse<Opportunity>> CreateOpportunityAsync(Opportunity opportunityDto)
         {
             var response = new ServiceResponse<Opportunity>();
@@ -404,6 +433,12 @@ namespace BackEnd.Services
             return response;
         }
 
+        /// <summary>
+        /// Function that deletes the opportunity by its id
+        /// </summary>
+        /// <param name="id">Id of the opportunity</param>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true and deletes the opportunity</returns>
         public async Task<ServiceResponse<bool>> DeleteOpportunityByIdAsync(int id)
         {
             var response = new ServiceResponse<bool>();
@@ -466,6 +501,12 @@ namespace BackEnd.Services
             return response;
         }
 
+        /// <summary>
+        /// Function that activates the opportunity by its id
+        /// </summary>
+        /// <param name="id">Id of the opportunity</param>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true and activates the opportunity</returns>
         public async Task<ServiceResponse<bool>> ActivateOpportunityByIdAsync(int id)
         {
             var response = new ServiceResponse<bool>();
@@ -524,6 +565,12 @@ namespace BackEnd.Services
             return response;
         }
 
+        /// <summary>
+        /// Function that deactivates the opportunity by its id
+        /// </summary>
+        /// <param name="id">Id of the opportunity</param>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true and deactivates the opportunity</returns>
         public async Task<ServiceResponse<bool>> DeactivateOpportunityByIdAsync(int id)
         {
             var response = new ServiceResponse<bool>();
@@ -581,7 +628,13 @@ namespace BackEnd.Services
 
             return response;
         }
-
+        /// <summary>
+        /// Function that edits the Opportunity by its id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="updatedOpportunity"></param>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true and the updated Opportunity Dto</returns>
         public async Task<ServiceResponse<Opportunity>> EditOpportunityByIdAsync(
             int id,
             Opportunity updatedOpportunity
@@ -676,7 +729,15 @@ namespace BackEnd.Services
             return response;
         }
 
-
+        /// <summary>
+        /// Function to validate opportunity search parameters
+        /// </summary>
+        /// <param name="vacancies"></param>
+        /// <param name="minPrice"></param>
+        /// <param name="maxPrice"></param>
+        /// <param name="category"></param>
+        /// <param name="location"></param>
+        /// <returns>A list of error messages. If the list is empty, the validation passed.</returns>
         public List<string> ValidateSearchParameters(int? vacancies, decimal? minPrice, decimal? maxPrice, Category? category, Location? location)
         {
             var errors = new List<string>();

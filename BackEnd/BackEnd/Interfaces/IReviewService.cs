@@ -4,6 +4,9 @@ using BackEnd.ServiceResponses;
 
 namespace BackEnd.Interfaces
 {
+    /// <summary>
+    /// This interface is responsibile for all the functions of the logic part of Review
+    /// </summary>
     public interface IReviewService
     {
         Task<ServiceResponse<Review>> GetReviewByIdAsync(int id);

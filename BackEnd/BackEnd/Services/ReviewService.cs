@@ -8,6 +8,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BackEnd.Services
 {
+    /// <summary>
+    /// The class is responsible for the logic of Reviews of the program
+    /// and implements the IReviewService Interface
+    /// Has a constructor that receives a DBContext
+    /// </summary>
     public class ReviewService : IReviewService
     {
         private readonly ApplicationDbContext dbContext;
@@ -18,6 +23,12 @@ namespace BackEnd.Services
             this.dbContext = dbContext;
         }
 
+        /// <summary>
+        /// Function that gets a Review by its id
+        /// </summary>
+        /// <param name="id">Review id</param>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true and the Review Dto</returns>
         public async Task<ServiceResponse<Review>> GetReviewByIdAsync(int id)
         {
             var response = new ServiceResponse<Review>();
@@ -65,6 +76,12 @@ namespace BackEnd.Services
             return response;
         }
 
+        /// <summary>
+        /// Function that creates a Review by receiving a review dto
+        /// </summary>
+        /// <param name="review">Review Dto</param>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true and the created Review Dto</returns>
         public async Task<ServiceResponse<Review>> CreateReviewAsync(Review review)
         {
             var response = new ServiceResponse<Review>();
@@ -166,6 +183,12 @@ namespace BackEnd.Services
             return response;
         }
 
+        /// <summary>
+        /// Function that deletes a Review by its id
+        /// </summary>
+        /// <param name="id">Review id</param>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true and deletes the Review</returns>
         public async Task<ServiceResponse<bool>> DeleteReviewByIdAsync(int id)
         {
             var response = new ServiceResponse<bool>();
@@ -208,6 +231,13 @@ namespace BackEnd.Services
             return response;
         }
 
+        /// <summary>
+        /// Function that edits the review by receiving an updated Review dto
+        /// </summary>
+        /// <param name="id">Review id</param>
+        /// <param name="updatedReview">Updated Review Dto</param>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true and updates the Review</returns>
         public async Task<ServiceResponse<Review>> EditReviewByIdAsync(int id, Review updatedReview)
         {
             var response = new ServiceResponse<Review>();

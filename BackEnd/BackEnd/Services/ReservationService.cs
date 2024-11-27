@@ -8,6 +8,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BackEnd.Services
 {
+    /// <summary>
+    /// This class is responsible for the Reservation logic of the program
+    /// and implements the IReservationService Interface
+    /// Has a constructor that receives a DBContext
+    /// </summary>
     public class ReservationService : IReservationService
     {
         private readonly ApplicationDbContext dbContext;
@@ -18,6 +23,12 @@ namespace BackEnd.Services
             this.dbContext = dbContext;
         }
 
+        /// <summary>
+        /// Function that gets all active Reservations from a user by his id
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true and the Reservations Dtos</returns>
         public async Task<ServiceResponse<IEnumerable<Reservation>>> GetAllActiveReservationsByUserIdAsync(int userId)
         {
             var response = new ServiceResponse<IEnumerable<Reservation>>();
@@ -66,6 +77,12 @@ namespace BackEnd.Services
             return response;
         }
 
+        /// <summary>
+        /// Function that gets all the Reservations of a user by his id
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true and the Reservation Dtos</returns>
         public async Task<ServiceResponse<IEnumerable<Reservation>>> GetAllReservationsByUserIdAsync(int userId)
         {
             var response = new ServiceResponse<IEnumerable<Reservation>>();
@@ -115,6 +132,12 @@ namespace BackEnd.Services
             return response;
         }
 
+        /// <summary>
+        /// Function that get a Reservation by its id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true and the Reservation Dto</returns>
         public async Task<ServiceResponse<Reservation>> GetReservationByIdAsync(int id)
         {
             var response = new ServiceResponse<Reservation>();
@@ -162,6 +185,13 @@ namespace BackEnd.Services
             return response;
         }
 
+        /// <summary>
+        /// Function that creates a new Reservation
+        /// </summary>
+        /// <param name="reservation"></param>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true, creates the reservation
+        /// and returns the created Review Dto</returns>
         public async Task<ServiceResponse<Reservation>> CreateNewReservationAsync(Reservation reservation)
         {
             var response = new ServiceResponse<Reservation>();
@@ -256,6 +286,12 @@ namespace BackEnd.Services
             return response;
         }
 
+        /// <summary>
+        /// Function that deactivates the reservation by its id
+        /// </summary>
+        /// <param name="id">Id of the reservation</param>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true and deactivates the reservation</returns>
         public async Task<ServiceResponse<bool>> DeactivateReservationByIdAsync(int id)
         {
             var response = new ServiceResponse<bool>();
@@ -307,6 +343,14 @@ namespace BackEnd.Services
             return response;
         }
 
+        /// <summary>
+        /// Function that updates the reservation by its id and an updated reservation dto
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="reservation"></param>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true, updates the reservation and
+        /// returns the updated reservation dto</returns>
         public async Task<ServiceResponse<bool>> UpdateReservationAsync(int id, Reservation reservation)
         {
             var response = new ServiceResponse<bool>();
@@ -371,6 +415,12 @@ namespace BackEnd.Services
             return response;
         }
 
+        /// <summary>
+        /// Function that deletes the reservation by its id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true and deletes the reservation</returns>
         public async Task<ServiceResponse<bool>> DeleteReservationAsync(int id)
         {
             var response = new ServiceResponse<bool>();

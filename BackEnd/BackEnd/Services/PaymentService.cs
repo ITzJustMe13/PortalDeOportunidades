@@ -8,6 +8,11 @@ using BackEnd.Controllers.Data;
 
 namespace BackEnd.Services
 {
+    /// <summary>
+    /// This class is responsible for the Payment logic of the program
+    /// and implements the IPaymentService Interface
+    /// Has a constructor that receives a DBContext
+    /// </summary>
     public class PaymentService : IPaymentService
     {
         private readonly ApplicationDbContext dbContext;
@@ -17,6 +22,13 @@ namespace BackEnd.Services
         {
             this.dbContext = dbContext;
         }
+
+        /// <summary>
+        /// Function responsible for creating a Checkout Session for a User Reservation
+        /// </summary>
+        /// <param name="reservation">Reservation dto</param>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true with the checkout session id</returns>
         public async Task<ServiceResponse<string>> CreateReservationCheckoutSessionAsync(Reservation reservation)
         {
             var response = new ServiceResponse<string>();
@@ -108,6 +120,12 @@ namespace BackEnd.Services
             return response;
         }
 
+        /// <summary>
+        /// Function responsible for creating a Checkout Session for a Impulse Opportunity payment
+        /// </summary>
+        /// <param name="impulse">Impulse dto</param>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true with the checkout session id</returns>
         public async Task<ServiceResponse<string>> CreateImpulseCheckoutSessionAsync(Impulse impulse)
         {
             var response = new ServiceResponse<string>();
