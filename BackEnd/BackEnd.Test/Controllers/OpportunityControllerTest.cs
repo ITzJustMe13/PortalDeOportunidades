@@ -11,6 +11,7 @@ using DotNetEnv;
 using BackEnd.Interfaces;
 using Moq;
 using BackEnd.Services;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace BackEnd.Test
 {
@@ -1622,25 +1623,51 @@ namespace BackEnd.Test
         {
             // Arrange
             var opportunityId = 1;
-            var opportunityModel = new OpportunityModel { OpportunityId = opportunityId, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "a description", Date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
+
+            // Create an existing OpportunityModel
+            var opportunityModel = new OpportunityModel
+            {
+                OpportunityId = opportunityId,
+                Price = 100,
+                Address = "um sitio",
+                Category = Enums.Category.AGRICULTURA,
+                UserID = 1,
+                Name = "name",
+                Description = "a description",
+                Date = DateTime.Now.AddDays(30),
+                Vacancies = 2,
+                IsActive = true,
+                Location = Enums.Location.LISBOA,
+                Score = 0,
+                IsImpulsed = false
+            };
 
             _context.Opportunities.Add(opportunityModel);
             await _context.SaveChangesAsync();
 
-            var name = "oportunidade 1";
-            var description = "description1";
-            var price = 255;
-            var vacancies = 11;
-            var category = Enums.Category.DESPORTOS_ATIVIDADES_AO_AR_LIVRE;
-            var location = Enums.Location.SETUBAL;
-            var address = "Rua da Oportunidade 1";
-            var date = DateTime.Now.AddDays(45);
+            // Example image data (byte array)
+            var image = new byte[] { 0xFF, 0xFF, 0x00, 0x00 };
 
-            byte[] image = { 0xFF, 0xFF, 0x00, 0x00 };
-            var newImageUrls = new List<byte[]> { image, image };
+            var oppImg = new OpportunityImg { image = image, opportunityId = opportunityId };
+            var oppImgList = new List<OpportunityImg> { oppImg , oppImg};
+
+            var opportunityDto = new Opportunity
+            {
+                name = "oportunidade 1",
+                description = "description1",
+                userId = 1,
+                price = 255,
+                vacancies = 11,
+                category = Enums.Category.DESPORTOS_ATIVIDADES_AO_AR_LIVRE,
+                location = Enums.Location.SETUBAL,
+                address = "Rua da Oportunidade 1",
+                date = DateTime.Now.AddDays(45),
+                isImpulsed = false,
+                OpportunityImgs = oppImgList
+            };
 
             // Act
-            var response = await _controller.EditOpportunityById(opportunityId, name, description, price, vacancies, category, location, address, date, newImageUrls);
+            var response = await _controller.EditOpportunityById(opportunityId, opportunityDto);
 
             // Assert
             Assert.That(response, Is.TypeOf<OkObjectResult>(), "Expected OkObjectResult for valid opportunity ID and valid values");
@@ -1649,26 +1676,37 @@ namespace BackEnd.Test
             Assert.That(okResult, Is.Not.Null, "OkObjectResult should not be null");
 
             var returnedOpportunity = okResult.Value as Opportunity;
-            Assert.That(returnedOpportunity, Is.TypeOf<Opportunity>(), "Expected Opportunity object for valid opportunityId");
-            Assert.That(returnedOpportunity.opportunityId, Is.EqualTo(opportunityId), "Expected returned opportunity id to be the same as the given in the request");
-            Assert.That(returnedOpportunity.name, Is.EqualTo(name), "Expected returned name to be the same as the given in the request");
-            Assert.That(returnedOpportunity.description, Is.EqualTo(description), "Expected returned description to be the same as the given in the request");
-            Assert.That(returnedOpportunity.price, Is.EqualTo(price), "Expected returned price to be the same as the given in the request");
-            Assert.That(returnedOpportunity.vacancies, Is.EqualTo(vacancies), "Expected returned vacancies to be the same as the given in the request");
-            Assert.That(returnedOpportunity.category, Is.EqualTo(category), "Expected returned category to be the same as the given in the request");
-            Assert.That(returnedOpportunity.location, Is.EqualTo(location), "Expected returned location to be the same as the given in the request");
-            Assert.That(returnedOpportunity.address, Is.EqualTo(address), "Expected returned address to be the same as the given in the request");
-            Assert.That(returnedOpportunity.date, Is.EqualTo(date), "Expected returned date to be the same as the given in the request");
+            Assert.That(returnedOpportunity, Is.Not.Null, "Expected Opportunity object for valid opportunityId");
+            Assert.That(returnedOpportunity.opportunityId, Is.EqualTo(opportunityId), "Expected returned opportunity ID to match the request ID");
+            Assert.That(returnedOpportunity.name, Is.EqualTo(opportunityDto.name), "Expected returned name to match the updated value");
+            Assert.That(returnedOpportunity.description, Is.EqualTo(opportunityDto.description), "Expected returned description to match the updated value");
+            Assert.That(returnedOpportunity.price, Is.EqualTo(opportunityDto.price), "Expected returned price to match the updated value");
+            Assert.That(returnedOpportunity.vacancies, Is.EqualTo(opportunityDto.vacancies), "Expected returned vacancies to match the updated value");
+            Assert.That(returnedOpportunity.category, Is.EqualTo(opportunityDto.category), "Expected returned category to match the updated value");
+            Assert.That(returnedOpportunity.location, Is.EqualTo(opportunityDto.location), "Expected returned location to match the updated value");
+            Assert.That(returnedOpportunity.address, Is.EqualTo(opportunityDto.address), "Expected returned address to match the updated value");
+            Assert.That(returnedOpportunity.date, Is.EqualTo(opportunityDto.date), "Expected returned date to match the updated value");
 
-            var returnedImages = new List<byte[]>();
+            // Validate returned images
+            Assert.That(returnedOpportunity.OpportunityImgs, Is.Not.Null, "Expected OpportunityImgs to not be null");
+            Assert.That(returnedOpportunity.OpportunityImgs.Count, Is.EqualTo(opportunityDto.OpportunityImgs.Count), "Expected OpportunityImgs count to match the request");
 
-            for (int i = 0; i < returnedOpportunity.OpportunityImgs.Count; i++)
+            var expectedImages = oppImgList.Select(img => img.image).ToList(); // Extract expected images (byte[])
+
+            Assert.That(returnedOpportunity.OpportunityImgs.Count, Is.EqualTo(expectedImages.Count),
+                "Expected the number of returned images to match the given images");
+
+            int index = 0;
+            foreach (var actualImageObj in returnedOpportunity.OpportunityImgs)
             {
-                returnedImages.Add(image);
+                var actualImage = actualImageObj.image; // Access the byte[] from the current image
+                var expectedImage = expectedImages[index]; // Get the corresponding expected image
+                Assert.That(actualImage, Is.EqualTo(expectedImage),
+                    $"Expected image at index {index} to match the given image");
+                index++;
             }
-
-            Assert.That(returnedImages, Is.EquivalentTo(newImageUrls), "Expected returned OpportunityImgs to be the same as the given in the request");
         }
+
 
         [Test]
         [Category("UnitTest")]
@@ -1681,20 +1719,28 @@ namespace BackEnd.Test
             _context.Opportunities.Add(opportunityModel);
             await _context.SaveChangesAsync();
 
-            var name = "oportunidade 1";
-            var description = "description1";
-            var price = 255;
-            var vacancies = 11;
-            var category = Enums.Category.DESPORTOS_ATIVIDADES_AO_AR_LIVRE;
-            var location = Enums.Location.SETUBAL;
-            var address = "Rua da Oportunidade 1";
-            var date = DateTime.Now.AddDays(45);
+            var image = new byte[] { 0xFF, 0xFF, 0x00, 0x00 };
 
-            byte[] image = { 0xFF, 0xFF, 0x00, 0x00 };
-            var newImageUrls = new List<byte[]> { image, image };
+            var oppImg = new OpportunityImg { image = image, opportunityId = opportunityId };
+            var oppImgList = new List<OpportunityImg> { oppImg, oppImg };
+
+            var opportunityDto = new Opportunity
+            {
+                name = "oportunidade 1",
+                description = "description1",
+                userId = 1,
+                price = 255,
+                vacancies = 11,
+                category = Enums.Category.DESPORTOS_ATIVIDADES_AO_AR_LIVRE,
+                location = Enums.Location.SETUBAL,
+                address = "Rua da Oportunidade 1",
+                date = DateTime.Now.AddDays(45),
+                isImpulsed = false,
+                OpportunityImgs = oppImgList
+            };
 
             // Act
-            var response = await _controller.EditOpportunityById(opportunityId, name, description, price, vacancies, category, location, address, date, newImageUrls);
+            var response = await _controller.EditOpportunityById(opportunityId, opportunityDto);
 
             // Assert
             Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if the id is invalid");
@@ -1716,20 +1762,28 @@ namespace BackEnd.Test
             _context.Opportunities.Add(opportunityModel);
             await _context.SaveChangesAsync();
 
-            var name = "oportunidade 1";
-            var description = "description1";
-            var price = 255;
-            var vacancies = 11;
-            var category = Enums.Category.DESPORTOS_ATIVIDADES_AO_AR_LIVRE;
-            var location = Enums.Location.SETUBAL;
-            var address = "Rua da Oportunidade 1";
-            var date = DateTime.Now.AddDays(45);
+            var image = new byte[] { 0xFF, 0xFF, 0x00, 0x00 };
 
-            byte[] image = { 0xFF, 0xFF, 0x00, 0x00 };
-            var newImageUrls = new List<byte[]> { image, image };
+            var oppImg = new OpportunityImg { image = image, opportunityId = opportunityId };
+            var oppImgList = new List<OpportunityImg> { oppImg, oppImg };
+
+            var opportunityDto = new Opportunity
+            {
+                name = "oportunidade 1",
+                description = "description1",
+                userId = 1,
+                price = 255,
+                vacancies = 11,
+                category = Enums.Category.DESPORTOS_ATIVIDADES_AO_AR_LIVRE,
+                location = Enums.Location.SETUBAL,
+                address = "Rua da Oportunidade 1",
+                date = DateTime.Now.AddDays(45),
+                isImpulsed = false,
+                OpportunityImgs = oppImgList
+            };
 
             // Act
-            var response = await _controller.EditOpportunityById(opportunityId, name, description, price, vacancies, category, location, address, date, newImageUrls);
+            var response = await _controller.EditOpportunityById(opportunityId, opportunityDto);
 
             // Assert
             Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if the id is non existent");
@@ -1750,20 +1804,28 @@ namespace BackEnd.Test
             _context.Opportunities.Add(opportunityModel);
             await _context.SaveChangesAsync();
 
-            var name = "oportunidade 1";
-            var description = "description1";
-            var price = 0;
-            var vacancies = 11;
-            var category = Enums.Category.DESPORTOS_ATIVIDADES_AO_AR_LIVRE;
-            var location = Enums.Location.SETUBAL;
-            var address = "Rua da Oportunidade 1";
-            var date = DateTime.Now.AddDays(45);
+            var image = new byte[] { 0xFF, 0xFF, 0x00, 0x00 };
 
-            byte[] image = { 0xFF, 0xFF, 0x00, 0x00 };
-            var newImageUrls = new List<byte[]> { image, image };
+            var oppImg = new OpportunityImg { image = image, opportunityId = opportunityId };
+            var oppImgList = new List<OpportunityImg> { oppImg, oppImg };
+
+            var opportunityDto = new Opportunity
+            {
+                name = "oportunidade 1",
+                description = "description1",
+                userId = 1,
+                price = 0,
+                vacancies = 11,
+                category = Enums.Category.DESPORTOS_ATIVIDADES_AO_AR_LIVRE,
+                location = Enums.Location.SETUBAL,
+                address = "Rua da Oportunidade 1",
+                date = DateTime.Now.AddDays(45),
+                isImpulsed = false,
+                OpportunityImgs = oppImgList
+            };
 
             // Act
-            var response = await _controller.EditOpportunityById(opportunityId, name, description, price, vacancies, category, location, address, date, newImageUrls);
+            var response = await _controller.EditOpportunityById(opportunityId, opportunityDto);
 
             // Assert
             Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if the id is valid and the price is invalid");
@@ -1784,20 +1846,28 @@ namespace BackEnd.Test
             _context.Opportunities.Add(opportunityModel);
             await _context.SaveChangesAsync();
 
-            var name = "oportunidade 1";
-            var description = "description1";
-            var price = 1;
-            var vacancies = 0;
-            var category = Enums.Category.DESPORTOS_ATIVIDADES_AO_AR_LIVRE;
-            var location = Enums.Location.SETUBAL;
-            var address = "Rua da Oportunidade 1";
-            var date = DateTime.Now.AddDays(45);
+            var image = new byte[] { 0xFF, 0xFF, 0x00, 0x00 };
 
-            byte[] image = { 0xFF, 0xFF, 0x00, 0x00 };
-            var newImageUrls = new List<byte[]> { image, image };
+            var oppImg = new OpportunityImg { image = image, opportunityId = opportunityId };
+            var oppImgList = new List<OpportunityImg> { oppImg, oppImg };
+
+            var opportunityDto = new Opportunity
+            {
+                name = "oportunidade 1",
+                description = "description1",
+                userId = 1,
+                price = 255,
+                vacancies = 0,
+                category = Enums.Category.DESPORTOS_ATIVIDADES_AO_AR_LIVRE,
+                location = Enums.Location.SETUBAL,
+                address = "Rua da Oportunidade 1",
+                date = DateTime.Now.AddDays(45),
+                isImpulsed = false,
+                OpportunityImgs = oppImgList
+            };
 
             // Act
-            var response = await _controller.EditOpportunityById(opportunityId, name, description, price, vacancies, category, location, address, date, newImageUrls);
+            var response = await _controller.EditOpportunityById(opportunityId, opportunityDto);
 
             // Assert
             Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if the id is valid and the vacancies is invalid");
@@ -1818,20 +1888,29 @@ namespace BackEnd.Test
             _context.Opportunities.Add(opportunityModel);
             await _context.SaveChangesAsync();
 
-            var name = "oportunidade 1";
-            var description = "description1";
-            var price = 1;
-            var vacancies = 1;
-            var category = (Enums.Category?)-1;
-            var location = Enums.Location.SETUBAL;
-            var address = "Rua da Oportunidade 1";
-            var date = DateTime.Now.AddDays(45);
+            var image = new byte[] { 0xFF, 0xFF, 0x00, 0x00 };
 
-            byte[] image = { 0xFF, 0xFF, 0x00, 0x00 };
-            var newImageUrls = new List<byte[]> { image, image };
+            var oppImg = new OpportunityImg { image = image, opportunityId = opportunityId };
+            var oppImgList = new List<OpportunityImg> { oppImg, oppImg };
+
+            var opportunityDto = new Opportunity
+            {
+                name = "oportunidade 1",
+                description = "description1",
+                userId = 1,
+                price = 255,
+                vacancies = 11,
+                category = (Enums.Category)9999,
+                location = Enums.Location.SETUBAL,
+                address = "Rua da Oportunidade 1",
+                date = DateTime.Now.AddDays(45),
+                isImpulsed = false,
+                OpportunityImgs = oppImgList
+            };
+
 
             // Act
-            var response = await _controller.EditOpportunityById(opportunityId, name, description, price, vacancies, category, location, address, date, newImageUrls);
+            var response = await _controller.EditOpportunityById(opportunityId, opportunityDto);
 
             // Assert
             Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if the id is valid and the Category is invalid");
@@ -1852,20 +1931,28 @@ namespace BackEnd.Test
             _context.Opportunities.Add(opportunityModel);
             await _context.SaveChangesAsync();
 
-            var name = "oportunidade 1";
-            var description = "description1";
-            var price = 1;
-            var vacancies = 1;
-            var category = Enums.Category.DESPORTOS_ATIVIDADES_AO_AR_LIVRE;
-            var location = (Enums.Location)(-7);
-            var address = "Rua da Oportunidade 1";
-            var date = DateTime.Now.AddDays(45);
+            var image = new byte[] { 0xFF, 0xFF, 0x00, 0x00 };
 
-            byte[] image = { 0xFF, 0xFF, 0x00, 0x00 };
-            var newImageUrls = new List<byte[]> { image, image };
+            var oppImg = new OpportunityImg { image = image, opportunityId = opportunityId };
+            var oppImgList = new List<OpportunityImg> { oppImg, oppImg };
+
+            var opportunityDto = new Opportunity
+            {
+                name = "oportunidade 1",
+                description = "description1",
+                userId = 1,
+                price = 255,
+                vacancies = 11,
+                category = Enums.Category.DESPORTOS_ATIVIDADES_AO_AR_LIVRE,
+                location = (Enums.Location)9999,
+                address = "Rua da Oportunidade 1",
+                date = DateTime.Now.AddDays(45),
+                isImpulsed = false,
+                OpportunityImgs = oppImgList
+            };
 
             // Act
-            var response = await _controller.EditOpportunityById(opportunityId, name, description, price, vacancies, category, location, address, date, newImageUrls);
+            var response = await _controller.EditOpportunityById(opportunityId, opportunityDto);
 
             // Assert
             Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if the id is valid and the Location is invalid");
@@ -1886,20 +1973,28 @@ namespace BackEnd.Test
             _context.Opportunities.Add(opportunityModel);
             await _context.SaveChangesAsync();
 
-            var name = "oportunidade 1";
-            var description = "description1";
-            var price = 1;
-            var vacancies = 1;
-            var category = Enums.Category.DESPORTOS_ATIVIDADES_AO_AR_LIVRE;
-            var location = Enums.Location.LISBOA;
-            var address = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-            var date = DateTime.Now.AddDays(45);
+            var image = new byte[] { 0xFF, 0xFF, 0x00, 0x00 };
 
-            byte[] image = { 0xFF, 0xFF, 0x00, 0x00 };
-            var newImageUrls = new List<byte[]> { image, image };
+            var oppImg = new OpportunityImg { image = image, opportunityId = opportunityId };
+            var oppImgList = new List<OpportunityImg> { oppImg, oppImg };
 
+            var opportunityDto = new Opportunity
+            {
+                name = "oportunidade 1",
+                description = "description1",
+                userId = 1,
+                price = 255,
+                vacancies = 11,
+                category = Enums.Category.DESPORTOS_ATIVIDADES_AO_AR_LIVRE,
+                location = Enums.Location.SETUBAL,
+                address = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                date = DateTime.Now.AddDays(45),
+                isImpulsed = false,
+                OpportunityImgs = oppImgList
+            };
+           
             // Act
-            var response = await _controller.EditOpportunityById(opportunityId, name, description, price, vacancies, category, location, address, date, newImageUrls);
+            var response = await _controller.EditOpportunityById(opportunityId, opportunityDto);
 
             // Assert
             Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if the id is valid and the Address is invalid");
@@ -1920,20 +2015,28 @@ namespace BackEnd.Test
             _context.Opportunities.Add(opportunityModel);
             await _context.SaveChangesAsync();
 
-            var name = "oportunidade 1";
-            var description = "description1";
-            var price = 1;
-            var vacancies = 1;
-            var category = Enums.Category.DESPORTOS_ATIVIDADES_AO_AR_LIVRE;
-            var location = Enums.Location.LEIRIA;
-            var address = "Rua da Oportunidade 1";
-            var date = DateTime.Now.AddDays(-45);
+            var image = new byte[] { 0xFF, 0xFF, 0x00, 0x00 };
 
-            byte[] image = { 0xFF, 0xFF, 0x00, 0x00 };
-            var newImageUrls = new List<byte[]> { image, image };
+            var oppImg = new OpportunityImg { image = image, opportunityId = opportunityId };
+            var oppImgList = new List<OpportunityImg> { oppImg, oppImg };
+
+            var opportunityDto = new Opportunity
+            {
+                name = "oportunidade 1",
+                description = "description1",
+                userId = 1,
+                price = 255,
+                vacancies = 11,
+                category = Enums.Category.DESPORTOS_ATIVIDADES_AO_AR_LIVRE,
+                location = Enums.Location.SETUBAL,
+                address = "Rua da Oportunidade 1",
+                date = DateTime.Now.AddDays(-45),
+                isImpulsed = false,
+                OpportunityImgs = oppImgList
+            };
 
             // Act
-            var response = await _controller.EditOpportunityById(opportunityId, name, description, price, vacancies, category, location, address, date, newImageUrls);
+            var response = await _controller.EditOpportunityById(opportunityId, opportunityDto);
 
             // Assert
             Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if the id is valid and the Location is invalid");
@@ -1959,10 +2062,28 @@ namespace BackEnd.Test
             _context.Opportunities.Add(opportunityModel);
             await _context.SaveChangesAsync();
 
-            var name = "oportunidade 1";
+            var image = new byte[] { 0xFF, 0xFF, 0x00, 0x00 };
+
+            var oppImg = new OpportunityImg { image = image, opportunityId = opportunityId };
+            var oppImgList = new List<OpportunityImg> { oppImg, oppImg };
+
+            var opportunityDto = new Opportunity
+            {
+                name = "oportunidade 1",
+                description = "description1",
+                userId = 1,
+                price = 255,
+                vacancies = 10,
+                category = Enums.Category.DESPORTOS_ATIVIDADES_AO_AR_LIVRE,
+                location = Enums.Location.SETUBAL,
+                address = "Rua da Oportunidade 1",
+                date = DateTime.Now.AddDays(45),
+                isImpulsed = false,
+                OpportunityImgs = oppImgList
+            };
 
             // Act
-            var response = await controller.EditOpportunityById(opportunityId, name, null, null, null, null, null, null, null, null);
+            var response = await controller.EditOpportunityById(opportunityId, opportunityDto);
 
             // Assert
             Assert.That(response, Is.InstanceOf<NotFoundObjectResult>());

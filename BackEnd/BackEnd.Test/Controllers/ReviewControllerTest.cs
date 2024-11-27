@@ -459,9 +459,10 @@ namespace BackEnd.Test
             var reviewModel = new ReviewModel { ReservationId = reservationId, Rating = 4.5f, Desc = "Test review" };
             _context.Reviews.Add(reviewModel);
             await _context.SaveChangesAsync();
+            var reviewDto = new Review {reservationId = invalidReservationId ,rating = 4.5f, desc = "desc" };
 
             // Act
-            var response = await _controller.EditReviewById(2, 4.5F, "Great test");
+            var response = await _controller.EditReviewById(2, reviewDto);
 
             // Assert
             Assert.That(response, Is.TypeOf<NotFoundObjectResult>());
@@ -485,9 +486,10 @@ namespace BackEnd.Test
 
             _context.Reviews.Add(reviewModel);
             await _context.SaveChangesAsync();
+            var reviewDto = new Review { reservationId = reservationId, rating = 2.5f, desc = "Great test" };
 
             // Act
-            var response = await _controller.EditReviewById(reservationId, 2.5F, "Great test");
+            var response = await _controller.EditReviewById(reservationId, reviewDto);
 
             // Assert
             Assert.That(response, Is.TypeOf<OkObjectResult>());
@@ -510,9 +512,9 @@ namespace BackEnd.Test
             var reviewModel = new ReviewModel { ReservationId = reservationId, Rating = 4.5f, Desc = "Test review" };
             _context.Reviews.Add(reviewModel);
             await _context.SaveChangesAsync();
-
+            var reviewDto = new Review { reservationId = reservationId, rating = -1, desc = "desc" };
             // Act
-            var response = await _controller.EditReviewById(1, -1, "Great test");
+            var response = await _controller.EditReviewById(1, reviewDto);
 
             // Assert
             Assert.That(response, Is.TypeOf<BadRequestObjectResult>());
@@ -533,9 +535,10 @@ namespace BackEnd.Test
             var reviewModel = new ReviewModel { ReservationId = reservationId, Rating = 4.5f, Desc = "Test review" };
             _context.Reviews.Add(reviewModel);
             await _context.SaveChangesAsync();
+            var reviewDto = new Review { reservationId = reservationId, rating = 4.5f, desc = "desc" };
 
             // Act
-            var response = await controller.EditReviewById(1, 2.5F, "Great test");
+            var response = await controller.EditReviewById(1, reviewDto);
 
             // Assert
             Assert.That(response, Is.InstanceOf<NotFoundObjectResult>());
