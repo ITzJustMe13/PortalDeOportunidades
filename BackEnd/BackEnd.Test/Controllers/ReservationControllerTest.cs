@@ -97,8 +97,8 @@ namespace BackEnd.Test
                 isActive = true,
                 fixedPrice = 100
             };
-            await _controller.CreateNewReservation(reservation);
-            await _controller.CreateNewReservation(reservation2);
+            await _controller.CreateEntity(reservation);
+            await _controller.CreateEntity(reservation2);
 
             // Act
 
@@ -153,8 +153,8 @@ namespace BackEnd.Test
                 isActive = true,
                 fixedPrice = 100
             };
-            await _controller.CreateNewReservation(reservation);
-            await _controller.CreateNewReservation(reservation2);
+            await _controller.CreateEntity(reservation);
+            await _controller.CreateEntity(reservation2);
 
             // Act
 
@@ -202,8 +202,8 @@ namespace BackEnd.Test
                 isActive = false,
                 fixedPrice = 100
             };
-            await _controller.CreateNewReservation(reservation);
-            await _controller.CreateNewReservation(reservation2);
+            await _controller.CreateEntity(reservation);
+            await _controller.CreateEntity(reservation2);
 
             // Act
 
@@ -257,8 +257,8 @@ namespace BackEnd.Test
                 isActive = false,
                 fixedPrice = 100
             };
-            await _controller.CreateNewReservation(reservation);
-            await _controller.CreateNewReservation(reservation2);
+            await _controller.CreateEntity(reservation);
+            await _controller.CreateEntity(reservation2);
 
             // Act
 
@@ -294,7 +294,7 @@ namespace BackEnd.Test
             int ReservationID = 1;
 
             // Act
-            var result = await _controller.GetReservationById(ReservationID);
+            var result = await _controller.GetEntityById(ReservationID);
 
             // Assert
             Assert.That(result, Is.TypeOf<NotFoundObjectResult>());
@@ -322,7 +322,7 @@ namespace BackEnd.Test
             _context.Reservations.Add(reservation);
 
             // Act
-            var result = await _controller.GetReservationById(reservation.reservationID);
+            var result = await _controller.GetEntityById(reservation.reservationID);
 
             // Assert
             Assert.That(result, Is.TypeOf<OkObjectResult>());
@@ -356,7 +356,7 @@ namespace BackEnd.Test
             _context.Reservations.Add(reservation);
 
             // Act
-            var result = await controller.GetReservationById(reservation.reservationID);
+            var result = await controller.GetEntityById(reservation.reservationID);
 
             // Assert
             Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
@@ -388,7 +388,7 @@ namespace BackEnd.Test
             };
 
             // Act
-            var result = await _controller.CreateNewReservation(reservation);
+            var result = await _controller.CreateEntity(reservation);
 
             // Assert
             Assert.That(result, Is.TypeOf<CreatedAtActionResult>());
@@ -434,7 +434,7 @@ namespace BackEnd.Test
             };
 
             // Act
-            var result = await controller.CreateNewReservation(reservation);
+            var result = await controller.CreateEntity(reservation);
 
             // Assert
             Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
@@ -466,7 +466,7 @@ namespace BackEnd.Test
             };
 
             // Act
-            var result = await _controller.CreateNewReservation(reservation);
+            var result = await _controller.CreateEntity(reservation);
 
             // Assert
             Assert.That(result, Is.TypeOf<BadRequestObjectResult>());
@@ -498,7 +498,7 @@ namespace BackEnd.Test
             };
 
             // Act
-            var result = await _controller.CreateNewReservation(reservation);
+            var result = await _controller.CreateEntity(reservation);
 
             // Assert
             Assert.That(result, Is.TypeOf<NotFoundObjectResult>());
@@ -530,7 +530,7 @@ namespace BackEnd.Test
             };
 
             // Act
-            var result = await _controller.CreateNewReservation(reservation);
+            var result = await _controller.CreateEntity(reservation);
 
             // Assert
             Assert.That(result, Is.TypeOf<NotFoundObjectResult>());
@@ -563,7 +563,7 @@ namespace BackEnd.Test
             };
 
             // Act
-            var result = await _controller.CreateNewReservation(reservation);
+            var result = await _controller.CreateEntity(reservation);
 
             // Assert
             Assert.That(result, Is.TypeOf<BadRequestObjectResult>());
@@ -595,7 +595,7 @@ namespace BackEnd.Test
             };
 
             // Act
-            var result = await _controller.CreateNewReservation(reservation);
+            var result = await _controller.CreateEntity(reservation);
 
             // Assert
             Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
@@ -749,7 +749,7 @@ namespace BackEnd.Test
             await _context.SaveChangesAsync();
 
             // Act
-            var result = await _controller.UpdateReservation(reservation.reservationID, reservationDTO);
+            var result = await _controller.UpdateEntity(reservation.reservationID, reservationDTO);
 
             // Assert
             Assert.That(result, Is.InstanceOf<OkObjectResult>());
@@ -794,7 +794,7 @@ namespace BackEnd.Test
             await _context.SaveChangesAsync();
 
             // Act
-            var result = await controller.UpdateReservation(reservation.reservationID, reservationDTO);
+            var result = await controller.UpdateEntity(reservation.reservationID, reservationDTO);
 
             // Assert
             Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
@@ -822,7 +822,7 @@ namespace BackEnd.Test
             };
 
             // Act
-            var result = await _controller.UpdateReservation(reservationid, reservationDTO);
+            var result = await _controller.UpdateEntity(reservationid, reservationDTO);
 
             // Assert
             Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
@@ -865,7 +865,7 @@ namespace BackEnd.Test
             await _context.SaveChangesAsync();
 
             // Act
-            var result = await _controller.UpdateReservation(reservation.reservationID, reservationDTO);
+            var result = await _controller.UpdateEntity(reservation.reservationID, reservationDTO);
 
             // Assert
             Assert.That(result, Is.TypeOf<BadRequestObjectResult>());
@@ -909,7 +909,7 @@ namespace BackEnd.Test
             await _context.SaveChangesAsync();
 
             // Act
-            var result = await _controller.UpdateReservation(reservation.reservationID, reservationDTO);
+            var result = await _controller.UpdateEntity(reservation.reservationID, reservationDTO);
 
             // Assert
             Assert.That(result, Is.TypeOf<BadRequestObjectResult>());
@@ -938,7 +938,7 @@ namespace BackEnd.Test
             await _context.SaveChangesAsync();
 
             // Act
-            var result = await _controller.DeleteReservation(reservation.reservationID);
+            var result = await _controller.DeleteEntity(reservation.reservationID);
 
             // Assert
             Assert.That(result, Is.TypeOf<OkObjectResult>());
@@ -968,7 +968,7 @@ namespace BackEnd.Test
             await _context.SaveChangesAsync();
 
             // Act
-            var result = await controller.DeleteReservation(reservation.reservationID);
+            var result = await controller.DeleteEntity(reservation.reservationID);
 
             // Assert
             Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
@@ -986,7 +986,7 @@ namespace BackEnd.Test
   
 
             // Act
-            var result = await _controller.DeleteReservation(reservationid);
+            var result = await _controller.DeleteEntity(reservationid);
 
             // Assert
             Assert.That(result, Is.TypeOf<NotFoundObjectResult>());

@@ -1,15 +1,7 @@
-using BackEnd.Controllers.Data;
-using BackEnd.Enums;
-using BackEnd.Models.BackEndModels;
 using BackEnd.Models.FrontEndModels;
-using BackEnd.Models.Mappers;
-using BackEnd.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
-using BackEnd.Services;
 using BackEnd.Interfaces;
 using BackEnd.ServiceResponses;
 
@@ -21,7 +13,7 @@ namespace BackEnd.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : BaseController
+    public class UserController : BaseCrudController<User>
     {
         private readonly IUserService _userService;
         private readonly IFavoritesService _favoritesService;
@@ -39,7 +31,7 @@ namespace BackEnd.Controllers
         /// <returns>Returns NotFound() if is not sucessefully or OK() with the User Dto if it is</returns>
         [HttpGet("{id}")]
         [Authorize]
-        public async Task<IActionResult> GetUserByID(int id)
+        public override async Task<IActionResult> GetEntityById(int id)
         {
             var serviceResponse = await _userService.GetUserByIDAsync(id);
 
@@ -54,7 +46,7 @@ namespace BackEnd.Controllers
         /// NotFound() if userService responds "NotFound", or CreatedAtAction()
         /// with the path for the newly created user</returns>
         [HttpPost]
-        public async Task<IActionResult> CreateNewUser(User user)
+        public override async Task<IActionResult> CreateEntity(User user)
         {
             var serviceResponse = await _userService.CreateNewUserAsync(user);
 
@@ -63,7 +55,7 @@ namespace BackEnd.Controllers
                 return HandleResponse(serviceResponse);
             }
 
-            return HandleCreatedAtAction(serviceResponse, nameof(GetUserByID), new { id = serviceResponse.Data.userId });
+            return HandleCreatedAtAction(serviceResponse, nameof(GetEntityById), new { id = serviceResponse.Data.userId });
         }
 
 
@@ -76,7 +68,7 @@ namespace BackEnd.Controllers
         /// user is correctly deleted from the system</returns>
         [HttpDelete("{id}")]
         [Authorize]
-        public async Task<IActionResult> DeleteUser(int id)
+        public override async Task<IActionResult> DeleteEntity(int id)
         {
             {
                 var serviceResponse = await _userService.DeleteUserAsync(id);
@@ -97,7 +89,7 @@ namespace BackEnd.Controllers
         /// updated User dto if updated correctly</returns>
         [HttpPut("{id}")]
         [Authorize]
-        public async Task<IActionResult> EditUser(int id, User updatedUser)
+        public override async Task<IActionResult> UpdateEntity(int id, User updatedUser)
         {
             var serviceResponse = await _userService.EditUserAsync(id, updatedUser);
 

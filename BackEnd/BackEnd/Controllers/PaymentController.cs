@@ -14,7 +14,7 @@ namespace BackEnd.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    public class PaymentController : BaseController
+    public class PaymentController : ResponseController
     {
         private readonly IPaymentService _paymentService;
 

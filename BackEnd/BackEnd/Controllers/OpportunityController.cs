@@ -1,23 +1,14 @@
-﻿using BackEnd.Controllers.Data;
-using BackEnd.Enums;
-using BackEnd.Models.BackEndModels;
+﻿using BackEnd.Enums;
 using BackEnd.Models.FrontEndModels;
-using BackEnd.Models.Mappers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.IdentityModel.Tokens;
-using System.ComponentModel.DataAnnotations;
-using System.Security;
-using BackEnd.Services;
 using BackEnd.Interfaces;
 
 namespace BackEnd.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class OpportunityController : BaseController
+    public class OpportunityController : BaseCrudController<Opportunity>
     {
         private IOpportunityService _opportunityService;
 
@@ -46,7 +37,7 @@ namespace BackEnd.Controllers
 
         //GET api/Opportunity/1
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetOpportunityById(int id)
+        public override async Task<IActionResult> GetEntityById(int id)
         {
             var serviceResponse = await _opportunityService.GetOpportunityByIdAsync(id);
 
@@ -81,7 +72,7 @@ namespace BackEnd.Controllers
         //POST api/Opportunity/
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> CreateOpportunity(Opportunity opportunity)
+        public override async Task<IActionResult> CreateEntity(Opportunity opportunity)
         {
             var serviceResponse = await _opportunityService.CreateOpportunityAsync(opportunity);
 
@@ -91,7 +82,7 @@ namespace BackEnd.Controllers
             }
 
             return HandleCreatedAtAction(serviceResponse,
-                nameof(GetOpportunityById),
+                nameof(GetEntityById),
                 new { id = serviceResponse.Data.opportunityId }        
             );
         }
@@ -99,7 +90,7 @@ namespace BackEnd.Controllers
         //DELETE api/Opportunity/1
         [HttpDelete("{id}")]
         [Authorize]
-        public async Task<IActionResult> DeleteOpportunityById(int id)
+        public override async Task<IActionResult> DeleteEntity(int id)
         {
             var serviceResponse = await _opportunityService.DeleteOpportunityByIdAsync(id);
 
@@ -129,7 +120,7 @@ namespace BackEnd.Controllers
         // PUT api/Opportunity/1/Edit?name=event&description=description&price=10&vacancies=2&category=agricultura&location=VilaReal&address=RuaTeste&date=10/02/2025&newImages=["img1","img2"]
         [HttpPut("{id}/Edit")]
         [Authorize]
-        public async Task<IActionResult> EditOpportunityById(
+        public override async Task<IActionResult> UpdateEntity(
             int id,
             Opportunity updatedOpportunity
         )

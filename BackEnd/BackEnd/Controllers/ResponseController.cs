@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BackEnd.Controllers
 {
-    public class BaseController : ControllerBase
+    public class ResponseController : ControllerBase
     {
         protected IActionResult HandleResponse<T>(ServiceResponse<T> serviceResponse)
         {
@@ -34,7 +34,6 @@ namespace BackEnd.Controllers
             object routeValues
         )
         {
-
             return CreatedAtAction(actionName, routeValues,  serviceResponse.Data);
         }
 

@@ -53,7 +53,7 @@ namespace BackEnd.Test
             await _context.SaveChangesAsync();
 
             // Act
-            var response = await _controller.GetReviewById(reviewId);
+            var response = await _controller.GetEntityById(reviewId);
 
             // Assert
             Assert.That(response, Is.TypeOf<OkObjectResult>(), "Expected OkObjectResult for valid review ID");
@@ -76,7 +76,7 @@ namespace BackEnd.Test
             var reviewId = 1;
 
             // Act
-            var response = await _controller.GetReviewById(reviewId);
+            var response = await _controller.GetEntityById(reviewId);
 
             // Assert
             Assert.That(response, Is.TypeOf<NotFoundObjectResult>(), "Expected NotFoundObjectResult for nonexistent review ID");
@@ -96,7 +96,7 @@ namespace BackEnd.Test
             var reviewId = 1;
 
             // Act
-            var response = await controller.GetReviewById(reviewId);
+            var response = await controller.GetEntityById(reviewId);
 
             // Assert
             Assert.That(response, Is.InstanceOf<NotFoundObjectResult>());
@@ -118,7 +118,7 @@ namespace BackEnd.Test
                 rating = 4.5f,
                 desc = "test review"
             };
-            var response = await _controller.CreateReview(reviewDto);
+            var response = await _controller.CreateEntity(reviewDto);
 
             // Assert
             Assert.That(response, Is.TypeOf<BadRequestObjectResult>());
@@ -199,14 +199,14 @@ namespace BackEnd.Test
             };
 
             // Act
-            var response = await _controller.CreateReview(newReviewDto);
+            var response = await _controller.CreateEntity(newReviewDto);
 
             // Assert
    
             Assert.That(response, Is.TypeOf<CreatedAtActionResult>());
             var createdAtResult = response as CreatedAtActionResult;
             Assert.That(createdAtResult, Is.Not.Null);
-            Assert.That(createdAtResult?.ActionName, Is.EqualTo(nameof(ReviewController.GetReviewById)));
+            Assert.That(createdAtResult?.ActionName, Is.EqualTo(nameof(ReviewController.GetEntityById)));
 
             var returnedReview = await _context.Reviews.FindAsync(reservationModel.reservationID);
             Assert.That(returnedReview, Is.Not.Null);
@@ -288,7 +288,7 @@ namespace BackEnd.Test
             };
 
             // Act
-            var response = await controller.CreateReview(newReviewDto);
+            var response = await controller.CreateEntity(newReviewDto);
 
             // Assert
 
@@ -325,7 +325,7 @@ namespace BackEnd.Test
                 rating = 4.0f,
                 desc = "Existing test review"
             };
-            await _controller.CreateReview(existingReviewDto);
+            await _controller.CreateEntity(existingReviewDto);
 
             // Create a new review DTO with the same reservation ID
             var duplicateReviewDto = new BackEnd.Models.FrontEndModels.Review
@@ -336,7 +336,7 @@ namespace BackEnd.Test
             };
 
             // Act
-            var response = await _controller.CreateReview(duplicateReviewDto);
+            var response = await _controller.CreateEntity(duplicateReviewDto);
 
             // Assert
             Assert.That(response, Is.TypeOf<BadRequestObjectResult>());
@@ -360,7 +360,7 @@ namespace BackEnd.Test
 
             // Act
 
-            var response = await _controller.CreateReview(reviewDto);
+            var response = await _controller.CreateEntity(reviewDto);
 
             // Assert
             Assert.That(response, Is.TypeOf<BadRequestObjectResult>());
@@ -378,7 +378,7 @@ namespace BackEnd.Test
             Models.FrontEndModels.Review reviewDto = null;
 
             // Act
-            var response = await _controller.CreateReview(reviewDto);
+            var response = await _controller.CreateEntity(reviewDto);
 
             // Assert
             Assert.That(response, Is.TypeOf<BadRequestObjectResult>());
@@ -401,7 +401,7 @@ namespace BackEnd.Test
             await _context.SaveChangesAsync();
 
             // Act
-            var response = await _controller.DeleteReviewById(invalidReservationId);
+            var response = await _controller.DeleteEntity(invalidReservationId);
 
             // Assert
             Assert.That(response, Is.TypeOf<NotFoundObjectResult>());
@@ -421,7 +421,7 @@ namespace BackEnd.Test
             await _context.SaveChangesAsync();
 
             // Act
-            var response = await _controller.DeleteReviewById(reservationId);
+            var response = await _controller.DeleteEntity(reservationId);
 
             // Assert
             Assert.That(response, Is.TypeOf<NoContentResult>());
@@ -441,7 +441,7 @@ namespace BackEnd.Test
             await _context.SaveChangesAsync();
 
             // Act
-            var response = await controller.DeleteReviewById(reservationId);
+            var response = await controller.DeleteEntity(reservationId);
 
             // Assert
             Assert.That(response, Is.InstanceOf<NotFoundObjectResult>());
@@ -462,7 +462,7 @@ namespace BackEnd.Test
             var reviewDto = new Review {reservationId = invalidReservationId ,rating = 4.5f, desc = "desc" };
 
             // Act
-            var response = await _controller.EditReviewById(2, reviewDto);
+            var response = await _controller.UpdateEntity(2, reviewDto);
 
             // Assert
             Assert.That(response, Is.TypeOf<NotFoundObjectResult>());
@@ -489,7 +489,7 @@ namespace BackEnd.Test
             var reviewDto = new Review { reservationId = reservationId, rating = 2.5f, desc = "Great test" };
 
             // Act
-            var response = await _controller.EditReviewById(reservationId, reviewDto);
+            var response = await _controller.UpdateEntity(reservationId, reviewDto);
 
             // Assert
             Assert.That(response, Is.TypeOf<OkObjectResult>());
@@ -514,7 +514,7 @@ namespace BackEnd.Test
             await _context.SaveChangesAsync();
             var reviewDto = new Review { reservationId = reservationId, rating = -1, desc = "desc" };
             // Act
-            var response = await _controller.EditReviewById(1, reviewDto);
+            var response = await _controller.UpdateEntity(1, reviewDto);
 
             // Assert
             Assert.That(response, Is.TypeOf<BadRequestObjectResult>());
@@ -538,7 +538,7 @@ namespace BackEnd.Test
             var reviewDto = new Review { reservationId = reservationId, rating = 4.5f, desc = "desc" };
 
             // Act
-            var response = await controller.EditReviewById(1, reviewDto);
+            var response = await controller.UpdateEntity(1, reviewDto);
 
             // Assert
             Assert.That(response, Is.InstanceOf<NotFoundObjectResult>());

@@ -189,7 +189,7 @@ namespace BackEnd.Test
             await _context.SaveChangesAsync();
 
             // Act
-            var response = await _controller.GetOpportunityById(opportunityId);
+            var response = await _controller.GetEntityById(opportunityId);
 
             // Assert
             Assert.That(response, Is.TypeOf<OkObjectResult>(), "Expected OkObjectResult for valid opportunity ID");
@@ -214,7 +214,7 @@ namespace BackEnd.Test
             await _context.SaveChangesAsync();
 
             // Act
-            var response = await _controller.GetOpportunityById(opportunityId);
+            var response = await _controller.GetEntityById(opportunityId);
 
             // Assert
             Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult for invalid opportunity ID");
@@ -239,7 +239,7 @@ namespace BackEnd.Test
             await _context.SaveChangesAsync();
 
             // Act
-            var response = await _controller.GetOpportunityById(opportunityId);
+            var response = await _controller.GetEntityById(opportunityId);
 
             // Assert
             Assert.That(response, Is.TypeOf<NotFoundObjectResult>(), "Expected NotFoundObjectResult for nonexistent opportunity ID");
@@ -265,7 +265,7 @@ namespace BackEnd.Test
             await _context.SaveChangesAsync();
 
             // Act
-            var response = await controller.GetOpportunityById(opportunityId);
+            var response = await controller.GetEntityById(opportunityId);
 
             // Assert
             Assert.That(response, Is.InstanceOf<NotFoundObjectResult>());
@@ -687,7 +687,7 @@ namespace BackEnd.Test
 
 
             // Act
-            var response = await _controller.CreateOpportunity(opportunity);
+            var response = await _controller.CreateEntity(opportunity);
 
             // Assert
             Assert.That(response, Is.TypeOf<CreatedAtActionResult>(), "Expected CreatedAtActionResult if opportunity is valid");
@@ -723,7 +723,7 @@ namespace BackEnd.Test
 
 
             // Act
-            var response = await _controller.CreateOpportunity(opportunity);
+            var response = await _controller.CreateEntity(opportunity);
 
             // Assert
             Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if user id is nonexistent");
@@ -771,7 +771,7 @@ namespace BackEnd.Test
 
 
             // Act
-            var response = await _controller.CreateOpportunity(opportunity);
+            var response = await _controller.CreateEntity(opportunity);
 
             // Assert
             Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if name is empty");
@@ -819,7 +819,7 @@ namespace BackEnd.Test
 
 
             // Act
-            var response = await _controller.CreateOpportunity(opportunity);
+            var response = await _controller.CreateEntity(opportunity);
 
             // Assert
             Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if name is larger than accepted");
@@ -866,7 +866,7 @@ namespace BackEnd.Test
             };
 
             // Act
-            var response = await _controller.CreateOpportunity(opportunity);
+            var response = await _controller.CreateEntity(opportunity);
 
             // Assert
             Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if description is empty");
@@ -914,7 +914,7 @@ namespace BackEnd.Test
 
 
             // Act
-            var response = await _controller.CreateOpportunity(opportunity);
+            var response = await _controller.CreateEntity(opportunity);
 
             // Assert
             Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if description is larger than accepted");
@@ -961,7 +961,7 @@ namespace BackEnd.Test
             };
 
             // Act
-            var response = await _controller.CreateOpportunity(opportunity);
+            var response = await _controller.CreateEntity(opportunity);
 
             // Assert
             Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if description is empty");
@@ -1008,7 +1008,7 @@ namespace BackEnd.Test
             };
 
             // Act
-            var response = await _controller.CreateOpportunity(opportunity);
+            var response = await _controller.CreateEntity(opportunity);
 
             // Assert
             Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if description is empty");
@@ -1055,7 +1055,7 @@ namespace BackEnd.Test
             };
 
             // Act
-            var response = await _controller.CreateOpportunity(opportunity);
+            var response = await _controller.CreateEntity(opportunity);
 
             // Assert
             Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if description is empty");
@@ -1102,7 +1102,7 @@ namespace BackEnd.Test
             };
 
             // Act
-            var response = await _controller.CreateOpportunity(opportunity);
+            var response = await _controller.CreateEntity(opportunity);
 
             // Assert
             Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if description is empty");
@@ -1149,7 +1149,7 @@ namespace BackEnd.Test
             };
 
             // Act
-            var response = await _controller.CreateOpportunity(opportunity);
+            var response = await _controller.CreateEntity(opportunity);
 
             // Assert
             Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if description is empty");
@@ -1196,7 +1196,7 @@ namespace BackEnd.Test
             };
 
             // Act
-            var response = await _controller.CreateOpportunity(opportunity);
+            var response = await _controller.CreateEntity(opportunity);
 
             // Assert
             Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if description is empty");
@@ -1247,7 +1247,7 @@ namespace BackEnd.Test
             };
 
             // Act
-            var response = await controller.CreateOpportunity(opportunity);
+            var response = await controller.CreateEntity(opportunity);
 
             // Assert
             Assert.That(response, Is.InstanceOf<NotFoundObjectResult>());
@@ -1269,7 +1269,7 @@ namespace BackEnd.Test
             await _context.SaveChangesAsync();
 
             // Act
-            var response = await _controller.DeleteOpportunityById(opportunityId);
+            var response = await _controller.DeleteEntity(opportunityId);
 
             // Assert
             Assert.That(response, Is.TypeOf<NoContentResult>(), "Expected NoContentResult if the opportunity id is valid");
@@ -1289,7 +1289,7 @@ namespace BackEnd.Test
             await _context.SaveChangesAsync();
 
             // Act
-            var response = await _controller.DeleteOpportunityById(opportunityId);
+            var response = await _controller.DeleteEntity(opportunityId);
 
             // Assert
             Assert.That(response, Is.TypeOf<NotFoundObjectResult>(), "Expected NotFoundObjectResult if the id is non existent");
@@ -1313,7 +1313,7 @@ namespace BackEnd.Test
             await _context.SaveChangesAsync();
 
             // Act
-            var response = await _controller.DeleteOpportunityById(opportunityId);
+            var response = await _controller.DeleteEntity(opportunityId);
 
             // Assert
             Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if the id is invalid");
@@ -1347,7 +1347,7 @@ namespace BackEnd.Test
             await _context.SaveChangesAsync();
 
             // Act
-            var response = await _controller.DeleteOpportunityById(opportunityId);
+            var response = await _controller.DeleteEntity(opportunityId);
 
             // Assert
             Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if the opportunity has active reservations");
@@ -1375,7 +1375,7 @@ namespace BackEnd.Test
             await _context.SaveChangesAsync();
 
             // Act
-            var response = await controller.DeleteOpportunityById(opportunityId);
+            var response = await controller.DeleteEntity(opportunityId);
 
             // Assert
             Assert.That(response, Is.InstanceOf<NotFoundObjectResult>());
@@ -1667,7 +1667,7 @@ namespace BackEnd.Test
             };
 
             // Act
-            var response = await _controller.EditOpportunityById(opportunityId, opportunityDto);
+            var response = await _controller.UpdateEntity(opportunityId, opportunityDto);
 
             // Assert
             Assert.That(response, Is.TypeOf<OkObjectResult>(), "Expected OkObjectResult for valid opportunity ID and valid values");
@@ -1740,7 +1740,7 @@ namespace BackEnd.Test
             };
 
             // Act
-            var response = await _controller.EditOpportunityById(opportunityId, opportunityDto);
+            var response = await _controller.UpdateEntity(opportunityId, opportunityDto);
 
             // Assert
             Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if the id is invalid");
@@ -1783,7 +1783,7 @@ namespace BackEnd.Test
             };
 
             // Act
-            var response = await _controller.EditOpportunityById(opportunityId, opportunityDto);
+            var response = await _controller.UpdateEntity(opportunityId, opportunityDto);
 
             // Assert
             Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if the id is non existent");
@@ -1825,7 +1825,7 @@ namespace BackEnd.Test
             };
 
             // Act
-            var response = await _controller.EditOpportunityById(opportunityId, opportunityDto);
+            var response = await _controller.UpdateEntity(opportunityId, opportunityDto);
 
             // Assert
             Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if the id is valid and the price is invalid");
@@ -1867,7 +1867,7 @@ namespace BackEnd.Test
             };
 
             // Act
-            var response = await _controller.EditOpportunityById(opportunityId, opportunityDto);
+            var response = await _controller.UpdateEntity(opportunityId, opportunityDto);
 
             // Assert
             Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if the id is valid and the vacancies is invalid");
@@ -1910,7 +1910,7 @@ namespace BackEnd.Test
 
 
             // Act
-            var response = await _controller.EditOpportunityById(opportunityId, opportunityDto);
+            var response = await _controller.UpdateEntity(opportunityId, opportunityDto);
 
             // Assert
             Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if the id is valid and the Category is invalid");
@@ -1952,7 +1952,7 @@ namespace BackEnd.Test
             };
 
             // Act
-            var response = await _controller.EditOpportunityById(opportunityId, opportunityDto);
+            var response = await _controller.UpdateEntity(opportunityId, opportunityDto);
 
             // Assert
             Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if the id is valid and the Location is invalid");
@@ -1994,7 +1994,7 @@ namespace BackEnd.Test
             };
            
             // Act
-            var response = await _controller.EditOpportunityById(opportunityId, opportunityDto);
+            var response = await _controller.UpdateEntity(opportunityId, opportunityDto);
 
             // Assert
             Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if the id is valid and the Address is invalid");
@@ -2036,7 +2036,7 @@ namespace BackEnd.Test
             };
 
             // Act
-            var response = await _controller.EditOpportunityById(opportunityId, opportunityDto);
+            var response = await _controller.UpdateEntity(opportunityId, opportunityDto);
 
             // Assert
             Assert.That(response, Is.TypeOf<BadRequestObjectResult>(), "Expected BadRequestObjectResult if the id is valid and the Location is invalid");
@@ -2083,7 +2083,7 @@ namespace BackEnd.Test
             };
 
             // Act
-            var response = await controller.EditOpportunityById(opportunityId, opportunityDto);
+            var response = await controller.UpdateEntity(opportunityId, opportunityDto);
 
             // Assert
             Assert.That(response, Is.InstanceOf<NotFoundObjectResult>());

@@ -11,7 +11,7 @@ namespace BackEnd.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ReservationController : BaseController
+    public class ReservationController : BaseCrudController<Reservation>
     {
         private readonly IReservationService _reservationService;
         public ReservationController(IReservationService reservationService)
@@ -42,7 +42,7 @@ namespace BackEnd.Controllers
         //GET para obter uma reserva pelo ID
         [HttpGet("{id}")]
         [Authorize]
-        public async Task<IActionResult> GetReservationById(int id)
+        public override async Task<IActionResult> GetEntityById(int id)
         {
             var serviceResponse = await _reservationService.GetReservationByIdAsync(id);
 
@@ -52,7 +52,7 @@ namespace BackEnd.Controllers
         //POST para criar uma nova Reserva
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> CreateNewReservation(Reservation reservation)
+        public override async Task<IActionResult> CreateEntity(Reservation reservation)
         {
             var serviceResponse = await _reservationService.CreateNewReservationAsync(reservation);
 
@@ -61,7 +61,7 @@ namespace BackEnd.Controllers
                 return HandleResponse(serviceResponse);
             }
 
-            return HandleCreatedAtAction(serviceResponse, nameof(CreateNewReservation), new { id = serviceResponse.Data.reservationId });
+            return HandleCreatedAtAction(serviceResponse, nameof(GetEntityById), new { id = serviceResponse.Data.reservationId });
         }
 
         //PUT api/Opportunity/1/deactivate
@@ -77,7 +77,7 @@ namespace BackEnd.Controllers
         //PUT para atualizar uma reserva
         [HttpPut("{id}")]
         [Authorize]
-        public async Task<IActionResult> UpdateReservation(int id, Reservation reservation)
+        public override async Task<IActionResult> UpdateEntity(int id, Reservation reservation)
         {
             var serviceResponse = await _reservationService.UpdateReservationAsync(id, reservation);
 
@@ -87,7 +87,7 @@ namespace BackEnd.Controllers
         //DELETE para apagar uma reserva
         [HttpDelete("{id}")]
         [Authorize]
-        public async Task<IActionResult> DeleteReservation(int id)
+        public override async Task<IActionResult> DeleteEntity(int id)
         {
             var serviceResponse = await _reservationService.DeleteReservationAsync(id);
 
