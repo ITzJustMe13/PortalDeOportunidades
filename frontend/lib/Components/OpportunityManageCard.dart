@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/Components/dynamic_active_inactive_button.dart';
-import 'package:frontend/Components/dynamic_details_button.dart';
-import 'package:frontend/Components/dynamic_delete_button.dart';
-import 'package:frontend/Components/dynamic_edit_button.dart';
+import 'package:frontend/Components/DynamicActiveInactiveButton.dart';
+import 'package:frontend/Components/DynamicDetailsButton.dart';
+import 'package:frontend/Components/DynamicDeleteButton.dart';
+import 'package:frontend/Components/DynamicEditButton.dart';
 import 'package:frontend/Models/Opportunity.dart';
 import 'dart:convert'; // For Base64 decoding
 import 'package:frontend/Views/OpportunityDetailsScreen.dart';

@@ -1,6 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:frontend/Components/on_the_rise_opportunity_card.dart';
+import 'package:frontend/Components/OnTheRiseOpportunityCard.dart';
 import 'package:frontend/Models/Opportunity.dart';
 
 class OnTheRiseOpportunityCarousel extends StatelessWidget {

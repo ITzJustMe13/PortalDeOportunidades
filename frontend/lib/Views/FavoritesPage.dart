@@ -2,7 +2,7 @@ import 'package:dynamic_height_grid_view/dynamic_height_grid_view.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/Components/CustomAppBar.dart';
 import 'package:frontend/Components/CustomDrawer.dart';
-import 'package:frontend/Components/dynamic_details_button.dart';
+import 'package:frontend/Components/DynamicDetailsButton.dart';
 import 'package:frontend/Enums/Location.dart';
 import 'package:frontend/Enums/OppCategory.dart';
 import 'package:frontend/Models/Opportunity.dart';

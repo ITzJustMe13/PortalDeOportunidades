@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:frontend/Components/CustomAppBar.dart';
 import 'package:frontend/Components/CustomDrawer.dart';
-import 'package:frontend/Components/paginated_opportunity_gallery.dart';
+import 'package:frontend/Components/PaginatedOpportunityGallery.dart';
 import 'package:frontend/Enums/Location.dart';
 import 'package:frontend/Enums/OppCategory.dart';
 import 'package:frontend/Models/Opportunity.dart';

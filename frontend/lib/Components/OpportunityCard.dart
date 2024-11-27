@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/Components/dynamic_details_button.dart';
+import 'package:frontend/Components/DynamicDetailsButton.dart';
 import 'package:frontend/Models/Opportunity.dart';
 import 'package:frontend/Views/OpportunityDetailsScreen.dart';
 import 'dart:convert';
