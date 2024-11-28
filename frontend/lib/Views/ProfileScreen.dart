@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:frontend/Components/CustomAppBar.dart';
 import 'package:frontend/Components/CustomDrawer.dart';
 import 'package:frontend/Enums/Gender.dart';
+import 'package:provider/provider.dart';
+import 'package:frontend/Services/user_api_handler.dart';
 import '../Models/User.dart';
+import 'dart:convert';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -12,50 +15,77 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  User user = User(
-      userId: 1,
-      firstName: "Antonio",
-      lastName: "Silva",
-      email: "antonio.silva@gmail.com",
-      password: "123456789",
-      birthDate: DateTime(2004),
-      registrationDate: DateTime.now(),
-      cellPhoneNumber: 911232938,
-      gender: Gender.MASCULINO,
-      image: "teste");
+
+  User? _cachedUser; // Cache for the user
+  late Future<User?> _userFuture; // Declare _userFuture as late
+
+  Future<User?> _getCachedUser() async {
+    // If user is already cached, return it
+    if (_cachedUser != null) {
+      return _cachedUser;
+    }
+    // Fetch user from API and cache it
+    final user = await Provider.of<UserApiHandler>(context, listen: false)
+        .getStoredUser();
+    _cachedUser = user;
+    return user;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _userFuture = _getCachedUser(); // Initialize _userFuture
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: CustomAppBar(),
-        endDrawer: CustomDrawer(),
-        body: LayoutBuilder(builder: (context, constraints) {
-          if (constraints.maxWidth < 600) {
-            // Layout para telas pequenas (smartphones)
-            return _buildMobileLayout();
-          } else if (constraints.maxWidth < 1200) {
-            // Layout para telas médias (tablets)
-            return _buildTabletLayout();
+      appBar: CustomAppBar(),
+      endDrawer: CustomDrawer(),
+      body: FutureBuilder<User?>(
+        future: _userFuture, // Use the single Future instance
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text('Erro a carregar o utilizador: ${snapshot.error}'),
+            );
+          } else if (!snapshot.hasData) {
+            return const Center(child: Text('Utilizador não foi encontrado'));
           } else {
-            // Layout para telas grandes (desktops)
-            return _buildDesktopLayout();
+            final user = snapshot.data!;
+            return LayoutBuilder(
+              builder: (context, constraints) {
+                if (constraints.maxWidth < 600) {
+                  return _buildMobileLayout(user);
+                } else if (constraints.maxWidth < 1200) {
+                  return _buildTabletLayout(user);
+                } else {
+                  return _buildDesktopLayout(user);
+                }
+              },
+            );
           }
-        }));
+        },
+      ),
+    );
   }
+  
 
-  Widget _buildMobileLayout() {
+  Widget _buildMobileLayout(User user) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          _buildImage(),
+          _buildImage(user),
           const SizedBox(height: 16),
           _buildEditProfileButton(),
           const SizedBox(height: 16),
-          _buildExtraInfo(),
+          _buildExtraInfo(user),
           const SizedBox(height: 16),
-          _buildUserInfo(),
+          _buildUserInfo(user),
           const SizedBox(height: 16),
           _buildHistoryButton(),
         ],
@@ -63,7 +93,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildTabletLayout() {
+  Widget _buildTabletLayout(User user) {
     return Padding(
       padding: EdgeInsets.only(left: 100.0, right: 25),
       child: Column(
@@ -72,7 +102,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildImage(),
+              _buildImage(user),
               const SizedBox(width: 16),
               Expanded(
                 child: Column(
@@ -81,12 +111,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _buildUserInfo(),
+                        _buildUserInfo(user),
                         _buildEditProfileButton(),
                       ],
                     ),
                     const Divider(thickness: 1, height: 32),
-                    _buildExtraInfo(),
+                    _buildExtraInfo(user),
                   ],
                 ),
               ),
@@ -99,7 +129,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildDesktopLayout() {
+  Widget _buildDesktopLayout(User user) {
     return Padding(
       padding: const EdgeInsets.only(left: 200.0, right: 200, top: 200),
       child: Row(
@@ -108,9 +138,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildImage(),
+              _buildImage(user),
               const SizedBox(height: 16),
-              _buildExtraInfo(),
+              _buildExtraInfo(user),
               const SizedBox(height: 16),
               _buildHistoryButton(),
             ],
@@ -123,7 +153,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _buildUserInfo(),
+                    _buildUserInfo(user),
                     _buildEditProfileButton(),
                   ],
                 ),
@@ -137,19 +167,40 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   /// Método para construir o layout da imagem do perfil
-  Widget _buildImage() {
-    return Container(
-      width: 150,
-      height: 150,
-      decoration: BoxDecoration(
-        color: Colors.grey[300],
-        borderRadius: BorderRadius.circular(8.0),
-        image: DecorationImage(
-          image: NetworkImage(user.image),
-          fit: BoxFit.cover,
+  Widget _buildImage(User user) {
+    // Check if the user image string is not null or empty
+    if (user.image.isNotEmpty) {
+      // Decode the Base64 string
+      final decodedBytes = base64Decode(user.image);
+
+      return Container(
+        width: 150,
+        height: 150,
+        decoration: BoxDecoration(
+          color: Colors.grey[300],
+          borderRadius: BorderRadius.circular(8.0),
+          image: DecorationImage(
+            image: MemoryImage(decodedBytes), // Use MemoryImage for Base64
+            fit: BoxFit.cover,
+          ),
         ),
-      ),
-    );
+      );
+    } else {
+      // Placeholder if the user has no image
+      return Container(
+        width: 150,
+        height: 150,
+        decoration: BoxDecoration(
+          color: Colors.grey[300],
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+        child: Icon(
+          Icons.person,
+          size: 80,
+          color: Colors.grey[600],
+        ),
+      );
+    }
   }
 
   /// Método para construir o botão "Editar Perfil"
@@ -170,7 +221,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   /// Método para construir as informações do utilizador
-  Widget _buildUserInfo() {
+  Widget _buildUserInfo(User user) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -215,7 +266,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   /// Método para construir informações extras (anos, meses ou dias no portal)
-  Widget _buildExtraInfo() {
+  Widget _buildExtraInfo(User user) {
     final now = DateTime.now();
     final duration = now.difference(user.registrationDate);
 

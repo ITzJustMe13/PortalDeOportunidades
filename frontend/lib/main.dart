@@ -5,6 +5,7 @@ import 'package:frontend/State/LoginState.dart';
 import 'package:frontend/State/RegisterState.dart';
 import 'package:frontend/Views/ActivationSucessScreen.dart';
 import 'package:frontend/Views/LoginScreen.dart';
+import 'package:frontend/Views/PaymentCancelScreen.dart';
 import 'package:frontend/Views/RegisterScreen.dart';
 import 'package:http/http.dart' as http;
 
@@ -16,6 +17,7 @@ import 'package:frontend/Views/CreateOpportunityScreen.dart';
 import 'package:frontend/Views/OpportunityManager.dart';
 import 'package:frontend/Views/FavoritesPage.dart';
 import 'package:frontend/Views/SearchPage.dart';
+import 'package:frontend/Views/PaymentSucessScreen.dart';
 
 import 'Views/HomePage.dart';
 import 'package:provider/provider.dart';
@@ -74,6 +76,8 @@ class MainApp extends StatelessWidget {
         '/reservation-history': (context) => const HistoryReservationScreen(),
         '/login': (context) => LoginScreen(),
         '/register': (context) => RegisterScreen(),
+        '/payment-success': (context) => PaymentSuccessScreen(),
+        '/payment-cancel': (context) => PaymentCancelScreen(),
       },
       onGenerateRoute: (settings) {
         Uri? uri = Uri.tryParse(settings.name ?? '');

@@ -68,8 +68,8 @@ namespace BackEnd.Controllers
             },
         },
                 Mode = "payment",
-                SuccessUrl = "https://localhost:7235/success", // UPDATE WITH FRONTEND
-                CancelUrl = "https://localhost:7235/cancel", // UPDATE WITH FRONTEND
+                SuccessUrl = "http://localhost:50394/#/success", // UPDATE WITH FRONTEND
+                CancelUrl = "http://localhost:50394/#/payment-cancel", // UPDATE WITH FRONTEND
                 CustomerEmail = user.Email, // For sending the receipt to the user
             };
 

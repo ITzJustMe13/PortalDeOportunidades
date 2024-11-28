@@ -87,7 +87,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   ElevatedButton(
                     child: Text(_birthDateController == null
-                        ? 'Select Birth Date*'
+                        ? 'Selecione a Data de Nascimento*'
                         : '${_birthDateController!.day}/${_birthDateController!.month}/${_birthDateController!.year}'),
                     onPressed: () async {
                       final DateTime? picked = await showDatePicker(
@@ -134,7 +134,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   DropdownButtonFormField<Gender>(
                     value: _genderController,
-                    hint: Text("Select Category*"),
+                    hint: Text("Selecione Gênero*"),
                     onChanged: (Gender? newValue) {
                       setState(() {
                         _genderController = newValue;
