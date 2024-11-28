@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/Components/CustomAppBar.dart';
 import 'package:frontend/Components/CustomDrawer.dart';
 import 'package:frontend/Enums/Gender.dart';
+import 'package:frontend/Views/EditProfileScreen.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend/Services/user_api_handler.dart';
 import '../Models/User.dart';
@@ -81,7 +82,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         children: [
           _buildImage(user),
           const SizedBox(height: 16),
-          _buildEditProfileButton(),
+          _buildEditProfileButton(user),
           const SizedBox(height: 16),
           _buildExtraInfo(user),
           const SizedBox(height: 16),
@@ -112,7 +113,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         _buildUserInfo(user),
-                        _buildEditProfileButton(),
+                        _buildEditProfileButton(user),
                       ],
                     ),
                     const Divider(thickness: 1, height: 32),
@@ -154,7 +155,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     _buildUserInfo(user),
-                    _buildEditProfileButton(),
+                    _buildEditProfileButton(user),
                   ],
                 ),
                 const Divider(thickness: 1, height: 32),
@@ -204,10 +205,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   /// Método para construir o botão "Editar Perfil"
-  Widget _buildEditProfileButton() {
+  Widget _buildEditProfileButton(user) {
     return ElevatedButton(
       onPressed: () {
-        Navigator.pushNamed(context, '/edit-profile');
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EditProfileScreen(user: user),
+          ),
+        );
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.green,

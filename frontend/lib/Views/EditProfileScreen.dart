@@ -3,36 +3,35 @@ import 'package:frontend/Components/CustomAppBar.dart';
 import 'package:frontend/Components/CustomDrawer.dart';
 import 'package:frontend/Enums/Gender.dart';
 import '../Models/User.dart';
+import 'package:provider/provider.dart';
+import 'package:frontend/Services/user_api_handler.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:convert';
+import 'dart:typed_data';
 
 class EditProfileScreen extends StatefulWidget {
-  const EditProfileScreen({super.key});
+
+  final User user;
+
+  const EditProfileScreen({super.key, required this.user});
 
   @override
   _EditProfileScreenState createState() => _EditProfileScreenState();
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-  User user = User(
-    userId: 1,
-    firstName: "Antonio",
-    lastName: "Silva",
-    email: "antonio.silva@gmail.com",
-    password: "123456789",
-    birthDate: DateTime(2004),
-    registrationDate: DateTime.now(),
-    cellPhoneNumber: 911232938,
-    gender: Gender.MASCULINO,
-    image: "https://via.placeholder.com/150",
-  );
+  
 
   TextEditingController emailController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
+  final ImagePicker _picker = ImagePicker();
+  String? _updatedImageBase64;
 
   @override
   void initState() {
     super.initState();
-    emailController.text = user.email;
-    phoneController.text = user.cellPhoneNumber.toString();
+    emailController.text = widget.user.email;
+    phoneController.text = widget.user.cellPhoneNumber.toString();
   }
 
   @override
@@ -130,33 +129,71 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   // Widget para exibir a imagem do perfil com botão
-  Widget _buildProfileImage() {
-    return Column(
-      children: [
-        Container(
-          width: 100,
-          height: 100,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8.0),
-            image: DecorationImage(
-              image: NetworkImage(user.image),
-              fit: BoxFit.cover,
-            ),
-          ),
+ Widget _buildProfileImage() {
+  return Column(
+    children: [
+      // Display the profile image or placeholder
+      _buildImage(_updatedImageBase64 ?? widget.user.image),
+      const SizedBox(height: 8),
+      ElevatedButton(
+        onPressed: () async {
+          // Picking the image from the gallery
+          final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+          if (pickedFile != null) {
+            // Convert the image to bytes and then encode to base64
+            final Uint8List fileBytes = await pickedFile.readAsBytes();
+            final String base64Image = base64Encode(fileBytes);
+
+            // Store the new base64 image temporarily
+            setState(() {
+              _updatedImageBase64 = base64Image;
+            });
+          }
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.green,
         ),
-        const SizedBox(height: 8),
-        ElevatedButton(
-          onPressed: () {
-            // Lógica para escolher nova foto
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.green,
-          ),
-          child: const Text('Escolher Foto'),
+        child: const Text('Escolher Foto'),
+      ),
+    ],
+  );
+}
+
+// This is the helper function to display the image or placeholder
+Widget _buildImage(String image) {
+  if (image.isNotEmpty) {
+    // Decode the Base64 string into bytes
+    final decodedBytes = base64Decode(image);
+
+    return Container(
+      width: 150,
+      height: 150,
+      decoration: BoxDecoration(
+        color: Colors.grey[300],
+        borderRadius: BorderRadius.circular(8.0),
+        image: DecorationImage(
+          image: MemoryImage(decodedBytes), // Use MemoryImage to decode the Base64
+          fit: BoxFit.cover,
         ),
-      ],
+      ),
+    );
+  } else {
+    // If no image is provided, display a placeholder icon
+    return Container(
+      width: 150,
+      height: 150,
+      decoration: BoxDecoration(
+        color: Colors.grey[300],
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      child: Icon(
+        Icons.person,
+        size: 80,
+        color: Colors.grey[600],
+      ),
     );
   }
+}
 
   // Widget para o campo de email
   Widget _buildEmailField() {
@@ -211,8 +248,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   // Lógica para salvar alterações
-  void _saveChanges() {
-    // Validação de email e telefone
+  void _saveChanges() async {
+    // Validate email and phone
     if (emailController.text.isEmpty || phoneController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -234,29 +271,37 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       return;
     }
 
-    // Atualização do estado
-    setState(() {
-      // Criar uma nova instância do User com as alterações
-      user = User(
-        userId: user.userId,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: emailController.text,
-        password: user.password,
-        birthDate: user.birthDate,
-        registrationDate: user.registrationDate,
-        cellPhoneNumber: phoneNumber,
-        gender: user.gender,
-        image: user.image,
-      );
-    });
-
-    // Feedback ao usuário
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Alterações gravadas com sucesso!'),
-        backgroundColor: Colors.green,
-      ),
+    // Create updated user object
+    User updatedUser = User(
+      userId: widget.user.userId,
+      firstName: widget.user.firstName,
+      lastName: widget.user.lastName,
+      email: emailController.text,
+      password: widget.user.password,
+      birthDate: widget.user.birthDate,
+      registrationDate: widget.user.registrationDate,
+      cellPhoneNumber: phoneNumber,
+      gender: widget.user.gender,
+      image: _updatedImageBase64.toString(),
     );
+
+    final success = await Provider.of<UserApiHandler>(context, listen: false)
+        .editUser(widget.user.userId, updatedUser);
+  
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Alterações gravadas com sucesso!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Falha ao gravar as alterações. Tente novamente!'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 }

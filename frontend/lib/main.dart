@@ -71,7 +71,7 @@ class MainApp extends StatelessWidget {
         '/your-opportunities': (context) => const OpportunityManagerScreen(),
         //'/your-reservations': (context) => const YourReservationsPage(),
         '/profile': (context) => const ProfileScreen(),
-        '/edit-profile': (context) => const EditProfileScreen(),
+        //'/edit-profile': (context) => const EditProfileScreen(),
         '/reviews-history': (context) => const ReviewsHistoryScreen(),
         '/reservation-history': (context) => const HistoryReservationScreen(),
         '/login': (context) => LoginScreen(),
