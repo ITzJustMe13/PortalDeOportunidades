@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
-import 'package:frontend/Components/ReviewCard.dart';
-import 'package:frontend/Models/Review.dart';
 import 'package:frontend/Models/User.dart';
 import 'package:frontend/Services/user_api_handler.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:frontend/Components/CustomAppBar.dart';
 import 'package:frontend/Components/CustomDrawer.dart';
 import 'package:frontend/Components/OpportunityImages.dart';
@@ -12,10 +8,7 @@ import 'package:frontend/Components/OpportunityLocationMap.dart';
 import 'package:frontend/Components/OpportunityDetails.dart';
 import 'package:frontend/Components/OpportunityAdditionalInfo.dart';
 import 'package:frontend/Components/ReservationButton.dart';
-import 'package:frontend/Enums/OppCategory.dart';
-import 'package:frontend/Enums/Location.dart';
 import 'package:provider/provider.dart';
-import 'package:frontend/Services/opportunity_api_handler.dart';
 import 'package:frontend/Models/Opportunity.dart';
 import 'package:intl/intl.dart';
 

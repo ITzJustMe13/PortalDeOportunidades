@@ -30,7 +30,7 @@ class _AddOpportunityScreenState extends State<CreateOpportunityScreen> {
   String _address = '';
   DateTime _date = DateTime.now();
   String _errorMessage = "";
-  List<OpportunityImg> _opportunityImgs = [];
+  final List<OpportunityImg> _opportunityImgs = [];
 
   @override
   Widget build(BuildContext context) {
@@ -162,7 +162,7 @@ class _AddOpportunityScreenState extends State<CreateOpportunityScreen> {
               child: const Text('Escolher Fotos',
                   style: TextStyle(color: Colors.white)),
               onPressed: () async {
-                final List<XFile>? pickedFiles = await ImagePicker()
+                final List<XFile> pickedFiles = await ImagePicker()
                     .pickMultiImage(); // Pick multiple images
                 if (pickedFiles != null && pickedFiles.isNotEmpty) {
                   final List<String> base64Images = await Future.wait(

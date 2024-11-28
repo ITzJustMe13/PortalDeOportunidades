@@ -10,10 +10,14 @@ class LoginState with ChangeNotifier {
   String? _token;
   String? _errorMessage;
   bool _isLoading = false;
+  bool _isLoggedIn = false;
+  String _username = "Convidado";
 
   String? get token => _token;
   String? get errorMessage => _errorMessage;
   bool get isLoading => _isLoading;
+  bool get isLoggedIn => _isLoggedIn;
+  String get username => _username;
 
   // Function to login
   Future<bool> login(
@@ -37,9 +41,12 @@ class LoginState with ChangeNotifier {
       notifyListeners();
       return false;
     }
+
+    _username = response.firstName;
     Navigator.pushNamed(context, '/');
     notifyListeners();
 
+    _isLoggedIn = true;
     return true;
   }
 
@@ -47,6 +54,9 @@ class LoginState with ChangeNotifier {
   Future<void> logout() async {
     await _storage.delete(key: 'accessToken');
     _token = null;
+    _isLoggedIn = false;
+    _username = "Convidado";
+
     notifyListeners();
   }
 }

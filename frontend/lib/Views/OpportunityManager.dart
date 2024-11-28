@@ -74,7 +74,7 @@ class _OpportunityManagerScreenState extends State<OpportunityManagerScreen> {
                     padding: const EdgeInsets.only(bottom: 20.0),
                     child: OpportunityManageCard(opportunity: opportunity),
                   ))
-              .toList(),
+              ,
         ],
       ),
     );

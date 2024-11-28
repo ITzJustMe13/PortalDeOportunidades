@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/Components/CustomAppBar.dart';
 import 'package:frontend/Components/CustomDrawer.dart';
-import 'package:frontend/Models/User.dart';
 import 'package:provider/provider.dart';
 import '../State/LoginState.dart';
 

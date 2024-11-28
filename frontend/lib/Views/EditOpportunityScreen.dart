@@ -157,7 +157,7 @@ class OpportunityTextField extends StatelessWidget {
   final int maxLines;
   final TextInputType? inputType;
 
-  const OpportunityTextField({
+  const OpportunityTextField({super.key, 
     required this.label,
     required this.controller,
     this.maxLines = 1,
