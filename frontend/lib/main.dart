@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/State/ActivationState.dart';
-import 'package:frontend/State/AppBarState.dart';
+import 'package:frontend/State/CreateOpportunityState.dart';
+import 'package:frontend/State/DrawerState.dart';
 import 'package:frontend/State/LoginState.dart';
 import 'package:frontend/State/RegisterState.dart';
 import 'package:frontend/Views/ActivationSucessScreen.dart';
@@ -42,10 +43,18 @@ void main() {
             create: (_) => PaymentApiHandler(http.Client())),
         ChangeNotifierProvider<LoginState>(create: (_) => LoginState()),
         ChangeNotifierProvider<RegisterState>(create: (_) => RegisterState()),
-        ChangeNotifierProvider<CustomAppBarState>(
-            create: (_) => CustomAppBarState()),
         ChangeNotifierProvider<ActivationState>(
-            create: (_) => ActivationState())
+            create: (_) => ActivationState()),
+        ChangeNotifierProvider<CreateOpportunityState>(
+            create: (_) => CreateOpportunityState()),
+        ChangeNotifierProxyProvider<LoginState, CustomDrawerState>(
+          create: (context) => CustomDrawerState(
+            loginState: context.read<LoginState>(),
+          ),
+          update: (context, loginState, customDrawerState) => CustomDrawerState(
+            loginState: loginState,
+          ),
+        ),
       ],
       child: MainApp(),
     ),

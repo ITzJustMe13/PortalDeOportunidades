@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/State/AppBarState.dart';
+import 'package:frontend/State/LoginState.dart';
 import 'package:provider/provider.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -16,10 +16,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<CustomAppBarState>(
+    return Consumer<LoginState>(
       builder: (context, appBarState, child) {
-        appBarState.checkLoginStatus();
-
         if (MediaQuery.of(context).size.width < 600) {
           // Mobile layout
           return _buildMobileAppBar(context, appBarState, bottom);
@@ -36,7 +34,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 }
 
 // AppBar para dispositivos móveis
-AppBar _buildMobileAppBar(BuildContext context, CustomAppBarState appBarState,
+AppBar _buildMobileAppBar(BuildContext context, LoginState appBarState,
     PreferredSizeWidget? bottom) {
   return AppBar(
     backgroundColor: const Color(0xFF50C878),
@@ -87,7 +85,7 @@ AppBar _buildMobileAppBar(BuildContext context, CustomAppBarState appBarState,
 }
 
 // AppBar para tablets
-AppBar _buildTabletAppBar(BuildContext context, CustomAppBarState appBarState,
+AppBar _buildTabletAppBar(BuildContext context, LoginState appBarState,
     PreferredSizeWidget? bottom) {
   return AppBar(
     backgroundColor: const Color(0xFF50C878),
@@ -114,7 +112,7 @@ AppBar _buildTabletAppBar(BuildContext context, CustomAppBarState appBarState,
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Text(
-                appBarState.userName,
+                appBarState.username,
                 style: const TextStyle(fontSize: 16, color: Colors.white),
               ),
             ),
@@ -149,7 +147,7 @@ AppBar _buildTabletAppBar(BuildContext context, CustomAppBarState appBarState,
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Text(
-                appBarState.userName,
+                appBarState.username,
                 style: const TextStyle(fontSize: 16, color: Colors.white),
               ),
             ),
@@ -165,7 +163,7 @@ AppBar _buildTabletAppBar(BuildContext context, CustomAppBarState appBarState,
 }
 
 // AppBar para desktops
-AppBar _buildDesktopAppBar(BuildContext context, CustomAppBarState appBarState,
+AppBar _buildDesktopAppBar(BuildContext context, LoginState appBarState,
     PreferredSizeWidget? bottom) {
   return AppBar(
     backgroundColor: const Color(0xFF50C878),
@@ -199,7 +197,7 @@ AppBar _buildDesktopAppBar(BuildContext context, CustomAppBarState appBarState,
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Text(
-                appBarState.userName,
+                appBarState.username,
                 style: const TextStyle(fontSize: 16, color: Colors.white),
               ),
             ),
@@ -234,7 +232,7 @@ AppBar _buildDesktopAppBar(BuildContext context, CustomAppBarState appBarState,
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Text(
-                appBarState.userName,
+                appBarState.username,
                 style: const TextStyle(fontSize: 16, color: Colors.white),
               ),
             ),

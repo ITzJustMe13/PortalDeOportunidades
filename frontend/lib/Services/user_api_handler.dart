@@ -67,6 +67,20 @@ class UserApiHandler {
     }
   }
 
+  Future<int> getStoredUserID() async {
+    final String? storedUser = await storage.read(key: 'currentUser');
+
+    try {
+      if (storedUser != null) {
+        int? userID = int.parse(storedUser);
+        return userID;
+      }
+      return -1;
+    } catch (e) {
+      return -1;
+    }
+  }
+
   /// Get user by ID
   Future<User?> getUserByID(int id) async {
     final uri = Uri.parse('$baseUri/$id');

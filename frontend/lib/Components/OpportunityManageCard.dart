@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/Components/DynamicActiveInactiveButton.dart';
 import 'package:frontend/Components/DynamicDetailsButton.dart';
-import 'package:frontend/Components/DynamicDeleteButton.dart';
 import 'package:frontend/Components/DynamicActionButton.dart';
-import 'package:frontend/Components/DynamicEditButton.dart';
 import 'package:frontend/Models/Opportunity.dart';
 import 'dart:convert'; // For Base64 decoding
 import 'package:frontend/Views/OpportunityDetailsScreen.dart';
 import 'package:frontend/Views/EditOpportunityScreen.dart';
-import 'package:intl/intl.dart';
 
 class OpportunityManageCard extends StatelessWidget {
   final Opportunity opportunity;

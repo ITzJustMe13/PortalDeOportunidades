@@ -8,18 +8,15 @@ import 'package:http/http.dart' as http;
 import '../Models/Opportunity.dart';
 
 class OpportunityApiHandler {
-
   final String baseUri = "https://localhost:7235/api/Opportunity";
 
   final http.Client client;
   final storage = FlutterSecureStorage();
   final timeout = const Duration(seconds: 30);
 
-
   OpportunityApiHandler(this.client);
 
   Future<Opportunity?> getOpportunityByID(int id) async {
-
     final uri = Uri.parse('$baseUri/$id');
 
     try {
@@ -150,18 +147,26 @@ class OpportunityApiHandler {
     final uri = Uri.parse(baseUri);
     final String? accessToken = await storage.read(key: 'accessToken');
 
+    print(uri);
     if (accessToken == null) {
       print('Error: No access token found');
       return null;
     }
 
+    print(jsonEncode(opportunity.toJson()));
+
     try {
-      final response = await client.post(uri, headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $accessToken',
-      });
+      final response = await client.post(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
+        },
+        body: jsonEncode(opportunity.toJson()),
+      );
 
       if (response.statusCode >= 200 && response.statusCode <= 299) {
+        print(response.body);
         final Opp = Opportunity.fromJson(jsonDecode(response.body));
         return Opp;
       } else {
@@ -278,11 +283,9 @@ class OpportunityApiHandler {
         print('Opportunity updated successfully');
         return true;
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return false;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return false;
     }
   }

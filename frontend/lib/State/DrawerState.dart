@@ -1,25 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/Services/user_api_handler.dart';
-import 'package:http/http.dart' as http;
+import 'package:frontend/State/LoginState.dart';
 
 class CustomDrawerState with ChangeNotifier {
-  final UserApiHandler _userApiHandler;
-  bool? _isLoggedIn;
+  final LoginState _loginState;
 
-  CustomDrawerState({required http.Client httpClient, String? token})
-      : _userApiHandler = UserApiHandler(httpClient) {
-    _checkLoginStatus();
-  }
-
-  bool get isLoggedIn => _isLoggedIn ?? false;
-
-  void _checkLoginStatus() async {
-    _isLoggedIn = await _userApiHandler.getStoredUser() != null;
-    notifyListeners();
-  }
+  CustomDrawerState({
+    required LoginState loginState, // Accept as a parameter
+    String? token,
+  }) : _loginState = loginState;
 
   void navigateToRoute(BuildContext context, String route) {
-    _checkLoginStatus();
     if (route.isNotEmpty) {
       Navigator.pushNamed(context, route);
     } else {
@@ -28,7 +18,7 @@ class CustomDrawerState with ChangeNotifier {
   }
 
   void ensureUserLoggedIn(BuildContext context, String route) {
-    if (isLoggedIn) {
+    if (_loginState.isLoggedIn) {
       navigateToRoute(context, route);
     } else {
       _showLoginDialog(context);
@@ -36,8 +26,8 @@ class CustomDrawerState with ChangeNotifier {
   }
 
   void logout(BuildContext context, String route) {
-    _userApiHandler.logout();
-    _isLoggedIn = false;
+    _loginState.logout();
+
     navigateToRoute(context, route);
   }
 

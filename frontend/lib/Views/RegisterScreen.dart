@@ -31,8 +31,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   String _errorMessage = '';
 
-  final ImagePicker _picker =
-      ImagePicker(); // <--- NEW INSTANCE FOR IMAGE PICKER
+  final ImagePicker _picker = ImagePicker();
 
   @override
   void dispose() {
