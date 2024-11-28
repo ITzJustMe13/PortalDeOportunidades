@@ -18,9 +18,9 @@ namespace BackEnd.Services
     /// </summary>
     public class OpportunityService : IOpportunityService
     {
-        
-        
         private readonly ApplicationDbContext dbContext;
+
+
 
         public OpportunityService(ApplicationDbContext context)
         {

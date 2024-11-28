@@ -13,7 +13,7 @@ class CustomDrawerState with ChangeNotifier {
 
   bool get isLoggedIn => _isLoggedIn ?? false;
 
-  void _checkLoginStatus() async {
+  Future<void> _checkLoginStatus() async {
     _isLoggedIn = await _userApiHandler.getStoredUser() != null;
     notifyListeners();
   }

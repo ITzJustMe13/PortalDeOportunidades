@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/State/ActivationState.dart';
 import 'package:frontend/State/AppBarState.dart';
+import 'package:frontend/State/CreateOpportunityState.dart';
 import 'package:frontend/State/LoginState.dart';
 import 'package:frontend/State/RegisterState.dart';
 import 'package:frontend/Views/ActivationSucessScreen.dart';
@@ -45,7 +46,9 @@ void main() {
         ChangeNotifierProvider<CustomAppBarState>(
             create: (_) => CustomAppBarState()),
         ChangeNotifierProvider<ActivationState>(
-            create: (_) => ActivationState())
+            create: (_) => ActivationState()),
+        ChangeNotifierProvider<CreateOpportunityState>(
+            create: (_) => CreateOpportunityState())
       ],
       child: MainApp(),
     ),

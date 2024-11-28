@@ -1,16 +1,22 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/Components/CustomAppBar.dart';
 import 'package:frontend/Components/CustomDrawer.dart';
 import 'package:frontend/Enums/Location.dart';
 import 'package:frontend/Enums/OppCategory.dart';
+import 'package:frontend/Models/Opportunity.dart';
 import 'package:frontend/Models/OpportunityImg.dart';
+import 'package:frontend/State/CreateOpportunityState.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
 class CreateOpportunityScreen extends StatefulWidget {
   const CreateOpportunityScreen({super.key});
 
   @override
-  _AddOpportunityScreenState createState() => _AddOpportunityScreenState();
+  State<CreateOpportunityScreen> createState() => _AddOpportunityScreenState();
 }
 
 class _AddOpportunityScreenState extends State<CreateOpportunityScreen> {
@@ -23,100 +29,45 @@ class _AddOpportunityScreenState extends State<CreateOpportunityScreen> {
   Location _location = Location.PORTO;
   String _address = '';
   DateTime _date = DateTime.now();
+  String _errorMessage = "";
+  List<OpportunityImg> _opportunityImgs = [];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(),
-      endDrawer: CustomDrawer(),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          if (constraints.maxWidth < 600) {
-            // Layout para telas pequenas (smartphones)
-            return _buildMobileLayout();
-          } else if (constraints.maxWidth < 1200) {
-            // Layout para telas médias (tablets)
-            return _buildTabletLayout();
-          } else {
-            // Layout para telas grandes (desktops)
-            return _buildDesktopLayout();
-          }
-        },
-      ),
-    );
+        appBar: CustomAppBar(),
+        endDrawer: CustomDrawer(),
+        body: Consumer<CreateOpportunityState>(
+          builder: (context, createOpportunityState, child) => LayoutBuilder(
+            builder: (context, constraints) {
+              if (constraints.maxWidth < 600) {
+                // Layout para telas pequenas (smartphones)
+                return _buildMobileLayout(createOpportunityState);
+              } else if (constraints.maxWidth < 1200) {
+                // Layout para telas médias (tablets)
+                return _buildTabletLayout(createOpportunityState);
+              } else {
+                // Layout para telas grandes (desktops)
+                return _buildDesktopLayout(createOpportunityState);
+              }
+            },
+          ),
+        ));
   }
 
-  Widget _buildMobileLayout() {
+  Widget _buildMobileLayout(CreateOpportunityState createOpportunityState) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Center(
-            child: _buildImagePicker(),
-          ),
-          const SizedBox(height: 16),
-          _buildTextFields(),
-          const SizedBox(height: 16),
-          _buildDropdowns(),
-          const SizedBox(height: 16),
-          _buildDateField(),
-          const SizedBox(height: 16),
-          _buildAddressField(),
-          const SizedBox(height: 16),
-          _buildSubmitButton(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTabletLayout() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(flex: 1, child: _buildImagePicker()),
-              const SizedBox(width: 16),
-              Expanded(flex: 2, child: _buildTextFields()),
-            ],
-          ),
-          const SizedBox(height: 16),
-          _buildDropdowns(),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(flex: 2, child: _buildDateField()),
-              const SizedBox(width: 16),
-              Expanded(flex: 1, child: _buildAddressField()),
-            ],
-          ),
-          const SizedBox(height: 16),
-          _buildSubmitButton(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDesktopLayout() {
-    return Padding(
-      padding: const EdgeInsets.only(left: 400, right: 400, top: 50),
-      child: SingleChildScrollView(
-        // Adiciona o scroll
+      child: Form(
+        key: _formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildImagePicker(),
-                const SizedBox(width: 16),
-                Expanded(child: _buildTextFields()),
-              ],
+            Center(
+              child: _buildImagesPicker(),
             ),
+            const SizedBox(height: 16),
+            _buildTextFields(),
             const SizedBox(height: 16),
             _buildDropdowns(),
             const SizedBox(height: 16),
@@ -124,24 +75,135 @@ class _AddOpportunityScreenState extends State<CreateOpportunityScreen> {
             const SizedBox(height: 16),
             _buildAddressField(),
             const SizedBox(height: 16),
-            _buildSubmitButton(),
+            _buildSubmitButton(createOpportunityState),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildImagePicker() {
+  Widget _buildTabletLayout(CreateOpportunityState createOpportunityState) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16.0),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(flex: 1, child: _buildImagesPicker()),
+                const SizedBox(width: 16),
+                Expanded(flex: 2, child: _buildTextFields()),
+              ],
+            ),
+            const SizedBox(height: 16),
+            _buildDropdowns(),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(flex: 2, child: _buildDateField()),
+                const SizedBox(width: 16),
+                Expanded(flex: 1, child: _buildAddressField()),
+              ],
+            ),
+            const SizedBox(height: 16),
+            _buildSubmitButton(createOpportunityState),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDesktopLayout(CreateOpportunityState createOpportunityState) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 400, right: 400, top: 50),
+      child: SingleChildScrollView(
+        // Adiciona o scroll
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildImagesPicker(),
+                  const SizedBox(width: 16),
+                  Expanded(child: _buildTextFields()),
+                ],
+              ),
+              const SizedBox(height: 16),
+              _buildDropdowns(),
+              const SizedBox(height: 16),
+              _buildDateField(),
+              const SizedBox(height: 16),
+              _buildAddressField(),
+              const SizedBox(height: 16),
+              _buildSubmitButton(createOpportunityState),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildImagesPicker() {
     return Container(
       width: 300,
       height: 250,
       color: Colors.grey[300],
       child: Center(
-        child: ElevatedButton(
-          onPressed: () {},
-          style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-          child: const Text('Escolher Fotos',
-              style: TextStyle(color: Colors.white)),
+        child: Column(
+          children: [
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+              child: const Text('Escolher Fotos',
+                  style: TextStyle(color: Colors.white)),
+              onPressed: () async {
+                final List<XFile>? pickedFiles = await ImagePicker()
+                    .pickMultiImage(); // Pick multiple images
+                if (pickedFiles != null && pickedFiles.isNotEmpty) {
+                  final List<String> base64Images = await Future.wait(
+                    pickedFiles.map((file) async {
+                      final Uint8List fileBytes = await file.readAsBytes();
+                      return base64Encode(fileBytes);
+                    }),
+                  );
+                  setState(() {
+                    for (var image in base64Images) {
+                      var oppImg = OpportunityImg(
+                          imgId: 0, opportunityId: 0, imageBase64: image);
+                      _opportunityImgs.add(oppImg);
+                    }
+                  });
+                }
+              },
+            ),
+            SizedBox(height: 16.0),
+            _opportunityImgs.isNotEmpty
+                ? GridView.builder(
+                    shrinkWrap: true, // Allow GridView to fit within a Column
+                    itemCount: _opportunityImgs.length,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3, // Number of columns
+                      crossAxisSpacing: 8.0,
+                      mainAxisSpacing: 8.0,
+                    ),
+                    itemBuilder: (context, index) {
+                      final Uint8List imageBytes = Uint8List.fromList(
+                          base64Decode(_opportunityImgs[index].imageBase64));
+                      return Image.memory(
+                        imageBytes,
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                      );
+                    },
+                  )
+                : Center(child: Text('Nenhuma imagem selecionada')),
+          ],
         ),
       ),
     );
@@ -152,19 +214,30 @@ class _AddOpportunityScreenState extends State<CreateOpportunityScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildTextField(
-          label: 'Nome da Oportunidade:',
-          onSaved: (value) => _name = value!,
-          validator: (value) => value == null || value.isEmpty
-              ? 'Por favor, insira o nome da oportunidade'
-              : null,
-        ),
+            label: 'Nome da Oportunidade:',
+            onChanged: (value) => _name = value ?? "",
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Por favor, insira o nome da oportunidade';
+              } else if (value.length > 100) {
+                return 'O nome não deve ter mais do que 100 carateres';
+              } else {
+                return null;
+              }
+            }),
         const SizedBox(height: 16),
         _buildTextField(
           label: 'Descrição:',
-          onSaved: (value) => _description = value!,
-          validator: (value) => value == null || value.isEmpty
-              ? 'Por favor, insira uma descrição da oportunidade'
-              : null,
+          onChanged: (value) => _description = value ?? "",
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Por favor, insira a descrição da oportunidade';
+            } else if (value.length > 100) {
+              return 'A descrição não deve ter mais do que 1000 carateres';
+            } else {
+              return null;
+            }
+          },
           maxLines: 4, // Definindo o campo para aceitar até 6 linhas visíveis
           keyboardType: TextInputType.multiline, // Necessário para multiline
         ),
@@ -175,10 +248,16 @@ class _AddOpportunityScreenState extends State<CreateOpportunityScreen> {
               child: _buildTextField(
                 label: 'Preço:',
                 keyboardType: TextInputType.numberWithOptions(decimal: true),
-                onSaved: (value) => _price = double.parse(value!),
-                validator: (value) => value == null || value.isEmpty
-                    ? 'Por favor, insira o preço da oportunidade'
-                    : null,
+                onChanged: (value) => _price = double.parse(value ?? ""),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor, insira a descrição da oportunidade';
+                  } else if (double.parse(value) < 0) {
+                    return 'Deve ser maior que 0';
+                  } else {
+                    return null;
+                  }
+                },
               ),
             ),
             const SizedBox(width: 16),
@@ -186,10 +265,17 @@ class _AddOpportunityScreenState extends State<CreateOpportunityScreen> {
               child: _buildTextField(
                 label: 'Vagas:',
                 keyboardType: TextInputType.number,
-                onSaved: (value) => _vacancies = int.parse(value!),
-                validator: (value) => value == null || value.isEmpty
-                    ? 'Por favor, insira a quantidade de vagas'
-                    : null,
+                onChanged: (value) => _vacancies = int.parse(value ?? ""),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor, insira a descrição da oportunidade';
+                  } else if (double.parse(value) < 1 ||
+                      double.parse(value) > 30) {
+                    return 'Deve ser entre 1 e 30';
+                  } else {
+                    return null;
+                  }
+                },
               ),
             ),
           ],
@@ -201,7 +287,7 @@ class _AddOpportunityScreenState extends State<CreateOpportunityScreen> {
   Widget _buildTextField({
     required String label,
     TextInputType keyboardType = TextInputType.text,
-    required FormFieldSetter<String> onSaved,
+    required FormFieldSetter<String> onChanged,
     required FormFieldValidator<String> validator,
     int? maxLines, // Adicionando o parâmetro
   }) {
@@ -213,7 +299,7 @@ class _AddOpportunityScreenState extends State<CreateOpportunityScreen> {
       ),
       keyboardType: keyboardType,
       validator: validator,
-      onSaved: onSaved,
+      onChanged: onChanged,
       maxLines: maxLines,
       textAlign: TextAlign
           .start, // Usando maxLines para ajustar a altura do campo // Alinha o texto no topo da caixa
@@ -282,7 +368,15 @@ class _AddOpportunityScreenState extends State<CreateOpportunityScreen> {
 
         if (pickedDate != null) {
           setState(() {
-            _date = pickedDate;
+            _date = DateTime(
+              pickedDate.year,
+              pickedDate.month,
+              pickedDate.day,
+              1, // Set hours to 1
+              1, // Set minutes to 1
+              1, // Set seconds to 1
+              1, // Set milliseconds to 1
+            );
           });
         }
       },
@@ -295,10 +389,16 @@ class _AddOpportunityScreenState extends State<CreateOpportunityScreen> {
   Widget _buildAddressField() {
     return _buildTextField(
       label: 'Endereço:',
-      onSaved: (value) => _address = value!,
-      validator: (value) => value == null || value.isEmpty
-          ? 'Por favor, insira o endereço'
-          : null,
+      onChanged: (value) => _address = value ?? "",
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Por favor, insira a morada da oportunidade';
+        } else if (value.length > 200) {
+          return 'A morada não deve ter mais do que 200 carateres';
+        } else {
+          return null;
+        }
+      },
     );
   }
 
@@ -324,35 +424,73 @@ class _AddOpportunityScreenState extends State<CreateOpportunityScreen> {
     );
   }
 
-  Widget _buildSubmitButton() {
+  Widget _buildSubmitButton(CreateOpportunityState createOpportunityState) {
     return Center(
-      child: ElevatedButton(
-        onPressed: () {
-          if (_formKey.currentState?.validate() ?? false) {
-            // Se o formulário for válido, chama a função de envio
-            _handleSubmit();
-          }
-        },
-        child: const Text('Enviar'),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.green,
-          padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 70.0),
+        child: Column(children: [
+      if (createOpportunityState.isLoading)
+        CircularProgressIndicator()
+      else
+        ElevatedButton(
+          onPressed: () {
+            if (_formKey.currentState!.validate()) {
+              _errorMessage = "";
+              _handleSubmit(createOpportunityState);
+            }
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.green,
+            padding:
+                const EdgeInsets.symmetric(vertical: 20.0, horizontal: 70.0),
+          ),
+          child: const Text('Enviar'),
         ),
-      ),
-    );
+      if (_errorMessage.isNotEmpty ||
+          createOpportunityState.errorMessage != null ||
+          createOpportunityState.errorMessage != '')
+        Text(
+          _errorMessage == ""
+              ? createOpportunityState.errorMessage ?? ""
+              : _errorMessage,
+          style: TextStyle(color: Colors.red),
+        ),
+    ]));
   }
 
-  void _handleSubmit() {
-    // Aqui você pode processar os dados do formulário, como salvar ou enviar para um servidor.
-    // Exemplo:
-    print("Dados Enviados: ");
-    print("Nome: $_name");
-    print("Preço: $_price");
-    print("Vagas: $_vacancies");
-    print("Categoria: $_oppcategory");
-    print("Descrição: $_description");
-    print("Localização: $_location");
-    print("Endereço: $_address");
-    print("Data: $_date");
+  Future<bool> _handleSubmit(
+      CreateOpportunityState createOpportunityState) async {
+    int currentUserId = await createOpportunityState.getCurrentUserId();
+
+    if (_opportunityImgs.isEmpty) {
+      setState(() {
+        _errorMessage = 'A oportunidade deve conter imagens';
+      });
+      return false;
+    }
+
+    if (currentUserId == -1) {
+      setState(() {
+        _errorMessage = 'Erro ao criar conta';
+      });
+      return false;
+    }
+
+    final opportunity = Opportunity(
+        opportunityId: 0,
+        userId: currentUserId,
+        name: _name,
+        price: _price,
+        vacancies: _vacancies,
+        isActive: true,
+        category: _oppcategory,
+        description: _description,
+        location: _location,
+        address: _address,
+        date: _date,
+        isImpulsed: false,
+        reviewScore: 0,
+        opportunityImgs: []);
+
+    return await createOpportunityState.createOpportunity(
+        opportunity, _opportunityImgs);
   }
 }

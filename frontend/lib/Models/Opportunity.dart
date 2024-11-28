@@ -54,6 +54,7 @@ class Opportunity {
           .toList());
 
   Map<String, dynamic> toJson() => {
+        "opportunityId": opportunityId,
         "name": name,
         "price": price,
         "vacancies": vacancies,
