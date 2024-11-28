@@ -9,6 +9,10 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:convert';
 import 'dart:typed_data';
 
+/// A screen that allows users to edit their profile information.
+///
+/// This screen supports updating the user's email, phone number, and profile picture.
+/// The layout adapts to different screen sizes (mobile, tablet, desktop).
 class EditProfileScreen extends StatefulWidget {
 
   final User user;
@@ -19,6 +23,8 @@ class EditProfileScreen extends StatefulWidget {
   _EditProfileScreenState createState() => _EditProfileScreenState();
 }
 
+/// The state class for `EditProfileScreen`, managing the UI and logic
+/// for editing the user's profile.
 class _EditProfileScreenState extends State<EditProfileScreen> {
   
 
@@ -53,6 +59,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
+  /// Builds the mobile layout for the screen.
   Widget _buildMobileLayout() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -71,6 +78,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
+  /// Builds the tablet layout for the screen.
   Widget _buildTabletLayout() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 64.0),
@@ -96,6 +104,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
+  /// Builds the desktop layout for the screen.
   Widget _buildDesktopLayout() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 200.0, vertical: 50.0),
@@ -128,7 +137,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  // Widget para exibir a imagem do perfil com botão
+  /// Widget para exibir a imagem do perfil com botão
  Widget _buildProfileImage() {
   return Column(
     children: [
@@ -159,7 +168,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   );
 }
 
-// This is the helper function to display the image or placeholder
+// Helper function to display the image or placeholder if the image is "empty"
 Widget _buildImage(String image) {
   if (image.isNotEmpty) {
     // Decode the Base64 string into bytes
@@ -195,7 +204,7 @@ Widget _buildImage(String image) {
   }
 }
 
-  // Widget para o campo de email
+  /// Widget para o campo de email
   Widget _buildEmailField() {
     return Row(
       children: [
@@ -214,7 +223,7 @@ Widget _buildImage(String image) {
     );
   }
 
-  // Widget para o campo de número de telefone
+  /// Widget para o campo de número de telefone
   Widget _buildPhoneField() {
     return Row(
       children: [
@@ -233,7 +242,7 @@ Widget _buildImage(String image) {
     );
   }
 
-  // Widget para o botão de salvar alterações
+  /// Widget para o botão de salvar alterações
   Widget _buildSaveButton() {
     return ElevatedButton(
       onPressed: () {
@@ -247,7 +256,7 @@ Widget _buildImage(String image) {
     );
   }
 
-  // Lógica para salvar alterações
+  /// Lógica para salvar alterações
   void _saveChanges() async {
     // Validate email and phone
     if (emailController.text.isEmpty || phoneController.text.isEmpty) {
