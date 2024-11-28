@@ -261,6 +261,77 @@ namespace BackEnd.Services
             return response;
         }
 
+        public async Task<ServiceResponse<List<Review>>> GetAllReviewsByOpportunityIdAsync(int opportunityId)
+        {
+            var response = new ServiceResponse<List<Review>>();
+
+            try
+            {
+                if (dbContext == null)
+                {
+                    response.Success = false;
+                    response.Message = "DB context is missing.";
+                    response.Type = "NotFound";
+                    return response;
+                }
+
+                if (opportunityId <= 0)
+                {
+                    response.Success = false;
+                    response.Message = "Given userId is invalid, it should be greater than 0.";
+                    response.Type = "BadRequest";
+                    return response;
+                }
+
+                var opportunity = await dbContext.Opportunities
+                    .Include(o => o.OpportunityImgs)
+                    .FirstOrDefaultAsync(o => o.OpportunityId == opportunityId);
+
+                if (opportunity == null)
+                {
+                    response.Success = false;
+                    response.Message = $"Opportunities with userId {opportunityId} not found.";
+                    response.Type = "NotFound";
+                    return response;
+                }
+
+                // Obter as Reviews associadas às Reservations da Opportunity
+                var reviews = await dbContext.Reservations
+                    .Where(r => r.opportunityID == opportunityId) // Filtra as Reservations da Opportunity
+                    .Select(r => r.review) // Obtem a Review associada a cada Reservation
+                    .ToListAsync();
+
+                // Verifica se existem reviews
+                if (!reviews.Any())
+                {
+                    response.Success = false;
+                    response.Message = $"No reviews found for Opportunity with ID {opportunityId}.";
+                    response.Type = "NotFound";
+                    return response;
+                }
+
+                var reviewDtos = reviews.Select(ReviewMapper.MapToDto).ToList();
+                response.Data = reviewDtos;
+                response.Success = true;
+                response.Message = "Reviews retrieved successfully.";
+                response.Type = "Ok";
+            }
+            catch (ValidationException ex)
+            {
+                response.Success = false;
+                response.Message = "Validation error occurred.";
+                response.Type = "BadRequest";
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = "An unexpected error occurred.";
+                response.Type = "InternalServerError";
+            }
+
+            return response;
+        }
+
         /// <summary>
         /// Function that searches Opportunities in the DB by certain filters
         /// </summary>

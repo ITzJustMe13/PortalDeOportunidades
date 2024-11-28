@@ -53,6 +53,14 @@ namespace BackEnd.Controllers
             return HandleResponse(serviceResponse);
         }
 
+        [HttpGet("Reviews/{id}")]
+        public async Task<IActionResult> GetAllReviewsByOpportunityId(int id)
+        {
+            var serviceResponse = await _opportunityService.GetAllReviewsByOpportunityIdAsync(id);
+
+            return HandleResponse(serviceResponse);
+        }
+
         // GET api/Opportunity/Search?keyword=event&vacancies=5&minPrice=10&maxPrice=100&category=conference&location=VilaReal
         [HttpGet("Search")]
         public async Task<IActionResult> SearchOpportunities(

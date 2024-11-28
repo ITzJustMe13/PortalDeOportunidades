@@ -14,6 +14,8 @@ namespace BackEnd.Interfaces
 
         Task<ServiceResponse<List<Opportunity>>> GetAllOpportunitiesByUserIdAsync(int userId);
 
+        Task<ServiceResponse<List<Review>>> GetAllReviewsByOpportunityIdAsync(int opportunityId);
+
         Task<ServiceResponse<List<Opportunity>>> SearchOpportunitiesAsync(
             string? keyword,
             int? vacancies,
