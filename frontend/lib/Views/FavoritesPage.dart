@@ -2,10 +2,11 @@ import 'package:dynamic_height_grid_view/dynamic_height_grid_view.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/Components/CustomAppBar.dart';
 import 'package:frontend/Components/CustomDrawer.dart';
-import 'package:frontend/Components/DynamicDetailsButton.dart';
+import 'package:frontend/Components/DynamicActionButton.dart';
 import 'package:frontend/Enums/Location.dart';
 import 'package:frontend/Enums/OppCategory.dart';
 import 'package:frontend/Models/Opportunity.dart';
+import 'package:frontend/Views/OpportunityDetailsScreen.dart';
 
 class FavoritesPage extends StatefulWidget {
   const FavoritesPage({super.key});
@@ -237,7 +238,19 @@ class _FavoritesPageState extends State<FavoritesPage> {
                       ),
                       SizedBox(width: 8),
                       Flexible(
-                          fit: FlexFit.loose, child: DynamicDetailsButton()),
+                          fit: FlexFit.loose, 
+                          child: DynamicActionButton
+                          (text: 'Detalhes', 
+                          color:Color(0xFF50C878) ,
+                          icon: Icons.details,
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => OpportunityDetailsScreen(opportunity: opportunity),
+                              ),
+                            );
+                          },)),
                     ],
                   ),
                   SizedBox(height: 8),
