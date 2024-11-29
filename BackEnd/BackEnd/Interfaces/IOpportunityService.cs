@@ -1,5 +1,5 @@
 ﻿using BackEnd.Enums;
-using BackEnd.GenericClasses;
+using BackEnd.ServiceResponses;
 using BackEnd.Models.FrontEndModels;
 
 namespace BackEnd.Interfaces
@@ -13,6 +13,8 @@ namespace BackEnd.Interfaces
         Task<ServiceResponse<Opportunity>> GetOpportunityByIdAsync(int id);
 
         Task<ServiceResponse<List<Opportunity>>> GetAllOpportunitiesByUserIdAsync(int userId);
+
+        Task<ServiceResponse<List<Review>>> GetAllReviewsByOpportunityIdAsync(int opportunityId);
 
         Task<ServiceResponse<List<Opportunity>>> SearchOpportunitiesAsync(
             string? keyword,
@@ -31,17 +33,6 @@ namespace BackEnd.Interfaces
 
         Task<ServiceResponse<bool>> DeactivateOpportunityByIdAsync(int id);
 
-        Task<ServiceResponse<Opportunity>> EditOpportunityByIdAsync(
-            int id,
-            string? name,
-            string? description,
-            decimal? price,
-            int? vacancies,
-            Category? category,
-            Location? location,
-            string? address,
-            DateTime? date,
-            List<byte[]>? newImageUrls
-        );
+        Task<ServiceResponse<Opportunity>> EditOpportunityByIdAsync(int id,Opportunity opportunity);
     }
 }

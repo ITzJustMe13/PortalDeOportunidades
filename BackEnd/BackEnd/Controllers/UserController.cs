@@ -1,17 +1,9 @@
-using BackEnd.Controllers.Data;
-using BackEnd.Enums;
-using BackEnd.Models.BackEndModels;
 using BackEnd.Models.FrontEndModels;
-using BackEnd.Models.Mappers;
-using BackEnd.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
-using BackEnd.Services;
 using BackEnd.Interfaces;
-using BackEnd.GenericClasses;
+using BackEnd.ServiceResponses;
 
 namespace BackEnd.Controllers
 {
@@ -21,7 +13,7 @@ namespace BackEnd.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class UserController : BaseCrudController<User>
     {
         private readonly IUserService _userService;
         private readonly IFavoritesService _favoritesService;
@@ -39,14 +31,11 @@ namespace BackEnd.Controllers
         /// <returns>Returns NotFound() if is not sucessefully or OK() with the User Dto if it is</returns>
         [HttpGet("{id}")]
         [Authorize]
-        public async Task<IActionResult> GetUserByID(int id)
+        public override async Task<IActionResult> GetEntityById(int id)
         {
-            var response = await _userService.GetUserByIDAsync(id);
+            var serviceResponse = await _userService.GetUserByIDAsync(id);
 
-            if (!response.Success)
-                return NotFound(response.Message);
-
-            return Ok(response.Data);
+            return HandleResponse(serviceResponse);
         }
 
         /// <summary>
@@ -57,21 +46,16 @@ namespace BackEnd.Controllers
         /// NotFound() if userService responds "NotFound", or CreatedAtAction()
         /// with the path for the newly created user</returns>
         [HttpPost]
-        public async Task<IActionResult> CreateNewUser(User user)
+        public override async Task<IActionResult> CreateEntity(User user)
         {
-            var response = await _userService.CreateNewUserAsync(user);
+            var serviceResponse = await _userService.CreateNewUserAsync(user);
 
-            if (!response.Success && response.Type.Equals("BadRequest"))
+            if (!serviceResponse.Success)
             {
-                return BadRequest(response.Message);
+                return HandleResponse(serviceResponse);
             }
 
-            if (!response.Success && response.Type.Equals("NotFound"))
-            {
-                return NotFound(response.Message);
-            }
-
-         return CreatedAtAction(nameof(GetUserByID), new { id = response.Data.userId }, response.Data);
+            return HandleCreatedAtAction(serviceResponse, nameof(GetEntityById), new { id = serviceResponse.Data.userId });
         }
 
         /// <summary>
@@ -83,22 +67,12 @@ namespace BackEnd.Controllers
         /// user is correctly deleted from the system</returns>
         [HttpDelete("{id}")]
         [Authorize]
-        public async Task<IActionResult> DeleteUser(int id)
+        public override async Task<IActionResult> DeleteEntity(int id)
         {
             {
                 var serviceResponse = await _userService.DeleteUserAsync(id);
 
-                if (!serviceResponse.Success && serviceResponse.Type.Equals("BadRequest"))
-                {
-                    return BadRequest(serviceResponse.Message);
-                }
-
-                if (!serviceResponse.Success && serviceResponse.Type.Equals("NotFound"))
-                {
-                    return NotFound(serviceResponse.Message);
-                }
-
-             return NoContent();
+                return HandleResponse(serviceResponse);
             }
         }
 
@@ -112,21 +86,11 @@ namespace BackEnd.Controllers
         /// updated User dto if updated correctly</returns>
         [HttpPut("{id}")]
         [Authorize]
-        public async Task<IActionResult> EditUser(int id, User updatedUser)
+        public override async Task<IActionResult> UpdateEntity(int id, User updatedUser)
         {
             var serviceResponse = await _userService.EditUserAsync(id, updatedUser);
 
-            if (!serviceResponse.Success && serviceResponse.Type.Equals("BadRequest"))
-            {
-                return BadRequest(serviceResponse.Message);
-            }
-
-            if (!serviceResponse.Success && serviceResponse.Type.Equals("NotFound"))
-            {
-                return NotFound(serviceResponse.Message);
-            }
-
-            return Ok(serviceResponse.Data);
+            return HandleResponse(serviceResponse);
         }
 
         /// <summary>
@@ -143,22 +107,12 @@ namespace BackEnd.Controllers
         {
             var serviceResponse = await _favoritesService.AddFavoriteAsync(favorite);
 
-            if (!serviceResponse.Success && serviceResponse.Type.Equals("BadRequest"))
+            if (!serviceResponse.Success)
             {
-                return BadRequest(serviceResponse.Message);
+                return HandleResponse(serviceResponse);
             }
 
-            if (!serviceResponse.Success && serviceResponse.Type.Equals("NotFound"))
-            {
-                return NotFound(serviceResponse.Message);
-            }
-
-            if (!serviceResponse.Success && serviceResponse.Type.Equals("Conflict"))
-            {
-                return Conflict(serviceResponse.Message);
-            }
-
-            return CreatedAtAction(nameof(GetFavoriteById), new { userId = favorite.userId, opportunityId = favorite.opportunityId }, serviceResponse.Data);
+            return HandleCreatedAtAction(serviceResponse, nameof(GetFavoriteById), new { userId = favorite.userId, opportunityId = favorite.opportunityId });
         }
 
         /// <summary>
@@ -175,17 +129,7 @@ namespace BackEnd.Controllers
         {
             var serviceResponse = await _favoritesService.GetFavoriteByIdAsync(userId, opportunityId);
 
-            if (!serviceResponse.Success && serviceResponse.Type.Equals("BadRequest"))
-            {
-              return BadRequest(serviceResponse.Message);
-            }
-
-            if (!serviceResponse.Success && serviceResponse.Type.Equals("NotFound"))
-            {
-                return NotFound(serviceResponse.Message);
-            }
-
-            return Ok(serviceResponse.Data);
+            return HandleResponse(serviceResponse);
         }
 
         /// <summary>
@@ -201,18 +145,7 @@ namespace BackEnd.Controllers
         {
             var serviceResponse = await _favoritesService.GetFavoritesAsync(userId);
 
-            if (!serviceResponse.Success && serviceResponse.Type.Equals("BadRequest"))
-            {
-              return BadRequest(serviceResponse.Message);
-            }
-
-            if (!serviceResponse.Success && serviceResponse.Type.Equals("NotFound"))
-            {
-                return NotFound(serviceResponse.Message);
-            }
-
-
-            return Ok(serviceResponse.Data);
+            return HandleResponse(serviceResponse);
         }
 
         /// <summary>
@@ -228,23 +161,16 @@ namespace BackEnd.Controllers
         {
             var serviceResponse = await _userService.ImpulseOpportunityAsync(impulse);
 
-            if (!serviceResponse.Success && serviceResponse.Type.Equals("BadRequest"))
+            if (!serviceResponse.Success)
             {
-                 return BadRequest(serviceResponse.Message);
-
+                return HandleResponse(serviceResponse);
             }
 
-            if (!serviceResponse.Success && serviceResponse.Type.Equals("NotFound"))
-            {
-                return NotFound(serviceResponse.Message);
-
-            }
-
-            return CreatedAtAction(nameof(ImpulseOportunity), new
+            return HandleCreatedAtAction(serviceResponse, nameof(ImpulseOportunity), new
             {
                 serviceResponse.Data.userId,
                 serviceResponse.Data.opportunityId
-            }, serviceResponse.Data);
+            });
         }
 
         /// <summary>
@@ -260,17 +186,7 @@ namespace BackEnd.Controllers
         {
             var serviceResponse = await _favoritesService.GetCreatedOpportunitiesAsync(userId);
 
-            if (!serviceResponse.Success && serviceResponse.Type.Equals("BadRequest"))
-            {
-             return BadRequest(serviceResponse.Message);
-            }
-
-            if (!serviceResponse.Success && serviceResponse.Type.Equals("NotFound"))
-            {
-             return NotFound(serviceResponse.Message);
-            }
-
-         return Ok(serviceResponse.Data);
+            return HandleResponse(serviceResponse);
         }
 
         /// <summary>
@@ -286,23 +202,7 @@ namespace BackEnd.Controllers
         {
            var serviceResponse = await _userService.LoginAsync(request);
 
-           if (!serviceResponse.Success && serviceResponse.Type.Equals("BadRequest"))
-           {
-                return BadRequest(serviceResponse.Message);
-           }
-
-            if (!serviceResponse.Success && serviceResponse.Type.Equals("NotFound"))
-            {
-                return NotFound(serviceResponse.Message);
-            }
-
-            if (!serviceResponse.Success && serviceResponse.Type.Equals("Unauthorized"))
-            {
-                return Unauthorized(serviceResponse.Message);
-            }
-
-            return Ok(serviceResponse.Data);
-
+            return HandleResponse(serviceResponse);
         }
 
         /// <summary>
@@ -317,18 +217,7 @@ namespace BackEnd.Controllers
         {
             var serviceResponse = await _userService.CheckEmailAvailabilityAsync(email);
 
-            if (!serviceResponse.Success && serviceResponse.Type.Equals("BadRequest"))
-            { 
-
-                return BadRequest(serviceResponse.Message);
-            }
-
-            if (!serviceResponse.Success && serviceResponse.Type.Equals("NotFound"))
-            {
-                return NotFound(serviceResponse.Message);
-            }
-
-         return Ok(serviceResponse.Data);
+            return HandleResponse(serviceResponse);
         }
 
         /// <summary>
@@ -342,13 +231,7 @@ namespace BackEnd.Controllers
         {
             var serviceResponse = await _userService.ActivateAccountAsync(token);
 
-            if (!serviceResponse.Success)
-            {
-
-                return BadRequest(serviceResponse.Message);
-            }
-
-            return Ok(serviceResponse.Data);
+            return HandleResponse(serviceResponse);
         }
 
         /// <summary>
@@ -364,8 +247,6 @@ namespace BackEnd.Controllers
 
             throw new NotImplementedException();
         }
-
-
 
     }
 }

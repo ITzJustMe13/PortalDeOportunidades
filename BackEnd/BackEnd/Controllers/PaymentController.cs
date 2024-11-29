@@ -6,20 +6,27 @@ using BackEnd.Controllers.Data;
 using BackEnd.Services;
 using BackEnd.Interfaces;
 
+
 namespace BackEnd.Controllers
 {
+    /// <summary>
+    /// Controller Responsible for Payments
+    /// Has a constructor that receives an IPaymentService
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    public class PaymentController : ControllerBase
+    public class PaymentController : ResponseController
     {
-        private readonly ApplicationDbContext _context;
-        public PaymentController(ApplicationDbContext context)
+        private readonly IPaymentService _paymentService;
+
+
+        public PaymentController(IPaymentService paymentService)
         {
-            _context = context;
+            _paymentService = paymentService ?? throw new ArgumentNullException(nameof(paymentService));
         }
 
         /// <summary>
-        /// Endpoint that creates a checkout session using strip for paying for a reservation
+        /// Endpoint that creates a Checkout Session for a User Reservation
         /// </summary>
         /// <param name="reservation"></param>
         /// <returns>The checkout Session id for redirection on stripe</returns>
@@ -87,21 +94,18 @@ namespace BackEnd.Controllers
                 return BadRequest($"Stripe error: {ex.Message}");
             }
 
-            return Ok(new { sessionId = session.Id });
+            return HandleResponse(serviceResponse);
         }
 
 
-
-
         /// <summary>
-        /// Endpoint that creates a checkout session using strip for paying for a Opportunity Impulse
+        /// Endpoint that creates a Checkout Session for a Opportunity Impulse payment
         /// </summary>
         /// <param name="impulse"></param>
         /// <returns>The checkout Session id for redirection on stripe</returns>
         [HttpPost("Checkout-Impulse")]
         public async Task<IActionResult> CreateImpulseCheckoutSession([FromBody] Impulse impulse)
         {
-
             if (impulse == null || impulse.value <= 0 || impulse.expireDate <= DateTime.Today)
             {
                 return BadRequest("Invalid impulse data.");
@@ -162,6 +166,7 @@ namespace BackEnd.Controllers
             }
 
             return Ok(new { sessionId = session.Id }); // Return sessionId for frontend redirection to Stripe
+
         }
 
 

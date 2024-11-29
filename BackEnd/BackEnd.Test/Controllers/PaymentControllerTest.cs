@@ -13,6 +13,8 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 using Stripe;
 using DotNetEnv;
 using Sprache;
+using BackEnd.Interfaces;
+using BackEnd.Services;
 
 
 namespace BackEnd.Test
@@ -22,6 +24,7 @@ namespace BackEnd.Test
     {
         private PaymentController _controller;
         private ApplicationDbContext _context;
+        private IPaymentService _paymentService;
         private string stripeKey;
 
         [SetUp]
@@ -33,7 +36,8 @@ namespace BackEnd.Test
                 .Options;
 
             _context = new ApplicationDbContext(options);
-            _controller = new PaymentController(_context);
+            _paymentService = new PaymentService(_context);
+            _controller = new PaymentController(_paymentService);
 
             string envTestPath = Path.GetFullPath("../../../../BackEnd/.env");
             Console.WriteLine("Resolved.env Path: " + envTestPath);
@@ -145,7 +149,8 @@ namespace BackEnd.Test
         public async Task CreateReservationCheckoutSession_ReturnsNotFound_ForDBContextMissing()
         {
             // Arrange
-            var controller = new PaymentController(null);
+            var paymentService = new PaymentService(null);
+            var controller = new PaymentController(paymentService);
             StripeConfiguration.ApiKey = stripeKey;
 
             byte[] userImg = new byte[]
@@ -211,7 +216,7 @@ namespace BackEnd.Test
             // Assert
             Assert.That(response, Is.InstanceOf<NotFoundObjectResult>());
             var notFoundResult = response as NotFoundObjectResult;
-            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
+            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing."));
         }
 
         [Test]
@@ -713,7 +718,8 @@ namespace BackEnd.Test
         public async Task CreateImpulseCheckoutSession_ReturnsNotFound_ForDBContextMissing()
         {
             // Arrange
-            var controller = new PaymentController(null);
+            var paymentService = new PaymentService(null);
+            var controller = new PaymentController(paymentService);
             StripeConfiguration.ApiKey = stripeKey;
             byte[] userImg = new byte[]
             {
@@ -777,7 +783,7 @@ namespace BackEnd.Test
 
             Assert.That(response, Is.InstanceOf<NotFoundObjectResult>());
             var notFoundResult = response as NotFoundObjectResult;
-            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing"));
+            Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing."));
         }
 
         [Test]

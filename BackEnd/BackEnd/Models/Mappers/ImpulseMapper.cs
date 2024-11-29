@@ -20,7 +20,6 @@ namespace BackEnd.Models.Mappers
             {
                 return null;
             }
-            ValidateModel(impulseModel);
 
             return new Impulse
             {

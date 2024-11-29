@@ -1,4 +1,6 @@
-﻿namespace BackEnd.Models.FrontEndModels
+﻿using BackEnd.Models.FrontEndModels;
+
+namespace BackEnd.Responses
 {
     public class LoginResponse
     {

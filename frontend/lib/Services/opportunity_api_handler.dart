@@ -112,15 +112,34 @@ class OpportunityApiHandler {
     }
   }
 
-  Future<List<Opportunity>?> SearchOpportunities(
+  Future<List<Opportunity>> searchOpportunities(
       String? keyword,
       int? vacancies,
       double? minPrice,
       double? maxPrice,
       OppCategory? category,
       Location? location) async {
-    final uri = Uri.parse(
-        '$baseUri/Search?keyword=$keyword&vacancies=$vacancies&minPrice=$minPrice&maxPrice=$maxPrice&category=$category&location=$location');
+    String query = "";
+    if (keyword != null) {
+      query += "keyword=$keyword&";
+    }
+    if (vacancies != null) {
+      query += "vacancies=$vacancies&";
+    }
+    if (minPrice != null) {
+      query += "minPrice=$minPrice&";
+    }
+    if (maxPrice != null) {
+      query += "maxPrice=$maxPrice&";
+    }
+    if (category != null) {
+      query += "category=${categoryToInt(category)}&";
+    }
+    if (location != null) {
+      query += "location=${locationToInt(location)}&";
+    }
+
+    final uri = Uri.parse('$baseUri/Search?$query');
 
     try {
       final response = await client.get(uri).timeout(timeout);
@@ -131,15 +150,13 @@ class OpportunityApiHandler {
             jsonList.map((json) => Opportunity.fromJson(json)).toList();
         return searchedOpp;
       } else if (response.statusCode == 404) {
-        print('No Searched opportunities found!');
         return [];
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
-        return null;
+        return [];
       }
     } catch (e) {
       print('Exception occurred: $e');
-      return null;
+      return [];
     }
   }
 
