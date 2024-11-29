@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/Components/DynamicDetailsButton.dart';
+import 'package:frontend/Components/DynamicActionButton.dart';
 import 'package:frontend/Models/Opportunity.dart';
 import 'package:frontend/Views/OpportunityDetailsScreen.dart';
 import 'dart:convert';
@@ -132,7 +132,10 @@ class OpportunityCard extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 8),
-                DynamicDetailsButton(
+                DynamicActionButton(
+                  text: 'Detalhes',
+                  icon: Icons.details,
+                  color: Color(0xFF50C878),
                   onPressed: () {
                     Navigator.push(
                       context,

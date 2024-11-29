@@ -29,6 +29,6 @@ namespace BackEnd.Models.FrontEndModels
 
         public required bool isImpulsed { get; set;}
 
-        public required ICollection<OpportunityImg> OpportunityImgs { get; set; }
+        public ICollection<OpportunityImg?> OpportunityImgs { get; set; }
     }
 }

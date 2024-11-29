@@ -11,7 +11,7 @@ class PaymentApiHandler {
 
   PaymentApiHandler(this.client);
 
-  Future<int?> createReservationCheckoutSession(Reservation reservation) async {
+  Future<String?> createReservationCheckoutSession(Reservation reservation) async {
     final uri = Uri.parse('$baseUri/Checkout-Reservation');
 
     try {
@@ -34,7 +34,7 @@ class PaymentApiHandler {
     }
   }
 
-  Future<int?> createImpulseCheckoutSession(Impulse impulse) async {
+  Future<String?> createImpulseCheckoutSession(Impulse impulse) async {
     final uri = Uri.parse('$baseUri/Checkout-Impulse');
 
     try {

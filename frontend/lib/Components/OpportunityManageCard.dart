@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/Components/DynamicActiveInactiveButton.dart';
-import 'package:frontend/Components/DynamicDetailsButton.dart';
 import 'package:frontend/Components/DynamicActionButton.dart';
 import 'package:frontend/Models/Opportunity.dart';
 import 'dart:convert'; // For Base64 decoding
@@ -123,7 +121,10 @@ class OpportunityManageCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     // Details Button
-                    DynamicDetailsButton(
+                    DynamicActionButton(
+                      text: 'Detalhes',
+                      icon: Icons.details,
+                      color: Color(0xFF50C878),
                       onPressed: () {
                       Navigator.push(
                         context,
@@ -148,7 +149,11 @@ class OpportunityManageCard extends StatelessWidget {
                     color: Colors.green,
                     ),
 
-                    DynamicActiveInactiveButton(isActive: true, onPressed: (){
+                    DynamicActionButton(
+                      text: 'Ativo/Inativo',
+                      color: Colors.yellow,
+                      icon: Icons.adjust,
+                      onPressed: (){
                       
                     },),
                     // Delete Button

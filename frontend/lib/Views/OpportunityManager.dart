@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/Models/Opportunity.dart';
+import 'package:frontend/Models/User.dart';
 import 'package:frontend/Components/CustomAppBar.dart';
 import 'package:frontend/Components/CustomDrawer.dart';
 import 'package:frontend/Components/OpportunityManageCard.dart';
 import 'package:frontend/Services/opportunity_api_handler.dart';
+import 'package:frontend/Services/user_api_handler.dart';
 import 'package:provider/provider.dart';
 
 class OpportunityManagerScreen extends StatefulWidget {
@@ -17,11 +19,23 @@ class OpportunityManagerScreen extends StatefulWidget {
 class _OpportunityManagerScreenState extends State<OpportunityManagerScreen> {
   late Future<List<Opportunity>?> _opportunitiesFuture;
 
+   User? user;
+
   @override
   void initState() {
     super.initState();
-    _opportunitiesFuture = Provider.of<OpportunityApiHandler>(context, listen: false)
-        .getAllOpportunitiesByUserId(1);
+    _initializeData();
+  }
+
+  Future<void> _initializeData() async {
+    user = await _getCachedUser();
+    if (user != null) {
+      _opportunitiesFuture = Provider.of<OpportunityApiHandler>(context, listen: false)
+          .getAllOpportunitiesByUserId(user!.userId);
+      setState(() {}); // Trigger a rebuild after setting opportunities
+    } else {
+      _opportunitiesFuture = Future.value([]);
+    }
   }
 
   @override
@@ -36,10 +50,10 @@ class _OpportunityManagerScreenState extends State<OpportunityManagerScreen> {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(
-              child: Text('Error loading opportunities: ${snapshot.error}'),
+              child: Text('Erro ao carregar Opportunidades: ${snapshot.error}'),
             );
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No opportunities found.'));
+            return const Center(child: Text('Não foram encontradas Oportunidades.'));
           } else {
             final opportunities = snapshot.data!;
             return LayoutBuilder(
@@ -145,4 +159,15 @@ class _OpportunityManagerScreenState extends State<OpportunityManagerScreen> {
       ),
     );
   }
+
+  Future<User?> _getCachedUser() async {
+  try {
+    // Fetch the user from the API or local storage
+    final user = await Provider.of<UserApiHandler>(context, listen: false).getStoredUser();
+    return user;
+  } catch (e) {
+    print('Error fetching user: $e');
+    return null;
+  }
+}
 }
