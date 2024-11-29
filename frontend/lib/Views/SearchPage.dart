@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/Components/CustomAppBar.dart';
 import 'package:frontend/Components/CustomDrawer.dart';
+import 'package:frontend/Components/DynamicActionButton.dart';
 import 'package:frontend/Components/PaginatedOpportunityGallery.dart';
 import 'package:frontend/Components/SearchDrawer.dart';
 import 'package:frontend/State/SearchState.dart';
@@ -24,7 +25,7 @@ class _SearchPageState extends State<SearchPage> {
       return Scaffold(
         key: _scaffoldKey,
         appBar: CustomAppBar(
-          bottom: _buildBottomBar(),
+          bottom: _buildBottomBar(searchState),
         ),
         endDrawer: CustomDrawer(),
         body: LayoutBuilder(
@@ -79,7 +80,7 @@ class _SearchPageState extends State<SearchPage> {
     });
   }
 
-  PreferredSize _buildBottomBar() {
+  PreferredSize _buildBottomBar(SearchState searchState) {
     return PreferredSize(
       preferredSize: Size.fromHeight(50.0),
       child: Container(
@@ -96,14 +97,40 @@ class _SearchPageState extends State<SearchPage> {
                       _isDrawerOpen = !_isDrawerOpen;
                     });
                   }),
-              TextButton(
-                  onPressed: null,
-                  style: TextButton.styleFrom(
-                      padding: EdgeInsets.zero,
-                      backgroundColor: Color(0xFF50C878)),
-                  child: Text("TOP",
-                      style: TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.bold))),
+              SizedBox(width: 24),
+              DynamicActionButton(
+                onPressed: () => searchState.toggleTopChecked(),
+                icon: Icons.list,
+                text: searchState.isTopChecked ? "TOP" : "All",
+                color: Color(0xFF50C878),
+              ),
+              SizedBox(width: 24),
+              Flexible(
+                child: Container(
+                  constraints: BoxConstraints(maxWidth: 300), // Set max width
+                  child: DropdownButton<String>(
+                    value: searchState.selectedSort,
+                    hint: Text('Escolhe o tipo de ordenação'),
+                    isExpanded: true,
+                    onChanged: (String? newValue) async {
+                      searchState.setSelectedSort(newValue);
+
+                      if (newValue != null &&
+                          searchState.sortOptions[newValue] != null) {
+                        // Call the selected sort method
+                        await searchState.sortOptions[newValue]!(searchState);
+                      }
+                    },
+                    items:
+                        searchState.sortOptions.keys.map((String sortOption) {
+                      return DropdownMenuItem<String>(
+                        value: sortOption,
+                        child: Text(sortOption),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
