@@ -81,14 +81,6 @@ class _CustomDrawerState extends State<CustomDrawer> {
               ),
               ListTile(
                 leading: const Icon(Icons.book),
-                title: const Text('As suas Reservas'),
-                onTap: () {
-                  drawerState.ensureUserLoggedIn(
-                      context, "/your-reservations"); // Close the drawer
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.book),
                 title: const Text('O seu Histórico de Reservas'),
                 onTap: () {
                   drawerState.ensureUserLoggedIn(

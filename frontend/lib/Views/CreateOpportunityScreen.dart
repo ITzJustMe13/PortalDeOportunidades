@@ -9,6 +9,7 @@ import 'package:frontend/Enums/OppCategory.dart';
 import 'package:frontend/Models/Opportunity.dart';
 import 'package:frontend/Models/OpportunityImg.dart';
 import 'package:frontend/State/CreateOpportunityState.dart';
+import 'package:frontend/Views/OpportunityDetailsScreen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
@@ -431,10 +432,20 @@ class _AddOpportunityScreenState extends State<CreateOpportunityScreen> {
         CircularProgressIndicator()
       else
         ElevatedButton(
-          onPressed: () {
+          onPressed: () async {
             if (_formKey.currentState!.validate()) {
               _errorMessage = "";
-              _handleSubmit(createOpportunityState);
+              Opportunity? createdOpportunity =
+                  await _handleSubmit(createOpportunityState);
+              if (createdOpportunity != null) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => OpportunityDetailsScreen(
+                        opportunity: createdOpportunity),
+                  ),
+                );
+              }
             }
           },
           style: ElevatedButton.styleFrom(
@@ -456,7 +467,7 @@ class _AddOpportunityScreenState extends State<CreateOpportunityScreen> {
     ]));
   }
 
-  Future<bool> _handleSubmit(
+  Future<Opportunity?> _handleSubmit(
       CreateOpportunityState createOpportunityState) async {
     int currentUserId = await createOpportunityState.getCurrentUserId();
 
@@ -464,14 +475,14 @@ class _AddOpportunityScreenState extends State<CreateOpportunityScreen> {
       setState(() {
         _errorMessage = 'A oportunidade deve conter imagens';
       });
-      return false;
+      return null;
     }
 
     if (currentUserId == -1) {
       setState(() {
         _errorMessage = 'Erro ao criar conta';
       });
-      return false;
+      return null;
     }
 
     final opportunity = Opportunity(

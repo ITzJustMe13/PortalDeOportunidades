@@ -6,7 +6,6 @@ class CustomDrawerState with ChangeNotifier {
 
   CustomDrawerState({
     required LoginState loginState, // Accept as a parameter
-    String? token,
   }) : _loginState = loginState;
 
   void navigateToRoute(BuildContext context, String route) {

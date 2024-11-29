@@ -21,7 +21,7 @@ class CreateOpportunityState with ChangeNotifier {
 
 /*TODO: testar apos merge*/
   // Function to register
-  Future<bool> createOpportunity(
+  Future<Opportunity?> createOpportunity(
       Opportunity opportunity, List<OpportunityImg> opportunityImgs) async {
     _isLoading = true;
     notifyListeners();
@@ -35,7 +35,7 @@ class CreateOpportunityState with ChangeNotifier {
       _errorMessage = 'Ocorreu um erro ao criar Oportunidade';
       notifyListeners();
 
-      return false;
+      return null;
     } else {
       for (OpportunityImg image in opportunityImgs) {
         createdOpportunity.opportunityImgs.add(OpportunityImg(
@@ -49,11 +49,11 @@ class CreateOpportunityState with ChangeNotifier {
       if (!isEditValid) {
         _errorMessage = 'Ocorreu um erro ao criar Oportunidade';
         notifyListeners();
-        return false;
+        return null;
       }
     }
 
     notifyListeners();
-    return true;
+    return createdOpportunity;
   }
 }

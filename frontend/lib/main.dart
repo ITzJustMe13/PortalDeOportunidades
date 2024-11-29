@@ -4,6 +4,7 @@ import 'package:frontend/State/CreateOpportunityState.dart';
 import 'package:frontend/State/DrawerState.dart';
 import 'package:frontend/State/LoginState.dart';
 import 'package:frontend/State/RegisterState.dart';
+import 'package:frontend/State/SearchState.dart';
 import 'package:frontend/Views/ActivationSucessScreen.dart';
 import 'package:frontend/Views/LoginScreen.dart';
 import 'package:frontend/Views/PaymentCancelScreen.dart';
@@ -47,6 +48,7 @@ void main() {
             create: (_) => ActivationState()),
         ChangeNotifierProvider<CreateOpportunityState>(
             create: (_) => CreateOpportunityState()),
+        ChangeNotifierProvider<SearchState>(create: (_) => SearchState()),
         ChangeNotifierProxyProvider<LoginState, CustomDrawerState>(
           create: (context) => CustomDrawerState(
             loginState: context.read<LoginState>(),
@@ -78,7 +80,6 @@ class MainApp extends StatelessWidget {
         '/favorites': (context) => const FavoritesPage(),
         '/create-opportunity': (context) => const CreateOpportunityScreen(),
         '/your-opportunities': (context) => const OpportunityManagerScreen(),
-        //'/your-reservations': (context) => const YourReservationsPage(),
         '/profile': (context) => const ProfileScreen(),
         '/edit-profile': (context) => const EditProfileScreen(),
         '/reviews-history': (context) => const ReviewsHistoryScreen(),

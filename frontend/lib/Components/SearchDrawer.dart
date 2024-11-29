@@ -1,0 +1,258 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:frontend/Components/DynamicActionButton.dart';
+import 'package:frontend/Enums/Location.dart';
+import 'package:frontend/Enums/OppCategory.dart';
+import 'package:frontend/State/SearchState.dart';
+import 'package:provider/provider.dart';
+
+class SearchDrawer extends StatefulWidget {
+  final double width;
+  final bool isMobile;
+  const SearchDrawer({super.key, required this.width, required this.isMobile});
+
+  @override
+  State<SearchDrawer> createState() => _SearchDrawerState();
+}
+
+class _SearchDrawerState extends State<SearchDrawer> {
+  String? _keyword;
+  Location? _location;
+  OppCategory? _category;
+  int? _vacancies;
+  double? _minPrice;
+  double? _maxPrice;
+
+  late TextEditingController _keywordController;
+  late TextEditingController _vacanciesController;
+  late TextEditingController _minPriceController;
+  late TextEditingController _maxPriceController;
+
+  @override
+  void initState() {
+    super.initState();
+    _keywordController = TextEditingController();
+    _vacanciesController = TextEditingController();
+    _minPriceController = TextEditingController();
+    _maxPriceController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _keywordController.dispose();
+    _vacanciesController.dispose();
+    _minPriceController.dispose();
+    _maxPriceController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<SearchState>(
+      builder: (context, searchState, child) {
+        return Container(
+          color: widget.isMobile ? Color(0xFFD9D9D9) : null,
+          width: widget.width,
+          child: SingleChildScrollView(
+            // Make the drawer scrollable if its height exceeds screen
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Search & Filter",
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  Divider(),
+                  TextField(
+                    controller: _keywordController,
+                    decoration: InputDecoration(
+                      labelText: 'Keyword',
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (text) {
+                      setState(() {
+                        _keyword = text;
+                      });
+                    },
+                  ),
+                  SizedBox(height: 8),
+                  TextField(
+                    controller: _vacanciesController,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                    ],
+                    decoration: InputDecoration(
+                      labelText: 'Vacancies',
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (text) {
+                      setState(() {
+                        _vacancies = int.parse(text);
+                      });
+                    },
+                  ),
+                  SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                        child: TextField(
+                          controller: _minPriceController,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                          ],
+                          decoration: InputDecoration(
+                            labelText: 'Min Price',
+                            border: OutlineInputBorder(),
+                          ),
+                          onChanged: (text) {
+                            setState(() {
+                              _minPrice = double.parse(text);
+                            });
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: TextField(
+                          controller: _maxPriceController,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                          ],
+                          decoration: InputDecoration(
+                            labelText: 'Max Price',
+                            border: OutlineInputBorder(),
+                          ),
+                          onChanged: (text) {
+                            setState(() {
+                              _maxPrice = double.parse(text);
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 8),
+                  DropdownButton<OppCategory>(
+                    value: _category,
+                    hint: Text("Select Category"),
+                    onChanged: (OppCategory? newValue) {
+                      setState(() {
+                        _category = newValue;
+                      });
+                    },
+                    isExpanded:
+                        true, // Make the dropdown button take full width
+                    items: OppCategory.values.map((OppCategory category) {
+                      return DropdownMenuItem<OppCategory>(
+                        value: category,
+                        child: Text(
+                          category.name.replaceAll(
+                              '_', ' '), // Replace underscores with spaces
+                          overflow: TextOverflow
+                              .ellipsis, // Truncate with ellipsis if too long
+                          maxLines: 2, // Ensure only one line of text
+                        ),
+                      );
+                    }).toList(),
+                    selectedItemBuilder: (BuildContext context) {
+                      return OppCategory.values.map((OppCategory category) {
+                        return Text(
+                          category.name.replaceAll('_', ' '),
+                          overflow: TextOverflow
+                              .ellipsis, // Truncate with ellipsis for the selected item
+                          maxLines:
+                              1, // Ensure only one line of text for the selected value
+                        );
+                      }).toList();
+                    },
+                  ),
+                  SizedBox(height: 8),
+                  DropdownButton<Location>(
+                    value: _location,
+                    hint: Text("Select Location"),
+                    onChanged: (Location? newValue) {
+                      setState(() {
+                        _location = newValue;
+                      });
+                    },
+                    isExpanded:
+                        true, // Make the dropdown button take full width
+                    items: Location.values.map((Location location) {
+                      return DropdownMenuItem<Location>(
+                        value: location,
+                        child: Text(
+                          location.name.replaceAll(
+                              '_', ' '), // Replace underscores with spaces
+                          overflow: TextOverflow
+                              .ellipsis, // Truncate with ellipsis if too long
+                          maxLines: 2, // Ensure only one line of text
+                        ),
+                      );
+                    }).toList(),
+                    selectedItemBuilder: (BuildContext context) {
+                      return Location.values.map((Location location) {
+                        return Text(
+                          location.name.replaceAll('_', ' '),
+                          overflow: TextOverflow
+                              .ellipsis, // Truncate with ellipsis for the selected item
+                          maxLines:
+                              1, // Ensure only one line of text for the selected value
+                        );
+                      }).toList();
+                    },
+                  ),
+                  SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Center(
+                        child: DynamicActionButton(
+                            onPressed: () async {
+                              await searchState.search(_keyword, _location,
+                                  _vacancies, _category, _minPrice, _maxPrice);
+                            },
+                            text: "Filtrar",
+                            icon: Icons.filter,
+                            color: Color(0xFF50C878)),
+                      ),
+                      SizedBox(width: 8),
+                      Center(
+                          child: IconButton(
+                              onPressed: () => _clearSearch(),
+                              icon: Icon(Icons.clear))),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _clearSearch() {
+    setState(() {
+      // Clear the state variables
+      _keyword = null;
+      _location = null;
+      _category = null;
+      _vacancies = null;
+      _minPrice = null;
+      _maxPrice = null;
+
+      // Clear the controllers
+      _keywordController.clear();
+      _vacanciesController.clear();
+      _minPriceController.clear();
+      _maxPriceController.clear();
+    });
+  }
+}

@@ -52,30 +52,35 @@ class _PaginatedOpportunityGalleryState
                   int itemsPerRow =
                       (constraints.maxWidth / minCardWidth).floor().clamp(1, 5);
 
-                  return DynamicHeightGridView(
-                    crossAxisCount: itemsPerRow,
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    crossAxisSpacing: 16.0,
-                    mainAxisSpacing: 20.0,
-                    itemCount: _currentPageOpportunities.length,
-                    builder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: OpportunityCard(
-                          opportunity: _currentPageOpportunities[index],
-                        ),
-                      );
-                    },
-                  );
+                  if (widget.allOpportunities.isEmpty) {
+                    return Text('Nenhuma oportunidade encontrada');
+                  } else {
+                    return DynamicHeightGridView(
+                      crossAxisCount: itemsPerRow,
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      crossAxisSpacing: 16.0,
+                      mainAxisSpacing: 20.0,
+                      itemCount: _currentPageOpportunities.length,
+                      builder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: OpportunityCard(
+                            opportunity: _currentPageOpportunities[index],
+                          ),
+                        );
+                      },
+                    );
+                  }
                 },
               ),
               // Pagination control
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: NumberPaginator(
-                  numberPages:
-                      _numPages, // Now it dynamically reflects the number of pages
+                  numberPages: _numPages > 0
+                      ? _numPages
+                      : 1,
                   onPageChange: (int index) {
                     setState(() {
                       _currentPage = index;
