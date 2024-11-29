@@ -98,7 +98,7 @@ namespace BackEnd.Test
             await _context.SaveChangesAsync();
 
             // Act
-            var response = await _controller.GetUserByID(userId);
+            var response = await _controller.GetEntityById(userId);
 
             // Assert
             Assert.That(response, Is.TypeOf<OkObjectResult>());
@@ -142,7 +142,7 @@ namespace BackEnd.Test
             await _context.SaveChangesAsync();
 
             // Act
-            var response = await _controller.GetUserByID(userId);
+            var response = await _controller.GetEntityById(userId);
 
             // Assert
             Assert.That(response, Is.TypeOf<NotFoundObjectResult>());
@@ -162,7 +162,7 @@ namespace BackEnd.Test
             var controller = new UserController(userService, favoritesService);
 
             // Act
-            var response = await controller.GetUserByID(1);
+            var response = await controller.GetEntityById(1);
 
             // Assert
             Assert.That(response, Is.InstanceOf<NotFoundObjectResult>());
@@ -190,7 +190,7 @@ namespace BackEnd.Test
             };
 
             // Act
-            var response = await _controller.CreateNewUser(user);
+            var response = await _controller.CreateEntity(user);
 
             // Assert
             Assert.That(response, Is.TypeOf<CreatedAtActionResult>());
@@ -225,7 +225,7 @@ namespace BackEnd.Test
             };
 
             // Act
-            var response = await controller.CreateNewUser(user);
+            var response = await controller.CreateEntity(user);
 
             // Assert
             Assert.That(response, Is.TypeOf<NotFoundObjectResult>());
@@ -269,7 +269,7 @@ namespace BackEnd.Test
             };
 
             // Act
-            var response = await _controller.CreateNewUser(user);
+            var response = await _controller.CreateEntity(user);
 
             // Assert
             Assert.That(response, Is.InstanceOf<BadRequestObjectResult>());
@@ -297,7 +297,7 @@ namespace BackEnd.Test
             };
 
             // Act
-            var response = await _controller.CreateNewUser(user);
+            var response = await _controller.CreateEntity(user);
 
             // Assert
             Assert.That(response, Is.InstanceOf<BadRequestObjectResult>());
@@ -324,7 +324,7 @@ namespace BackEnd.Test
 
             };
             // Act
-            var response = await _controller.CreateNewUser(user);
+            var response = await _controller.CreateEntity(user);
 
             // Assert
             Assert.That(response, Is.InstanceOf<BadRequestObjectResult>());
@@ -352,7 +352,7 @@ namespace BackEnd.Test
             };
 
             // Act
-            var response = await _controller.CreateNewUser(user);
+            var response = await _controller.CreateEntity(user);
 
             // Assert
             Assert.That(response, Is.InstanceOf<BadRequestObjectResult>());
@@ -381,7 +381,7 @@ namespace BackEnd.Test
             };
 
             // Act
-            var response = await _controller.CreateNewUser(user);
+            var response = await _controller.CreateEntity(user);
 
             // Assert
             Assert.That(response, Is.TypeOf<BadRequestObjectResult>());
@@ -397,7 +397,7 @@ namespace BackEnd.Test
             var userid = 1;
 
             // Act
-            var result = await _controller.DeleteUser(userid);
+            var result = await _controller.DeleteEntity(userid);
 
             // Assert
             Assert.That(result, Is.TypeOf<NotFoundObjectResult>());
@@ -430,7 +430,7 @@ namespace BackEnd.Test
             await _context.SaveChangesAsync();
 
             // Act
-            var response = await _controller.DeleteUser(userId);
+            var response = await _controller.DeleteEntity(userId);
 
             // Assert
             Assert.That(response, Is.TypeOf<NoContentResult>());
@@ -448,7 +448,7 @@ namespace BackEnd.Test
 
             var controller = new UserController(userService, favoritesService);
             // Act
-            var response = await controller.DeleteUser(1);
+            var response = await controller.DeleteEntity(1);
 
             // Assert
             Assert.That(response, Is.InstanceOf<NotFoundObjectResult>());
@@ -492,7 +492,7 @@ namespace BackEnd.Test
             await _context.SaveChangesAsync();
 
             // Act
-            var response = await _controller.EditUser(userId, updatedUser);
+            var response = await _controller.UpdateEntity(userId, updatedUser);
 
             // Assert
             Assert.That(response, Is.TypeOf<OkObjectResult>());
@@ -527,7 +527,7 @@ namespace BackEnd.Test
             await _context.SaveChangesAsync();
 
             // Act
-            var response = await _controller.EditUser(userId, updatedUser);
+            var response = await _controller.UpdateEntity(userId, updatedUser);
 
             // Assert
             Assert.That(response, Is.TypeOf<NotFoundObjectResult>());
@@ -585,7 +585,7 @@ namespace BackEnd.Test
             await _context.SaveChangesAsync();
 
             // Act
-            var response = await _controller.EditUser(userId, updatedUser);
+            var response = await _controller.UpdateEntity(userId, updatedUser);
 
             // Assert
             Assert.That(response, Is.TypeOf<BadRequestObjectResult>());
@@ -629,7 +629,7 @@ namespace BackEnd.Test
             await _context.SaveChangesAsync();
 
             // Act
-            var response = await _controller.EditUser(userId, updatedUser);
+            var response = await _controller.UpdateEntity(userId, updatedUser);
 
             // Assert
             Assert.That(response, Is.InstanceOf<BadRequestObjectResult>());
@@ -673,7 +673,7 @@ namespace BackEnd.Test
             await _context.SaveChangesAsync();
 
             // Act
-            var response = await _controller.EditUser(userId, updatedUser);
+            var response = await _controller.UpdateEntity(userId, updatedUser);
 
             // Assert
             Assert.That(response, Is.InstanceOf<BadRequestObjectResult>());
@@ -708,7 +708,7 @@ namespace BackEnd.Test
             };
 
             // Act
-            var response = await controller.EditUser(userId, updatedUser);
+            var response = await controller.UpdateEntity(userId, updatedUser);
 
             // Assert
             Assert.That(response, Is.InstanceOf<NotFoundObjectResult>());
@@ -753,7 +753,7 @@ namespace BackEnd.Test
             await _context.SaveChangesAsync();
 
             // Act
-            var response = await _controller.EditUser(userId, updatedUser);
+            var response = await _controller.UpdateEntity(userId, updatedUser);
 
             // Assert
             Assert.That(response, Is.TypeOf<BadRequestObjectResult>());
@@ -1746,8 +1746,8 @@ namespace BackEnd.Test
             var response = await controller.ActivateAccount("token");
 
             // Assert
-            Assert.That(response, Is.InstanceOf<BadRequestObjectResult>());
-            var notFoundResult = response as BadRequestObjectResult;
+            Assert.That(response, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = response as NotFoundObjectResult;
             Assert.That(notFoundResult?.Value, Is.EqualTo("DB context is missing."));
         }
 

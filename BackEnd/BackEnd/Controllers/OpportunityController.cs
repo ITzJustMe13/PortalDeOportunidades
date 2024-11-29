@@ -1,23 +1,14 @@
-﻿using BackEnd.Controllers.Data;
-using BackEnd.Enums;
-using BackEnd.Models.BackEndModels;
+﻿using BackEnd.Enums;
 using BackEnd.Models.FrontEndModels;
-using BackEnd.Models.Mappers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.IdentityModel.Tokens;
-using System.ComponentModel.DataAnnotations;
-using System.Security;
-using BackEnd.Services;
 using BackEnd.Interfaces;
 
 namespace BackEnd.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class OpportunityController : ControllerBase
+    public class OpportunityController : BaseCrudController<Opportunity>
     {
         private IOpportunityService _opportunityService;
 
@@ -31,21 +22,11 @@ namespace BackEnd.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public async Task<ActionResult> GetAllOpportunities()
+        public async Task<IActionResult> GetAllOpportunities()
         {
             var serviceResponse = await _opportunityService.GetAllOpportunitiesAsync();
 
-            if (!serviceResponse.Success)
-            {
-                return serviceResponse.Type switch
-                {
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "BadRequest" => BadRequest( serviceResponse.Message),
-                    _ => StatusCode(500, serviceResponse.Message ) // Default for unexpected errors
-                };
-            }
-
-            return Ok(serviceResponse.Data);
+            return HandleResponse(serviceResponse);
         }
 
         /// <summary>
@@ -53,21 +34,11 @@ namespace BackEnd.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("Impulsed")]
-        public async Task<ActionResult> GetAllImpulsedOpportunities()
+        public async Task<IActionResult> GetAllImpulsedOpportunities()
         {
             var serviceResponse = await _opportunityService.GetAllImpulsedOpportunitiesAsync();
 
-            if (!serviceResponse.Success)
-            {
-                return serviceResponse.Type switch
-                {
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "BadRequest" => BadRequest(serviceResponse.Message ),
-                    _ => StatusCode(500, serviceResponse.Message) // Default for unexpected errors
-                };
-            }
-
-            return Ok(serviceResponse.Data);
+            return HandleResponse(serviceResponse);
         }
 
         /// <summary>
@@ -76,21 +47,11 @@ namespace BackEnd.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult> GetOpportunityById(int id)
+        public override async Task<IActionResult> GetEntityById(int id)
         {
             var serviceResponse = await _opportunityService.GetOpportunityByIdAsync(id);
 
-            if (!serviceResponse.Success)
-            {
-                return serviceResponse.Type switch
-                {
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "BadRequest" => BadRequest(serviceResponse.Message ),
-                    _ => StatusCode(500,  serviceResponse.Message ) // InternalServerError
-                };
-            }
-
-            return Ok(serviceResponse.Data);
+            return HandleResponse(serviceResponse);
         }
 
         /// <summary>
@@ -99,21 +60,19 @@ namespace BackEnd.Controllers
         /// <param name="userId"></param>
         /// <returns></returns>
         [HttpGet("User/{userId}")]
-        public async Task<ActionResult> GetAllOpportunitiesByUserId(int userId)
+        public async Task<IActionResult> GetAllOpportunitiesByUserId(int userId)
         {
             var serviceResponse = await _opportunityService.GetAllOpportunitiesByUserIdAsync(userId);
 
-            if (!serviceResponse.Success)
-            {
-                return serviceResponse.Type switch
-                {
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "BadRequest" => BadRequest(serviceResponse.Message ),
-                    _ => StatusCode(500,  serviceResponse.Message) // InternalServerError
-                };
-            }
+            return HandleResponse(serviceResponse);
+        }
 
-            return Ok(serviceResponse.Data);
+        [HttpGet("Reviews/{id}")]
+        public async Task<IActionResult> GetAllReviewsByOpportunityId(int id)
+        {
+            var serviceResponse = await _opportunityService.GetAllReviewsByOpportunityIdAsync(id);
+
+            return HandleResponse(serviceResponse);
         }
 
         /// <summary>
@@ -127,7 +86,7 @@ namespace BackEnd.Controllers
         /// <param name="location"></param>
         /// <returns></returns>
         [HttpGet("Search")]
-        public async Task<ActionResult> SearchOpportunities(
+        public async Task<IActionResult> SearchOpportunities(
             [FromQuery] string? keyword,
             [FromQuery] int? vacancies,
             [FromQuery] decimal? minPrice,
@@ -138,17 +97,7 @@ namespace BackEnd.Controllers
         {
             var serviceResponse = await _opportunityService.SearchOpportunitiesAsync(keyword, vacancies, minPrice, maxPrice, category, location);
 
-            if (!serviceResponse.Success)
-            {
-                return serviceResponse.Type switch
-                {
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "BadRequest" => BadRequest( serviceResponse.Message ),
-                    _ => StatusCode(500, serviceResponse.Message) // InternalServerError
-                };
-            }
-
-            return Ok(serviceResponse.Data);
+            return HandleResponse(serviceResponse);
         }
 
         /// <summary>
@@ -158,24 +107,18 @@ namespace BackEnd.Controllers
         /// <returns></returns>
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult> CreateOpportunity(Opportunity opportunity)
+        public override async Task<IActionResult> CreateEntity(Opportunity opportunity)
         {
             var serviceResponse = await _opportunityService.CreateOpportunityAsync(opportunity);
 
             if (!serviceResponse.Success)
             {
-                return serviceResponse.Type switch
-                {
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "BadRequest" => BadRequest(serviceResponse.Message),
-                    _ => StatusCode(500,  serviceResponse.Message) // InternalServerError
-                };
+                return HandleResponse(serviceResponse);
             }
 
-            return CreatedAtAction(
-                nameof(GetOpportunityById),
-                new { id = serviceResponse.Data.opportunityId },
-                serviceResponse.Data
+            return HandleCreatedAtAction(serviceResponse,
+                nameof(GetEntityById),
+                new { id = serviceResponse.Data.opportunityId }        
             );
         }
 
@@ -186,21 +129,11 @@ namespace BackEnd.Controllers
         /// <returns></returns>
         [HttpDelete("{id}")]
         [Authorize]
-        public async Task<ActionResult> DeleteOpportunityById(int id)
+        public override async Task<IActionResult> DeleteEntity(int id)
         {
             var serviceResponse = await _opportunityService.DeleteOpportunityByIdAsync(id);
 
-            if (!serviceResponse.Success)
-            {
-                return serviceResponse.Type switch
-                {
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "BadRequest" => BadRequest(serviceResponse.Message),
-                    _ => StatusCode(500,  serviceResponse.Message) // InternalServerError
-                };
-            }
-
-            return NoContent();
+            return HandleResponse(serviceResponse);
         }
 
         /// <summary>
@@ -210,21 +143,11 @@ namespace BackEnd.Controllers
         /// <returns></returns>
         [HttpPut("{id}/activate")]
         [Authorize]
-        public async Task<ActionResult> ActivateOpportunityById(int id)
+        public async Task<IActionResult> ActivateOpportunityById(int id)
         {
             var serviceResponse = await _opportunityService.ActivateOpportunityByIdAsync(id);
 
-            if (!serviceResponse.Success)
-            {
-                return serviceResponse.Type switch
-                {
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "BadRequest" => BadRequest(serviceResponse.Message),
-                    _ => StatusCode(500,  serviceResponse.Message) // InternalServerError
-                };
-            }
-
-            return NoContent();
+            return HandleResponse(serviceResponse);
         }
 
         /// <summary>
@@ -234,21 +157,11 @@ namespace BackEnd.Controllers
         /// <returns></returns>
         [HttpPut("{id}/deactivate")]
         [Authorize]
-        public async Task<ActionResult<Opportunity>> DeactivateOpportunityById(int id)
+        public async Task<IActionResult> DeactivateOpportunityById(int id)
         {
             var serviceResponse = await _opportunityService.DeactivateOpportunityByIdAsync(id);
 
-            if (!serviceResponse.Success)
-            {
-                return serviceResponse.Type switch
-                {
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "BadRequest" => BadRequest(serviceResponse.Message),
-                    _ => StatusCode(500,  serviceResponse.Message) // InternalServerError
-                };
-            }
-
-            return NoContent();
+            return HandleResponse(serviceResponse);
         }
 
         /// <summary>
@@ -267,43 +180,17 @@ namespace BackEnd.Controllers
         /// <returns></returns>
         [HttpPut("{id}/Edit")]
         [Authorize]
-        public async Task<ActionResult> EditOpportunityById(
+        public override async Task<IActionResult> UpdateEntity(
             int id,
-            [FromQuery] string? name,
-            [FromQuery] string? description,
-            [FromQuery] decimal? price,
-            [FromQuery] int? vacancies,
-            [FromQuery] Category? category,
-            [FromQuery] Location? location,
-            [FromQuery] string? address,
-            [FromQuery] DateTime? date,
-            [FromBody] List<byte[]>? newImageUrls
+            Opportunity updatedOpportunity
         )
         {
             var serviceResponse = await _opportunityService.EditOpportunityByIdAsync(
                 id,
-                name,
-                description,
-                price,
-                vacancies,
-                category,
-                location,
-                address,
-                date,
-                newImageUrls
+                updatedOpportunity
             );
 
-            if (!serviceResponse.Success)
-            {
-                return serviceResponse.Type switch
-                {
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "BadRequest" => BadRequest(serviceResponse.Message),
-                    _ => StatusCode(500, serviceResponse.Message)
-                };
-            }
-
-            return Ok(serviceResponse.Data); // Return the updated opportunity DTO
+            return HandleResponse(serviceResponse);
         }
     }
 }

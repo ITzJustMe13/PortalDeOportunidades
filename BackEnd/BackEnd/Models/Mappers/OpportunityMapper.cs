@@ -20,7 +20,6 @@ namespace BackEnd.Models.Mappers
             if (opportunityModel == null)
                 return null;
 
-            ValidateModel(opportunityModel);
 
             return new Opportunity
             {

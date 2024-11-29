@@ -19,8 +19,6 @@ namespace BackEnd.Models.Mappers
             if (reviewModel == null)
                 return null;
 
-            ValidateModel(reviewModel);
-
             return new Review
             {
                 reservationId = reviewModel.ReservationId,
