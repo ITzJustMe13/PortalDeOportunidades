@@ -1,9 +1,18 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/Enums/OppCategory.dart';
+import 'package:frontend/Services/opportunity_api_handler.dart';
 import 'package:intl/intl.dart';
 import 'package:frontend/Models/Opportunity.dart';
 import 'package:frontend/Components/CustomAppBar.dart';
 import 'package:frontend/Components/CustomDrawer.dart';
 import 'package:frontend/Enums/Location.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:convert';
+import 'dart:typed_data';
+import 'package:frontend/Models/OpportunityImg.dart';
+import 'package:provider/provider.dart';
+import 'package:frontend/Components/OpportunityTextField.dart';
 
 class EditOpportunityScreen extends StatefulWidget {
   final Opportunity opportunity;
@@ -20,8 +29,13 @@ class _EditOpportunityScreenState extends State<EditOpportunityScreen> {
   late TextEditingController descriptionController;
   late TextEditingController addressController;
   late TextEditingController vacanciesController;
+  late TextEditingController priceController;
 
-  late Location selectedLocation; // Use enum for location
+  DateTime? _oppDateController;
+  TimeOfDay? _oppTimeController;
+  final List<OpportunityImg> _opportunityImgs = [];
+  late Location selectedLocation;
+  late OppCategory selectedCategory;
 
   @override
   void initState() {
@@ -33,21 +47,59 @@ class _EditOpportunityScreenState extends State<EditOpportunityScreen> {
     descriptionController = TextEditingController(text: widget.opportunity.description);
     addressController = TextEditingController(text: widget.opportunity.address);
     vacanciesController = TextEditingController(text: widget.opportunity.vacancies.toString());
-    selectedLocation = widget.opportunity.location; // Preselect the current location
+    priceController = TextEditingController(text: widget.opportunity.price.toString());
+    selectedLocation = widget.opportunity.location;
+    selectedCategory = widget.opportunity.category;
   }
 
   @override
   void dispose() {
     verticalScrollController.dispose();
     nameController.dispose();
+    addressController.dispose();
     descriptionController.dispose();
     vacanciesController.dispose();
+    priceController.dispose();
     super.dispose();
   }
 
-  void _saveOpportunity() {
-    // Example: Save the opportunity along with the selected images, location, etc.
-    Navigator.of(context).pop(widget.opportunity);
+  void _saveOpportunity() async {
+    
+    Opportunity updatedOpportunity = Opportunity(
+      opportunityId: widget.opportunity.opportunityId,
+      name: nameController.text, 
+      price: double.tryParse(priceController.text) ?? 0.0, 
+      vacancies: int.tryParse(vacanciesController.text) ?? 0, 
+      isActive: widget.opportunity.isActive, 
+      category: selectedCategory, 
+      description: descriptionController.text, 
+      location: selectedLocation, 
+      address: addressController.text, 
+      userId: widget.opportunity.userId, 
+      reviewScore: widget.opportunity.reviewScore, 
+      date: (_oppDateController ?? DateTime.now()).add(Duration(days: 1)), 
+      isImpulsed: widget.opportunity.isImpulsed, 
+      opportunityImgs: _opportunityImgs);
+
+    
+    final success = await Provider.of<OpportunityApiHandler>(context, listen: false)
+      .editOpportunity(widget.opportunity.opportunityId, updatedOpportunity);
+    
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Alterações gravadas com sucesso!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Falha ao gravar as alterações. Tente novamente!'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   @override
@@ -118,6 +170,27 @@ class _EditOpportunityScreenState extends State<EditOpportunityScreen> {
             }).toList(),
           ),
           SizedBox(height: 20),
+          Text(
+            'Categoria',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 10),
+          DropdownButton<OppCategory>(
+            isExpanded: true,
+            value: selectedCategory,
+            onChanged: (OppCategory? newValue) {
+              setState(() {
+                selectedCategory = newValue!;
+              });
+            },
+            items: OppCategory.values.map((OppCategory category) {
+              return DropdownMenuItem<OppCategory>(
+                value: category,
+                child: Text(category.name),
+              );
+            }).toList(),
+          ),
+          SizedBox(height: 20),
           OpportunityTextField(
             label: 'Vagas',
             controller: vacanciesController,
@@ -125,7 +198,17 @@ class _EditOpportunityScreenState extends State<EditOpportunityScreen> {
             inputType: TextInputType.number, // For numeric input
           ),
           SizedBox(height: 20),
-
+          ElevatedButton(
+            child: Text(
+              _oppDateController == null
+                  ? 'Selecione a Data e Hora da Oportunidade'
+                  : '${_oppDateController!.day}/${_oppDateController!.month}/${_oppDateController!.year} ${_oppDateController!.hour}:${_oppDateController!.minute}',
+            ),
+            onPressed: () => _showDateAndTimePicker(context),
+          ),
+          SizedBox(height: 20),
+          _buildImagesPicker(),
+          SizedBox(height: 20),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: Color(0xFF50C878), // Set button color here
@@ -142,38 +225,105 @@ class _EditOpportunityScreenState extends State<EditOpportunityScreen> {
   }
 
   Widget _buildTabletLayout() {
-    return _buildMobileLayout(); // Can adjust the layout for larger screens if needed
+    return _buildMobileLayout();
   }
 
   Widget _buildDesktopLayout() {
-    return _buildMobileLayout(); // Can adjust the layout for larger screens if needed
+    return _buildMobileLayout();
   }
-}
 
-// Reusable widget for text fields
-class OpportunityTextField extends StatelessWidget {
-  final String label;
-  final TextEditingController controller;
-  final int maxLines;
-  final TextInputType? inputType;
-
-  const OpportunityTextField({super.key, 
-    required this.label,
-    required this.controller,
-    this.maxLines = 1,
-    this.inputType,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return TextField(
-      decoration: InputDecoration(
-        labelText: label,
-        border: OutlineInputBorder(),
+  Widget _buildImagesPicker() {
+    return Container(
+      width: 300,
+      height: 250,
+      color: Colors.grey[300],
+      child: Center(
+        child: Column(
+          children: [
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+              child: const Text('Escolher Fotos',
+                  style: TextStyle(color: Colors.white)),
+              onPressed: () async {
+                final List<XFile> pickedFiles = await ImagePicker()
+                    .pickMultiImage(); // Pick multiple images
+                if (pickedFiles != null && pickedFiles.isNotEmpty) {
+                  final List<String> base64Images = await Future.wait(
+                    pickedFiles.map((file) async {
+                      final Uint8List fileBytes = await file.readAsBytes();
+                      return base64Encode(fileBytes);
+                    }),
+                  );
+                  setState(() {
+                    for (var image in base64Images) {
+                      var oppImg = OpportunityImg(
+                          imgId: 0, opportunityId: 0, imageBase64: image);
+                      _opportunityImgs.add(oppImg);
+                    }
+                  });
+                }
+              },
+            ),
+            SizedBox(height: 16.0),
+            _opportunityImgs.isNotEmpty
+                ? GridView.builder(
+                    shrinkWrap: true, // Allow GridView to fit within a Column
+                    itemCount: _opportunityImgs.length,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3, // Number of columns
+                      crossAxisSpacing: 8.0,
+                      mainAxisSpacing: 8.0,
+                    ),
+                    itemBuilder: (context, index) {
+                      final Uint8List imageBytes = Uint8List.fromList(
+                          base64Decode(_opportunityImgs[index].imageBase64));
+                      return Image.memory(
+                        imageBytes,
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                      );
+                    },
+                  )
+                : Center(child: Text('Nenhuma imagem selecionada')),
+          ],
+        ),
       ),
-      controller: controller,
-      maxLines: maxLines,
-      keyboardType: inputType,
     );
   }
+
+  void _showDateAndTimePicker(BuildContext context) async {
+  final DateTime? pickedDate = await showDatePicker(
+    context: context,
+    initialDate: DateTime.now(),
+    firstDate: DateTime(1900),
+    lastDate: DateTime.now(),
+  );
+
+  if (pickedDate != null) {
+    final TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+
+    if (pickedTime != null) {
+      setState(() {
+        _oppDateController = DateTime(
+          pickedDate.year,
+          pickedDate.month,
+          pickedDate.day,
+          pickedTime.hour,
+          pickedTime.minute,
+        );
+        _oppTimeController = pickedTime;
+      });
+    }
+  }
 }
+
+}
+
+
+
+
+

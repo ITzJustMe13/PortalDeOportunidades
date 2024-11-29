@@ -213,6 +213,7 @@ class _ReviewsHistoryScreenState extends State<ReviewsHistoryScreen> {
 
   Opportunity _getOpportunity(int opportunityId) {
     return Opportunity(
+        opportunityId: opportunityId,
         name: "Experience $opportunityId",
         price: 12.20,
         vacancies: 4,

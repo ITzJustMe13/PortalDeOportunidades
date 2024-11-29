@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/Components/CustomAppBar.dart';
 import 'package:frontend/Components/CustomDrawer.dart';
-import 'package:frontend/Enums/Gender.dart';
 import '../Models/User.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend/Services/user_api_handler.dart';
@@ -38,6 +37,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     super.initState();
     emailController.text = widget.user.email;
     phoneController.text = widget.user.cellPhoneNumber.toString();
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    phoneController.dispose();
+    super.dispose();
   }
 
   @override

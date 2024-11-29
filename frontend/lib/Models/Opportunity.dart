@@ -3,7 +3,7 @@ import 'package:frontend/Enums/Location.dart';
 import 'package:frontend/Models/OpportunityImg.dart';
 
 class Opportunity {
-  final int? opportunityId;
+  final int opportunityId;
   final String name;
   final double price;
   final int vacancies;
@@ -19,7 +19,7 @@ class Opportunity {
   final List<OpportunityImg> opportunityImgs;
 
   Opportunity({
-    this.opportunityId,
+    required this.opportunityId,
     required this.name,
     required this.price,
     required this.vacancies,

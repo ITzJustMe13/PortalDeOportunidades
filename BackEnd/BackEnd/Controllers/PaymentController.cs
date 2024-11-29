@@ -78,6 +78,7 @@ namespace BackEnd.Controllers
             try
             {
                 session = await service.CreateAsync(options);
+                //colocar criação da reserva aqui
             }
             catch (StripeException ex)
             {
@@ -152,6 +153,7 @@ namespace BackEnd.Controllers
             try
             {
                 session = await service.CreateAsync(options); // Create the session for checkout
+                //colocar o impulso na opp com a duraçao
             }
             catch (StripeException ex)
             {

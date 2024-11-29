@@ -78,7 +78,6 @@ class MainApp extends StatelessWidget {
         '/favorites': (context) => const FavoritesPage(),
         '/create-opportunity': (context) => const CreateOpportunityScreen(),
         '/your-opportunities': (context) => const OpportunityManagerScreen(),
-        //'/your-reservations': (context) => const YourReservationsPage(),
         '/profile': (context) => const ProfileScreen(),
         //'/edit-profile': (context) => const EditProfileScreen(),
         '/reviews-history': (context) => const ReviewsHistoryScreen(),

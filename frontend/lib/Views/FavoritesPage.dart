@@ -3,10 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:frontend/Components/CustomAppBar.dart';
 import 'package:frontend/Components/CustomDrawer.dart';
 import 'package:frontend/Components/DynamicActionButton.dart';
-import 'package:frontend/Enums/Location.dart';
-import 'package:frontend/Enums/OppCategory.dart';
+import 'package:frontend/Models/Favorite.dart';
 import 'package:frontend/Models/Opportunity.dart';
+import 'package:frontend/Models/User.dart';
+import 'package:frontend/Services/opportunity_api_handler.dart';
 import 'package:frontend/Views/OpportunityDetailsScreen.dart';
+import 'package:frontend/Services/user_api_handler.dart';
+import 'package:provider/provider.dart';
+
 
 class FavoritesPage extends StatefulWidget {
   const FavoritesPage({super.key});
@@ -16,22 +20,84 @@ class FavoritesPage extends StatefulWidget {
 }
 
 class _FavoritesPageState extends State<FavoritesPage> {
-  Opportunity opportunity = Opportunity(
-      name: "Oportunidade9",
-      price: 10.2,
-      vacancies: 1,
-      isActive: true,
-      category: OppCategory.AGRICULTURA,
-      description: "description",
-      location: Location.ACORES,
-      address: "address",
-      userId: 1,
-      reviewScore: 42,
-      date: DateTime.now(),
-      isImpulsed: false,
-      opportunityImgs: []);
+  
+  late Future<List<Favorite>?> _favoritesFuture;
+  late Future<List<Opportunity>?> _opportunityFuture;
+  late User? _user;
 
   @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    // Get the user
+    final user = await Provider.of<UserApiHandler>(context, listen: false)
+        .getStoredUser();
+    
+    setState(() {
+      _user = user;
+    });
+
+    // Once the user is loaded, fetch the favorites
+    if (_user != null) {
+      _favoritesFuture = Provider.of<UserApiHandler>(context, listen: false)
+          .getFavorites(_user!.userId);
+      
+      // Once favorites are fetched, fetch the opportunities using their IDs
+      _favoritesFuture.then((favorites) async {
+        if (favorites != null && favorites.isNotEmpty) {
+          // Extract opportunityId(s) from favorites
+          final opportunityIds = favorites.map((favorite) => favorite.opportunityId).toList();
+
+          // Fetch opportunities sequentially using the opportunityIds
+          List<Opportunity> opportunities = await _fetchOpportunitiesSequentially(opportunityIds);
+
+          // After fetching all opportunities, update the _opportunityFuture
+          setState(() {
+            _opportunityFuture = Future.value(opportunities);
+          });
+        } else {
+          // if no favorites exist
+          setState(() {
+            _opportunityFuture = Future.value([]);
+          });
+        }
+      });
+    } else {
+      //if the user isnt found
+      setState(() {
+        _favoritesFuture = Future.value([]);
+        _opportunityFuture = Future.value([]);
+      });
+    }
+  }
+
+  // Function to fetch opportunities sequentially (one by one)
+  Future<List<Opportunity>> _fetchOpportunitiesSequentially(List<int> opportunityIds) async {
+    List<Opportunity> opportunities = [];
+
+    
+    for (int opportunityId in opportunityIds) {
+      try {
+        final opportunity = await Provider.of<OpportunityApiHandler>(context, listen: false)
+            .getOpportunityByID(opportunityId);
+
+        if (opportunity != null) {
+          opportunities.add(opportunity);
+        }
+      } catch (e) {
+        //Error handling
+        print("Error fetching opportunity with id $opportunityId: $e");
+      }
+    }
+
+    return opportunities;
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -261,6 +327,13 @@ class _FavoritesPageState extends State<FavoritesPage> {
                         opportunity.location.toString().split('.').last,
                       ),
                       _buildRemoveButton(),
+                      DynamicActionButton(
+                        onPressed: () {
+                          // Lógica para o botão "Cancelar"
+                        }, 
+                        text: 'Remover', 
+                        icon: Icons.remove, 
+                        color: Colors.red)
                     ],
                   ),
                 ],
@@ -327,25 +400,6 @@ class _FavoritesPageState extends State<FavoritesPage> {
     return Text(
       location,
       style: TextStyle(fontSize: 24, color: Colors.grey),
-    );
-  }
-
-  Widget _buildDetailsButton() {
-    return ElevatedButton(
-      onPressed: () {
-        // Lógica para o botão "Detalhes"
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.green,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
-      ),
-      child: Text(
-        'Detalhes',
-        style: TextStyle(color: Colors.white),
-      ),
     );
   }
 
