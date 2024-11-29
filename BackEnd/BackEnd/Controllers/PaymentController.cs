@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Stripe.Checkout;
 using Stripe;
 using BackEnd.Controllers.Data;
+using BackEnd.Services;
+using BackEnd.Interfaces;
 
 namespace BackEnd.Controllers
 {
@@ -20,7 +22,7 @@ namespace BackEnd.Controllers
         /// Endpoint that creates a checkout session using strip for paying for a reservation
         /// </summary>
         /// <param name="reservation"></param>
-        /// <returns></returns>
+        /// <returns>The checkout Session id for redirection on stripe</returns>
         [HttpPost("Checkout-Reservation")]
         public async Task<IActionResult> CreateReservationCheckoutSession([FromBody] Reservation reservation)
         {
@@ -68,8 +70,8 @@ namespace BackEnd.Controllers
             },
         },
                 Mode = "payment",
-                SuccessUrl = "http://localhost:50394/#/success", // UPDATE WITH FRONTEND
-                CancelUrl = "http://localhost:50394/#/payment-cancel", // UPDATE WITH FRONTEND
+                SuccessUrl = $"http://localhost:50394/#/payment/success?paymentType=reservation",
+                CancelUrl = $"http://localhost:50394/#/payment/cancel?paymentType=reservation",
                 CustomerEmail = user.Email, // For sending the receipt to the user
             };
 
@@ -78,7 +80,7 @@ namespace BackEnd.Controllers
             try
             {
                 session = await service.CreateAsync(options);
-                //colocar criação da reserva aqui
+                
             }
             catch (StripeException ex)
             {
@@ -95,7 +97,7 @@ namespace BackEnd.Controllers
         /// Endpoint that creates a checkout session using strip for paying for a Opportunity Impulse
         /// </summary>
         /// <param name="impulse"></param>
-        /// <returns></returns>
+        /// <returns>The checkout Session id for redirection on stripe</returns>
         [HttpPost("Checkout-Impulse")]
         public async Task<IActionResult> CreateImpulseCheckoutSession([FromBody] Impulse impulse)
         {
@@ -142,8 +144,8 @@ namespace BackEnd.Controllers
             },
         },
                 Mode = "payment",
-                SuccessUrl = "https://localhost:7235/success",  // UPDATE WITH FRONTEND
-                CancelUrl = "https://localhost:7235/cancel",    // UPDATE WITH FRONTEND
+                SuccessUrl = $"http://localhost:50394/#/payment/success?paymentType=impulse&entity={impulse}",
+                CancelUrl = $"http://localhost:50394/#/payment/cancel?paymentType=impulse&entity={impulse}",
                 CustomerEmail = user.Email, // For sending the receipt to the user
             };
 
@@ -153,7 +155,6 @@ namespace BackEnd.Controllers
             try
             {
                 session = await service.CreateAsync(options); // Create the session for checkout
-                //colocar o impulso na opp com a duraçao
             }
             catch (StripeException ex)
             {
@@ -162,6 +163,7 @@ namespace BackEnd.Controllers
 
             return Ok(new { sessionId = session.Id }); // Return sessionId for frontend redirection to Stripe
         }
+
 
     }
 }

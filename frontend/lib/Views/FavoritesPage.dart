@@ -143,7 +143,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
               return Padding(
                 padding: const EdgeInsets.symmetric(
                     horizontal: 75.0, vertical: 10.0),
-                child: _buildOpportunityCard(opportunity),
+                //child: _buildOpportunityCard(opportunity),
               );
             },
           ),
@@ -191,7 +191,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                       return SizedBox(
                         width:
                             cardWidth, // Largura ajustada para 3 cards por linha
-                        child: _buildOpportunityCard(opportunity),
+                        //child: _buildOpportunityCard(opportunity),
                       );
                     },
                   );
@@ -246,7 +246,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                     return SizedBox(
                       width:
                           cardWidth, // Largura ajustada para 3 cards por linha
-                      child: _buildOpportunityCard(opportunity),
+                      //child: _buildOpportunityCard(opportunity),
                     );
                   },
                 );

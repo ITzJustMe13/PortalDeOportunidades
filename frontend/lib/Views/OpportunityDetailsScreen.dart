@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/Models/User.dart';
 import 'package:frontend/Services/user_api_handler.dart';
+import 'package:frontend/Services/payment_api_handler.dart';
 import 'package:frontend/Components/CustomAppBar.dart';
 import 'package:frontend/Components/CustomDrawer.dart';
 import 'package:frontend/Components/OpportunityImages.dart';
@@ -10,7 +11,10 @@ import 'package:frontend/Components/OpportunityAdditionalInfo.dart';
 import 'package:frontend/Components/ReservationButton.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend/Models/Opportunity.dart';
+import 'package:frontend/Models/Reservation.dart';
 import 'package:intl/intl.dart';
+import 'package:frontend/Services/payment_service.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class OpportunityDetailsScreen extends StatefulWidget {
   final Opportunity opportunity;
@@ -56,7 +60,6 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen>{
           final DateTime dateTime = opportunity.date;
           final String formattedTime = DateFormat('HH:mm').format(dateTime);
 
-          //FALTA OWNER DEVIDO A FALTA DE TOKEN PRA API HANDLER
           return LayoutBuilder(
             builder: (context, constraints) {
               if (constraints.maxWidth < 600) {
@@ -89,8 +92,8 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen>{
           SizedBox(height: 20),
           ReservationButton(
             availableVacancies: 2,
-            onPressed: () {
-              print('Reservation button pressed!');
+            onPressed: (numberOfPersons) {
+              createTempReservation(numberOfPersons);
             },
           ),
           SizedBox(height: 20),
@@ -99,8 +102,8 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen>{
             location: opportunity.location,
             address: opportunity.address,
             vacancies: opportunity.vacancies,
-            firstName: "teste",
-            lastName: "teste",
+            firstName: "",
+            lastName: "",
             time: time,
             date: opportunity.date,
           ),
@@ -148,8 +151,8 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen>{
                   ),
                   ReservationButton(
                     availableVacancies: opportunity.vacancies,
-                    onPressed: () {
-                      print('Reservation button pressed!');
+                    onPressed: (numberOfPersons) {
+                      createTempReservation(numberOfPersons);
                     },
                   ),
                 ],
@@ -222,8 +225,9 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen>{
                     description: opportunity.description,),
                   SizedBox(height: 20),
                   ReservationButton(
-                    availableVacancies: 2,
-                    onPressed: () {
+                    availableVacancies: widget.opportunity.vacancies,
+                    onPressed: (numberOfPersons) {
+                      createTempReservation(numberOfPersons);
                       print('Reservation button pressed!');
                     },
                   ),
@@ -270,5 +274,68 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen>{
       ),
     );
   }
+
+
+  Future<void> createCheckoutSessionReservation(Reservation reservation) async {
+  String? checkoutId;
+
+  if (reservation != null) {
+    checkoutId = await Provider.of<PaymentApiHandler>(context, listen: false)
+        .createReservationCheckoutSession(reservation);
+
+    if (checkoutId != null) {
+      // Now that we have the sessionId, we need to construct the checkout URL.
+      final checkoutUrl = 'https://checkout.stripe.com/pay/$checkoutId';
+
+      // Use url_launcher to open the checkout session in the user's browser.
+      if (await canLaunch(checkoutUrl)) {
+        await launch(checkoutUrl);
+      } else {
+        print('Could not launch $checkoutUrl');
+      }
+    } else {
+      print('Failed to create checkout session');
+    }
+  }
+}
+
+  Future<void> createTempReservation(int numberOfPersons) async {
+    
+    User? user = await _getCachedUser();
+
+    // Check if user is null before proceeding
+    if (user == null) {
+      print('No user found. Cannot create reservation.');
+      return null;
+    }
+
+    // Create a reservation
+    final reservation = Reservation(
+      opportunityId: widget.opportunity.opportunityId,
+      userId: user.userId,
+      checkInDate: widget.opportunity.date,
+      numOfPeople: numberOfPersons,
+      reservationDate: DateTime.now(),
+      isActive: true,
+      fixedPrice: (widget.opportunity.price * 0.1) + widget.opportunity.price
+    );
+
+    // Save the reservation asynchronously
+    await saveReservation(reservation);
+    // Create a checkout session for the reservation
+    createCheckoutSessionReservation(reservation);
+  }
+
+Future<User?> _getCachedUser() async {
+  try {
+    // Fetch the user from the API or local storage
+    final user = await Provider.of<UserApiHandler>(context, listen: false).getStoredUser();
+    return user;
+  } catch (e) {
+    print('Error fetching user: $e');
+    return null;
+  }
+}
+
 }
 
