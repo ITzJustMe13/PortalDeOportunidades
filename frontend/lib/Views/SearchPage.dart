@@ -7,15 +7,8 @@ import 'package:frontend/Components/SearchDrawer.dart';
 import 'package:frontend/State/SearchState.dart';
 import 'package:provider/provider.dart';
 
-class SearchPage extends StatefulWidget {
-  const SearchPage({super.key});
-
-  @override
-  State<SearchPage> createState() => _SearchPageState();
-}
-
-class _SearchPageState extends State<SearchPage> {
-  var _isDrawerOpen = false;
+class SearchPage extends StatelessWidget {
+  SearchPage({super.key});
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -51,7 +44,7 @@ class _SearchPageState extends State<SearchPage> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        if (_isDrawerOpen)
+                        if (searchState.isDrawerOpen)
                           SearchDrawer(width: drawerWidth, isMobile: isMobile),
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 8.0),
@@ -63,7 +56,7 @@ class _SearchPageState extends State<SearchPage> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        if (_isDrawerOpen)
+                        if (searchState.isDrawerOpen)
                           SearchDrawer(width: drawerWidth, isMobile: isMobile),
                         Expanded(
                           child: Padding(
@@ -93,9 +86,7 @@ class _SearchPageState extends State<SearchPage> {
               IconButton(
                   icon: Icon(Icons.search),
                   onPressed: () {
-                    setState(() {
-                      _isDrawerOpen = !_isDrawerOpen;
-                    });
+                    searchState.updateIsDrawerOpen();
                   }),
               SizedBox(width: 24),
               DynamicActionButton(

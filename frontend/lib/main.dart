@@ -76,7 +76,7 @@ class MainApp extends StatelessWidget {
       ),
       home: HomePage(),
       routes: {
-        '/search': (context) => const SearchPage(),
+        '/search': (context) => SearchPage(),
         '/favorites': (context) => const FavoritesPage(),
         '/create-opportunity': (context) => const CreateOpportunityScreen(),
         '/your-opportunities': (context) => const OpportunityManagerScreen(),

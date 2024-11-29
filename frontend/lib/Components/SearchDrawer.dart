@@ -6,53 +6,18 @@ import 'package:frontend/Enums/OppCategory.dart';
 import 'package:frontend/State/SearchState.dart';
 import 'package:provider/provider.dart';
 
-class SearchDrawer extends StatefulWidget {
+class SearchDrawer extends StatelessWidget {
   final double width;
   final bool isMobile;
   const SearchDrawer({super.key, required this.width, required this.isMobile});
-
-  @override
-  State<SearchDrawer> createState() => _SearchDrawerState();
-}
-
-class _SearchDrawerState extends State<SearchDrawer> {
-  String? _keyword;
-  Location? _location;
-  OppCategory? _category;
-  int? _vacancies;
-  double? _minPrice;
-  double? _maxPrice;
-
-  late TextEditingController _keywordController;
-  late TextEditingController _vacanciesController;
-  late TextEditingController _minPriceController;
-  late TextEditingController _maxPriceController;
-
-  @override
-  void initState() {
-    super.initState();
-    _keywordController = TextEditingController();
-    _vacanciesController = TextEditingController();
-    _minPriceController = TextEditingController();
-    _maxPriceController = TextEditingController();
-  }
-
-  @override
-  void dispose() {
-    _keywordController.dispose();
-    _vacanciesController.dispose();
-    _minPriceController.dispose();
-    _maxPriceController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<SearchState>(
       builder: (context, searchState, child) {
         return Container(
-          color: widget.isMobile ? Color(0xFFD9D9D9) : null,
-          width: widget.width,
+          color: isMobile ? Color(0xFFD9D9D9) : null,
+          width: width,
           child: SingleChildScrollView(
             // Make the drawer scrollable if its height exceeds screen
             child: Padding(
@@ -66,20 +31,18 @@ class _SearchDrawerState extends State<SearchDrawer> {
                   ),
                   Divider(),
                   TextField(
-                    controller: _keywordController,
+                    controller: searchState.keywordController,
                     decoration: InputDecoration(
                       labelText: 'Keyword',
                       border: OutlineInputBorder(),
                     ),
                     onChanged: (text) {
-                      setState(() {
-                        _keyword = text;
-                      });
+                      searchState.updateKeyword(text);
                     },
                   ),
                   SizedBox(height: 8),
                   TextField(
-                    controller: _vacanciesController,
+                    controller: searchState.vacanciesController,
                     keyboardType: TextInputType.number,
                     inputFormatters: [
                       FilteringTextInputFormatter.digitsOnly,
@@ -89,9 +52,7 @@ class _SearchDrawerState extends State<SearchDrawer> {
                       border: OutlineInputBorder(),
                     ),
                     onChanged: (text) {
-                      setState(() {
-                        _vacancies = int.parse(text);
-                      });
+                      searchState.updateVacancies(int.parse(text));
                     },
                   ),
                   SizedBox(height: 8),
@@ -100,7 +61,7 @@ class _SearchDrawerState extends State<SearchDrawer> {
                     children: [
                       Flexible(
                         child: TextField(
-                          controller: _minPriceController,
+                          controller: searchState.minPriceController,
                           keyboardType: TextInputType.number,
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
@@ -110,16 +71,14 @@ class _SearchDrawerState extends State<SearchDrawer> {
                             border: OutlineInputBorder(),
                           ),
                           onChanged: (text) {
-                            setState(() {
-                              _minPrice = double.parse(text);
-                            });
+                            searchState.updateMinPrice(double.parse(text));
                           },
                         ),
                       ),
                       const SizedBox(width: 8),
                       Flexible(
                         child: TextField(
-                          controller: _maxPriceController,
+                          controller:searchState.maxPriceController,
                           keyboardType: TextInputType.number,
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
@@ -129,9 +88,7 @@ class _SearchDrawerState extends State<SearchDrawer> {
                             border: OutlineInputBorder(),
                           ),
                           onChanged: (text) {
-                            setState(() {
-                              _maxPrice = double.parse(text);
-                            });
+                            searchState.updateMaxPrice(double.parse(text));
                           },
                         ),
                       ),
@@ -139,12 +96,10 @@ class _SearchDrawerState extends State<SearchDrawer> {
                   ),
                   SizedBox(height: 8),
                   DropdownButton<OppCategory>(
-                    value: _category,
+                    value: searchState.category,
                     hint: Text("Select Category"),
                     onChanged: (OppCategory? newValue) {
-                      setState(() {
-                        _category = newValue;
-                      });
+                      searchState.updateCategory(newValue);
                     },
                     isExpanded:
                         true, // Make the dropdown button take full width
@@ -174,12 +129,10 @@ class _SearchDrawerState extends State<SearchDrawer> {
                   ),
                   SizedBox(height: 8),
                   DropdownButton<Location>(
-                    value: _location,
+                    value:searchState.location,
                     hint: Text("Select Location"),
                     onChanged: (Location? newValue) {
-                      setState(() {
-                        _location = newValue;
-                      });
+                      searchState.updateLocation(newValue);
                     },
                     isExpanded:
                         true, // Make the dropdown button take full width
@@ -215,8 +168,7 @@ class _SearchDrawerState extends State<SearchDrawer> {
                       Center(
                         child: DynamicActionButton(
                             onPressed: () async {
-                              await searchState.search(_keyword, _location,
-                                  _vacancies, _category, _minPrice, _maxPrice);
+                              await searchState.search();
                             },
                             text: "Filtrar",
                             icon: Icons.filter,
@@ -225,7 +177,7 @@ class _SearchDrawerState extends State<SearchDrawer> {
                       SizedBox(width: 8),
                       Center(
                           child: IconButton(
-                              onPressed: () => _clearSearch(),
+                              onPressed: () => searchState.clear(),
                               icon: Icon(Icons.clear))),
                     ],
                   ),
@@ -236,23 +188,5 @@ class _SearchDrawerState extends State<SearchDrawer> {
         );
       },
     );
-  }
-
-  void _clearSearch() {
-    setState(() {
-      // Clear the state variables
-      _keyword = null;
-      _location = null;
-      _category = null;
-      _vacancies = null;
-      _minPrice = null;
-      _maxPrice = null;
-
-      // Clear the controllers
-      _keywordController.clear();
-      _vacanciesController.clear();
-      _minPriceController.clear();
-      _maxPriceController.clear();
-    });
   }
 }
