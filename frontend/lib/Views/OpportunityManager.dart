@@ -24,6 +24,7 @@ class _OpportunityManagerScreenState extends State<OpportunityManagerScreen> {
   @override
   void initState() {
     super.initState();
+    _opportunitiesFuture = Future.value([]); //this is to give time to load and not give any errors to the page
     _initializeData();
   }
 

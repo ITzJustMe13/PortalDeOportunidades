@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/Enums/OppCategory.dart';
 import 'package:frontend/Services/opportunity_api_handler.dart';
+import 'package:frontend/Views/OpportunityManager.dart';
 import 'package:intl/intl.dart';
 import 'package:frontend/Models/Opportunity.dart';
 import 'package:frontend/Components/CustomAppBar.dart';
@@ -65,6 +66,10 @@ class _EditOpportunityScreenState extends State<EditOpportunityScreen> {
 
   void _saveOpportunity() async {
     
+    final List<OpportunityImg> finalImages = _opportunityImgs.isNotEmpty
+      ? _opportunityImgs
+      : widget.opportunity.opportunityImgs;
+
     Opportunity updatedOpportunity = Opportunity(
       opportunityId: widget.opportunity.opportunityId,
       name: nameController.text, 
@@ -79,7 +84,7 @@ class _EditOpportunityScreenState extends State<EditOpportunityScreen> {
       reviewScore: widget.opportunity.reviewScore, 
       date: (_oppDateController ?? DateTime.now()).add(Duration(days: 1)), 
       isImpulsed: widget.opportunity.isImpulsed, 
-      opportunityImgs: _opportunityImgs);
+      opportunityImgs: finalImages);
 
     
     final success = await Provider.of<OpportunityApiHandler>(context, listen: false)
@@ -213,7 +218,15 @@ class _EditOpportunityScreenState extends State<EditOpportunityScreen> {
             style: ElevatedButton.styleFrom(
               backgroundColor: Color(0xFF50C878), // Set button color here
             ),
-            onPressed: _saveOpportunity,
+            onPressed: () {
+              _saveOpportunity(); // Call the save function
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => OpportunityManagerScreen()
+                ),
+              );
+            },
             child: Text(
               'Salvar',
               style: TextStyle(color: Colors.white), // Adjust text color if needed
@@ -296,8 +309,8 @@ class _EditOpportunityScreenState extends State<EditOpportunityScreen> {
   final DateTime? pickedDate = await showDatePicker(
     context: context,
     initialDate: DateTime.now(),
-    firstDate: DateTime(1900),
-    lastDate: DateTime.now(),
+    firstDate: DateTime.now(),
+    lastDate: DateTime(2100),
   );
 
   if (pickedDate != null) {

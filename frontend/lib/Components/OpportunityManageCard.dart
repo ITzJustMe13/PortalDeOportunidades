@@ -4,6 +4,8 @@ import 'package:frontend/Models/Opportunity.dart';
 import 'dart:convert'; // For Base64 decoding
 import 'package:frontend/Views/OpportunityDetailsScreen.dart';
 import 'package:frontend/Views/EditOpportunityScreen.dart';
+import 'package:provider/provider.dart';
+import 'package:frontend/Services/opportunity_api_handler.dart';
 
 class OpportunityManageCard extends StatelessWidget {
   final Opportunity opportunity;
@@ -12,7 +14,6 @@ class OpportunityManageCard extends StatelessWidget {
     super.key,
     required this.opportunity,
   });
-
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +65,26 @@ class OpportunityManageCard extends StatelessWidget {
                   ),
                   child: Text(
                     opportunity.category.name.replaceAll("_", " "),
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ),
+              // Active/Inactive Tag
+              Positioned(
+                bottom: 10,
+                left: 10,
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: opportunity.isActive ? Colors.green : Colors.red, // Color based on active status
+                    borderRadius: BorderRadius.circular(4.0),
+                  ),
+                  child: Text(
+                    opportunity.isActive ? 'Ativo' : 'Inativo',
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -126,44 +147,63 @@ class OpportunityManageCard extends StatelessWidget {
                       icon: Icons.details,
                       color: Color(0xFF50C878),
                       onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => OpportunityDetailsScreen(opportunity: opportunity),
-                        ),
-                      );
-                    },
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => OpportunityDetailsScreen(opportunity: opportunity),
+                          ),
+                        );
+                      },
                     ),
 
                     DynamicActionButton(
+                      text: 'Editar',
+                      icon: Icons.edit,
+                      color: Colors.green,
                       onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => EditOpportunityScreen(opportunity: opportunity),
-                        ),
-                      );
-                    },
-                    text: 'Editar',
-                    icon: Icons.edit,
-                    color: Colors.green,
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EditOpportunityScreen(opportunity: opportunity),
+                          ),
+                        );
+                      },
                     ),
 
                     DynamicActionButton(
                       text: 'Ativo/Inativo',
                       color: Colors.yellow,
                       icon: Icons.adjust,
-                      onPressed: (){
-                      
-                    },),
+                      onPressed: () {
+                        
+                      },
+                    ),
+
                     // Delete Button
                     DynamicActionButton(
-                      onPressed: () {
-                       
-                    },
-                    text: 'Apagar',
-                    icon: Icons.delete,
-                    color: Colors.red,
+                      text: 'Apagar',
+                      icon: Icons.delete,
+                      color: Colors.red,
+                      onPressed: () async {
+                        final bool success = await Provider.of<OpportunityApiHandler>(context, listen: false)
+                            .deleteOpportunity(opportunity.opportunityId);
+
+                        if (success) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Oportunidade apagada com sucesso!'),
+                              backgroundColor: Colors.green,
+                            ),
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Falha ao apagar a oportunidade. Pode possuir ainda reservas para esta Opportunidade, se o erro persistir contacte-nos.'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
+                      },
                     )
                   ],
                 ),
