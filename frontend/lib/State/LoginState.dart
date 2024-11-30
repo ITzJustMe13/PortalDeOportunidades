@@ -19,6 +19,25 @@ class LoginState with ChangeNotifier {
   bool get isLoggedIn => _isLoggedIn;
   String get username => _username;
 
+  LoginState() {
+    checkToken();
+  }
+
+  Future<void> checkToken() async {
+    var currentUser = await _apiHandler.getStoredUser();
+
+    if (currentUser == null) {
+      _isLoggedIn = false;
+      notifyListeners();
+      return;
+    }
+
+    _username = currentUser.firstName;
+    _isLoggedIn = true;
+    notifyListeners();
+    return;
+  }
+
   // Function to login
   Future<bool> login(
       String email, String password, BuildContext context) async {
@@ -33,7 +52,6 @@ class LoginState with ChangeNotifier {
 
     var response = await _apiHandler.login(email, password);
     _isLoading = false;
-    print(response);
 
     if (response == null) {
       _errorMessage =
@@ -53,6 +71,7 @@ class LoginState with ChangeNotifier {
   // Function to logout and remove token
   Future<void> logout() async {
     await _storage.delete(key: 'accessToken');
+    await _storage.delete(key: 'currentUser');
     _token = null;
     _isLoggedIn = false;
     _username = "Convidado";

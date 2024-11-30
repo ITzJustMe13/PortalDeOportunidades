@@ -75,7 +75,6 @@ class SearchState with ChangeNotifier {
     notifyListeners();
   }
 
-  // Sorting options
   final Map<String, Future<void> Function(SearchState)> _sortOptions = {
     'Classificação Descendente': (SearchState searchState) =>
         searchState.sortByScore(),

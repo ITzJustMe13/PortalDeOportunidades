@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/State/ActivationState.dart';
 import 'package:frontend/State/CreateOpportunityState.dart';
 import 'package:frontend/State/DrawerState.dart';
+import 'package:frontend/State/HistoryReservationState.dart';
 import 'package:frontend/State/LoginState.dart';
 import 'package:frontend/State/RegisterState.dart';
 import 'package:frontend/State/SearchState.dart';
@@ -48,6 +49,8 @@ void main() {
         ChangeNotifierProvider<CreateOpportunityState>(
             create: (_) => CreateOpportunityState()),
         ChangeNotifierProvider<SearchState>(create: (_) => SearchState()),
+        ChangeNotifierProvider<HistoryReservationState>(
+            create: (_) => HistoryReservationState()),
         ChangeNotifierProxyProvider<LoginState, CustomDrawerState>(
           create: (context) => CustomDrawerState(
             loginState: context.read<LoginState>(),
@@ -125,7 +128,6 @@ class MainApp extends StatelessWidget {
               );
             },
           );
-
         }
 
         // Check for deep link path for activate-account

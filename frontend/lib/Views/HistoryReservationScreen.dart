@@ -1,50 +1,44 @@
+import 'dart:convert';
+
+import 'package:dynamic_height_grid_view/dynamic_height_grid_view.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/Components/CustomAppBar.dart';
 import 'package:frontend/Components/CustomDrawer.dart';
-import 'package:frontend/Enums/OppCategory.dart';
+import 'package:frontend/Components/DynamicActionButton.dart';
+import 'package:frontend/Models/Opportunity.dart';
 import 'package:frontend/Models/Reservation.dart';
+import 'package:frontend/State/HistoryReservationState.dart';
+import 'package:frontend/Views/OpportunityDetailsScreen.dart';
+import 'package:provider/provider.dart';
 
-class HistoryReservationScreen extends StatefulWidget {
+class HistoryReservationScreen extends StatelessWidget {
   const HistoryReservationScreen({super.key});
 
   @override
-  _HistoryReservationScreenState createState() =>
-      _HistoryReservationScreenState();
-}
-
-class _HistoryReservationScreenState extends State<HistoryReservationScreen> {
-  Reservation reservation = Reservation(
-      opportunityId: 1,
-      userId: 1,
-      reservationDate: DateTime.now(),
-      checkInDate: DateTime.now(),
-      numOfPeople: 3,
-      isActive: true,
-      fixedPrice: 12.20);
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar(),
-      endDrawer: CustomDrawer(),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          if (constraints.maxWidth < 800) {
-            // Layout para telas pequenas (smartphones)
-            return _buildMobileLayout();
-          } else if (constraints.maxWidth < 1100) {
-            // Layout para telas médias (tablets)
-            return _buildTabletLayout();
-          } else {
-            // Layout para telas grandes (desktops)
-            return _buildDesktopLayout();
-          }
-        },
+    return Consumer<HistoryReservationState>(
+      builder: (context, historyReservationState, child) => Scaffold(
+        appBar: CustomAppBar(),
+        endDrawer: CustomDrawer(),
+        body: LayoutBuilder(
+          builder: (context, constraints) {
+            if (constraints.maxWidth < 800) {
+              // Layout para telas pequenas (smartphones)
+              return _buildMobileLayout(historyReservationState);
+            } else if (constraints.maxWidth < 1100) {
+              // Layout para telas médias (tablets)
+              return _buildTabletLayout(historyReservationState);
+            } else {
+              // Layout para telas grandes (desktops)
+              return _buildDesktopLayout(historyReservationState);
+            }
+          },
+        ),
       ),
     );
   }
 
-  Widget _buildMobileLayout() {
+  Widget _buildMobileLayout(HistoryReservationState historyReservationState) {
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,79 +53,118 @@ class _HistoryReservationScreenState extends State<HistoryReservationScreen> {
               ),
             ),
           ),
-          ListView.builder(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: 3, // Pode ser uma lista dinâmica no futuro.
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 75.0, vertical: 10.0),
-                child: _buildReservationCard(reservation),
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTabletLayout() {
-    return SingleChildScrollView(
-      scrollDirection: Axis.vertical, // Para garantir o scroll vertical
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              'Os seus Histórico de Reservas:',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              // Número de itens por linha para tablet
-              int itemsPerRow = 2;
-              // Calcular a largura dos cards considerando padding e spacing
-              double totalSpacing =
-                  (itemsPerRow - 1) * 16; // Espaço entre os cards
-              double cardWidth =
-                  (constraints.maxWidth - 2 * 16 - totalSpacing) /
-                      itemsPerRow; // Largura dos cards
-
-              return Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal:
-                        16.0), // Mantém o padding correto nas extremidades
-                child: Wrap(
-                  spacing: 16, // Espaço horizontal entre os cards
-                  runSpacing: 20, // Espaço vertical entre as linhas
-                  children: List.generate(6, (index) {
-                    return SizedBox(
-                      width:
-                          cardWidth, // Largura ajustada para 2 cards por linha
-                      child: _buildReservationCard(reservation),
-                    );
-                  }),
+          if (historyReservationState.isLoading)
+            Center(
+              child: CircularProgressIndicator(),
+            )
+          else if (historyReservationState.reservationList.isEmpty)
+            Center(
+              child: Text(
+                'Nenhuma reserva encontrada',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
                 ),
-              );
-            },
-          ),
+              ),
+            )
+          else
+            ListView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: historyReservationState.reservationList.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 75.0, vertical: 10.0),
+                  child: _buildReservationCard(
+                      historyReservationState,
+                      historyReservationState.reservationList[index].keys.first,
+                      historyReservationState
+                          .reservationList[index].values.first,
+                      context),
+                );
+              },
+            ),
         ],
       ),
     );
   }
 
-  Widget _buildDesktopLayout() {
+  Widget _buildTabletLayout(HistoryReservationState historyReservationState) {
     return SingleChildScrollView(
-      scrollDirection: Axis.vertical, // Definindo scroll vertical
+      scrollDirection: Axis.vertical,
+      child: Center(
+        child: Padding(
+          padding: EdgeInsets.all(24.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  'Os seus Histórico de Reservas:',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              if (historyReservationState.isLoading)
+                Center(
+                  child: CircularProgressIndicator(),
+                )
+              else if (historyReservationState.reservationList.isEmpty)
+                Center(
+                  child: Text(
+                    'Nenhuma reserva encontrada',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                )
+              else
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    int itemsPerRow = 3;
+                    double totalSpacing = (itemsPerRow - 1) * 16;
+                    double cardWidth =
+                        (constraints.maxWidth - 2 * 16 - totalSpacing) /
+                            itemsPerRow;
+                    return DynamicHeightGridView(
+                      crossAxisCount: itemsPerRow,
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      crossAxisSpacing: 16.0,
+                      mainAxisSpacing: 20.0,
+                      itemCount: historyReservationState.reservationList.length,
+                      builder: (context, index) {
+                        return SizedBox(
+                          width: cardWidth,
+                          child: _buildReservationCard(
+                              historyReservationState,
+                              historyReservationState
+                                  .reservationList[index].keys.first,
+                              historyReservationState
+                                  .reservationList[index].values.first,
+                              context),
+                        );
+                      },
+                    );
+                  },
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDesktopLayout(HistoryReservationState historyReservationState) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.vertical,
       child: Padding(
-        padding:
-            const EdgeInsets.symmetric(horizontal: 50.0), // Ajustando o padding
+        padding: const EdgeInsets.all(50.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -145,38 +178,60 @@ class _HistoryReservationScreenState extends State<HistoryReservationScreen> {
                 ),
               ),
             ),
-            LayoutBuilder(
-              builder: (context, constraints) {
-                // Número de itens por linha
-                int itemsPerRow = 3;
+            if (historyReservationState.isLoading)
+              Center(
+                child: CircularProgressIndicator(),
+              )
+            else if (historyReservationState.reservationList.isEmpty)
+              Center(
+                child: Text(
+                  'Nenhuma reserva encontrada',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              )
+            else
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  int itemsPerRow = 3;
 
-                // Calcular a largura dos cartões, levando em consideração o espaçamento e o padding
-                double totalSpacing =
-                    (itemsPerRow - 1) * 16; // Espaço horizontal entre os cards
-                double cardWidth =
-                    (constraints.maxWidth - 2 * 50 - totalSpacing) /
-                        itemsPerRow;
+                  double totalSpacing = (itemsPerRow - 1) * 16;
+                  double cardWidth =
+                      (constraints.maxWidth - 2 * 50 - totalSpacing) /
+                          itemsPerRow;
 
-                return Wrap(
-                  spacing: 16, // Espaço horizontal entre os cards
-                  runSpacing: 20, // Espaço vertical entre as linhas
-                  children: List.generate(6, (index) {
-                    return SizedBox(
-                      width:
-                          cardWidth, // Largura ajustada para 3 cards por linha
-                      child: _buildReservationCard(reservation),
-                    );
-                  }),
-                );
-              },
-            ),
+                  return DynamicHeightGridView(
+                    crossAxisCount: itemsPerRow,
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    crossAxisSpacing: 16.0,
+                    mainAxisSpacing: 20.0,
+                    itemCount: historyReservationState.reservationList.length,
+                    builder: (context, index) {
+                      return SizedBox(
+                        width: cardWidth,
+                        child: _buildReservationCard(
+                            historyReservationState,
+                            historyReservationState
+                                .reservationList[index].keys.first,
+                            historyReservationState
+                                .reservationList[index].values.first,
+                            context),
+                      );
+                    },
+                  );
+                },
+              ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildReservationCard(Reservation reservation) {
+  Widget _buildReservationCard(HistoryReservationState state,
+      Reservation reservation, Opportunity opportunity, context) {
     return ConstrainedBox(
       constraints: BoxConstraints(
         maxHeight: 500, // Limita a largura do card
@@ -189,17 +244,17 @@ class _HistoryReservationScreenState extends State<HistoryReservationScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Imagem e tag empilhadas (sem padding).
             Stack(
               children: [
-                _buildCardImage(
-                       'https://picsum.photos/200'), // Imagem sem padding.
+                _buildCardImage(opportunity.opportunityImgs.isNotEmpty
+                    ? opportunity.opportunityImgs[0].imageBase64
+                    : null), // Imagem sem padding.
                 Positioned(
                   top: 8,
                   left: 8,
-                  child: _buildCategoryTag(OppCategory
-                      .DESPORTOS_ATIVIDADES_AO_AR_LIVRE
-                      .toString()), // Tag sobre a imagem.
+                  child: _buildCategoryTag(
+                    opportunity.category.toString().split('.').last,
+                  ), // TaTag sobre a imagem.
                 ),
               ],
             ),
@@ -218,7 +273,7 @@ class _HistoryReservationScreenState extends State<HistoryReservationScreen> {
                         constraints: BoxConstraints(
                             maxWidth: 250), // Limita a largura a 250px
                         child: _buildTitle(
-                          'Venha aprender a cozinhar o Pato à Transmontana',
+                          opportunity.name,
                         ),
                       ),
                       _buildStatusTag(reservation.isActive),
@@ -228,23 +283,26 @@ class _HistoryReservationScreenState extends State<HistoryReservationScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      _buildLocation('Vila Real'),
-                      _buildDetailsButton(),
+                      _buildLocation(
+                          opportunity.location.toString().split('.').last),
+                      if (reservation.isActive)
+                        _buildDetailsButton(context, opportunity),
                     ],
                   ),
                   SizedBox(height: 8),
-                  _buildReservationDates('02/02/2025', '04/02/2025'),
+                  _buildReservationDates(
+                      reservation.reservationDate.toString().split(' ')[0],
+                      reservation.checkInDate.toString().split(' ')[0]),
                   SizedBox(height: 8),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      _buildNumPeople(2),
-                      _buildPrice(23.44),
+                      _buildNumPeople(reservation.numOfPeople),
+                      _buildPrice(reservation.fixedPrice),
                     ],
                   ),
                   SizedBox(height: 8),
-                  // Botões.
-                  _buildCancelButton(),
+                  _buildCancelButton(state, reservation),
                 ],
               ),
             ),
@@ -288,31 +346,43 @@ class _HistoryReservationScreenState extends State<HistoryReservationScreen> {
     );
   }
 
-  Widget _buildCardImage(String imageUrl) {
-    return ClipRRect(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
-      child: Image.network(
-        imageUrl,
+  Widget _buildCardImage(String? image) {
+    if (image == null) {
+      return Container(
         height: 250,
         width: double.infinity,
-        fit: BoxFit.cover,
-        loadingBuilder: (context, child, progress) {
-          if (progress == null) return child; // Imagem carregada.
-          return Center(
-            child: CircularProgressIndicator(), // Indicador de carregamento.
-          );
-        },
-        errorBuilder: (context, error, stackTrace) {
-          return Center(
-            child: Icon(
-              Icons.broken_image,
-              color: Colors.grey,
-              size: 50,
-            ), // Ícone de erro para imagem inválida.
-          );
-        },
-      ),
-    );
+        decoration: BoxDecoration(
+          color: Colors.grey[300],
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Icon(
+          Icons.broken_image,
+          size: 80,
+          color: Colors.grey[600],
+        ),
+      );
+    } else {
+      final decodedBytes = base64Decode(image);
+
+      return ClipRRect(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
+        child: Image.memory(
+          decodedBytes,
+          height: 250,
+          width: double.infinity,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return Center(
+              child: Icon(
+                Icons.broken_image,
+                color: Colors.grey,
+                size: 50,
+              ),
+            );
+          },
+        ),
+      );
+    }
   }
 
   Widget _buildTitle(String title) {
@@ -375,44 +445,49 @@ class _HistoryReservationScreenState extends State<HistoryReservationScreen> {
     );
   }
 
-  Widget _buildDetailsButton() {
-    return ElevatedButton(
+  Widget _buildDetailsButton(BuildContext context, Opportunity opportunity) {
+    return DynamicActionButton(
+      text: 'Detalhes',
+      color: Color(0xFF50C878),
+      icon: Icons.details,
       onPressed: () {
-        // Lógica para o botão "Detalhes"
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => OpportunityDetailsScreen(
+              opportunity: opportunity,
+              isReservation: true,
+            ),
+          ),
+        );
       },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.green,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
-      ),
-      child: Text(
-        'Detalhes',
-        style: TextStyle(color: Colors.white),
-      ),
     );
   }
 
-  Widget _buildCancelButton() {
-    return Align(
-      alignment: Alignment.centerRight, // Alinha o botão à direita.
-      child: ElevatedButton(
-        onPressed: () {
-          // Lógica para o botão "Cancelar"
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.red,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
+  Widget _buildCancelButton(HistoryReservationState historyReservationState,
+      Reservation reservation) {
+    return Column(
+      children: [
+        if (historyReservationState.isCancelling)
+          Center(
+            child: CircularProgressIndicator(),
+          )
+        else
+          Align(
+            alignment: Alignment.centerRight, // Alinha o botão à direita.
+            child: DynamicActionButton(
+              onPressed: () {
+                historyReservationState.cancelReservation(reservation);
+              },
+              text: 'Cancelar',
+              icon: Icons.cancel,
+              color: Colors.red,
+            ),
           ),
-          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
-        ),
-        child: Text(
-          'Cancelar',
-          style: TextStyle(color: Colors.white),
-        ),
-      ),
+        if (historyReservationState.error.isNotEmpty)
+          Text(historyReservationState.error,
+              style: TextStyle(color: Colors.red)),
+      ],
     );
   }
 }

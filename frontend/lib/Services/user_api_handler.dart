@@ -55,7 +55,7 @@ class UserApiHandler {
     final String? storedUser = await storage.read(key: 'currentUser');
 
     try {
-      if (storedUser != null) {
+      if (storedUser != null && int.parse(storedUser) != -1) {
         User? user = await getUserByID(int.parse(storedUser));
         if (user != null) {
           return user;
