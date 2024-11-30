@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dynamic_height_grid_view/dynamic_height_grid_view.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/Components/ConfirmationDialog.dart';
 import 'package:frontend/Components/CustomAppBar.dart';
 import 'package:frontend/Components/CustomDrawer.dart';
 import 'package:frontend/Components/DynamicActionButton.dart';
@@ -302,7 +303,7 @@ class HistoryReservationScreen extends StatelessWidget {
                     ],
                   ),
                   SizedBox(height: 8),
-                  _buildCancelButton(state, reservation),
+                  _buildCancelButton(state, reservation, context),
                 ],
               ),
             ),
@@ -465,7 +466,7 @@ class HistoryReservationScreen extends StatelessWidget {
   }
 
   Widget _buildCancelButton(HistoryReservationState historyReservationState,
-      Reservation reservation) {
+      Reservation reservation, BuildContext context) {
     return Column(
       children: [
         if (historyReservationState.isCancelling)
@@ -475,13 +476,49 @@ class HistoryReservationScreen extends StatelessWidget {
         else
           Align(
             alignment: Alignment.centerRight, // Alinha o botão à direita.
-            child: DynamicActionButton(
-              onPressed: () {
-                historyReservationState.cancelReservation(reservation);
-              },
-              text: 'Cancelar',
-              icon: Icons.cancel,
-              color: Colors.red,
+            child: Tooltip(
+              message:
+                  'Para obter o reembolso parcial da reserva contacte o suporte.',
+              child: DynamicActionButton(
+                text: 'Cancelar',
+                icon: Icons.cancel,
+                color: Colors.red,
+                onPressed: () async {
+                  bool confirmCancellation = await showDialog<bool>(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return ConfirmationDialog(
+                            action: 'Cancelar Reserva',
+                            message:
+                                'Tem certeza de que deseja cancelar esta reserva?\n\n*Para obter o reembolso parcial da reserva contacte o suporte.',
+                            onConfirm: () async {
+                              final bool success = await historyReservationState
+                                  .cancelReservation(reservation);
+
+                              return success;
+                            },
+                          );
+                        },
+                      ) ??
+                      false;
+
+                  if (confirmCancellation) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Reserva cancelada com sucesso!'),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Falha ao cancelar a reserva.'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                },
+              ),
             ),
           ),
         if (historyReservationState.error.isNotEmpty)

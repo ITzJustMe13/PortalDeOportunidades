@@ -93,12 +93,13 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
             description: opportunity.description,
           ),
           SizedBox(height: 20),
-          ReservationButton(
-            availableVacancies: 2,
-            onPressed: (numberOfPersons) {
-              createTempReservation(numberOfPersons);
-            },
-          ),
+          if (!widget.isReservation)
+            ReservationButton(
+              availableVacancies: 2,
+              onPressed: (numberOfPersons) {
+                createTempReservation(numberOfPersons);
+              },
+            ),
           SizedBox(height: 20),
           OpportunityAdditionalInfo(
             price: opportunity.price,
@@ -154,12 +155,13 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
                     name: opportunity.name,
                     description: opportunity.description,
                   ),
-                  ReservationButton(
-                    availableVacancies: opportunity.vacancies,
-                    onPressed: (numberOfPersons) {
-                      createTempReservation(numberOfPersons);
-                    },
-                  ),
+                  if (!widget.isReservation)
+                    ReservationButton(
+                      availableVacancies: opportunity.vacancies,
+                      onPressed: (numberOfPersons) {
+                        createTempReservation(numberOfPersons);
+                      },
+                    ),
                 ],
               ),
             ),

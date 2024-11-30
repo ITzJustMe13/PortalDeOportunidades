@@ -244,6 +244,7 @@ class _OpportunityManageCardState extends State<OpportunityManageCard> {
                           builder: (BuildContext context) {
                             return ConfirmationDialog(
                               action: 'apagar',
+                              message: 'Tem certeza de que deseja apagar esta oportunidade?',
                               onConfirm: () async {
                                 final bool success = await Provider.of<OpportunityApiHandler>(context, listen: false)
                                     .deleteOpportunity(widget.opportunity.opportunityId);

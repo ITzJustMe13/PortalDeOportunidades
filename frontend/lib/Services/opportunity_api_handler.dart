@@ -25,7 +25,7 @@ class OpportunityApiHandler {
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
         },
-      ).timeout(timeout);
+      );
 
       if (response.statusCode >= 200 && response.statusCode <= 299) {
         final opportunity = Opportunity.fromJson(jsonDecode(response.body));

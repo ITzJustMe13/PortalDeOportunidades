@@ -69,7 +69,7 @@ class HistoryReservationState with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> cancelReservation(Reservation reservation) async {
+  Future<bool> cancelReservation(Reservation reservation) async {
     _isCancelling = true;
     notifyListeners();
 
@@ -80,13 +80,14 @@ class HistoryReservationState with ChangeNotifier {
       _isCancelling = false;
       _err = "Erro ao cancelar reserva";
       notifyListeners();
-      return;
+      return false;
     }
 
     _reservationList.removeWhere((element) =>
         element.keys.first.reservationId == reservation.reservationId);
     _isCancelling = false;
     notifyListeners();
+    return true;
   }
 
   void _startAutoRefresh() {

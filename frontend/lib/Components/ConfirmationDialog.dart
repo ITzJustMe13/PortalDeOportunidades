@@ -2,19 +2,21 @@ import 'package:flutter/material.dart';
 
 class ConfirmationDialog extends StatelessWidget {
   final String action;
+  final String message;
   final Future<bool> Function() onConfirm;
 
   const ConfirmationDialog({
     Key? key,
     required this.action,
     required this.onConfirm,
+    required this.message,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text('Confirmar $action'),
-      content: Text('Tem certeza de que deseja $action esta oportunidade?'),
+      content: Text(message),
       actions: <Widget>[
         TextButton(
           onPressed: () {
@@ -24,7 +26,8 @@ class ConfirmationDialog extends StatelessWidget {
         ),
         TextButton(
           onPressed: () async {
-            final bool confirmed = await onConfirm(); // Call the onConfirm function
+            final bool confirmed =
+                await onConfirm(); // Call the onConfirm function
             Navigator.of(context).pop(confirmed);
           },
           child: Text('Confirmar'),
