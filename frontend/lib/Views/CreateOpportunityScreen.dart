@@ -11,6 +11,7 @@ import 'package:frontend/Models/OpportunityImg.dart';
 import 'package:frontend/State/CreateOpportunityState.dart';
 import 'package:frontend/Views/OpportunityDetailsScreen.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class CreateOpportunityScreen extends StatefulWidget {
@@ -173,6 +174,7 @@ class _AddOpportunityScreenState extends State<CreateOpportunityScreen> {
                     }),
                   );
                   setState(() {
+                    _opportunityImgs.clear();
                     for (var image in base64Images) {
                       var oppImg = OpportunityImg(
                           imgId: 0, opportunityId: 0, imageBase64: image);
@@ -360,31 +362,40 @@ class _AddOpportunityScreenState extends State<CreateOpportunityScreen> {
       readOnly: true,
       onTap: () async {
         FocusScope.of(context).requestFocus(FocusNode());
-        DateTime? pickedDate = await showDatePicker(
-          context: context,
-          initialDate: _date,
-          firstDate: DateTime(2000),
-          lastDate: DateTime(2101),
-        );
-
-        if (pickedDate != null) {
-          setState(() {
-            _date = DateTime(
-              pickedDate.year,
-              pickedDate.month,
-              pickedDate.day,
-              1, // Set hours to 1
-              1, // Set minutes to 1
-              1, // Set seconds to 1
-              1, // Set milliseconds to 1
-            );
-          });
-        }
+        _showDateAndTimePicker(context);
       },
       controller: TextEditingController(
-        text: '${_date.toLocal()}'.split(' ')[0],
+        text: DateFormat('yyyy-MM-dd HH:mm:ss').format(_date),
       ),
     );
+  }
+
+  void _showDateAndTimePicker(BuildContext context) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2100),
+    );
+
+    if (pickedDate != null) {
+      final TimeOfDay? pickedTime = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.now(),
+      );
+
+      if (pickedTime != null) {
+        setState(() {
+          _date = DateTime(
+            pickedDate.year,
+            pickedDate.month,
+            pickedDate.day,
+            pickedTime.hour,
+            pickedTime.minute,
+          );
+        });
+      }
+    }
   }
 
   Widget _buildAddressField() {
@@ -481,6 +492,13 @@ class _AddOpportunityScreenState extends State<CreateOpportunityScreen> {
     if (currentUserId == -1) {
       setState(() {
         _errorMessage = 'Erro ao criar conta';
+      });
+      return null;
+    }
+
+    if (_opportunityImgs.length > 5) {
+      setState(() {
+        _errorMessage = 'Não é permitido adicionar mais de 5 imagens';
       });
       return null;
     }

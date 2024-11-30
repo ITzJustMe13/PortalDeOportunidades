@@ -285,3 +285,4 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   }
 }
+/*TODO: reencaminhar para uma página de a sua conta ainda não foi ativada*/

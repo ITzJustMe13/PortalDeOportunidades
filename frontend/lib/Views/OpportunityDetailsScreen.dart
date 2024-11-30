@@ -17,15 +17,18 @@ import 'package:frontend/Services/payment_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class OpportunityDetailsScreen extends StatefulWidget {
+  final bool isReservation;
   final Opportunity opportunity;
 
-  const OpportunityDetailsScreen({super.key, required this.opportunity});
+  const OpportunityDetailsScreen(
+      {super.key, required this.opportunity, this.isReservation = false});
 
   @override
-  _OpportunityManagerScreenState createState() => _OpportunityManagerScreenState();
+  _OpportunityManagerScreenState createState() =>
+      _OpportunityManagerScreenState();
 }
 
-class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen>{
+class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
   final ScrollController verticalScrollController = ScrollController();
   final ScrollController horizontalScrollController = ScrollController();
   late Future<User?> _ownerFuture;
@@ -76,7 +79,6 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen>{
     );
   }
 
-
   // Mobile layout (Vertical scroll)
   Widget _buildMobileLayout(Opportunity opportunity, String time) {
     return SingleChildScrollView(
@@ -88,7 +90,8 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen>{
           SizedBox(height: 20),
           OpportunityDetails(
             name: opportunity.name,
-            description: opportunity.description,),
+            description: opportunity.description,
+          ),
           SizedBox(height: 20),
           ReservationButton(
             availableVacancies: 2,
@@ -108,7 +111,9 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen>{
             date: opportunity.date,
           ),
           SizedBox(height: 20),
-          OpportunityLocationMap(address: opportunity.address,),
+          OpportunityLocationMap(
+            address: opportunity.address,
+          ),
           /*
           //REVIEWS
           SizedBox(height: 20),
@@ -128,7 +133,7 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen>{
   }
 
   // Tablet layout (Vertical scroll with Scrollbar)
-    Widget _buildTabletLayout(Opportunity opportunity, String time) {
+  Widget _buildTabletLayout(Opportunity opportunity, String time) {
     return Scrollbar(
       thumbVisibility: true,
       controller: verticalScrollController,
@@ -159,7 +164,7 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen>{
               ),
             ),
             SizedBox(width: 20), // Add space between the two columns
-            
+
             // Right Column (Additional Info and Map)
             Expanded(
               flex: 1,
@@ -177,7 +182,9 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen>{
                     date: opportunity.date,
                   ),
                   SizedBox(height: 20),
-                  OpportunityLocationMap(address: opportunity.address,),
+                  OpportunityLocationMap(
+                    address: opportunity.address,
+                  ),
                   /*
                   //REVIEWS
                   SizedBox(height: 20),
@@ -200,7 +207,7 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen>{
     );
   }
 
- // Desktop layout (Both vertical and horizontal scroll with Scrollbar)
+  // Desktop layout (Both vertical and horizontal scroll with Scrollbar)
   Widget _buildDesktopLayout(Opportunity opportunity, String time) {
     return Scrollbar(
       thumbVisibility: true,
@@ -222,15 +229,17 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen>{
                   OpportunityImages(opportunity: opportunity),
                   OpportunityDetails(
                     name: opportunity.name,
-                    description: opportunity.description,),
-                  SizedBox(height: 20),
-                  ReservationButton(
-                    availableVacancies: widget.opportunity.vacancies,
-                    onPressed: (numberOfPersons) {
-                      createTempReservation(numberOfPersons);
-                      print('Reservation button pressed!');
-                    },
+                    description: opportunity.description,
                   ),
+                  SizedBox(height: 20),
+                  if (!widget.isReservation)
+                    ReservationButton(
+                      availableVacancies: widget.opportunity.vacancies,
+                      onPressed: (numberOfPersons) {
+                        createTempReservation(numberOfPersons);
+                        print('Reservation button pressed!');
+                      },
+                    ),
                 ],
               ),
             ),
@@ -252,7 +261,9 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen>{
                     date: opportunity.date,
                   ),
                   SizedBox(height: 20),
-                  OpportunityLocationMap(address: opportunity.address,),
+                  OpportunityLocationMap(
+                    address: opportunity.address,
+                  ),
                   /*
                   //REVIEWS
                   SizedBox(height: 20),
@@ -275,32 +286,30 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen>{
     );
   }
 
-
   Future<void> createCheckoutSessionReservation(Reservation reservation) async {
-  String? checkoutId;
+    String? checkoutId;
 
-  if (reservation != null) {
-    checkoutId = await Provider.of<PaymentApiHandler>(context, listen: false)
-        .createReservationCheckoutSession(reservation);
+    if (reservation != null) {
+      checkoutId = await Provider.of<PaymentApiHandler>(context, listen: false)
+          .createReservationCheckoutSession(reservation);
 
-    if (checkoutId != null) {
-      // Now that we have the sessionId, we need to construct the checkout URL.
-      final checkoutUrl = 'https://checkout.stripe.com/pay/$checkoutId';
+      if (checkoutId != null) {
+        // Now that we have the sessionId, we need to construct the checkout URL.
+        final checkoutUrl = 'https://checkout.stripe.com/pay/$checkoutId';
 
-      // Use url_launcher to open the checkout session in the user's browser.
-      if (await canLaunch(checkoutUrl)) {
-        await launch(checkoutUrl);
+        // Use url_launcher to open the checkout session in the user's browser.
+        if (await canLaunch(checkoutUrl)) {
+          await launch(checkoutUrl);
+        } else {
+          print('Could not launch $checkoutUrl');
+        }
       } else {
-        print('Could not launch $checkoutUrl');
+        print('Failed to create checkout session');
       }
-    } else {
-      print('Failed to create checkout session');
     }
   }
-}
 
   Future<void> createTempReservation(int numberOfPersons) async {
-    
     User? user = await _getCachedUser();
 
     // Check if user is null before proceeding
@@ -311,14 +320,14 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen>{
 
     // Create a reservation
     final reservation = Reservation(
-      opportunityId: widget.opportunity.opportunityId,
-      userId: user.userId,
-      checkInDate: widget.opportunity.date,
-      numOfPeople: numberOfPersons,
-      reservationDate: DateTime.now(),
-      isActive: true,
-      fixedPrice: (widget.opportunity.price * 0.1) + widget.opportunity.price
-    );
+        opportunityId: widget.opportunity.opportunityId,
+        userId: user.userId,
+        checkInDate: widget.opportunity.date,
+        numOfPeople: numberOfPersons,
+        reservationDate: DateTime.now(),
+        isActive: true,
+        fixedPrice:
+            (widget.opportunity.price * 0.1) + widget.opportunity.price);
 
     // Save the reservation asynchronously
     await saveReservation(reservation);
@@ -326,16 +335,15 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen>{
     createCheckoutSessionReservation(reservation);
   }
 
-Future<User?> _getCachedUser() async {
-  try {
-    // Fetch the user from the API or local storage
-    final user = await Provider.of<UserApiHandler>(context, listen: false).getStoredUser();
-    return user;
-  } catch (e) {
-    print('Error fetching user: $e');
-    return null;
+  Future<User?> _getCachedUser() async {
+    try {
+      // Fetch the user from the API or local storage
+      final user = await Provider.of<UserApiHandler>(context, listen: false)
+          .getStoredUser();
+      return user;
+    } catch (e) {
+      print('Error fetching user: $e');
+      return null;
+    }
   }
 }
-
-}
-
