@@ -91,8 +91,8 @@ namespace BackEnd.Services
                 },
             },
                     Mode = "payment",
-                    SuccessUrl = "https://localhost:7235/success", // UPDATE WITH FRONTEND
-                    CancelUrl = "https://localhost:7235/cancel", // UPDATE WITH FRONTEND
+                    SuccessUrl = $"http://localhost:50394/#/payment/success?paymentType=reservation",
+                    CancelUrl = $"http://localhost:50394/#/payment/cancel?paymentType=reservation",
                     CustomerEmail = user.Email, // For sending the receipt to the user
                 };
 
@@ -188,8 +188,8 @@ namespace BackEnd.Services
                 },
             },
                     Mode = "payment",
-                    SuccessUrl = "https://localhost:7235/success", // UPDATE WITH FRONTEND
-                    CancelUrl = "https://localhost:7235/cancel",  // UPDATE WITH FRONTEND
+                    SuccessUrl = $"http://localhost:50394/#/payment/success?paymentType=impulse",
+                    CancelUrl = $"http://localhost:50394/#/payment/cancel?paymentType=impulse",
                     CustomerEmail = user.Email, // For sending the receipt to the user
                 };
 
