@@ -14,6 +14,9 @@ import 'dart:typed_data';
 import 'package:frontend/Models/OpportunityImg.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend/Components/OpportunityTextField.dart';
+import 'package:frontend/Components/OpportunityImagePicker.dart';
+import 'package:frontend/Views/OpportunityDetailsScreen.dart';
+import 'package:frontend/Components/OpportunityDateTimePicker.dart';
 
 class EditOpportunityScreen extends StatefulWidget {
   final Opportunity opportunity;
@@ -34,9 +37,10 @@ class _EditOpportunityScreenState extends State<EditOpportunityScreen> {
 
   DateTime? _oppDateController;
   TimeOfDay? _oppTimeController;
-  final List<OpportunityImg> _opportunityImgs = [];
+  List<OpportunityImg> _opportunityImgs = [];
   late Location selectedLocation;
   late OppCategory selectedCategory;
+  String _errorMessage = "";
 
   @override
   void initState() {
@@ -66,6 +70,20 @@ class _EditOpportunityScreenState extends State<EditOpportunityScreen> {
 
   void _saveOpportunity() async {
     
+    if (_opportunityImgs.isEmpty) {
+      setState(() {
+        _errorMessage = 'A oportunidade deve conter imagens';
+      });
+      return null;
+    }
+
+    if (_opportunityImgs.length > 5) {
+      setState(() {
+        _errorMessage = 'Não é permitido adicionar mais de 5 imagens';
+      });
+      return null;
+    }
+
     final List<OpportunityImg> finalImages = _opportunityImgs.isNotEmpty
       ? _opportunityImgs
       : widget.opportunity.opportunityImgs;
@@ -95,6 +113,12 @@ class _EditOpportunityScreenState extends State<EditOpportunityScreen> {
         const SnackBar(
           content: Text('Alterações gravadas com sucesso!'),
           backgroundColor: Colors.green,
+        ),
+      );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => OpportunityDetailsScreen(opportunity: updatedOpportunity),
         ),
       );
     } else {
@@ -203,16 +227,29 @@ class _EditOpportunityScreenState extends State<EditOpportunityScreen> {
             inputType: TextInputType.number, // For numeric input
           ),
           SizedBox(height: 20),
-          ElevatedButton(
-            child: Text(
-              _oppDateController == null
-                  ? 'Selecione a Data e Hora da Oportunidade'
-                  : '${_oppDateController!.day}/${_oppDateController!.month}/${_oppDateController!.year} ${_oppDateController!.hour}:${_oppDateController!.minute}',
-            ),
-            onPressed: () => _showDateAndTimePicker(context),
+          OpportunityDateAndTimePicker(
+            initialDate: _oppDateController,
+            initialTime: _oppTimeController,
+            onDateTimeSelected: (DateTime date) {
+              setState(() {
+                _oppDateController = date;
+              });
+            },
+            onTimeSelected: (TimeOfDay time) {
+              setState(() {
+                _oppTimeController = time;
+              });
+            },
           ),
           SizedBox(height: 20),
-          _buildImagesPicker(),
+          OpportunityImagePicker(
+            opportunityImgs: _opportunityImgs,
+            onImagesChanged: (newImages) {
+              setState(() {
+                _opportunityImgs = newImages;
+              });
+            },
+          ),
           SizedBox(height: 20),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -244,95 +281,6 @@ class _EditOpportunityScreenState extends State<EditOpportunityScreen> {
   Widget _buildDesktopLayout() {
     return _buildMobileLayout();
   }
-
-  Widget _buildImagesPicker() {
-    return Container(
-      width: 300,
-      height: 250,
-      color: Colors.grey[300],
-      child: Center(
-        child: Column(
-          children: [
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-              child: const Text('Escolher Fotos',
-                  style: TextStyle(color: Colors.white)),
-              onPressed: () async {
-                final List<XFile> pickedFiles = await ImagePicker()
-                    .pickMultiImage(); // Pick multiple images
-                if (pickedFiles != null && pickedFiles.isNotEmpty) {
-                  final List<String> base64Images = await Future.wait(
-                    pickedFiles.map((file) async {
-                      final Uint8List fileBytes = await file.readAsBytes();
-                      return base64Encode(fileBytes);
-                    }),
-                  );
-                  setState(() {
-                    for (var image in base64Images) {
-                      var oppImg = OpportunityImg(
-                          imgId: 0, opportunityId: 0, imageBase64: image);
-                      _opportunityImgs.add(oppImg);
-                    }
-                  });
-                }
-              },
-            ),
-            SizedBox(height: 16.0),
-            _opportunityImgs.isNotEmpty
-                ? GridView.builder(
-                    shrinkWrap: true, // Allow GridView to fit within a Column
-                    itemCount: _opportunityImgs.length,
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3, // Number of columns
-                      crossAxisSpacing: 8.0,
-                      mainAxisSpacing: 8.0,
-                    ),
-                    itemBuilder: (context, index) {
-                      final Uint8List imageBytes = Uint8List.fromList(
-                          base64Decode(_opportunityImgs[index].imageBase64));
-                      return Image.memory(
-                        imageBytes,
-                        width: 100,
-                        height: 100,
-                        fit: BoxFit.cover,
-                      );
-                    },
-                  )
-                : Center(child: Text('Nenhuma imagem selecionada')),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _showDateAndTimePicker(BuildContext context) async {
-  final DateTime? pickedDate = await showDatePicker(
-    context: context,
-    initialDate: DateTime.now(),
-    firstDate: DateTime.now(),
-    lastDate: DateTime(2100),
-  );
-
-  if (pickedDate != null) {
-    final TimeOfDay? pickedTime = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-    );
-
-    if (pickedTime != null) {
-      setState(() {
-        _oppDateController = DateTime(
-          pickedDate.year,
-          pickedDate.month,
-          pickedDate.day,
-          pickedTime.hour,
-          pickedTime.minute,
-        );
-        _oppTimeController = pickedTime;
-      });
-    }
-  }
-}
 
 }
 
