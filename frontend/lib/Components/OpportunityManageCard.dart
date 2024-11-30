@@ -4,16 +4,69 @@ import 'package:frontend/Models/Opportunity.dart';
 import 'dart:convert'; // For Base64 decoding
 import 'package:frontend/Views/OpportunityDetailsScreen.dart';
 import 'package:frontend/Views/EditOpportunityScreen.dart';
+import 'package:frontend/Views/OpportunityManager.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend/Services/opportunity_api_handler.dart';
+import 'package:frontend/Components/ConfirmationDialog.dart';
 
-class OpportunityManageCard extends StatelessWidget {
+class OpportunityManageCard extends StatefulWidget {
   final Opportunity opportunity;
 
   const OpportunityManageCard({
     super.key,
     required this.opportunity,
   });
+
+  @override
+  _OpportunityManageCardState createState() => _OpportunityManageCardState();
+}
+
+class _OpportunityManageCardState extends State<OpportunityManageCard> {
+  late bool isActive; // Local state for active/inactive
+
+  @override
+  void initState() {
+    super.initState();
+    isActive = widget.opportunity.isActive; // Initialize state with opportunity's status
+  }
+
+  void toggleStatus(bool activate) async {
+    try {
+      final bool success = activate
+          ? await Provider.of<OpportunityApiHandler>(context, listen: false)
+              .activateOpportunity(widget.opportunity.opportunityId)
+          : await Provider.of<OpportunityApiHandler>(context, listen: false)
+              .deactivateOpportunity(widget.opportunity.opportunityId);
+
+      if (success) {
+        setState(() {
+          isActive = activate;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(activate
+                ? 'Oportunidade ativada com sucesso!'
+                : 'Oportunidade desativada com sucesso!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } else {
+        _showErrorSnackbar();
+      }
+    } catch (e) {
+      _showErrorSnackbar();
+    }
+  }
+
+
+  void _showErrorSnackbar() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Erro ao alterar o status da oportunidade.'),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +90,7 @@ class OpportunityManageCard extends StatelessWidget {
                   ),
                   image: DecorationImage(
                     image: MemoryImage(
-                      base64Decode(opportunity.opportunityImgs[0].imageBase64),
+                      base64Decode(widget.opportunity.opportunityImgs[0].imageBase64),
                     ),
                     fit: BoxFit.cover,
                   ),
@@ -64,7 +117,7 @@ class OpportunityManageCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(4.0),
                   ),
                   child: Text(
-                    opportunity.category.name.replaceAll("_", " "),
+                    widget.opportunity.category.name.replaceAll("_", " "),
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -80,11 +133,11 @@ class OpportunityManageCard extends StatelessWidget {
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: opportunity.isActive ? Colors.green : Colors.red, // Color based on active status
+                    color: isActive ? Colors.green : Colors.red, // Color based on active status
                     borderRadius: BorderRadius.circular(4.0),
                   ),
                   child: Text(
-                    opportunity.isActive ? 'Ativo' : 'Inativo',
+                    isActive ? 'Ativo' : 'Inativo',
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -104,7 +157,7 @@ class OpportunityManageCard extends StatelessWidget {
               children: [
                 // Title
                 Text(
-                  opportunity.name,
+                  widget.opportunity.name,
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -116,21 +169,21 @@ class OpportunityManageCard extends StatelessWidget {
 
                 // Details
                 Text(
-                  '${opportunity.vacancies} Vagas Disponíveis',
+                  '${widget.opportunity.vacancies} Vagas Disponíveis',
                   style: TextStyle(fontSize: 14),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 Text(
-                  '${opportunity.price}€ / Pessoa',
+                  '${widget.opportunity.price}€ / Pessoa',
                   style: TextStyle(fontSize: 14, color: Colors.grey[700]),
                 ),
                 Text(
-                  'Data: ${opportunity.date}',
+                  'Data: ${widget.opportunity.date}',
                   style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                 ),
                 Text(
-                  '${opportunity.address} / ${opportunity.location.name}',
+                  '${widget.opportunity.address} / ${widget.opportunity.location.name}',
                   style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -141,6 +194,7 @@ class OpportunityManageCard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+
                     // Details Button
                     DynamicActionButton(
                       text: 'Detalhes',
@@ -150,12 +204,13 @@ class OpportunityManageCard extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => OpportunityDetailsScreen(opportunity: opportunity),
+                            builder: (context) => OpportunityDetailsScreen(opportunity: widget.opportunity),
                           ),
                         );
                       },
                     ),
 
+                    // Edit Button
                     DynamicActionButton(
                       text: 'Editar',
                       icon: Icons.edit,
@@ -164,19 +219,18 @@ class OpportunityManageCard extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => EditOpportunityScreen(opportunity: opportunity),
+                            builder: (context) => EditOpportunityScreen(opportunity: widget.opportunity),
                           ),
                         );
                       },
                     ),
 
+                    // Active/Inactive Button
                     DynamicActionButton(
-                      text: 'Ativo/Inativo',
-                      color: Colors.yellow,
-                      icon: Icons.adjust,
-                      onPressed: () {
-                        
-                      },
+                      text: isActive ? 'Desativar' : 'Ativar',
+                      color: isActive ? Colors.red : Colors.green,
+                      icon: isActive ? Icons.visibility_off : Icons.visibility,
+                      onPressed: () => toggleStatus(!isActive),
                     ),
 
                     // Delete Button
@@ -185,20 +239,37 @@ class OpportunityManageCard extends StatelessWidget {
                       icon: Icons.delete,
                       color: Colors.red,
                       onPressed: () async {
-                        final bool success = await Provider.of<OpportunityApiHandler>(context, listen: false)
-                            .deleteOpportunity(opportunity.opportunityId);
+                        bool confirmDelete = await showDialog<bool>(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return ConfirmationDialog(
+                              action: 'apagar',
+                              onConfirm: () async {
+                                final bool success = await Provider.of<OpportunityApiHandler>(context, listen: false)
+                                    .deleteOpportunity(widget.opportunity.opportunityId);
 
-                        if (success) {
+                                return success; // Return the result of the delete operation
+                              },
+                            );
+                          },
+                        ) ?? false;
+
+                        if (confirmDelete) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text('Oportunidade apagada com sucesso!'),
                               backgroundColor: Colors.green,
                             ),
                           );
+
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) => OpportunityManagerScreen()),
+                          );
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text('Falha ao apagar a oportunidade. Pode possuir ainda reservas para esta Opportunidade, se o erro persistir contacte-nos.'),
+                              content: Text('Falha ao apagar a oportunidade.'),
                               backgroundColor: Colors.red,
                             ),
                           );
