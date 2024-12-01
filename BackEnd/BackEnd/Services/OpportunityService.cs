@@ -762,7 +762,7 @@ namespace BackEnd.Services
                 opportunityModel.Category = updatedOpportunity.category;
                 opportunityModel.Location = updatedOpportunity.location;
                 opportunityModel.Address = updatedOpportunity.address;
-                opportunityModel.Date = updatedOpportunity.date;
+                opportunityModel.Date = (DateTime)updatedOpportunity.date;
 
 
                 if (updatedOpportunity.OpportunityImgs != null)

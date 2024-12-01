@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using BackEnd.Interfaces;
+using System.ComponentModel.DataAnnotations;
 
 namespace BackEnd.Models.FrontEndModels
 {
-    public class Reservation
+    public class Reservation: IExpirable
     {
         public int reservationId { get; set; }
 
@@ -12,7 +13,7 @@ namespace BackEnd.Models.FrontEndModels
 
         public DateTime? reservationDate { get; set; }
 
-        public DateTime? checkInDate { get; set; }
+        public DateTime? date { get; set; }
 
         public required int numOfPeople { get; set; }
 

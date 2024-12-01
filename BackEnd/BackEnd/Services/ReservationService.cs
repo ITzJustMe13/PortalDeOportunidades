@@ -254,7 +254,7 @@ namespace BackEnd.Services
                 }
 
                 reservation.reservationDate = DateTime.Now;
-                reservation.checkInDate = opportunity.Date;
+                reservation.date = opportunity.Date;
                 reservation.isActive = true;
                 reservation.fixedPrice = ((float)(reservation.numOfPeople * opportunity.Price));
 

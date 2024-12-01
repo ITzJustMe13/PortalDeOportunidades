@@ -41,6 +41,8 @@ builder.Services.AddScoped<IOpportunityService, OpportunityService>();
 builder.Services.AddScoped<IReviewService, BackEnd.Services.ReviewService>();
 builder.Services.AddScoped<IReservationService, ReservationService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddHostedService<ExpirationBackgroundService>();
+builder.Services.AddHostedService<ImpulseExpirationBackgroundService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("PortalOportunidadesDB"))
