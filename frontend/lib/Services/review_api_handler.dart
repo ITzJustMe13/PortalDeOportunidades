@@ -39,6 +39,36 @@ class ReviewApiHandler {
     }
   }
 
+  Future<List<Review>> getReviewsByUserId(int userId) async {
+    final uri = Uri.parse('$baseUri/getReviewsByUser/$userId');
+    final String? accessToken = await storage.read(key: 'accessToken');
+
+    if (accessToken == null) {
+      print('Error: No access token found');
+      return [];
+    }
+
+    try {
+      final response = await client.get(uri, headers: {
+        'Authorization': 'Bearer $accessToken',
+        'Content-Type': 'application/json',
+      });
+
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
+        final List<dynamic> jsonList = jsonDecode(response.body);
+        final userReviews =
+            jsonList.map((json) => Review.fromJson(json)).toList();
+        return userReviews;
+      } else {
+        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
+        return [];
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      return [];
+    }
+  }
+
   Future<Review?> createReview(Review review) async {
     final uri = Uri.parse(baseUri);
     final String? accessToken = await storage.read(key: 'accessToken');

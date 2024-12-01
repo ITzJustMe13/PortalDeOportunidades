@@ -1,6 +1,7 @@
 ﻿
 using BackEnd.Models.FrontEndModels;
 using BackEnd.ServiceResponses;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BackEnd.Interfaces
 {
@@ -16,5 +17,7 @@ namespace BackEnd.Interfaces
         Task<ServiceResponse<bool>> DeleteReviewByIdAsync(int id);
 
         Task<ServiceResponse<Review>> EditReviewByIdAsync(int id, Review updatedReview);
+
+        Task<ServiceResponse<IEnumerable<Review>>> GetReviewsByUserAsync(int userId);
     }
 }

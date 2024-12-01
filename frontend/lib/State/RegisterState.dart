@@ -8,9 +8,11 @@ class RegisterState with ChangeNotifier {
 
   String? _errorMessage;
   bool _isLoading = false;
+  bool _isActivationSuccess = false;
 
   String? get errorMessage => _errorMessage;
   bool get isLoading => _isLoading;
+  bool get isActivationSuccess => _isActivationSuccess;
 
   // Function to register
   Future<void> register(User user, BuildContext context) async {
@@ -19,13 +21,17 @@ class RegisterState with ChangeNotifier {
 
     User? createUser = await _apiHandler.createUser(user);
 
+    _isLoading = false;
+
     if (createUser != null) {
-      Navigator.pushNamed(context, '/login');
-    } else {
-      _errorMessage = 'Erro ao criar conta';
+      notifyListeners();
+
+      _isActivationSuccess = true;
+      return;
     }
 
-    _isLoading = false;
+    _isActivationSuccess = false;
+    _errorMessage = 'Erro ao criar conta';
     notifyListeners();
   }
 }

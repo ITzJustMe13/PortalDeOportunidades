@@ -85,5 +85,13 @@ namespace BackEnd.Controllers
             return HandleResponse(serviceResponse);
         }
 
+        [Authorize]
+        [HttpGet("getReviewsByUser/{userId}")]
+        public async Task<IActionResult> GetReviewsByUser(int userId)
+        {
+            var serviceResponse = await _reviewService.GetReviewsByUserAsync(userId);
+
+            return HandleResponse(serviceResponse);
+        }
     }
 }
