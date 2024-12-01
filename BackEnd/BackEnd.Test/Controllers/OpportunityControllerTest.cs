@@ -12,6 +12,7 @@ using BackEnd.Interfaces;
 using Moq;
 using BackEnd.Services;
 using static System.Net.Mime.MediaTypeNames;
+using Microsoft.Extensions.Configuration;
 
 namespace BackEnd.Test
 {
@@ -26,14 +27,25 @@ namespace BackEnd.Test
         public void Setup()
         {
 
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+
+            // Criação do banco de dados em memória para os testes
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-        .UseInMemoryDatabase("TestDatabase")
-        .Options;
+                .UseInMemoryDatabase("TestDatabase")
+                .Options;
 
             _context = new ApplicationDbContext(options);
+
+            // Criação do serviço (simulado)
             _opportunityService = new OpportunityService(_context);
 
-            _controller = new OpportunityController(_opportunityService);
+            // Instanciação do controlador com a dependência de IConfiguration
+            _controller = new OpportunityController(_opportunityService, configuration);
 
         }
 
@@ -94,8 +106,14 @@ namespace BackEnd.Test
         {
             // Arrange
             var opportunityService = new OpportunityService(null);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
 
-            var controller = new OpportunityController(opportunityService);
+            var controller = new OpportunityController(opportunityService, configuration);
 
             // Act
             var response = await controller.GetAllOpportunities();
@@ -166,7 +184,14 @@ namespace BackEnd.Test
             // Arrange
             var opportunityService = new OpportunityService(null);
 
-            var controller = new OpportunityController(opportunityService);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+
+            var controller = new OpportunityController(opportunityService, configuration);
 
             // Act
             var response = await controller.GetAllImpulsedOpportunities();
@@ -256,7 +281,14 @@ namespace BackEnd.Test
             // Arrange
             var opportunityService = new OpportunityService(null);
 
-            var controller = new OpportunityController(opportunityService);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+
+            var controller = new OpportunityController(opportunityService, configuration);
 
             var opportunityId = 1;
             var opportunityModel = new OpportunityModel { OpportunityId = 2, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "a description", Date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
@@ -361,8 +393,14 @@ namespace BackEnd.Test
         {
             // Arrange
             var opportunityService = new OpportunityService(null);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
 
-            var controller = new OpportunityController(opportunityService);
+            var controller = new OpportunityController(opportunityService, configuration);
 
             var userId = 2;
 
@@ -629,8 +667,14 @@ namespace BackEnd.Test
 
             // Arrange
             var opportunityService = new OpportunityService(null);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
 
-            var controller = new OpportunityController(opportunityService);
+            var controller = new OpportunityController(opportunityService, configuration);
 
 
             var opportunity = new OpportunityModel { OpportunityId = 1, Price = 1, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "um sitio", Date = DateTime.Now.AddDays(30), Vacancies = 1, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = true };
@@ -1212,8 +1256,14 @@ namespace BackEnd.Test
         {
             // Arrange
             var opportunityService = new OpportunityService(null);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
 
-            var controller = new OpportunityController(opportunityService);
+            var controller = new OpportunityController(opportunityService, configuration);
 
             var user = new UserModel
             {
@@ -1363,8 +1413,14 @@ namespace BackEnd.Test
         {
             // Arrange
             var opportunityService = new OpportunityService(null);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
 
-            var controller = new OpportunityController(opportunityService);
+            var controller = new OpportunityController(opportunityService, configuration);
 
             var opportunityId = 1;
 
@@ -1481,8 +1537,14 @@ namespace BackEnd.Test
         {
             // Arrange
             var opportunityService = new OpportunityService(null);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
 
-            var controller = new OpportunityController(opportunityService);
+            var controller = new OpportunityController(opportunityService, configuration);
 
             var opportunityId = 1;
             var opportunity = new OpportunityModel { OpportunityId = 1, Price = 1, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "um sitio", Date = DateTime.Now.AddDays(30), Vacancies = 1, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = true };
@@ -1598,8 +1660,14 @@ namespace BackEnd.Test
         {
             // Arrange
             var opportunityService = new OpportunityService(null);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
 
-            var controller = new OpportunityController(opportunityService);
+            var controller = new OpportunityController(opportunityService, configuration);
 
             var opportunityId = 1;
             var opportunity = new OpportunityModel { OpportunityId = 1, Price = 1, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "um sitio", Date = DateTime.Now.AddDays(30), Vacancies = 1, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = true };
@@ -2053,8 +2121,14 @@ namespace BackEnd.Test
         {
             // Arrange
             var opportunityService = new OpportunityService(null);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
 
-            var controller = new OpportunityController(opportunityService);
+            var controller = new OpportunityController(opportunityService, configuration);
 
             var opportunityId = 1;
             var opportunityModel = new OpportunityModel { OpportunityId = opportunityId, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "a description", Date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };

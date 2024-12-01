@@ -13,6 +13,7 @@ using BackEnd.Models.BackEndModels;
 using Azure;
 using BackEnd.Interfaces;
 using BackEnd.Services;
+using Microsoft.Extensions.Configuration;
 
 
 namespace BackEnd.Test
@@ -26,6 +27,12 @@ namespace BackEnd.Test
         [SetUp]
         public void Setup()
         {
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
 
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
         .UseInMemoryDatabase("TestDatabase")
@@ -34,7 +41,7 @@ namespace BackEnd.Test
             _context = new ApplicationDbContext(options);
             _reservationService = new ReservationService(_context);
 
-            _controller = new ReservationController(_reservationService);
+            _controller = new ReservationController(_reservationService, configuration);
 
         }
 
@@ -120,8 +127,13 @@ namespace BackEnd.Test
         {
             // Arrange
             var reservationService = new ReservationService(null);
-
-            var controller = new ReservationController(reservationService);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+            var controller = new ReservationController(reservationService, configuration);
 
             var opportunity = new OpportunityModel { OpportunityId = 1, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "a description", Date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
             var opportunity2 = new OpportunityModel { OpportunityId = 2, Price = 100, Address = "outro sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "a description", Date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
@@ -224,8 +236,13 @@ namespace BackEnd.Test
         {
             // Arrange
             var reservationService = new ReservationService(null);
-
-            var controller = new ReservationController(reservationService);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+            var controller = new ReservationController(reservationService, configuration);
 
             var opportunity = new OpportunityModel { OpportunityId = 1, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "a description", Date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
             var opportunity2 = new OpportunityModel { OpportunityId = 2, Price = 100, Address = "outro sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "a description", Date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
@@ -339,8 +356,13 @@ namespace BackEnd.Test
         {
             // Arrange
             var reservationService = new ReservationService(null);
-
-            var controller = new ReservationController(reservationService);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+            var controller = new ReservationController(reservationService, configuration);
 
             var reservation = new ReservationModel
             {
@@ -412,8 +434,13 @@ namespace BackEnd.Test
         {
             // Arrange
             var reservationService = new ReservationService(null);
-
-            var controller = new ReservationController(reservationService);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+            var controller = new ReservationController(reservationService, configuration);
 
             var opportunity = new OpportunityModel { OpportunityId = 1, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "a description", Date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
             var user = new UserModel { UserId = 1, FirstName = "John", LastName = "Doe", BirthDate = DateTime.Now.AddYears(-30), CellPhoneNum = 919919919, Email = "example@email.com", Gender = Enums.Gender.MASCULINO, Image = new byte[] { 0xFF, 0xD8, 0xFF, 0xE0 } };
@@ -639,8 +666,13 @@ namespace BackEnd.Test
         {
             // Arrange
             var reservationService = new ReservationService(null);
-
-            var controller = new ReservationController(reservationService);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+            var controller = new ReservationController(reservationService, configuration);
 
             var reservation = new ReservationModel
             {
@@ -762,8 +794,13 @@ namespace BackEnd.Test
         {
             // Arrange
             var reservationService = new ReservationService(null);
-
-            var controller = new ReservationController(reservationService);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+            var controller = new ReservationController(reservationService, configuration);
 
             var opportunity = new OpportunityModel { OpportunityId = 1, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "a description", Date = DateTime.Now.AddDays(30), Vacancies = 5, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
             _context.Opportunities.Add(opportunity);
@@ -951,8 +988,13 @@ namespace BackEnd.Test
         {
             // Arrange
             var reservationService = new ReservationService(null);
-
-            var controller = new ReservationController(reservationService);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+            var controller = new ReservationController(reservationService, configuration);
 
             var reservation = new ReservationModel
             {

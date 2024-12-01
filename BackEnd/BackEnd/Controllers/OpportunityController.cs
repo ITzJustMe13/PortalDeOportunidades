@@ -12,7 +12,7 @@ namespace BackEnd.Controllers
     {
         private IOpportunityService _opportunityService;
 
-        public OpportunityController(IOpportunityService opportunityService)
+        public OpportunityController(IOpportunityService opportunityService, IConfiguration configuration) : base(configuration)
         {
             _opportunityService = opportunityService ?? throw new ArgumentNullException(nameof(opportunityService));
         }

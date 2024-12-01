@@ -19,7 +19,7 @@ namespace BackEnd.Controllers
         private readonly IPaymentService _paymentService;
 
 
-        public PaymentController(IPaymentService paymentService)
+        public PaymentController(IPaymentService paymentService, IConfiguration configuration) : base(configuration)
         {
             _paymentService = paymentService ?? throw new ArgumentNullException(nameof(paymentService));
         }

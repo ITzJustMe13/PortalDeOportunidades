@@ -28,6 +28,8 @@ builder.Services
             ValidateAudience = false
         };
     });
+
+
 builder.Services.AddAuthorization();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -98,6 +100,12 @@ if (app.Environment.IsDevelopment())
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Portal de Oportunidades API v1");
     });
 }
+
+var messageMode = "Production"; // Define manualmente para teste.
+builder.Configuration.AddInMemoryCollection(new Dictionary<string, string>
+{
+    { "MessageMode", messageMode }
+});
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

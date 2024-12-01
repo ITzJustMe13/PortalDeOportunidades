@@ -14,7 +14,7 @@ namespace BackEnd.Controllers
     public class ReservationController : BaseCrudController<Reservation>
     {
         private readonly IReservationService _reservationService;
-        public ReservationController(IReservationService reservationService)
+        public ReservationController(IReservationService reservationService, IConfiguration configuration) : base(configuration)
         {
             _reservationService = reservationService ?? throw new ArgumentNullException(nameof(reservationService));
         }

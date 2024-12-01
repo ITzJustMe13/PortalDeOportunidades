@@ -11,6 +11,7 @@ using BackEnd.Services;
 using DotNetEnv;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using NUnit.Framework;
 
 namespace BackEnd.Test
@@ -25,6 +26,12 @@ namespace BackEnd.Test
         [SetUp]
         public void Setup()
         {
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
             // Use in-memory database for ApplicationDbContext
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseInMemoryDatabase(databaseName: "TestDatabase")
@@ -32,7 +39,7 @@ namespace BackEnd.Test
 
             _context = new ApplicationDbContext(options);
             _reviewService = new ReviewService(_context);
-            _controller = new ReviewController(_reviewService);
+            _controller = new ReviewController(_reviewService, configuration);
         }
 
         [TearDown]
@@ -92,7 +99,13 @@ namespace BackEnd.Test
         {
             // Arrange
             var reviewService = new ReviewService(null);
-            var controller = new ReviewController(reviewService);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+            var controller = new ReviewController(reviewService, configuration);
             var reviewId = 1;
 
             // Act
@@ -221,7 +234,13 @@ namespace BackEnd.Test
         {
             // Arrange
             var reviewService = new ReviewService(null);
-            var controller = new ReviewController(reviewService);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+            var controller = new ReviewController(reviewService, configuration);
             byte[] userImg = new byte[]
             {
         137, 80, 78, 71, 13, 10, 26, 10,
@@ -433,7 +452,13 @@ namespace BackEnd.Test
         {
             // Arrange
             var reviewService = new ReviewService(null);
-            var controller = new ReviewController(reviewService);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+            var controller = new ReviewController(reviewService, configuration);
 
             var reservationId = 1;
             var reviewModel = new ReviewModel { ReservationId = reservationId, Rating = 4.5f, Desc = "Test review" };
@@ -529,7 +554,13 @@ namespace BackEnd.Test
         {
             // Arrange
             var reviewService = new ReviewService(null);
-            var controller = new ReviewController(reviewService);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+            var controller = new ReviewController(reviewService, configuration);
 
             var reservationId = 1;
             var reviewModel = new ReviewModel { ReservationId = reservationId, Rating = 4.5f, Desc = "Test review" };
