@@ -149,6 +149,23 @@ namespace BackEnd.Controllers
         }
 
         /// <summary>
+        /// Endpoint that deletes a Favorite by the user id and the opportunity id
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="opportunityId"></param>
+        /// <returns>Returns BadRequest() if userService responds "BadRequest", 
+        /// NotFound() if userService responds "NotFound", or NoContent() if
+        /// the Favorite is deleted sucessefully</returns>
+        [Authorize]
+        [HttpDelete("favorite/{userId}/{opportunityId}/delete")]
+        public async Task<IActionResult> DeleteFavoriteById(int userId, int opportunityId)
+        {
+            var serviceResponse = await _favoritesService.DeleteFavoriteByIdAsync(userId, opportunityId);
+
+            return HandleResponse(serviceResponse);
+        }
+
+        /// <summary>
         /// Endpoint that adds an Impulse to a User's Opportunity
         /// </summary>
         /// <param name="impulse"></param>

@@ -308,6 +308,39 @@ class UserApiHandler {
     }
   }
 
+  /// Documentation for deleteFavoriteById
+  ///Endpoint that sends a delete Favorite request
+  /// @param: userId : id of the user
+  /// @param oppId : io of the opportunity
+  /// @returns: true if it was delete sucessefully, false if not
+  Future<bool> deleteFavoriteById(int userId, int oppId) async{
+    final uri = Uri.parse('$baseUri/favorite/$userId/$oppId/delete');
+    final String? accessToken = await storage.read(key: 'accessToken');
+    print('Deleting favorite with URI: $uri');
+    
+    if (accessToken == null) {
+      print('Error: No access token found');
+      return false;
+    }
+
+    try {
+      final response = await client.delete(uri, headers: {
+        'Authorization': 'Bearer $accessToken',
+      });
+
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
+        print('Favorite deleted successfully.');
+        return true;
+      } else {
+        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
+        return false;
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      return false;
+    }
+  }
+
   // Impulse
   Future<Impulse?> impulseOpportunity(Impulse impulse) async {
     final uri = Uri.parse('$baseUri/impulse');

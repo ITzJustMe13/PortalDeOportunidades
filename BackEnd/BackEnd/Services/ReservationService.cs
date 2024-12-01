@@ -16,11 +16,13 @@ namespace BackEnd.Services
     public class ReservationService : IReservationService
     {
         private readonly ApplicationDbContext dbContext;
+        private readonly IEmailService emailService;
 
         public ReservationService(
-            ApplicationDbContext dbContext)
+            ApplicationDbContext dbContext, IEmailService emailService)
         {
             this.dbContext = dbContext;
+            this.emailService = emailService ?? throw new ArgumentNullException(nameof(emailService)); ;
         }
 
         /// <summary>
@@ -263,6 +265,14 @@ namespace BackEnd.Services
                 await dbContext.SaveChangesAsync();
 
                 var reservationDto = ReservationMapper.MapToDto(reservationModel);
+
+                opportunity.Vacancies -= reservation.numOfPeople;
+                dbContext.Opportunities.Update(opportunity);
+                await dbContext.SaveChangesAsync();
+
+                var oppUser = await dbContext.Users.FindAsync(opportunity.UserID);
+                emailService.SendReservationEmailCustomer(user, reservationDto);
+                emailService.SendReservationEmailOppOwner(oppUser, opportunity, reservationModel);
 
                 response.Success = true;
                 response.Message = "Reservation created successfully.";

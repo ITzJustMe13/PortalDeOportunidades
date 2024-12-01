@@ -52,7 +52,6 @@ class OpportunityApiHandler {
             jsonList.map((json) => Opportunity.fromJson(json)).toList();
         return opportunities;
       } else if (response.statusCode == 404) {
-        print('No opportunities found!');
         return [];
       } else {
         print('Error: ${response.statusCode} - ${response.reasonPhrase}');
@@ -76,7 +75,6 @@ class OpportunityApiHandler {
             jsonList.map((json) => Opportunity.fromJson(json)).toList();
         return impulsedOpp;
       } else if (response.statusCode == 404) {
-        print('No impulsed opportunities found!');
         return [];
       } else {
         print('Error: ${response.statusCode} - ${response.reasonPhrase}');
@@ -100,7 +98,6 @@ class OpportunityApiHandler {
             jsonList.map((json) => Opportunity.fromJson(json)).toList();
         return userOpp;
       } else if (response.statusCode == 404) {
-        print('No impulsed opportunities found!');
         return [];
       } else {
         print('Error: ${response.statusCode} - ${response.reasonPhrase}');
@@ -196,6 +193,10 @@ class OpportunityApiHandler {
     }
   }
 
+  /// Documentation for deleteOpportunity
+  /// Endpoint that sends a delete Opportunity request
+  /// @param oppId : io of the opportunity
+  /// @returns: true if it was delete sucessefully, false if not
   Future<bool> deleteOpportunity(int oppId) async {
     final uri = Uri.parse('$baseUri/$oppId');
     final String? accessToken = await storage.read(key: 'accessToken');
@@ -211,7 +212,6 @@ class OpportunityApiHandler {
       });
 
       if (response.statusCode >= 200 && response.statusCode <= 299) {
-        print('Opportunity deleted successfully.');
         return true;
       } else {
         print('Error: ${response.statusCode} - ${response.reasonPhrase}');
@@ -238,7 +238,6 @@ class OpportunityApiHandler {
       });
 
       if (response.statusCode >= 200 && response.statusCode <= 299) {
-        print('Opportunity activated successfully');
         return true;
       } else {
         print('Error: ${response.statusCode} - ${response.reasonPhrase}');
@@ -265,7 +264,6 @@ class OpportunityApiHandler {
       });
 
       if (response.statusCode >= 200 && response.statusCode <= 299) {
-        print('Opportunity deactivated successfully');
         return true;
       } else {
         print('Error: ${response.statusCode} - ${response.reasonPhrase}');
@@ -297,7 +295,6 @@ class OpportunityApiHandler {
           body: jsonEncode(oppJson));
 
       if (response.statusCode >= 200 && response.statusCode <= 299) {
-        print('Opportunity updated successfully');
         return true;
       } else {
         return false;

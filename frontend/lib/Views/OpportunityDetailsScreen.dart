@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/Models/Favorite.dart';
 import 'package:frontend/Models/User.dart';
 import 'package:frontend/Services/user_api_handler.dart';
 import 'package:frontend/Services/payment_api_handler.dart';
@@ -15,13 +16,15 @@ import 'package:frontend/Models/Reservation.dart';
 import 'package:intl/intl.dart';
 import 'package:frontend/Services/payment_service.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:frontend/Components/DynamicActionButton.dart';
+import 'package:frontend/Services/user_services.dart';
 
 class OpportunityDetailsScreen extends StatefulWidget {
-  final bool isReservation;
+  final bool isReservable;
   final Opportunity opportunity;
 
   const OpportunityDetailsScreen(
-      {super.key, required this.opportunity, this.isReservation = false});
+      {super.key, required this.opportunity, this.isReservable = true});
 
   @override
   _OpportunityManagerScreenState createState() =>
@@ -32,12 +35,18 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
   final ScrollController verticalScrollController = ScrollController();
   final ScrollController horizontalScrollController = ScrollController();
   late Future<User?> _ownerFuture;
+  late bool isOwner;
 
   @override
   void initState() {
     super.initState();
+    isOwner = false;
     _ownerFuture = Provider.of<UserApiHandler>(context, listen: false)
         .getUserByID(widget.opportunity.userId);
+    
+    if(isOwner == false){
+      _checkUserOwnership();
+    }
   }
 
   @override
@@ -48,6 +57,9 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
       body: FutureBuilder<User?>(
         future: _ownerFuture,
         builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
           /*
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
@@ -93,7 +105,16 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
             description: opportunity.description,
           ),
           SizedBox(height: 20),
-          if (!widget.isReservation)
+          DynamicActionButton(
+              text: "Adicionar aos Favoritos",
+              color: Color(0xFF50C878),
+              icon: Icons.star,
+              onPressed: (){
+                addToFavorites(context, widget.opportunity.opportunityId);
+              },
+            ),
+          SizedBox(height: 20),
+          if (widget.isReservable && !isOwner && widget.opportunity.isActive)
             ReservationButton(
               availableVacancies: 2,
               onPressed: (numberOfPersons) {
@@ -155,7 +176,16 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
                     name: opportunity.name,
                     description: opportunity.description,
                   ),
-                  if (!widget.isReservation)
+                  SizedBox(height: 20),
+                  DynamicActionButton(
+                      text: "Adicionar aos Favoritos",
+                      color: Color(0xFF50C878),
+                      icon: Icons.star,
+                      onPressed: (){
+                        addToFavorites(context, widget.opportunity.opportunityId);
+                      },
+                    ),
+                  if (widget.isReservable && !isOwner && widget.opportunity.isActive)
                     ReservationButton(
                       availableVacancies: opportunity.vacancies,
                       onPressed: (numberOfPersons) {
@@ -234,7 +264,16 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
                     description: opportunity.description,
                   ),
                   SizedBox(height: 20),
-                  if (!widget.isReservation)
+                  DynamicActionButton(
+                      text: "Adicionar aos Favoritos",
+                      color: Color(0xFF50C878),
+                      icon: Icons.star,
+                      onPressed: (){
+                        addToFavorites(context, widget.opportunity.opportunityId);
+                      },
+                    ),
+                  SizedBox(height: 20),
+                  if (widget.isReservable && !isOwner && widget.opportunity.isActive)
                     ReservationButton(
                       availableVacancies: widget.opportunity.vacancies,
                       onPressed: (numberOfPersons) {
@@ -288,6 +327,8 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
     );
   }
 
+  
+
   Future<void> createCheckoutSessionReservation(Reservation reservation) async {
     String? checkoutId;
 
@@ -296,10 +337,10 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
           .createReservationCheckoutSession(reservation);
 
       if (checkoutId != null) {
-        // Now that we have the sessionId, we need to construct the checkout URL.
+        
         final checkoutUrl = 'https://checkout.stripe.com/pay/$checkoutId';
 
-        // Use url_launcher to open the checkout session in the user's browser.
+        // url_launcher to open the checkout session in the user's browser.
         if (await canLaunch(checkoutUrl)) {
           await launch(checkoutUrl);
         } else {
@@ -312,9 +353,8 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
   }
 
   Future<void> createTempReservation(int numberOfPersons) async {
-    User? user = await _getCachedUser();
+    User? user = await UserServices.getCachedUser(context);
 
-    // Check if user is null before proceeding
     if (user == null) {
       print('No user found. Cannot create reservation.');
       return null;
@@ -331,21 +371,59 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
         fixedPrice:
             (widget.opportunity.price * 0.1) + widget.opportunity.price);
 
-    // Save the reservation asynchronously
     await saveReservation(reservation);
-    // Create a checkout session for the reservation
     createCheckoutSessionReservation(reservation);
   }
 
-  Future<User?> _getCachedUser() async {
+  Future<void> _checkUserOwnership() async {
+    bool owner = await _isUserOwner();
+    setState(() {
+      isOwner = owner;
+    });
+  }
+
+  Future<bool> _isUserOwner() async {
     try {
-      // Fetch the user from the API or local storage
-      final user = await Provider.of<UserApiHandler>(context, listen: false)
-          .getStoredUser();
-      return user;
+      User? loggedInUser = await UserServices.getCachedUser(context);
+      return loggedInUser?.userId == widget.opportunity.userId;
     } catch (e) {
-      print('Error fetching user: $e');
-      return null;
+      print('Error checking user ownership: $e');
+      return false;
+    }
+  }
+
+  /// Documentation for addToFavortites
+  /// @param: BuildContext context
+  /// @param: int oppId Opportunity id
+  /// This Function adds an Opportunity to a user's Favorites
+  static Future<void> addToFavorites(BuildContext context, int oppId) async {
+    User? user = await UserServices.getCachedUser(context);
+
+    if (!context.mounted) return; // Check if the context is still valid
+
+    if (user != null) {
+      final favorite = Favorite(userId: user.userId, opportunityId: oppId);
+      final Favorite? addedFavorite = await Provider.of<UserApiHandler>(context, listen: false)
+          .addFavorite(favorite);
+
+      if (!context.mounted) return;
+
+      if (addedFavorite != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Oportunidade adicionada aos seus Favoritos!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+                'Erro ao adicionar aos seus Favoritos, a Oportunidade já existe na sua lista ou tente novamente mais tarde.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 }
