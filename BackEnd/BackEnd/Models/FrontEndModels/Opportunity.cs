@@ -3,7 +3,7 @@ using BackEnd.Interfaces;
 
 namespace BackEnd.Models.FrontEndModels
 {
-    public class Opportunity: IExpirable
+    public class Opportunity
     {
         public int opportunityId { get; set; }
         public required string name { get; set;}
@@ -12,7 +12,7 @@ namespace BackEnd.Models.FrontEndModels
 
         public required int vacancies { get; set;}
 
-        public bool? isActive { get; set;}
+        public bool isActive { get; set;}
 
         public required Category category { get; set;}
 
@@ -26,7 +26,7 @@ namespace BackEnd.Models.FrontEndModels
 
         public float reviewScore { get; set;}
 
-        public required DateTime? date { get; set;}
+        public required DateTime date { get; set;}
 
         public required bool isImpulsed { get; set;}
 

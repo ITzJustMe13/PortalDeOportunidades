@@ -89,7 +89,7 @@ namespace BackEnd.Test
                 opportunityId = opportunity.OpportunityId,
                 userId = user2.UserId,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
                 isActive = true,
                 fixedPrice = 100
@@ -99,7 +99,7 @@ namespace BackEnd.Test
                 opportunityId = opportunity2.OpportunityId,
                 userId = user2.UserId,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
                 isActive = true,
                 fixedPrice = 100
@@ -150,7 +150,7 @@ namespace BackEnd.Test
                 opportunityId = opportunity.OpportunityId,
                 userId = user2.UserId,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
                 isActive = true,
                 fixedPrice = 100
@@ -160,7 +160,7 @@ namespace BackEnd.Test
                 opportunityId = opportunity2.OpportunityId,
                 userId = user2.UserId,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
                 isActive = true,
                 fixedPrice = 100
@@ -199,7 +199,7 @@ namespace BackEnd.Test
                 opportunityId = opportunity.OpportunityId,
                 userId = user2.UserId,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
                 isActive = true,
                 fixedPrice = 100
@@ -209,7 +209,7 @@ namespace BackEnd.Test
                 opportunityId = opportunity2.OpportunityId,
                 userId = user2.UserId,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
                 isActive = false,
                 fixedPrice = 100
@@ -259,7 +259,7 @@ namespace BackEnd.Test
                 opportunityId = opportunity.OpportunityId,
                 userId = user2.UserId,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
                 isActive = true,
                 fixedPrice = 100
@@ -269,7 +269,7 @@ namespace BackEnd.Test
                 opportunityId = opportunity2.OpportunityId,
                 userId = user2.UserId,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
                 isActive = false,
                 fixedPrice = 100
@@ -331,9 +331,9 @@ namespace BackEnd.Test
                 opportunityID = 1,
                 userID = 1,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                Date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
-                isActive = true,
+                IsActive = true,
                 fixedPrice = 100
             };
             _context.Reservations.Add(reservation);
@@ -370,9 +370,9 @@ namespace BackEnd.Test
                 opportunityID = 1,
                 userID = 1,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                Date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
-                isActive = true,
+                IsActive = true,
                 fixedPrice = 100
             };
             _context.Reservations.Add(reservation);
@@ -403,7 +403,7 @@ namespace BackEnd.Test
                 opportunityId = opportunity.OpportunityId,
                 userId = user.UserId,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
                 isActive = true,
                 fixedPrice = 100
@@ -422,7 +422,7 @@ namespace BackEnd.Test
             Assert.That(createdReservation.opportunityId, Is.EqualTo(reservation.opportunityId));
             Assert.That(createdReservation.userId, Is.EqualTo(reservation.userId));
             Assert.That(createdReservation.reservationDate, Is.EqualTo(reservation.reservationDate));
-            Assert.That(createdReservation.checkInDate, Is.EqualTo(reservation.checkInDate));
+            Assert.That(createdReservation.date, Is.EqualTo(reservation.date));
             Assert.That(createdReservation.numOfPeople, Is.EqualTo(reservation.numOfPeople));
             Assert.That(createdReservation.isActive, Is.EqualTo(reservation.isActive));
             Assert.That(createdReservation.fixedPrice, Is.EqualTo(reservation.fixedPrice));
@@ -454,7 +454,7 @@ namespace BackEnd.Test
                 opportunityId = opportunity.OpportunityId,
                 userId = user.UserId,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
                 isActive = true,
                 fixedPrice = 100
@@ -486,7 +486,7 @@ namespace BackEnd.Test
                 opportunityId = 0,
                 userId = 0,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
                 isActive = true,
                 fixedPrice = 100
@@ -518,7 +518,7 @@ namespace BackEnd.Test
                 opportunityId = 2,
                 userId = user.UserId,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
                 isActive = true,
                 fixedPrice = 100
@@ -550,7 +550,7 @@ namespace BackEnd.Test
                 opportunityId = opportunity.OpportunityId,
                 userId = 4,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
                 isActive = true,
                 fixedPrice = 100
@@ -583,7 +583,7 @@ namespace BackEnd.Test
                 opportunityId = opportunity.OpportunityId,
                 userId = user.UserId,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = -1,
                 isActive = true,
                 fixedPrice = 100
@@ -615,7 +615,7 @@ namespace BackEnd.Test
                 opportunityId = opportunity.OpportunityId,
                 userId = user.UserId,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 3,
                 isActive = true,
                 fixedPrice = 100
@@ -642,9 +642,9 @@ namespace BackEnd.Test
                 opportunityID = 1,
                 userID = 1,
                 reservationDate = DateTime.Now.AddDays(-10),
-                checkInDate = DateTime.Now.AddMonths(2),
+                Date = DateTime.Now.AddMonths(2),
                 numOfPeople = 1,
-                isActive = true,
+                IsActive = true,
                 fixedPrice = 100
             };
             await _context.Reservations.AddAsync(reservation);
@@ -680,9 +680,9 @@ namespace BackEnd.Test
                 opportunityID = 1,
                 userID = 1,
                 reservationDate = DateTime.Now.AddDays(-10),
-                checkInDate = DateTime.Now.AddMonths(2),
+                Date = DateTime.Now.AddMonths(2),
                 numOfPeople = 1,
-                isActive = true,
+                IsActive = true,
                 fixedPrice = 100
             };
             await _context.Reservations.AddAsync(reservation);
@@ -730,9 +730,9 @@ namespace BackEnd.Test
                 opportunityID = 1,
                 userID = 1,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                Date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
-                isActive = false,
+                IsActive = false,
                 fixedPrice = 100
             };
             _context.Reservations.Add(reservation);
@@ -762,9 +762,9 @@ namespace BackEnd.Test
                 opportunityID = 1,
                 userID = 1,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                Date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
-                isActive = false,
+                IsActive = false,
                 fixedPrice = 100
             };
             _context.Reservations.Add(reservation);
@@ -773,7 +773,7 @@ namespace BackEnd.Test
                 opportunityId = 1,
                 userId = 1,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 3,
                 isActive = false,
                 fixedPrice = 150
@@ -812,9 +812,9 @@ namespace BackEnd.Test
                 opportunityID = 1,
                 userID = 1,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                Date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
-                isActive = false,
+                IsActive = false,
                 fixedPrice = 100
             };
             _context.Reservations.Add(reservation);
@@ -823,7 +823,7 @@ namespace BackEnd.Test
                 opportunityId = 1,
                 userId = 1,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 3,
                 isActive = false,
                 fixedPrice = 150
@@ -852,7 +852,7 @@ namespace BackEnd.Test
                 opportunityId = 1,
                 userId = 1,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 3,
                 isActive = false,
                 fixedPrice = 150
@@ -883,9 +883,9 @@ namespace BackEnd.Test
                 opportunityID = 1,
                 userID = 1,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                Date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
-                isActive = false,
+                IsActive = false,
                 fixedPrice = 100
             };
             _context.Reservations.Add(reservation);
@@ -894,7 +894,7 @@ namespace BackEnd.Test
                 opportunityId = 1,
                 userId = 1,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = -3,
                 isActive = false,
                 fixedPrice = 150
@@ -927,9 +927,9 @@ namespace BackEnd.Test
                 opportunityID = 1,
                 userID = 1,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                Date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
-                isActive = false,
+                IsActive = false,
                 fixedPrice = 100
             };
             _context.Reservations.Add(reservation);
@@ -938,7 +938,7 @@ namespace BackEnd.Test
                 opportunityId = 1,
                 userId = 1,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 7,
                 isActive = false,
                 fixedPrice = 150
@@ -966,10 +966,10 @@ namespace BackEnd.Test
                 reservationID = 1,
                 opportunityID = 1,
                 userID = 1,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                Date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
                 fixedPrice = 100,
-                isActive = true
+                IsActive = true
             };
             _context.Reservations.Add(reservation);
             await _context.SaveChangesAsync();
@@ -1001,10 +1001,10 @@ namespace BackEnd.Test
                 reservationID = 1,
                 opportunityID = 1,
                 userID = 1,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                Date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
                 fixedPrice = 100,
-                isActive = true
+                IsActive = true
             };
             _context.Reservations.Add(reservation);
             await _context.SaveChangesAsync();

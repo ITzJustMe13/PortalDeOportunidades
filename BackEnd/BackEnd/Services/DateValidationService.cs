@@ -6,9 +6,9 @@ namespace BackEnd.Services
     {
         public void ValidateAndUpdateDate(IExpirable entity)
         {
-            if (entity.date < DateTime.Now)
+            if (entity.Date < DateTime.Now)
             {
-                entity.isActive = false; // Marca como desativado quando a data expira
+                entity.IsActive = false; // Marca como desativado quando a data expira
             }
         }
     }

@@ -1386,10 +1386,10 @@ namespace BackEnd.Test
                 reservationID = 1,
                 opportunityID = 1,
                 userID = 1,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                Date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
                 fixedPrice = 100,
-                isActive = true
+                IsActive = true
             };
             _context.Reservations.Add(reservation);
             _context.Opportunities.Add(opportunity);

@@ -1,9 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using BackEnd.Interfaces;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BackEnd.Models.BackEndModels
 {
-    public class ReservationModel
+    public class ReservationModel: IExpirable
     {
 
         [Key]
@@ -21,14 +22,14 @@ namespace BackEnd.Models.BackEndModels
         public DateTime reservationDate { get; set; }
 
         [Required(ErrorMessage = "O campo 'checkInDate' é obrigatório.")]
-        public DateTime checkInDate { get; set; }
+        public DateTime Date { get; set; }
 
         [Required(ErrorMessage = "O campo 'numOfPeople' é obrigatório.")]
         [Range(1, 10, ErrorMessage = "O 'numOfPeople' deve ter um valor de 1 a 10")]
         public int numOfPeople { get; set; }
 
         [Required(ErrorMessage = "O campo 'isActive' é obrigatório.")]
-        public bool isActive  { get; set; }
+        public bool IsActive  { get; set; }
 
         [Required(ErrorMessage = "O campo 'fixedPrice' é obrigatório.")]
         public float fixedPrice { get; set; }

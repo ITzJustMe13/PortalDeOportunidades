@@ -2,8 +2,8 @@
 {
     public interface IExpirable
     {
-        DateTime? date { get; set; }
-        bool? isActive { get; set; }
+        DateTime Date { get; set; }
+        bool IsActive { get; set; }
     }
 }
 

@@ -44,7 +44,7 @@ namespace BackEnd.Services
                 }
 
                 var reservations = await dbContext.Reservations
-                    .Where(r => r.userID == userId && r.isActive)
+                    .Where(r => r.userID == userId && r.IsActive)
                     .ToListAsync();
 
                 if (!reservations.Any())
@@ -316,9 +316,9 @@ namespace BackEnd.Services
                 }
 
                 // Verifica se a reserva pode ser desativada
-                if (reservationModel.checkInDate > DateTime.Now && reservationModel.isActive)
+                if (reservationModel.Date > DateTime.Now && reservationModel.IsActive)
                 {
-                    reservationModel.isActive = false;
+                    reservationModel.IsActive = false;
                     await dbContext.SaveChangesAsync();
                     response.Success = true;
                     response.Message = "Reservation successfully deactivated.";

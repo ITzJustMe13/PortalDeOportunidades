@@ -18,7 +18,7 @@ namespace BackEnd.Services
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                await Task.Delay(TimeSpan.FromHours(1), stoppingToken); // Intervalo de 1 hora
+                await Task.Delay(TimeSpan.FromDays(1), stoppingToken); // Intervalo de 1 dia
 
                 // Aqui criamos um escopo para acessar os serviços do DI
                 using (var scope = _serviceProvider.CreateScope())

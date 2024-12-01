@@ -27,9 +27,9 @@ namespace BackEnd.Models.Mappers
                     opportunityId = reservationModel.opportunityID,
                     userId = reservationModel.userID,
                     reservationDate = reservationModel.reservationDate,
-                    date = reservationModel.checkInDate,
+                    date = reservationModel.Date,
                     numOfPeople = reservationModel.numOfPeople,
-                    isActive = reservationModel.isActive,
+                    isActive = reservationModel.IsActive,
                     fixedPrice = reservationModel.fixedPrice
                 };
             }
@@ -53,9 +53,9 @@ namespace BackEnd.Models.Mappers
                 opportunityID = reservation.opportunityId,
                 userID = reservation.userId,
                 reservationDate = (DateTime)reservation.reservationDate!,
-                checkInDate = (DateTime)reservation.date!,
+                Date = (DateTime)reservation.date!,
                 numOfPeople = reservation.numOfPeople,
-                isActive = (bool)reservation.isActive!,
+                IsActive = (bool)reservation.isActive!,
                 fixedPrice = (float)reservation.fixedPrice!
             };
 

@@ -19,7 +19,7 @@ namespace BackEnd.Services
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                await Task.Delay(TimeSpan.FromHours(1), stoppingToken); // Intervalo de 1 hora
+                await Task.Delay(TimeSpan.FromDays(1), stoppingToken); // Intervalo de 1 dia
 
                 // Aqui criamos um escopo para acessar os serviços do DI
                 using (var scope = _serviceProvider.CreateScope())
@@ -27,17 +27,33 @@ namespace BackEnd.Services
                     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                     var dateValidationService = scope.ServiceProvider.GetRequiredService<DateValidationService>();
 
-                    // Obtemos todas as entidades do tipo IExpirable
-                    var expirableEntities = await context.Set<IExpirable>().ToListAsync();
+                    // Busca os Impulses expirados
+                    var expiredImpulses = await context.Impulses
+                        .Where(i => i.ExpireDate < DateTime.Now)
+                        .ToListAsync(stoppingToken);
 
-                    // Iteramos e validamos cada entidade
-                    foreach (var entity in expirableEntities)
+                    foreach (var impulse in expiredImpulses)
                     {
-                        dateValidationService.ValidateAndUpdateDate(entity);
+                        context.Impulses.Remove(impulse);
+
+                        // Encontra a Opportunity associada ao Impulse
+                        var opportunity = await context.Opportunities
+                            .FirstOrDefaultAsync(o => o.OpportunityId == impulse.OpportunityId, stoppingToken);
+
+                        if (opportunity != null)
+                        {
+                            var hasActiveImpulses = await context.Impulses
+                                .AnyAsync(i => i.OpportunityId == opportunity.OpportunityId && i.ExpireDate > DateTime.Now, stoppingToken);
+
+                            if (!hasActiveImpulses)
+                            {
+                                opportunity.IsImpulsed = false;
+                            }
+                        }
                     }
 
-                    await context.SaveChangesAsync(stoppingToken); // Salva as alterações no banco de dados
-                    _logger.LogInformation("Entidades expiradas verificadas e atualizadas.");
+                    await context.SaveChangesAsync(stoppingToken);
+                    _logger.LogInformation("Impulses expirados verificados e atualizados.");
                 }
             }
         }

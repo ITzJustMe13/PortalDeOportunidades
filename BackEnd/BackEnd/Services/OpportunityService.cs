@@ -543,7 +543,7 @@ namespace BackEnd.Services
                 }
 
                 bool hasActiveReservations = await dbContext.Reservations
-                    .AnyAsync(r => r.opportunityID == id && r.isActive);
+                    .AnyAsync(r => r.opportunityID == id && r.IsActive);
 
                 if (hasActiveReservations)
                 {

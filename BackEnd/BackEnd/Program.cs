@@ -41,6 +41,7 @@ builder.Services.AddScoped<IOpportunityService, OpportunityService>();
 builder.Services.AddScoped<IReviewService, BackEnd.Services.ReviewService>();
 builder.Services.AddScoped<IReservationService, ReservationService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<DateValidationService>();
 builder.Services.AddHostedService<ExpirationBackgroundService>();
 builder.Services.AddHostedService<ImpulseExpirationBackgroundService>();
 

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BackEnd.Models.FrontEndModels
 {
-    public class Reservation: IExpirable
+    public class Reservation
     {
         public int reservationId { get; set; }
 

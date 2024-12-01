@@ -194,11 +194,11 @@ namespace BackEnd.Test
             {
                 reservationID = 1,
                 reservationDate = DateTime.Now,
-                checkInDate = DateTime.Now,
+                Date = DateTime.Now,
                 opportunityID = 1,
                 userID = 1,
                 numOfPeople = 2,
-                isActive = true
+                IsActive = true
             };
 
             _context.Reservations.Add(reservationModel);
@@ -289,11 +289,11 @@ namespace BackEnd.Test
             {
                 reservationID = 1,
                 reservationDate = DateTime.Now,
-                checkInDate = DateTime.Now,
+                Date = DateTime.Now,
                 opportunityID = 1,
                 userID = 1,
                 numOfPeople = 2,
-                isActive = true
+                IsActive = true
             };
 
             _context.Reservations.Add(reservationModel);
@@ -328,11 +328,11 @@ namespace BackEnd.Test
             {
                 reservationID = validReservationId,
                 reservationDate = DateTime.Now,
-                checkInDate = DateTime.Now,
+                Date = DateTime.Now,
                 opportunityID = 1,
                 userID = 1,
                 numOfPeople = 2,
-                isActive = true
+                IsActive = true
             };
 
             _context.Reservations.Add(reservationModel);
