@@ -15,6 +15,7 @@ using NUnit.Framework;
 using System;
 using Stripe;
 using BackEnd.Models.Mappers;
+using Microsoft.Extensions.Configuration;
 
 namespace BackEnd.Test
 {
@@ -31,6 +32,12 @@ namespace BackEnd.Test
         [SetUp]
         public void Setup()
         {
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
 
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
         .UseInMemoryDatabase("TestDatabase")
@@ -42,7 +49,7 @@ namespace BackEnd.Test
 
             _favoritesService = new FavoritesService(_context);
 
-            _controller = new UserController(_userService, _favoritesService);
+            _controller = new UserController(_userService, _favoritesService, configuration);
 
 
             // Carregar o arquivo .env, se necessário
@@ -159,7 +166,14 @@ namespace BackEnd.Test
 
             var favoritesService = new FavoritesService(null);
 
-            var controller = new UserController(userService, favoritesService);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+
+            var controller = new UserController(userService, favoritesService, configuration);
 
             // Act
             var response = await controller.GetEntityById(1);
@@ -208,7 +222,14 @@ namespace BackEnd.Test
 
             var favoritesService = new FavoritesService(null);
 
-            var controller = new UserController(userService, favoritesService);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+
+            var controller = new UserController(userService, favoritesService, configuration);
 
             byte[] byteArray = new byte[] { 72, 101, 108, 108, 111 };
             var user = new User
@@ -446,7 +467,14 @@ namespace BackEnd.Test
 
             var favoritesService = new FavoritesService(null);
 
-            var controller = new UserController(userService, favoritesService);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+
+            var controller = new UserController(userService, favoritesService, configuration);
             // Act
             var response = await controller.DeleteEntity(1);
 
@@ -690,7 +718,14 @@ namespace BackEnd.Test
 
             var favoritesService = new FavoritesService(null);
 
-            var controller = new UserController(userService, favoritesService);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+
+            var controller = new UserController(userService, favoritesService, configuration);
 
             int userId = 1;
             byte[] byteArray = new byte[] { 72, 101, 108, 108, 111 };
@@ -867,7 +902,14 @@ namespace BackEnd.Test
 
             var favoritesService = new FavoritesService(null);
 
-            var controller = new UserController(userService, favoritesService); ;
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+
+            var controller = new UserController(userService, favoritesService, configuration);
 
             var favorite = new Favorite
             {
@@ -979,7 +1021,14 @@ namespace BackEnd.Test
 
             var favoritesService = new FavoritesService(null);
 
-            var controller = new UserController(userService, favoritesService);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+
+            var controller = new UserController(userService, favoritesService, configuration);
 
             // Act
             var response = await controller.GetFavoriteById(1, 1);
@@ -1064,7 +1113,14 @@ namespace BackEnd.Test
 
             var favoritesService = new FavoritesService(null);
 
-            var controller = new UserController(userService, favoritesService);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+
+            var controller = new UserController(userService, favoritesService, configuration);
 
             // Act
             var response = await controller.GetFavorites(1);
@@ -1084,7 +1140,14 @@ namespace BackEnd.Test
 
             var favoritesService = new FavoritesService(null);
 
-            var controller = new UserController(userService, favoritesService);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+
+            var controller = new UserController(userService, favoritesService, configuration);
 
             var impulse = new Impulse
             {
@@ -1282,7 +1345,14 @@ namespace BackEnd.Test
 
             var favoritesService = new FavoritesService(null);
 
-            var controller = new UserController(userService, favoritesService);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+
+            var controller = new UserController(userService, favoritesService, configuration);
 
             // Act
             var response = await controller.GetCreatedOpportunities(1);
@@ -1487,7 +1557,14 @@ namespace BackEnd.Test
 
             var favoritesService = new FavoritesService(null);
 
-            var controller = new UserController(userService, favoritesService);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+
+            var controller = new UserController(userService, favoritesService, configuration);
 
             byte[] byteArray = new byte[] { 72, 101, 108, 108, 111 };
             var user = new UserModel
@@ -1628,7 +1705,14 @@ namespace BackEnd.Test
 
             var favoritesService = new FavoritesService(null);
 
-            var controller = new UserController(userService, favoritesService);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+
+            var controller = new UserController(userService, favoritesService, configuration);
 
             // Act
             var response = await controller.GetEmailAvailability("email@example.pt");
@@ -1740,7 +1824,14 @@ namespace BackEnd.Test
 
             var favoritesService = new FavoritesService(null);
 
-            var controller = new UserController(userService, favoritesService);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+
+            var controller = new UserController(userService, favoritesService, configuration);
 
             // Act
             var response = await controller.ActivateAccount("token");

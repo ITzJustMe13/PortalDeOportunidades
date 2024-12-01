@@ -74,9 +74,9 @@ namespace BackEnd.Tests.Models
             {
                 opportunityID = opportunityID,
                 userID = userID,
-                checkInDate = checkInDate,
+                Date = checkInDate,
                 numOfPeople = numOfPeople,
-                isActive = isActive
+                IsActive = isActive
                 // `reservationDate` é gerado automaticamente pelo banco de dados
             };
         }
@@ -129,7 +129,7 @@ namespace BackEnd.Tests.Models
             // Assert
             var reservations = await _context.Reservations.ToListAsync();
             Assert.That(reservations.Count, Is.EqualTo(1));
-            Assert.That(reservations.First().checkInDate, Is.EqualTo(DateTime.Today.AddDays(10)));
+            Assert.That(reservations.First().Date, Is.EqualTo(DateTime.Today.AddDays(10)));
             Assert.That(reservations.First().numOfPeople, Is.EqualTo(2));
         }
 
@@ -183,7 +183,7 @@ namespace BackEnd.Tests.Models
 
             // Assert
             Assert.That(retrievedReservation, Is.Not.Null);
-            Assert.That(retrievedReservation.checkInDate, Is.EqualTo(DateTime.Today.AddDays(10)));
+            Assert.That(retrievedReservation.Date, Is.EqualTo(DateTime.Today.AddDays(10)));
         }
 
         [Test]
@@ -233,13 +233,13 @@ namespace BackEnd.Tests.Models
 
             // Act
             var retrievedReservation = await _context.Reservations.FindAsync(reservation.reservationID);
-            retrievedReservation.checkInDate = DateTime.Today.AddDays(20);
+            retrievedReservation.Date = DateTime.Today.AddDays(20);
             retrievedReservation.numOfPeople = 3;
             await _context.SaveChangesAsync();
 
             // Assert
             var updatedReservation = await _context.Reservations.FindAsync(reservation.reservationID);
-            Assert.That(updatedReservation.checkInDate, Is.EqualTo(DateTime.Today.AddDays(20)));
+            Assert.That(updatedReservation.Date, Is.EqualTo(DateTime.Today.AddDays(20)));
             Assert.That(updatedReservation.numOfPeople, Is.EqualTo(3));
         }
 

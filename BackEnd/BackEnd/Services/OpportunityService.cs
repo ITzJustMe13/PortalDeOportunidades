@@ -545,7 +545,7 @@ namespace BackEnd.Services
                 }
 
                 bool hasActiveReservations = await dbContext.Reservations
-                    .AnyAsync(r => r.opportunityID == id && r.isActive);
+                    .AnyAsync(r => r.opportunityID == id && r.IsActive);
 
                 if (hasActiveReservations)
                 {
@@ -764,7 +764,7 @@ namespace BackEnd.Services
                 opportunityModel.Category = updatedOpportunity.category;
                 opportunityModel.Location = updatedOpportunity.location;
                 opportunityModel.Address = updatedOpportunity.address;
-                opportunityModel.Date = updatedOpportunity.date;
+                opportunityModel.Date = (DateTime)updatedOpportunity.date;
 
 
                 if (updatedOpportunity.OpportunityImgs != null)
