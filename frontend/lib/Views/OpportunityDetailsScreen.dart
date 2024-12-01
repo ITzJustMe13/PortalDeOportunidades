@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/Models/Favorite.dart';
 import 'package:frontend/Models/User.dart';
+import 'package:frontend/Models/Review.dart';
 import 'package:frontend/Services/user_api_handler.dart';
 import 'package:frontend/Services/payment_api_handler.dart';
 import 'package:frontend/Components/CustomAppBar.dart';
@@ -18,7 +19,8 @@ import 'package:frontend/Services/payment_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:frontend/Components/DynamicActionButton.dart';
 import 'package:frontend/Services/user_services.dart';
-import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:frontend/Services/review_api_handler.dart';
+import 'package:frontend/Components/ReviewCard.dart';
 
 class OpportunityDetailsScreen extends StatefulWidget {
   final bool isReservable;
@@ -36,6 +38,8 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
   final ScrollController verticalScrollController = ScrollController();
   final ScrollController horizontalScrollController = ScrollController();
   late Future<User?> _ownerFuture;
+  List<Review> reviews = [];
+  bool isLoading = true;
   late bool isOwner;
 
   @override
@@ -48,6 +52,7 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
     if(isOwner == false){
       _checkUserOwnership();
     }
+    fetchReviews();
   }
 
   @override
@@ -61,17 +66,6 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           }
-          /*
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data == null) {
-            return Center(child: Text('Owner not found'));
-          }
-          
-          final owner = null;//snapshot.data!;
-          */
           final opportunity = widget.opportunity;
           final DateTime dateTime = opportunity.date;
           final String formattedTime = DateFormat('HH:mm').format(dateTime);
@@ -107,13 +101,13 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
           ),
           SizedBox(height: 20),
           DynamicActionButton(
-              text: "Adicionar aos Favoritos",
-              color: Color(0xFF50C878),
-              icon: Icons.star,
-              onPressed: (){
-                addToFavorites(context, widget.opportunity.opportunityId);
-              },
-            ),
+            text: "Adicionar aos Favoritos",
+            color: Color(0xFF50C878),
+            icon: Icons.star,
+            onPressed: () {
+              addToFavorites(context, widget.opportunity.opportunityId);
+            },
+          ),
           SizedBox(height: 20),
           if (widget.isReservable && !isOwner && widget.opportunity.isActive)
             ReservationButton(
@@ -137,19 +131,26 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
           OpportunityLocationMap(
             address: opportunity.address,
           ),
-          /*
-          //REVIEWS
+          // REVIEWS
           SizedBox(height: 20),
           Text(
-          'Opiniões',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        SizedBox(height: 10),
-        ..._reviews.map((review) => ReviewCard(
-            rating: review.rating,
-            description: review.description ?? '',
-            )).toList(),
-            */
+            'Opiniões',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 10),
+          // Check if reviews are loading
+          isLoading
+              ? Center(child: CircularProgressIndicator())
+              : reviews.isEmpty
+                  ? Text('Nenhuma opinião disponível.')
+                  : Column(
+                      children: reviews.map((review) {
+                        return ReviewCard(
+                          rating: review.rating,
+                          description: review.description ?? '',
+                        );
+                      }).toList(),
+                    ),
         ],
       ),
     );
@@ -179,13 +180,13 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
                   ),
                   SizedBox(height: 20),
                   DynamicActionButton(
-                      text: "Adicionar aos Favoritos",
-                      color: Color(0xFF50C878),
-                      icon: Icons.star,
-                      onPressed: (){
-                        addToFavorites(context, widget.opportunity.opportunityId);
-                      },
-                    ),
+                    text: "Adicionar aos Favoritos",
+                    color: Color(0xFF50C878),
+                    icon: Icons.star,
+                    onPressed: () {
+                      addToFavorites(context, widget.opportunity.opportunityId);
+                    },
+                  ),
                   if (widget.isReservable && !isOwner && widget.opportunity.isActive)
                     ReservationButton(
                       availableVacancies: opportunity.vacancies,
@@ -198,7 +199,7 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
             ),
             SizedBox(width: 20), // Add space between the two columns
 
-            // Right Column (Additional Info and Map)
+            // Right Column (Additional Info, Map, and Reviews)
             Expanded(
               flex: 1,
               child: Column(
@@ -218,19 +219,26 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
                   OpportunityLocationMap(
                     address: opportunity.address,
                   ),
-                  /*
-                  //REVIEWS
+                  // REVIEWS
                   SizedBox(height: 20),
                   Text(
-                  'Opiniões',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    'Opiniões',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 10),
-                  ..._reviews.map((review) => ReviewCard(
-                      rating: review.rating,
-                      description: review.description ?? '',
-                      )).toList(),
-                      */
+                  // Check if reviews are loading
+                  isLoading
+                      ? Center(child: CircularProgressIndicator())
+                      : reviews.isEmpty
+                          ? Text('Nenhuma opinião disponível.')
+                          : Column(
+                              children: reviews.map((review) {
+                                return ReviewCard(
+                                  rating: review.rating,
+                                  description: review.description ?? '',
+                                );
+                              }).toList(),
+                            ),
                 ],
               ),
             ),
@@ -239,6 +247,7 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
       ),
     );
   }
+
 
   // Desktop layout (Both vertical and horizontal scroll with Scrollbar)
   Widget _buildDesktopLayout(Opportunity opportunity, String time) {
@@ -266,13 +275,13 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
                   ),
                   SizedBox(height: 20),
                   DynamicActionButton(
-                      text: "Adicionar aos Favoritos",
-                      color: Color(0xFF50C878),
-                      icon: Icons.star,
-                      onPressed: (){
-                        addToFavorites(context, widget.opportunity.opportunityId);
-                      },
-                    ),
+                    text: "Adicionar aos Favoritos",
+                    color: Color(0xFF50C878),
+                    icon: Icons.star,
+                    onPressed: () {
+                      addToFavorites(context, widget.opportunity.opportunityId);
+                    },
+                  ),
                   SizedBox(height: 20),
                   if (widget.isReservable && !isOwner && widget.opportunity.isActive)
                     ReservationButton(
@@ -286,7 +295,7 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
               ),
             ),
             SizedBox(width: 20),
-            // Right column (additional info and map)
+            // Right column (additional info, map, and reviews)
             Expanded(
               flex: 1,
               child: Column(
@@ -306,19 +315,26 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
                   OpportunityLocationMap(
                     address: opportunity.address,
                   ),
-                  /*
-                  //REVIEWS
+                  // REVIEWS
                   SizedBox(height: 20),
                   Text(
-                  'Opiniões',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    'Opiniões',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 10),
-                  ..._reviews.map((review) => ReviewCard(
-                      rating: review.rating,
-                      description: review.description ?? '',
-                      )).toList(),
-                      */
+                  // Check if reviews are loading
+                  isLoading
+                      ? Center(child: CircularProgressIndicator())
+                      : reviews.isEmpty
+                          ? Text('Nenhuma opinião disponível.')
+                          : Column(
+                              children: reviews.map((review) {
+                                return ReviewCard(
+                                  rating: review.rating,
+                                  description: review.description ?? '',
+                                );
+                              }).toList(),
+                            ),
                 ],
               ),
             ),
@@ -327,6 +343,7 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
       ),
     );
   }
+
 
   
 
@@ -423,4 +440,28 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
     }
   }
 
+  Future<void> fetchReviews() async {
+    setState(() {
+      isLoading = true; // Ensure loading state is set before fetching.
+    });
+
+    try {
+      final List<Review>? fetchedReviews = await Provider.of<ReviewApiHandler>(
+        context,
+        listen: false,
+      ).getReviewsByOppId(widget.opportunity.opportunityId);
+
+      setState(() {
+        reviews = fetchedReviews ?? []; // Assign an empty list if null.
+        isLoading = false; // Stop loading after data fetch.
+      });
+    } catch (error) {
+      setState(() {
+        isLoading = false; // Stop loading after error.
+        reviews = []; // Clear reviews or handle errors more specifically.
+      });
+      // Log or handle the error
+      print('Failed to load reviews: $error');
+    }
+  }
 }

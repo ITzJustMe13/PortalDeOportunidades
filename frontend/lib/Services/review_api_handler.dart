@@ -8,6 +8,7 @@ class ReviewApiHandler {
   final String baseUri = "https://localhost:7235/api/Review";
   final http.Client client;
   final storage = FlutterSecureStorage();
+  final timeout = const Duration(seconds: 60);
 
   ReviewApiHandler(this.client);
 
@@ -29,6 +30,29 @@ class ReviewApiHandler {
       if (response.statusCode >= 200 && response.statusCode <= 299) {
         final review = Review.fromJson(jsonDecode(response.body));
         return review;
+      } else {
+        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
+        return null;
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      return null;
+    }
+  }
+
+  Future<List<Review>?> getReviewsByOppId(int oppId) async {
+    final uri = Uri.parse('$baseUri/Opportunity/Reviews/$oppId');
+
+    try {
+      final response = await client.get(uri).timeout(timeout);
+
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
+        final List<dynamic> jsonList = jsonDecode(response.body);
+        final reviews =
+            jsonList.map((json) => Review.fromJson(json)).toList();
+        return reviews;
+      } else if (response.statusCode == 404) {
+        return [];
       } else {
         print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return null;
