@@ -38,7 +38,7 @@ namespace BackEnd.Services
         {
             string userEmail = user.Email; 
             const string subject = "Reserva Portal de Oportunidades";
-            string body = $"Olá {user.FirstName} {user.LastName},\n\n:A tua reserva para o dia {reservation.checkInDate} foi confirmada\nPara Cancelamentos e Devoluções por favor contacta o nosso suporte em:portaldeoportunidades2024@gmail.com \nObrigado!";
+            string body = $"Olá {user.FirstName} {user.LastName},\n\n:A tua reserva para o dia {reservation.date} foi confirmada\nPara Cancelamentos e Devoluções por favor contacta o nosso suporte em:portaldeoportunidades2024@gmail.com \nObrigado!";
             SendEmail(subject, body, userEmail);    
         }
 
