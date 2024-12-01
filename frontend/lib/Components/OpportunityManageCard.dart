@@ -238,7 +238,14 @@ class _OpportunityManageCardState extends State<OpportunityManageCard> {
                           );
                         }
                       },
-                    )
+                    ),
+                    DynamicActionButton(
+                      text: "Impulsionar", 
+                      icon: Icons.upcoming, 
+                      color: Colors.blue,
+                      onPressed: () {
+                        //levar para tela com pacotes de impulso
+                      },)
                   ],
                 ),
               ],

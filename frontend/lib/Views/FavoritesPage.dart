@@ -13,7 +13,8 @@ import 'package:provider/provider.dart';
 
 import 'package:frontend/Components/FavoriteCard.dart';
 
-
+/// Documentation for FavoritesPage
+/// this page shows the user his favorites._
 class FavoritesPage extends StatefulWidget {
   const FavoritesPage({super.key});
 
@@ -21,6 +22,9 @@ class FavoritesPage extends StatefulWidget {
   State<FavoritesPage> createState() => _FavoritesPageState();
 }
 
+/// Documentation for FavoritesPageState
+/// this is the state of the page for it to be able to 
+/// update without exterior libraries
 class _FavoritesPageState extends State<FavoritesPage> {
   late Future<List<Favorite>?> _favoritesFuture;
   late Future<List<Opportunity>?> _opportunityFuture = Future.value([]);
@@ -32,6 +36,9 @@ class _FavoritesPageState extends State<FavoritesPage> {
     _loadData(context);
   }
 
+/// Documentation for build
+/// Builds the screen and categorizes for
+/// Mobile, Table and Desktop
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,6 +58,8 @@ class _FavoritesPageState extends State<FavoritesPage> {
     );
   }
 
+/// Documentation for _buildMobileLayout
+/// Mobile layout of the screen
   Widget _buildMobileLayout() {
     return FutureBuilder<List<Opportunity>?>(
       future: _opportunityFuture,
@@ -87,6 +96,8 @@ class _FavoritesPageState extends State<FavoritesPage> {
     );
   }
 
+/// Documentation for _buildTableLayout
+/// Tablet layout of the screen
   Widget _buildTabletLayout() {
     return FutureBuilder<List<Opportunity>?>(
       future: _opportunityFuture,
@@ -129,6 +140,8 @@ class _FavoritesPageState extends State<FavoritesPage> {
     );
   }
 
+/// Documentation for _buildDesktopLayout
+/// Desktop layout of the screen
   Widget _buildDesktopLayout() {
     return FutureBuilder<List<Opportunity>?>(
       future: _opportunityFuture,
@@ -171,6 +184,9 @@ class _FavoritesPageState extends State<FavoritesPage> {
     );
   }
 
+/// Documentation for _loadData
+/// @param: BuildContext context
+/// This function loads the favorites of the user in the initState
   Future<void> _loadData(BuildContext context) async {
     final user = await UserServices.getCachedUser(context); 
     setState(() {
