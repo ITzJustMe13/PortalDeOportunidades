@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/Components/CustomAppBar.dart';
 import 'package:frontend/Components/CustomDrawer.dart';
+import 'package:frontend/Components/DynamicActionButton.dart';
 import 'package:provider/provider.dart';
 import '../State/LoginState.dart';
 
@@ -72,7 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   if (loginState.isLoading)
                     CircularProgressIndicator()
                   else
-                    ElevatedButton(
+                    DynamicActionButton(
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
                           final email = _emailController.text;
@@ -87,7 +88,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           }
                         }
                       },
-                      child: Text('Login'),
+                      text: 'Login',
+                      color: Color(0xFF00C75A),
+                      icon: Icons.login_rounded,
                     ),
                   SizedBox(height: 16.0),
                   if (loginState.errorMessage != null)
@@ -95,6 +98,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       loginState.errorMessage!,
                       style: TextStyle(color: Colors.red),
                     ),
+                  DynamicActionButton(
+                      onPressed: () async {
+                        loginState.loginWithGoogle();
+                      },
+                      text: "Login com Google",
+                      icon: Icons.abc,
+                      color: Color(0xFF4285F4))
                 ],
               ),
             ),
