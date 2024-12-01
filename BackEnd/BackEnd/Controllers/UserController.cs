@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using BackEnd.Interfaces;
 using BackEnd.ServiceResponses;
+using BackEnd.Services;
 
 namespace BackEnd.Controllers
 {
@@ -257,12 +258,17 @@ namespace BackEnd.Controllers
         /// <param name="googleToken"></param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        [HttpPost("auth/google")]
-        public async Task<IActionResult> GoogleLogin([FromBody] string googleToken)
+        [HttpPost("google-sign-in")]
+        public async Task<IActionResult> GoogleSignIn([FromBody] GoogleSignInRequest request)
         {
-            //Irá ser implementado quando tivermos front-end
+            var response = await _userService.GoogleSignInAsync(request.IdToken);
 
-            throw new NotImplementedException();
+            if (response.Success)
+            {
+                return Ok(response);
+            }
+
+            return Unauthorized(response);
         }
 
     }
