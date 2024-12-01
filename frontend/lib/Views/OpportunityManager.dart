@@ -170,5 +170,7 @@ class _OpportunityManagerScreenState extends State<OpportunityManagerScreen> {
     print('Error fetching user: $e');
     return null;
   }
+
+  
 }
 }
