@@ -2,7 +2,10 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-final GoogleSignIn _googleSignIn = GoogleSignIn();
+// Instância do GoogleSignIn para Web
+final GoogleSignIn _googleSignIn = GoogleSignIn(
+  clientId: '348791959445-mo2sbugjbvmebd4ag0usmlupff0gv35l.apps.googleusercontent.com',  // Substitua pela sua Client ID da Web
+);
 
 class AuthService {
   Future<void> signInWithGoogle() async {
