@@ -1,0 +1,49 @@
+name: Integration Tests
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+    branches:
+      - main
+      - dev
+
+jobs:
+  integration-tests:
+    runs-on: ubuntu-latest
+    services:
+      mssql:
+        image: mcr.microsoft.com/mssql/server:2019-latest
+        env:
+          SA_PASSWORD: ${{ secrets.SA_PASSWORD }} 
+          ACCEPT_EULA: "Y"
+        ports:
+          - 1433:1433
+        options: >-
+          --health-cmd "exit 0"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: '8.x'
+
+      - name: Restore Dependencies
+        run: dotnet restore BackEnd/BackEnd.Test/BackEnd.Test.csproj
+
+      - name: Build Solution
+        run: dotnet build BackEnd/BackEnd.Test/BackEnd.Test.csproj --no-restore
+
+      - name: Run Integration Tests
+        env:
+          
+          CONNECTION_STRING: "Server=localhost,1433;Database=testdb;User Id=sa;Password=${{ secrets.SA_PASSWORD }};"
+        run: dotnet test BackEnd/BackEnd.sln --filter "Category=IntegrationTest"

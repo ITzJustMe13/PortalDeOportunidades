@@ -1,0 +1,30 @@
+name: Unit Tests
+
+on:
+  push:
+    branches:
+      - main
+      - dev   
+  pull_request:
+    branches:
+      - main
+      - dev   
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env: 
+      GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+      STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: '8.x'
+      - name: Restore Dependencies
+        run: dotnet restore BackEnd/BackEnd.Test/BackEnd.Test.csproj
+      - name: Run Unit Tests
+        run: dotnet test BackEnd/BackEnd.Test/BackEnd.Test.csproj --filter Category=UnitTest
