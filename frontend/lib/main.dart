@@ -5,6 +5,7 @@ import 'package:frontend/State/DrawerState.dart';
 import 'package:frontend/State/HistoryReservationState.dart';
 import 'package:frontend/State/LoginState.dart';
 import 'package:frontend/State/RegisterState.dart';
+import 'package:frontend/State/ReviewHistoryState.dart';
 import 'package:frontend/State/SearchState.dart';
 import 'package:frontend/Views/ActivationSucessScreen.dart';
 import 'package:frontend/Views/LoginScreen.dart';
@@ -51,6 +52,8 @@ void main() {
         ChangeNotifierProvider<SearchState>(create: (_) => SearchState()),
         ChangeNotifierProvider<HistoryReservationState>(
             create: (_) => HistoryReservationState()),
+        ChangeNotifierProvider<ReviewHistoryState>(
+            create: (_) => ReviewHistoryState()),
         ChangeNotifierProxyProvider<LoginState, CustomDrawerState>(
           create: (context) => CustomDrawerState(
             loginState: context.read<LoginState>(),
