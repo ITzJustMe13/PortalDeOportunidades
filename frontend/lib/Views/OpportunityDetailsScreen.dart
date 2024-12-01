@@ -17,11 +17,11 @@ import 'package:frontend/Services/payment_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class OpportunityDetailsScreen extends StatefulWidget {
-  final bool isReservation;
+  final bool isReservable;
   final Opportunity opportunity;
 
   const OpportunityDetailsScreen(
-      {super.key, required this.opportunity, this.isReservation = false});
+      {super.key, required this.opportunity, this.isReservable = true});
 
   @override
   _OpportunityManagerScreenState createState() =>
@@ -32,12 +32,18 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
   final ScrollController verticalScrollController = ScrollController();
   final ScrollController horizontalScrollController = ScrollController();
   late Future<User?> _ownerFuture;
+  late bool isOwner;
 
   @override
   void initState() {
     super.initState();
+    isOwner = false;
     _ownerFuture = Provider.of<UserApiHandler>(context, listen: false)
         .getUserByID(widget.opportunity.userId);
+    
+    if(isOwner == false){
+      _checkUserOwnership();
+    }
   }
 
   @override
@@ -48,6 +54,9 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
       body: FutureBuilder<User?>(
         future: _ownerFuture,
         builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
           /*
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
@@ -93,7 +102,7 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
             description: opportunity.description,
           ),
           SizedBox(height: 20),
-          if (!widget.isReservation)
+          if (widget.isReservable && !isOwner && widget.opportunity.isActive)
             ReservationButton(
               availableVacancies: 2,
               onPressed: (numberOfPersons) {
@@ -155,7 +164,7 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
                     name: opportunity.name,
                     description: opportunity.description,
                   ),
-                  if (!widget.isReservation)
+                  if (widget.isReservable && !isOwner && widget.opportunity.isActive)
                     ReservationButton(
                       availableVacancies: opportunity.vacancies,
                       onPressed: (numberOfPersons) {
@@ -234,7 +243,7 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
                     description: opportunity.description,
                   ),
                   SizedBox(height: 20),
-                  if (!widget.isReservation)
+                  if (widget.isReservable && !isOwner && widget.opportunity.isActive)
                     ReservationButton(
                       availableVacancies: widget.opportunity.vacancies,
                       onPressed: (numberOfPersons) {
@@ -296,10 +305,10 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
           .createReservationCheckoutSession(reservation);
 
       if (checkoutId != null) {
-        // Now that we have the sessionId, we need to construct the checkout URL.
+        
         final checkoutUrl = 'https://checkout.stripe.com/pay/$checkoutId';
 
-        // Use url_launcher to open the checkout session in the user's browser.
+        // url_launcher to open the checkout session in the user's browser.
         if (await canLaunch(checkoutUrl)) {
           await launch(checkoutUrl);
         } else {
@@ -314,7 +323,6 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
   Future<void> createTempReservation(int numberOfPersons) async {
     User? user = await _getCachedUser();
 
-    // Check if user is null before proceeding
     if (user == null) {
       print('No user found. Cannot create reservation.');
       return null;
@@ -331,9 +339,7 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
         fixedPrice:
             (widget.opportunity.price * 0.1) + widget.opportunity.price);
 
-    // Save the reservation asynchronously
     await saveReservation(reservation);
-    // Create a checkout session for the reservation
     createCheckoutSessionReservation(reservation);
   }
 
@@ -346,6 +352,23 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
     } catch (e) {
       print('Error fetching user: $e');
       return null;
+    }
+  }
+
+  Future<void> _checkUserOwnership() async {
+    bool owner = await _isUserOwner();
+    setState(() {
+      isOwner = owner;
+    });
+  }
+
+  Future<bool> _isUserOwner() async {
+    try {
+      User? loggedInUser = await _getCachedUser();
+      return loggedInUser?.userId == widget.opportunity.userId;
+    } catch (e) {
+      print('Error checking user ownership: $e');
+      return false;
     }
   }
 }

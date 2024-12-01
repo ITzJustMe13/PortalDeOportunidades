@@ -457,7 +457,7 @@ class HistoryReservationScreen extends StatelessWidget {
           MaterialPageRoute(
             builder: (context) => OpportunityDetailsScreen(
               opportunity: opportunity,
-              isReservation: true,
+              isReservable: false,
             ),
           ),
         );

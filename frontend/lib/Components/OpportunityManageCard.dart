@@ -30,44 +30,6 @@ class _OpportunityManageCardState extends State<OpportunityManageCard> {
     isActive = widget.opportunity.isActive; // Initialize state with opportunity's status
   }
 
-  void toggleStatus(bool activate) async {
-    try {
-      final bool success = activate
-          ? await Provider.of<OpportunityApiHandler>(context, listen: false)
-              .activateOpportunity(widget.opportunity.opportunityId)
-          : await Provider.of<OpportunityApiHandler>(context, listen: false)
-              .deactivateOpportunity(widget.opportunity.opportunityId);
-
-      if (success) {
-        setState(() {
-          isActive = activate;
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(activate
-                ? 'Oportunidade ativada com sucesso!'
-                : 'Oportunidade desativada com sucesso!'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      } else {
-        _showErrorSnackbar();
-      }
-    } catch (e) {
-      _showErrorSnackbar();
-    }
-  }
-
-
-  void _showErrorSnackbar() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Erro ao alterar o status da oportunidade.'),
-        backgroundColor: Colors.red,
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -283,6 +245,44 @@ class _OpportunityManageCardState extends State<OpportunityManageCard> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  void toggleStatus(bool activate) async {
+    try {
+      final bool success = activate
+          ? await Provider.of<OpportunityApiHandler>(context, listen: false)
+              .activateOpportunity(widget.opportunity.opportunityId)
+          : await Provider.of<OpportunityApiHandler>(context, listen: false)
+              .deactivateOpportunity(widget.opportunity.opportunityId);
+
+      if (success) {
+        setState(() {
+          isActive = activate;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(activate
+                ? 'Oportunidade ativada com sucesso!'
+                : 'Oportunidade desativada com sucesso!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } else {
+        _showErrorSnackbar();
+      }
+    } catch (e) {
+      _showErrorSnackbar();
+    }
+  }
+
+
+  void _showErrorSnackbar() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Erro ao alterar o status da oportunidade.'),
+        backgroundColor: Colors.red,
       ),
     );
   }
