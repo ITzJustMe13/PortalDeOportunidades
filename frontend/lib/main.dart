@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/State/ActivationState.dart';
+import 'package:frontend/State/ChooseImpulseState.dart';
 import 'package:frontend/State/CreateOpportunityState.dart';
 import 'package:frontend/State/DrawerState.dart';
 import 'package:frontend/State/HistoryReservationState.dart';
@@ -54,6 +55,8 @@ void main() {
             create: (_) => HistoryReservationState()),
         ChangeNotifierProvider<ReviewHistoryState>(
             create: (_) => ReviewHistoryState()),
+        ChangeNotifierProvider<ChooseImpulseState>(
+            create: (_) => ChooseImpulseState()),
         ChangeNotifierProxyProvider<LoginState, CustomDrawerState>(
           create: (context) => CustomDrawerState(
             loginState: context.read<LoginState>(),

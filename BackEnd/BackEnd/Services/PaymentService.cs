@@ -130,6 +130,7 @@ namespace BackEnd.Services
         {
             var response = new ServiceResponse<string>();
 
+
             try
             {
                 if (impulse == null || impulse.value <= 0 || impulse.expireDate <= DateTime.Today)
@@ -203,6 +204,7 @@ namespace BackEnd.Services
             }
             catch (StripeException ex)
             {
+                Console.WriteLine("Stripe"+ex.Message);
                 response.Success = false;
                 response.Message = $"Stripe error: {ex.Message}";
                 response.Type = "BadRequest";

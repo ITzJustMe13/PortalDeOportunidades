@@ -9,30 +9,32 @@ import 'package:frontend/Services/user_api_handler.dart';
 import 'package:provider/provider.dart';
 
 class OpportunityManagerScreen extends StatefulWidget {
-  
   const OpportunityManagerScreen({super.key});
 
   @override
-  _OpportunityManagerScreenState createState() => _OpportunityManagerScreenState();
+  _OpportunityManagerScreenState createState() =>
+      _OpportunityManagerScreenState();
 }
 
 class _OpportunityManagerScreenState extends State<OpportunityManagerScreen> {
   late Future<List<Opportunity>?> _opportunitiesFuture;
 
-   User? user;
+  User? user;
 
   @override
   void initState() {
     super.initState();
-    _opportunitiesFuture = Future.value([]); //this is to give time to load and not give any errors to the page
+    _opportunitiesFuture = Future.value(
+        []); //this is to give time to load and not give any errors to the page
     _initializeData();
   }
 
   Future<void> _initializeData() async {
     user = await _getCachedUser();
     if (user != null) {
-      _opportunitiesFuture = Provider.of<OpportunityApiHandler>(context, listen: false)
-          .getAllOpportunitiesByUserId(user!.userId);
+      _opportunitiesFuture =
+          Provider.of<OpportunityApiHandler>(context, listen: false)
+              .getAllOpportunitiesByUserId(user!.userId);
       setState(() {}); // Trigger a rebuild after setting opportunities
     } else {
       _opportunitiesFuture = Future.value([]);
@@ -54,7 +56,8 @@ class _OpportunityManagerScreenState extends State<OpportunityManagerScreen> {
               child: Text('Erro ao carregar Opportunidades: ${snapshot.error}'),
             );
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('Não foram encontradas Oportunidades.'));
+            return const Center(
+                child: Text('Não foram encontradas Oportunidades.'));
           } else {
             final opportunities = snapshot.data!;
             return LayoutBuilder(
@@ -84,20 +87,17 @@ class _OpportunityManagerScreenState extends State<OpportunityManagerScreen> {
             style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 20),
-          ...opportunities
-              .map((opportunity) => Padding(
-                    padding: const EdgeInsets.only(bottom: 20.0),
-                    child: OpportunityManageCard(opportunity: opportunity),
-                  ))
-              ,
+          ...opportunities.map((opportunity) => Padding(
+                padding: const EdgeInsets.only(bottom: 20.0),
+                child: OpportunityManageCard(opportunity: opportunity),
+              )),
         ],
       ),
     );
   }
 
   Widget _buildTabletLayout(List<Opportunity> opportunities) {
-    return Scrollbar(
-      thumbVisibility: true,
+    return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -130,47 +130,43 @@ class _OpportunityManagerScreenState extends State<OpportunityManagerScreen> {
   }
 
   Widget _buildDesktopLayout(List<Opportunity> opportunities) {
-    return Scrollbar(
-      thumbVisibility: true,
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "As suas Oportunidades",
-              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "As suas Oportunidades",
+            style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 20),
+          GridView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              crossAxisSpacing: 20.0,
+              mainAxisSpacing: 20.0,
             ),
-            SizedBox(height: 20),
-            GridView.builder(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                crossAxisSpacing: 20.0,
-                mainAxisSpacing: 20.0,
-              ),
-              itemCount: opportunities.length,
-              itemBuilder: (context, index) {
-                return OpportunityManageCard(opportunity: opportunities[index]);
-              },
-            ),
-          ],
-        ),
+            itemCount: opportunities.length,
+            itemBuilder: (context, index) {
+              return OpportunityManageCard(opportunity: opportunities[index]);
+            },
+          ),
+        ],
       ),
     );
   }
 
   Future<User?> _getCachedUser() async {
-  try {
-    // Fetch the user from the API or local storage
-    final user = await Provider.of<UserApiHandler>(context, listen: false).getStoredUser();
-    return user;
-  } catch (e) {
-    print('Error fetching user: $e');
-    return null;
+    try {
+      // Fetch the user from the API or local storage
+      final user = await Provider.of<UserApiHandler>(context, listen: false)
+          .getStoredUser();
+      return user;
+    } catch (e) {
+      print('Error fetching user: $e');
+      return null;
+    }
   }
-
-  
-}
 }
