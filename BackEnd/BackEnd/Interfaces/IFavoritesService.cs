@@ -44,5 +44,14 @@ namespace BackEnd.Interfaces
         /// if something is wrong or a response.Sucess=true,the array of Opportunity Dto 
         /// and a sucesseful mensage</returns>
         Task<ServiceResponse<Favorite[]>> GetCreatedOpportunitiesAsync(int userId);
+
+        /// <summary>
+        /// Function that deletes a Favorite by its user id and opportunity id
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="oppId"></param>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true if deleted sucessefully</returns>
+        Task<ServiceResponse<bool>> DeleteFavoriteByIdAsync(int userId, int oppId);
     }
 }

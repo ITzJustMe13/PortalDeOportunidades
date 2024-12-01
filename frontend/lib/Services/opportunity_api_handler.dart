@@ -196,6 +196,10 @@ class OpportunityApiHandler {
     }
   }
 
+  /// Documentation for deleteOpportunity
+  /// Endpoint that sends a delete Opportunity request
+  /// @param oppId : io of the opportunity
+  /// @returns: true if it was delete sucessefully, false if not
   Future<bool> deleteOpportunity(int oppId) async {
     final uri = Uri.parse('$baseUri/$oppId');
     final String? accessToken = await storage.read(key: 'accessToken');

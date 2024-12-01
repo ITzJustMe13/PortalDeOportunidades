@@ -153,7 +153,6 @@ class OnTheRiseOpportunityCard extends StatelessWidget {
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(width: 8),
-                  IconButton.filled(onPressed: null, icon: Icon(Icons.star)),
                 ],
               ),
             ],
