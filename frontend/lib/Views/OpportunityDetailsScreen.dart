@@ -18,6 +18,7 @@ import 'package:frontend/Services/payment_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:frontend/Components/DynamicActionButton.dart';
 import 'package:frontend/Services/user_services.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 
 class OpportunityDetailsScreen extends StatefulWidget {
   final bool isReservable;
@@ -330,21 +331,16 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
   
 
   Future<void> createCheckoutSessionReservation(Reservation reservation) async {
-    String? checkoutId;
-
     if (reservation != null) {
-      checkoutId = await Provider.of<PaymentApiHandler>(context, listen: false)
+      final sessionUrl = await Provider.of<PaymentApiHandler>(context, listen: false)
           .createReservationCheckoutSession(reservation);
 
-      if (checkoutId != null) {
-        
-        final checkoutUrl = 'https://checkout.stripe.com/pay/$checkoutId';
-
-        // url_launcher to open the checkout session in the user's browser.
-        if (await canLaunch(checkoutUrl)) {
-          await launch(checkoutUrl);
+      if (sessionUrl != null) {
+        // Use url_launcher to open the Stripe Checkout session
+        if (await canLaunch(sessionUrl)) {
+          await launch(sessionUrl);
         } else {
-          print('Could not launch $checkoutUrl');
+          print('Could not launch $sessionUrl');
         }
       } else {
         print('Failed to create checkout session');
@@ -426,4 +422,5 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
       }
     }
   }
+
 }
