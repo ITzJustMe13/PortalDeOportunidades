@@ -148,7 +148,7 @@ class PaymentScreen extends StatelessWidget {
 
   // Handle Reservation
   Future<void> _handleReservation() async {
-    final reservation = await getStoredReservation();
+    final reservation = await PaymentService().getStoredReservation();
     if (reservation != null) {
       print("Processing reservation: $reservation");
     } else {
@@ -158,7 +158,7 @@ class PaymentScreen extends StatelessWidget {
 
   // Handle Impulse
   Future<void> _handleImpulse() async {
-    final impulse = await getStoredImpulse();
+    final impulse = await PaymentService().getStoredImpulse();
     if (impulse != null) {
       print("Processing impulse: $impulse");
     } else {

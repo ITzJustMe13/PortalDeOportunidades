@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/Components/DynamicActionButton.dart';
 import 'package:frontend/Models/Opportunity.dart';
+import 'package:frontend/Views/ChooseImpulseScreen.dart';
 import 'dart:convert'; // For Base64 decoding
 import 'package:frontend/Views/OpportunityDetailsScreen.dart';
 import 'package:frontend/Views/EditOpportunityScreen.dart';
@@ -27,7 +28,8 @@ class _OpportunityManageCardState extends State<OpportunityManageCard> {
   @override
   void initState() {
     super.initState();
-    isActive = widget.opportunity.isActive; // Initialize state with opportunity's status
+    isActive = widget
+        .opportunity.isActive; // Initialize state with opportunity's status
   }
 
   @override
@@ -52,7 +54,8 @@ class _OpportunityManageCardState extends State<OpportunityManageCard> {
                   ),
                   image: DecorationImage(
                     image: MemoryImage(
-                      base64Decode(widget.opportunity.opportunityImgs[0].imageBase64),
+                      base64Decode(
+                          widget.opportunity.opportunityImgs[0].imageBase64),
                     ),
                     fit: BoxFit.cover,
                   ),
@@ -95,7 +98,9 @@ class _OpportunityManageCardState extends State<OpportunityManageCard> {
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: isActive ? Colors.green : Colors.red, // Color based on active status
+                    color: isActive
+                        ? Colors.green
+                        : Colors.red, // Color based on active status
                     borderRadius: BorderRadius.circular(4.0),
                   ),
                   child: Text(
@@ -156,7 +161,6 @@ class _OpportunityManageCardState extends State<OpportunityManageCard> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-
                     // Details Button
                     DynamicActionButton(
                       text: 'Detalhes',
@@ -166,7 +170,8 @@ class _OpportunityManageCardState extends State<OpportunityManageCard> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => OpportunityDetailsScreen(opportunity: widget.opportunity),
+                            builder: (context) => OpportunityDetailsScreen(
+                                opportunity: widget.opportunity),
                           ),
                         );
                       },
@@ -181,7 +186,8 @@ class _OpportunityManageCardState extends State<OpportunityManageCard> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => EditOpportunityScreen(opportunity: widget.opportunity),
+                            builder: (context) => EditOpportunityScreen(
+                                opportunity: widget.opportunity),
                           ),
                         );
                       },
@@ -202,32 +208,40 @@ class _OpportunityManageCardState extends State<OpportunityManageCard> {
                       color: Colors.red,
                       onPressed: () async {
                         bool confirmDelete = await showDialog<bool>(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return ConfirmationDialog(
-                              action: 'apagar',
-                              message: 'Tem certeza de que deseja apagar esta oportunidade?',
-                              onConfirm: () async {
-                                final bool success = await Provider.of<OpportunityApiHandler>(context, listen: false)
-                                    .deleteOpportunity(widget.opportunity.opportunityId);
+                              context: context,
+                              builder: (BuildContext context) {
+                                return ConfirmationDialog(
+                                  action: 'apagar',
+                                  message:
+                                      'Tem certeza de que deseja apagar esta oportunidade?',
+                                  onConfirm: () async {
+                                    final bool success = await Provider.of<
+                                                OpportunityApiHandler>(context,
+                                            listen: false)
+                                        .deleteOpportunity(
+                                            widget.opportunity.opportunityId);
 
-                                return success; // Return the result of the delete operation
+                                    return success; // Return the result of the delete operation
+                                  },
+                                );
                               },
-                            );
-                          },
-                        ) ?? false;
+                            ) ??
+                            false;
 
                         if (confirmDelete) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text('Oportunidade apagada com sucesso!'),
+                              content:
+                                  Text('Oportunidade apagada com sucesso!'),
                               backgroundColor: Colors.green,
                             ),
                           );
 
                           Navigator.pushReplacement(
                             context,
-                            MaterialPageRoute(builder: (context) => OpportunityManagerScreen()),
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    OpportunityManagerScreen()),
                           );
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -240,12 +254,19 @@ class _OpportunityManageCardState extends State<OpportunityManageCard> {
                       },
                     ),
                     DynamicActionButton(
-                      text: "Impulsionar", 
-                      icon: Icons.upcoming, 
+                      text: "Impulsionar",
+                      icon: Icons.upcoming,
                       color: Colors.blue,
-                      onPressed: () {
-                        //levar para tela com pacotes de impulso
-                      },)
+                      onPressed: () async {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ImpulseChooseScreen(
+                                opportunity: widget.opportunity),
+                          ),
+                        );
+                      },
+                    )
                   ],
                 ),
               ],
@@ -283,7 +304,6 @@ class _OpportunityManageCardState extends State<OpportunityManageCard> {
       _showErrorSnackbar();
     }
   }
-
 
   void _showErrorSnackbar() {
     ScaffoldMessenger.of(context).showSnackBar(

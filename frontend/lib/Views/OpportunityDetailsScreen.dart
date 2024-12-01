@@ -384,7 +384,8 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
         fixedPrice:
             (widget.opportunity.price * 0.1) + widget.opportunity.price);
 
-    await saveReservation(reservation);
+await PaymentService().saveReservation(reservation);
+    await PaymentService().saveReservation(reservation);
     createCheckoutSessionReservation(reservation);
   }
 

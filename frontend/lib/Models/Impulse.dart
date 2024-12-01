@@ -16,6 +16,10 @@ class Impulse {
       value: json["value"],
       expireDate: DateTime.parse(json["expireDate"]));
 
-  Map<String, dynamic> toJson() =>
-      {"userId": userId, "opportunityId": opportunityId, "value": value};
+  Map<String, dynamic> toJson() => {
+        "userId": userId,
+        "opportunityId": opportunityId,
+        "value": value,
+        "expireDate": expireDate.toIso8601String()
+      };
 }

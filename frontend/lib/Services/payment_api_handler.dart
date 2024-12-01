@@ -12,7 +12,8 @@ class PaymentApiHandler {
 
   PaymentApiHandler(this.client);
 
-  Future<String?> createReservationCheckoutSession(Reservation reservation) async {
+  Future<String?> createReservationCheckoutSession(
+      Reservation reservation) async {
     final uri = Uri.parse('$baseUri/Checkout-Reservation');
 
     try {
@@ -37,6 +38,8 @@ class PaymentApiHandler {
   Future<String?> createImpulseCheckoutSession(Impulse impulse) async {
     final uri = Uri.parse('$baseUri/Checkout-Impulse');
 
+    print(impulse.toJson());
+
     try {
       final response = await client.post(uri,
           headers: {
@@ -44,6 +47,8 @@ class PaymentApiHandler {
           },
           body: jsonEncode(impulse.toJson()));
 
+      print(response);
+      print(response.body);
       if (response.statusCode >= 200 && response.statusCode <= 299) {
         final sessionId = jsonDecode(response.body)['sessionId'];
         return sessionId;
