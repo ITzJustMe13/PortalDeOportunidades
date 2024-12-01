@@ -17,7 +17,7 @@ namespace BackEnd.Controllers
     {
         private readonly IReviewService _reviewService;
 
-        public ReviewController(IReviewService reviewService) 
+        public ReviewController(IReviewService reviewService, IConfiguration configuration) : base(configuration) 
         {
             _reviewService = reviewService ?? throw new ArgumentNullException(nameof(reviewService));
         }

@@ -1,10 +1,11 @@
 ﻿using BackEnd.Enums;
+using BackEnd.Interfaces;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BackEnd.Models.BackEndModels
 {
-    public class OpportunityModel
+    public class OpportunityModel: IExpirable
     {
 
         [Key]

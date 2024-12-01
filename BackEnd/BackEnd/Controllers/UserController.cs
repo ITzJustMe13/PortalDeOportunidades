@@ -17,7 +17,7 @@ namespace BackEnd.Controllers
     {
         private readonly IUserService _userService;
         private readonly IFavoritesService _favoritesService;
-        public UserController(IUserService userService, IFavoritesService favoritesService)
+        public UserController(IUserService userService, IFavoritesService favoritesService, IConfiguration configuration) : base(configuration)
         {
             _userService = userService ?? throw new ArgumentNullException(nameof(userService));
             _favoritesService = favoritesService ?? throw new ArgumentNullException(nameof(favoritesService));

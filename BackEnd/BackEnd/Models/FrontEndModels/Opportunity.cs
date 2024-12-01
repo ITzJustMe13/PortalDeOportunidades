@@ -1,4 +1,5 @@
 ﻿using BackEnd.Enums;
+using BackEnd.Interfaces;
 
 namespace BackEnd.Models.FrontEndModels
 {

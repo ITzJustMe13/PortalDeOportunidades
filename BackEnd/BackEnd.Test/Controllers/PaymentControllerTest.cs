@@ -15,6 +15,7 @@ using DotNetEnv;
 using Sprache;
 using BackEnd.Interfaces;
 using BackEnd.Services;
+using Microsoft.Extensions.Configuration;
 
 
 namespace BackEnd.Test
@@ -30,6 +31,13 @@ namespace BackEnd.Test
         [SetUp]
         public void Setup()
         {
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+
             // Use in-memory database for ApplicationDbContext
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseInMemoryDatabase(databaseName: "TestDatabase")
@@ -37,7 +45,7 @@ namespace BackEnd.Test
 
             _context = new ApplicationDbContext(options);
             _paymentService = new PaymentService(_context);
-            _controller = new PaymentController(_paymentService);
+            _controller = new PaymentController(_paymentService, configuration);
 
             string envTestPath = Path.GetFullPath("../../../../BackEnd/.env");
             Console.WriteLine("Resolved.env Path: " + envTestPath);
@@ -128,7 +136,7 @@ namespace BackEnd.Test
                 opportunityId = opportunity.OpportunityId,
                 userId = user.UserId,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
                 isActive = true,
                 fixedPrice = 100
@@ -150,7 +158,13 @@ namespace BackEnd.Test
         {
             // Arrange
             var paymentService = new PaymentService(null);
-            var controller = new PaymentController(paymentService);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+            var controller = new PaymentController(paymentService, configuration);
             StripeConfiguration.ApiKey = stripeKey;
 
             byte[] userImg = new byte[]
@@ -203,7 +217,7 @@ namespace BackEnd.Test
                 opportunityId = opportunity.OpportunityId,
                 userId = user.UserId,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
                 isActive = true,
                 fixedPrice = 100
@@ -264,7 +278,7 @@ namespace BackEnd.Test
                 opportunityId = opportunity.OpportunityId,
                 userId = user.UserId,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
                 isActive = true,
                 fixedPrice = -1
@@ -295,7 +309,7 @@ namespace BackEnd.Test
                 opportunityId = opportunity.OpportunityId,
                 userId = nonExistentUserId,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
                 isActive = true,
                 fixedPrice = 100
@@ -339,7 +353,7 @@ namespace BackEnd.Test
                 opportunityId = nonExistenOpportunityId,
                 userId = user.UserId,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
                 isActive = true,
                 fixedPrice = 100
@@ -412,7 +426,7 @@ namespace BackEnd.Test
                 opportunityId = opportunity.OpportunityId,
                 userId = user.UserId,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
                 isActive = true,
                 fixedPrice = 100
@@ -719,7 +733,13 @@ namespace BackEnd.Test
         {
             // Arrange
             var paymentService = new PaymentService(null);
-            var controller = new PaymentController(paymentService);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+            var controller = new PaymentController(paymentService, configuration);
             StripeConfiguration.ApiKey = stripeKey;
             byte[] userImg = new byte[]
             {
