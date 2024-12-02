@@ -197,7 +197,7 @@ namespace BackEnd.Services
                 var service = new SessionService();
                 Session session = await service.CreateAsync(options); // Create the session for checkout
 
-                response.Data = session.Id;
+                response.Data = session.Url;
                 response.Success = true;
                 response.Message = "Stripe session created successfully.";
                 response.Type = "Ok";
