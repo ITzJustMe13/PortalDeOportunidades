@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Stripe;
 using System.ComponentModel.DataAnnotations;
+using Google.Apis.Auth;
 
 namespace BackEnd.Services
 {
@@ -37,7 +38,7 @@ namespace BackEnd.Services
             this.dbContext = dbContext;
             this.emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
             this.authService = authService ?? throw new ArgumentNullException(nameof(authService));
-            this.ibanService = ibanService ?? throw new ArgumentNullException(nameof(ibanService)) ;
+            this.ibanService = ibanService ?? throw new ArgumentNullException(nameof(ibanService));
         }
 
         /// <summary>
@@ -101,7 +102,7 @@ namespace BackEnd.Services
                 response.Type = "BadRequest";
                 return response;
             }
-            
+
             if (!await IsEmailAvailable(user.email))
             {
                 response.Success = false;
@@ -148,7 +149,7 @@ namespace BackEnd.Services
             try
             {
                 var u = UserMapper.MapToModel(user);
-                
+
                 if (u == null)
                 {
                     response.Success = false;
@@ -513,7 +514,7 @@ namespace BackEnd.Services
                 response.Message = emailAvailable
                 ? "Email is available."
                 : "Email is already in use.";
-                response.Type = "Ok"; 
+                response.Type = "Ok";
             }
             catch (Exception ex)
             {
@@ -702,8 +703,100 @@ namespace BackEnd.Services
             return response;
         }
 
-    }
+        public async Task<ServiceResponse<string>> GoogleSignInAsync(string idToken)
+        {
+            var response = new ServiceResponse<string>();
 
-    
+            try
+            {
+                var payload = await VerifyGoogleTokenAsync(idToken);
+
+                if (payload != null)
+                {
+                    // O token é válido, crie ou autentique o usuário
+                    var user = await AuthenticateUser(payload);
+
+                    // Gera o JWT
+                    var token = authService.GenerateToken(user);
+                    response.Data = token;
+                    response.Success = true;
+                    response.Message = "Usuário autenticado com sucesso.";
+                    response.Type = "Ok";
+                }
+                else
+                {
+                    response.Success = false;
+                    response.Message = "Token inválido ou expirado.";
+                    response.Type = "Unauthorized";
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = $"Erro ao autenticar com Google: {ex.Message}";
+                response.Type = "InternalServerError";
+            }
+
+            return response;
+        }
+
+        // Função para verificar a validade do token Google
+        private async Task<GoogleJsonWebSignature.Payload?> VerifyGoogleTokenAsync(string idToken)
+        {
+            try
+            {
+                var payload = await GoogleJsonWebSignature.ValidateAsync(idToken);
+                return payload;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro ao validar token: {ex.Message}");
+                return null;
+            }
+        }
+
+        // Função para autenticar ou criar usuário
+        private async Task<UserModel> AuthenticateUser(GoogleJsonWebSignature.Payload payload)
+        {
+            // Tente encontrar um usuário com base no Google ID (ExternalId)
+            var user = await dbContext.Users
+                .FirstOrDefaultAsync(u => u.ExternalId == int.Parse(payload.Subject));
+
+            if (user == null)
+            {
+                // Se o usuário não existir, crie um novo usuário com os dados do Google
+                user = new UserModel
+                {
+                    ExternalId = int.Parse(payload.Subject),  // Associa o Google ID
+                    FirstName = payload.GivenName,  // Nome do Google
+                    LastName = payload.FamilyName,  // Sobrenome do Google
+                    Email = payload.Email,          // Email do Google
+                    RegistrationDate = DateTime.UtcNow,
+                    BirthDate = DateTime.UtcNow,    // Aqui você pode definir uma data padrão ou coletar do Google, se disponível
+                    Gender = Gender.NAO_ESPECIFICADO,        // Definir o gênero de acordo com os dados do Google, se disponível
+                    isActive = true,                // O usuário pode estar ativo por padrão
+                    Image = await DownloadProfileImage(payload.Picture),  // Método para baixar imagem do perfil, se necessário
+                };
+
+                // Salve o novo usuário no banco de dados
+                await dbContext.Users.AddAsync(user);
+                await dbContext.SaveChangesAsync();
+            }
+
+            return user;
+        }
+
+        // Método auxiliar para baixar a imagem do perfil (se desejado)
+        private async Task<byte[]> DownloadProfileImage(string imageUrl)
+        {
+            using (var client = new HttpClient())
+            {
+                var imageBytes = await client.GetByteArrayAsync(imageUrl);
+                return imageBytes;
+            }
+        }
+
+
+    }
 }
 

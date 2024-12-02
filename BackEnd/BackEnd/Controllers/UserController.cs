@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using BackEnd.Interfaces;
 using BackEnd.ServiceResponses;
+using BackEnd.Services;
 
 namespace BackEnd.Controllers
 {
@@ -58,7 +59,6 @@ namespace BackEnd.Controllers
             return HandleCreatedAtAction(serviceResponse, nameof(GetEntityById), new { id = serviceResponse.Data.userId });
         }
 
-
         /// <summary>
         /// Endpoint that deletes the User by his id
         /// </summary>
@@ -76,8 +76,6 @@ namespace BackEnd.Controllers
                 return HandleResponse(serviceResponse);
             }
         }
-
-
 
         /// <summary>
         /// Endpoint that edits the user based on an updated dto that it receives by his id
@@ -147,6 +145,23 @@ namespace BackEnd.Controllers
         public async Task<IActionResult> GetFavorites(int userId)
         {
             var serviceResponse = await _favoritesService.GetFavoritesAsync(userId);
+
+            return HandleResponse(serviceResponse);
+        }
+
+        /// <summary>
+        /// Endpoint that deletes a Favorite by the user id and the opportunity id
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="opportunityId"></param>
+        /// <returns>Returns BadRequest() if userService responds "BadRequest", 
+        /// NotFound() if userService responds "NotFound", or NoContent() if
+        /// the Favorite is deleted sucessefully</returns>
+        [Authorize]
+        [HttpDelete("favorite/{userId}/{opportunityId}/delete")]
+        public async Task<IActionResult> DeleteFavoriteById(int userId, int opportunityId)
+        {
+            var serviceResponse = await _favoritesService.DeleteFavoriteByIdAsync(userId, opportunityId);
 
             return HandleResponse(serviceResponse);
         }
@@ -243,12 +258,17 @@ namespace BackEnd.Controllers
         /// <param name="googleToken"></param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        [HttpPost("auth/google")]
-        public async Task<IActionResult> GoogleLogin([FromBody] string googleToken)
+        [HttpPost("google-sign-in")]
+        public async Task<IActionResult> GoogleSignIn([FromBody] GoogleSignInRequest request)
         {
-            //Irá ser implementado quando tivermos front-end
+            var response = await _userService.GoogleSignInAsync(request.IdToken);
 
-            throw new NotImplementedException();
+            if (response.Success)
+            {
+                return Ok(response);
+            }
+
+            return Unauthorized(response);
         }
 
     }

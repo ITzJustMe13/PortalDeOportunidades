@@ -91,8 +91,8 @@ namespace BackEnd.Services
                 },
             },
                     Mode = "payment",
-                    SuccessUrl = "https://localhost:7235/success", // UPDATE WITH FRONTEND
-                    CancelUrl = "https://localhost:7235/cancel", // UPDATE WITH FRONTEND
+                    SuccessUrl = $"http://localhost:50394/#/payment/success?paymentType=reservation",
+                    CancelUrl = $"http://localhost:50394/#/payment/cancel?paymentType=reservation",
                     CustomerEmail = user.Email, // For sending the receipt to the user
                 };
 
@@ -100,7 +100,7 @@ namespace BackEnd.Services
                 Session session = await service.CreateAsync(options);
 
                 response.Success = true;
-                response.Data = "sessiondId=" + session.Id; // Returning the session ID
+                response.Data = session.Url;
                 response.Message = "Checkout session created successfully.";
                 response.Type = "Ok";
             }
@@ -129,6 +129,7 @@ namespace BackEnd.Services
         public async Task<ServiceResponse<string>> CreateImpulseCheckoutSessionAsync(Impulse impulse)
         {
             var response = new ServiceResponse<string>();
+
 
             try
             {
@@ -188,8 +189,8 @@ namespace BackEnd.Services
                 },
             },
                     Mode = "payment",
-                    SuccessUrl = "https://localhost:7235/success", // UPDATE WITH FRONTEND
-                    CancelUrl = "https://localhost:7235/cancel",  // UPDATE WITH FRONTEND
+                    SuccessUrl = $"http://localhost:50394/#/payment/success?paymentType=impulse",
+                    CancelUrl = $"http://localhost:50394/#/payment/cancel?paymentType=impulse",
                     CustomerEmail = user.Email, // For sending the receipt to the user
                 };
 
@@ -203,6 +204,7 @@ namespace BackEnd.Services
             }
             catch (StripeException ex)
             {
+                Console.WriteLine("Stripe"+ex.Message);
                 response.Success = false;
                 response.Message = $"Stripe error: {ex.Message}";
                 response.Type = "BadRequest";

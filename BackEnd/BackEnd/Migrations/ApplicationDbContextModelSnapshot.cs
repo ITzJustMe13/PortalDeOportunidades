@@ -145,14 +145,14 @@ namespace BackEnd.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("reservationID"));
 
-                    b.Property<DateTime>("checkInDate")
+                    b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<float>("fixedPrice")
                         .HasColumnType("real");
-
-                    b.Property<bool>("isActive")
-                        .HasColumnType("bit");
 
                     b.Property<int>("numOfPeople")
                         .HasColumnType("int");

@@ -409,3 +409,73 @@ FodyWeavers.xsd
 /BackEnd/BackEnd/.env
 /.gitignore
 /BackEnd/BackEnd/env
+
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
+migrate_working_dir/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+/frontend/build
+/frontend/.flutter-plugins
+/frontend/.dart_tool/package_config_subset
+/frontend/.flutter-plugins
+/frontend/.flutter-plugins-dependencies
+/frontend/.dart_tool/package_config_subset
+/frontend/.dart_tool/package_config.json
+
+
+frontend/.flutter-plugins-dependencies
+frontend/windows/flutter/generated_plugin_registrant.h
+frontend/windows/flutter/generated_plugins.cmake
+frontend/macos/Flutter/GeneratedPluginRegistrant.swift
+frontend/windows/flutter/generated_plugins.cmake
+frontend/windows/flutter/generated_plugin_registrant.h
+frontend/windows/flutter/generated_plugin_registrant.cc
+frontend/linux/flutter/generated_plugins.cmake
+frontend/linux/flutter/generated_plugin_registrant.h
+frontend/linux/flutter/generated_plugin_registrant.cc
+frontend/.flutter-plugins-dependencies
+frontend/.flutter-plugins
+frontend/.dart_tool/package_config_subset
+frontend/.dart_tool/package_config.json
+/frontend/.dart_tool/
+

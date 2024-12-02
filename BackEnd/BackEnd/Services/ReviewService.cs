@@ -5,6 +5,7 @@ using BackEnd.Models.FrontEndModels;
 using BackEnd.Models.Mappers;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+using BackEnd.Models.BackEndModels;
 
 namespace BackEnd.Services
 {
@@ -281,9 +282,9 @@ namespace BackEnd.Services
             await dbContext.SaveChangesAsync();
 
             try
-            { 
+            {
                 var reviewDto = ReviewMapper.MapToDto(reviewModel);
-                
+
                 response.Success = true;
                 response.Data = reviewDto;
                 response.Message = "Review updated successfully.";
@@ -299,8 +300,76 @@ namespace BackEnd.Services
             return response;
         }
 
+        /// <summary>
+        /// Function that returns a list of reviews by the user id
+        /// </summary>
+        /// <param name="id">User id</param>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true and updates the Review</returns>
+        public async Task<ServiceResponse<IEnumerable<Review>>> GetReviewsByUserAsync(int userId)
+        {
+            var response = new ServiceResponse<IEnumerable<Review>>();
 
+            if (dbContext == null)
+            {
+                response.Success = false;
+                response.Message = "DB context missing.";
+                response.Type = "NotFound";
+                return response;
+            }
 
+            if (userId <= 0)
+            {
+                response.Success = false;
+                response.Message = "Invalid user ID. It should be greater than 0.";
+                response.Type = "BadRequest";
+                return response;
+            }
 
+            var reservationModels = await dbContext.Reservations
+                    .Where(r => r.userID == userId)
+                    .ToListAsync();
+
+            if (reservationModels == null)
+            {
+                response.Success = false;
+                response.Message = $"Reviews with userid {userId} not found.";
+                response.Type = "NotFound";
+                return response;
+            }
+
+            var reviewsDtos = new List<Review>();
+
+            try
+            {
+                foreach (ReservationModel reservation in reservationModels)
+                {
+                    var reviewsModels = await dbContext.Reviews
+                        .Where(r => r.ReservationId == reservation.reservationID)
+                        .ToListAsync();
+
+                    if (reviewsModels != null)
+                    {
+                        var temp = reviewsModels.Select(ReviewMapper.MapToDto).ToList();
+
+                        reviewsDtos.AddRange(temp);
+                    }
+
+                }
+
+                response.Data = reviewsDtos;
+                response.Success = true;
+                response.Message = "Reviews retrieved successfully.";
+                response.Type = "Ok";
+            }
+            catch (ValidationException ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                response.Type = "BadRequest";
+            }
+
+            return response;
+        }
     }
 }

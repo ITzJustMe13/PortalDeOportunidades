@@ -48,6 +48,8 @@ namespace BackEnd.Controllers
         {
             var serviceResponse = await _paymentService.CreateImpulseCheckoutSessionAsync(impulse);
 
+            Console.Write(serviceResponse);
+
             return HandleResponse(serviceResponse);
         }
 

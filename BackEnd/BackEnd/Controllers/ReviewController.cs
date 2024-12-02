@@ -22,7 +22,11 @@ namespace BackEnd.Controllers
             _reviewService = reviewService ?? throw new ArgumentNullException(nameof(reviewService));
         }
 
-        //GET api/Review/1
+        /// <summary>
+        /// Endpoint that gets the specific Review by Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         [Authorize]
         public override async Task<IActionResult> GetEntityById(int id)
@@ -32,7 +36,11 @@ namespace BackEnd.Controllers
             return HandleResponse(serviceResponse);
         }
 
-        //POST api/Review
+        /// <summary>
+        /// Endpoint that creates a review
+        /// </summary>
+        /// <param name="review"></param>
+        /// <returns></returns>
         [HttpPost]
         [Authorize]
         public override async Task<IActionResult> CreateEntity(Review review)
@@ -47,7 +55,11 @@ namespace BackEnd.Controllers
             return HandleCreatedAtAction(serviceResponse, nameof(GetEntityById), new {id = serviceResponse.Data.reservationId});
         }
 
-        //DELETE api/Review/1
+        /// <summary>
+        /// Endpoint that deletes a review by its id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         [Authorize]
         public override async Task<IActionResult> DeleteEntity(int id)
@@ -57,7 +69,13 @@ namespace BackEnd.Controllers
             return HandleResponse(serviceResponse);
         }
 
-        //PUT api/Review/1/Edit?score=2.5&desc=teste123
+        /// <summary>
+        /// Endpoint that edits a review by it id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="score"></param>
+        /// <param name="desc"></param>
+        /// <returns></returns>
         [HttpPut("{id}/Edit")]
         [Authorize]
         public override async Task<IActionResult> UpdateEntity(int id, Review updatedReview)
@@ -67,5 +85,13 @@ namespace BackEnd.Controllers
             return HandleResponse(serviceResponse);
         }
 
+        [Authorize]
+        [HttpGet("getReviewsByUser/{userId}")]
+        public async Task<IActionResult> GetReviewsByUser(int userId)
+        {
+            var serviceResponse = await _reviewService.GetReviewsByUserAsync(userId);
+
+            return HandleResponse(serviceResponse);
+        }
     }
 }

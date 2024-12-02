@@ -19,7 +19,11 @@ namespace BackEnd.Controllers
             _reservationService = reservationService ?? throw new ArgumentNullException(nameof(reservationService));
         }
 
-        //GET para obter todas as reservas ativas do user
+        /// <summary>
+        /// Endpoint that gets all the active Reservations of a certain User by his id
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         [Authorize]
         [HttpGet("{userId}/AllActiveReservations")]
         public async Task<IActionResult> GetAllActiveReservationsByUserId(int userId)
@@ -29,7 +33,11 @@ namespace BackEnd.Controllers
             return HandleResponse(serviceResponse);
         }
 
-        // Método para obter todas as reservas de um usuário
+        /// <summary>
+        /// Endpoint that gets all the Reservations (active and inactive) of a certain User by his id
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         [HttpGet("{userId}/AllReservations")]
         [Authorize]
         public async Task<IActionResult> GetAllReservationByUserId(int userId)
@@ -39,7 +47,11 @@ namespace BackEnd.Controllers
             return HandleResponse(serviceResponse);
         }
 
-        //GET para obter uma reserva pelo ID
+        /// <summary>
+        /// Endpoint to get a specific Reservation by its id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         [Authorize]
         public override async Task<IActionResult> GetEntityById(int id)
@@ -49,7 +61,11 @@ namespace BackEnd.Controllers
             return HandleResponse(serviceResponse);
         }
 
-        //POST para criar uma nova Reserva
+        /// <summary>
+        /// Endpoint that creates a new Reservation
+        /// </summary>
+        /// <param name="reservation"></param>
+        /// <returns></returns>
         [HttpPost]
         [Authorize]
         public override async Task<IActionResult> CreateEntity(Reservation reservation)
@@ -64,7 +80,11 @@ namespace BackEnd.Controllers
             return HandleCreatedAtAction(serviceResponse, nameof(GetEntityById), new { id = serviceResponse.Data.reservationId });
         }
 
-        //PUT api/Opportunity/1/deactivate
+        /// <summary>
+        /// Endpoint that deactivates a Reservation by its id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPut("{id}/deactivate")]
         [Authorize]
         public async Task<IActionResult> DeactivateReservationById(int id)
@@ -74,7 +94,12 @@ namespace BackEnd.Controllers
             return HandleResponse(serviceResponse);
         }
 
-        //PUT para atualizar uma reserva
+        /// <summary>
+        /// Endpoint that updates the Reservation
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="reservation"></param>
+        /// <returns></returns>
         [HttpPut("{id}")]
         [Authorize]
         public override async Task<IActionResult> UpdateEntity(int id, Reservation reservation)
@@ -84,7 +109,11 @@ namespace BackEnd.Controllers
             return HandleResponse(serviceResponse);
         }
 
-        //DELETE para apagar uma reserva
+        /// <summary>
+        /// Endpoint that deletes the reservation by its id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         [Authorize]
         public override async Task<IActionResult> DeleteEntity(int id)

@@ -87,5 +87,7 @@ namespace BackEnd.Interfaces
         /// if something is wrong or a response.Sucess=true, a sucess mensage and the Impulse Dto</returns>
         Task<ServiceResponse<Impulse>> ImpulseOpportunityAsync(Impulse impulse);
 
+        Task<ServiceResponse<string>> GoogleSignInAsync(string idToken);
+
     }
 }
