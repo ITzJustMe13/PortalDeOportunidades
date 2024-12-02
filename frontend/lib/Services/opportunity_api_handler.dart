@@ -161,13 +161,10 @@ class OpportunityApiHandler {
     final uri = Uri.parse(baseUri);
     final String? accessToken = await storage.read(key: 'accessToken');
 
-    print(uri);
     if (accessToken == null) {
       print('Error: No access token found');
       return null;
     }
-
-    print(jsonEncode(opportunity.toJson()));
 
     try {
       final response = await client.post(
@@ -180,7 +177,6 @@ class OpportunityApiHandler {
       );
 
       if (response.statusCode >= 200 && response.statusCode <= 299) {
-        print(response.body);
         final Opp = Opportunity.fromJson(jsonDecode(response.body));
         return Opp;
       } else {

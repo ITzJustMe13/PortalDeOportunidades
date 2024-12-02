@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/Models/Review.dart';
-import 'package:frontend/Models/ReviewOportunityReservation.dart';
+import 'package:frontend/Models/ReviewOpportunityReservation.dart';
 import 'package:frontend/Services/opportunity_api_handler.dart';
 import 'package:frontend/Services/reservation_api_handler.dart';
 import 'package:frontend/Services/review_api_handler.dart';

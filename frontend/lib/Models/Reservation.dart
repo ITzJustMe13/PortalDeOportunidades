@@ -23,7 +23,7 @@ class Reservation {
       opportunityId: json["opportunityId"],
       userId: json["userId"],
       reservationDate: DateTime.parse(json["reservationDate"]),
-      checkInDate: DateTime.parse(json["checkInDate"]),
+      checkInDate: DateTime.parse(json["date"]),
       numOfPeople: json["numOfPeople"],
       isActive: json["isActive"],
       fixedPrice: json["fixedPrice"]);
@@ -32,5 +32,10 @@ class Reservation {
         "opportunityId": opportunityId,
         "userId": userId,
         "numOfPeople": numOfPeople,
+        "isActive": isActive,
+        "fixedPrice": fixedPrice,
+        "reservationDate": reservationDate.toIso8601String(),
+        "date": checkInDate.toIso8601String(),
+        "reservationId": reservationId
       };
 }

@@ -19,7 +19,6 @@ class CreateOpportunityState with ChangeNotifier {
     return await _userApiHandler.getStoredUserID();
   }
 
-/*TODO: testar apos merge*/
   // Function to register
   Future<Opportunity?> createOpportunity(
       Opportunity opportunity, List<OpportunityImg> opportunityImgs) async {
@@ -40,11 +39,11 @@ class CreateOpportunityState with ChangeNotifier {
       for (OpportunityImg image in opportunityImgs) {
         createdOpportunity.opportunityImgs.add(OpportunityImg(
             imgId: 0,
-            opportunityId: createdOpportunity.opportunityId ?? -1,
+            opportunityId: createdOpportunity.opportunityId,
             imageBase64: image.imageBase64));
       }
       bool isEditValid = await _opportunityApiHandler.editOpportunity(
-          createdOpportunity.opportunityId ?? -1, createdOpportunity);
+          createdOpportunity.opportunityId, createdOpportunity);
 
       if (!isEditValid) {
         _errorMessage = 'Ocorreu um erro ao criar Oportunidade';

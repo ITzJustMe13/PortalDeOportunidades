@@ -57,9 +57,11 @@ class ReservationApiHandler {
       });
 
       if (response.statusCode >= 200 && response.statusCode <= 299) {
+        print(response.body);
         final List<dynamic> jsonList = jsonDecode(response.body);
         final reservations =
             jsonList.map((json) => Reservation.fromJson(json)).toList();
+            print(reservations.length);
         return reservations;
       } else {
         print('Error: ${response.statusCode} - ${response.reasonPhrase}');

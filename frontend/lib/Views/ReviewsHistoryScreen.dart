@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/Components/CustomAppBar.dart';
 import 'package:frontend/Components/CustomDrawer.dart';
-import 'package:frontend/Enums/Location.dart';
-import 'package:frontend/Enums/OppCategory.dart';
 import 'package:frontend/Models/Opportunity.dart';
 import 'package:frontend/Models/Reservation.dart';
 import 'package:frontend/Models/Review.dart';
-import 'package:frontend/Models/ReviewOportunityReservation.dart';
+import 'package:frontend/Models/ReviewOpportunityReservation.dart';
 import 'package:frontend/State/ReviewHistoryState.dart';
 import 'package:provider/provider.dart';
 

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BackEnd.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialDBSchema : Migration
+    public partial class fix : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -146,9 +146,9 @@ namespace BackEnd.Migrations
                     opportunityID = table.Column<int>(type: "int", nullable: false),
                     userID = table.Column<int>(type: "int", nullable: false),
                     reservationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    checkInDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     numOfPeople = table.Column<int>(type: "int", nullable: false),
-                    isActive = table.Column<bool>(type: "bit", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
                     fixedPrice = table.Column<float>(type: "real", nullable: false)
                 },
                 constraints: table =>
