@@ -47,11 +47,8 @@ class PaymentApiHandler {
           },
           body: jsonEncode(impulse.toJson()));
 
-      print(response);
-      print(response.body);
       if (response.statusCode >= 200 && response.statusCode <= 299) {
-        final sessionId = jsonDecode(response.body)['sessionId'];
-        return sessionId;
+        return response.body;
       } else {
         print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return null;

@@ -36,6 +36,6 @@ class Reservation {
         "fixedPrice": fixedPrice,
         "reservationDate": reservationDate.toIso8601String(),
         "date": checkInDate.toIso8601String(),
-        "reservationId": reservationId
+        "reservationId": reservationId??0
       };
 }

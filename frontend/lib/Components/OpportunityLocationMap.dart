@@ -29,7 +29,8 @@ class _OpportunityLocationMapState extends State<OpportunityLocationMap> {
 
     try {
       // Perform geocoding to get coordinates based on the address
-      Coordinates coordinates = await geoCode.forwardGeocoding(address: widget.address);
+      Coordinates coordinates =
+          await geoCode.forwardGeocoding(address: widget.address);
 
       setState(() {
         latitude = coordinates.latitude;
@@ -52,7 +53,13 @@ class _OpportunityLocationMapState extends State<OpportunityLocationMap> {
     return SizedBox(
       height: 250,
       child: latitude == null || longitude == null
-          ? Center(child: CircularProgressIndicator()) // Show loading until coordinates are fetched
+          ? error != ''
+              ? Center(
+                  child: Text("Erro ao Carregar mapa"),
+                )
+              : Center(
+                  child:
+                      CircularProgressIndicator()) // Show loading until coordinates are fetched
           : FlutterMap(
               options: MapOptions(
                 initialCenter: LatLng(initialLatitude, initialLongitude),
@@ -60,7 +67,8 @@ class _OpportunityLocationMapState extends State<OpportunityLocationMap> {
               ),
               children: [
                 TileLayer(
-                  urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                  urlTemplate:
+                      "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
                   subdomains: ['a', 'b', 'c'],
                 ),
                 MarkerLayer(
