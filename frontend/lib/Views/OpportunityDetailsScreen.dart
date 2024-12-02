@@ -22,6 +22,7 @@ import 'package:frontend/Components/DynamicActionButton.dart';
 import 'package:frontend/Services/user_services.dart';
 import 'package:frontend/Services/review_api_handler.dart';
 import 'package:frontend/Components/ReviewCard.dart';
+import 'package:frontend/Components/StarRating.dart';
 
 class OpportunityDetailsScreen extends StatefulWidget {
   final bool isReservable;
@@ -95,6 +96,8 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
         children: [
           OpportunityImages(opportunity: opportunity),
           SizedBox(height: 20),
+          StarRating(rating: opportunity.reviewScore),
+          SizedBox(height: 10),
           OpportunityDetails(
             name: opportunity.name,
             description: opportunity.description,
@@ -174,6 +177,7 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   OpportunityImages(opportunity: opportunity),
+                  StarRating(rating: opportunity.reviewScore),
                   OpportunityDetails(
                     name: opportunity.name,
                     description: opportunity.description,
@@ -269,6 +273,7 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
                 children: [
                   SizedBox(height: 20),
                   OpportunityImages(opportunity: opportunity),
+                  StarRating(rating: opportunity.reviewScore),
                   OpportunityDetails(
                     name: opportunity.name,
                     description: opportunity.description,
@@ -465,5 +470,22 @@ await PaymentService().saveReservation(reservation);
       // Log or handle the error
       print('Failed to load reviews: $error');
     }
+  }
+
+  List<Widget> buildStarRating(double rating) {
+    List<Widget> stars = [];
+    // Full stars
+    for (int i = 0; i < rating.floor(); i++) {
+      stars.add(const Icon(Icons.star, color: Colors.amber, size: 20));
+    }
+    // Half star if needed
+    if (rating - rating.floor() >= 0.5) {
+      stars.add(const Icon(Icons.star_half, color: Colors.amber, size: 20));
+    }
+    // Empty stars
+    while (stars.length < 5) {
+      stars.add(const Icon(Icons.star_border, color: Colors.amber, size: 20));
+    }
+    return stars;
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/Components/StarRating.dart';
 
 class ReviewCard extends StatelessWidget {
   final double rating;
@@ -25,12 +26,10 @@ class ReviewCard extends StatelessWidget {
           children: [
             // Row for username and rating stars
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                // Display the star rating
-                Row(
-                  children: buildStarRating(rating),
-                ),
+                // Use the StarRating widget here
+                StarRating(rating: rating),
               ],
             ),
             const SizedBox(height: 10),
@@ -45,21 +44,4 @@ class ReviewCard extends StatelessWidget {
     );
   }
 
-  // Function to build the star rating based on the double value
-  List<Widget> buildStarRating(double rating) {
-    List<Widget> stars = [];
-    // Full stars
-    for (int i = 0; i < rating.floor(); i++) {
-      stars.add(const Icon(Icons.star, color: Colors.amber, size: 20));
-    }
-    // Half star if needed
-    if (rating - rating.floor() >= 0.5) {
-      stars.add(const Icon(Icons.star_half, color: Colors.amber, size: 20));
-    }
-    // Empty stars
-    while (stars.length < 5) {
-      stars.add(const Icon(Icons.star_border, color: Colors.amber, size: 20));
-    }
-    return stars;
-  }
 }
