@@ -40,12 +40,10 @@ class ChooseImpulseState with ChangeNotifier {
 
     await _paymentService.saveImpulse(impulse);
 
-    String? checkoutId =
+    String? checkoutUrl =
         await _paymentApiHandler.createImpulseCheckoutSession(impulse);
 
-    if (checkoutId != null) {
-      final checkoutUrl = 'https://checkout.stripe.com/pay/$checkoutId';
-
+    if (checkoutUrl != null) {
       // url_launcher to open the checkout session in the user's browser.
       if (await canLaunch(checkoutUrl)) {
         await launch(checkoutUrl);
