@@ -49,7 +49,7 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
     isOwner = false;
     _ownerFuture = Provider.of<UserApiHandler>(context, listen: false)
         .getUserByID(widget.opportunity.userId);
-    if(isOwner == false){
+    if (isOwner == false) {
       _checkUserOwnership();
     }
     fetchReviews();
@@ -187,7 +187,9 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
                       addToFavorites(context, widget.opportunity.opportunityId);
                     },
                   ),
-                  if (widget.isReservable && !isOwner && widget.opportunity.isActive)
+                  if (widget.isReservable &&
+                      !isOwner &&
+                      widget.opportunity.isActive)
                     ReservationButton(
                       availableVacancies: opportunity.vacancies,
                       onPressed: (numberOfPersons) {
@@ -248,7 +250,6 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
     );
   }
 
-
   // Desktop layout (Both vertical and horizontal scroll with Scrollbar)
   Widget _buildDesktopLayout(Opportunity opportunity, String time) {
     return Scrollbar(
@@ -283,7 +284,9 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
                     },
                   ),
                   SizedBox(height: 20),
-                  if (widget.isReservable && !isOwner && widget.opportunity.isActive)
+                  if (widget.isReservable &&
+                      !isOwner &&
+                      widget.opportunity.isActive)
                     ReservationButton(
                       availableVacancies: widget.opportunity.vacancies,
                       onPressed: (numberOfPersons) {
@@ -344,13 +347,11 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
     );
   }
 
-
-  
-
   Future<void> createCheckoutSessionReservation(Reservation reservation) async {
     if (reservation != null) {
-      final sessionUrl = await Provider.of<PaymentApiHandler>(context, listen: false)
-          .createReservationCheckoutSession(reservation);
+      final sessionUrl =
+          await Provider.of<PaymentApiHandler>(context, listen: false)
+              .createReservationCheckoutSession(reservation);
 
       if (sessionUrl != null) {
         // Use url_launcher to open the Stripe Checkout session
@@ -384,7 +385,7 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
         fixedPrice:
             (widget.opportunity.price * 0.1) + widget.opportunity.price);
 
-await PaymentService().saveReservation(reservation);
+    await PaymentService().saveReservation(reservation);
     await PaymentService().saveReservation(reservation);
     createCheckoutSessionReservation(reservation);
   }
@@ -417,8 +418,9 @@ await PaymentService().saveReservation(reservation);
 
     if (user != null) {
       final favorite = Favorite(userId: user.userId, opportunityId: oppId);
-      final Favorite? addedFavorite = await Provider.of<UserApiHandler>(context, listen: false)
-          .addFavorite(favorite);
+      final Favorite? addedFavorite =
+          await Provider.of<UserApiHandler>(context, listen: false)
+              .addFavorite(favorite);
 
       if (!context.mounted) return;
 
@@ -447,7 +449,8 @@ await PaymentService().saveReservation(reservation);
     });
 
     try {
-      final List<Review>? fetchedReviews = await Provider.of<OpportunityApiHandler>(
+      final List<Review>? fetchedReviews =
+          await Provider.of<OpportunityApiHandler>(
         context,
         listen: false,
       ).getReviewsByOppId(widget.opportunity.opportunityId);
