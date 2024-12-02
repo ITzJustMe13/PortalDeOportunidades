@@ -353,10 +353,11 @@ class UserApiHandler {
     }
 
     try {
-      final response = await client?.get(uri, headers: {
+      final response = await client?.post(uri, headers: {
         'Authorization': 'Bearer $accessToken',
         'Content-Type': 'application/json',
-      });
+      },
+      body: jsonEncode(impulse.toJson()));
 
       if (response!.statusCode >= 200 && response.statusCode <= 299) {
         final createdImpulse = Impulse.fromJson(jsonDecode(response.body));

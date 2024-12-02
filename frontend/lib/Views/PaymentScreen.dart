@@ -57,7 +57,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
   @override
   Widget build(BuildContext context) {
     final paymentState = Provider.of<PaymentState>(context);
-
     return Scaffold(
       appBar: CustomAppBar(),
       endDrawer: CustomDrawer(),
@@ -102,9 +101,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
           const SizedBox(height: 8),
           Text(
             widget.isSuccess
-                ? "O pagamento foi efetuado com sucesso, Obrigado!"
-                : "O pagamento falhou. Por favor, tente novamente.",
-            style: TextStyle(fontSize: 16),
+              ? (widget.paymentType.toLowerCase() == "reservation"
+                  ? "Pagamento de Reserva Bem-Sucedido"
+                  : "Pagamento de Impulso Bem-Sucedido")
+              : "O pagamento falhou. Por favor, tente novamente.",
+            style: const TextStyle(fontSize: 16),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 24),
@@ -151,8 +152,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   children: [
                     Text(
                       widget.isSuccess
-                          ? "${widget.paymentType} Pagamento Bem-Sucedido!"
-                          : "${widget.paymentType} Pagamento Falhou!",
+                        ? (widget.paymentType.toLowerCase() == "reservation"
+                            ? "Pagamento de Reserva Bem-Sucedido"
+                            : "Pagamento de Impulso Bem-Sucedido")
+                        : "O pagamento falhou. Por favor, tente novamente.",
                       style: TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
@@ -162,8 +165,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     const SizedBox(height: 16),
                     Text(
                       widget.isSuccess
-                          ? "O pagamento foi efetuado com sucesso, Obrigado!"
-                          : "O pagamento falhou. Por favor, tente novamente.",
+                        ? (widget.paymentType.toLowerCase() == "reservation"
+                            ? "Pagamento de Reserva Bem-Sucedido"
+                            : "Pagamento de Impulso Bem-Sucedido")
+                        : "O pagamento falhou. Por favor, tente novamente.",
                       style: TextStyle(fontSize: 18),
                     ),
                     const SizedBox(height: 24),
@@ -196,6 +201,4 @@ class _PaymentScreenState extends State<PaymentScreen> {
     );
   }
 
-  // Extract the paymentType from the query params
-  // Handle Payment Success or Cancel based on URL
 }
