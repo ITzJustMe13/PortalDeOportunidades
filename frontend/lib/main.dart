@@ -5,6 +5,7 @@ import 'package:frontend/State/CreateOpportunityState.dart';
 import 'package:frontend/State/DrawerState.dart';
 import 'package:frontend/State/HistoryReservationState.dart';
 import 'package:frontend/State/LoginState.dart';
+import 'package:frontend/State/PaymentState.dart';
 import 'package:frontend/State/RegisterState.dart';
 import 'package:frontend/State/ReviewHistoryState.dart';
 import 'package:frontend/State/SearchState.dart';
@@ -57,6 +58,8 @@ void main() {
             create: (_) => ReviewHistoryState()),
         ChangeNotifierProvider<ChooseImpulseState>(
             create: (_) => ChooseImpulseState()),
+            ChangeNotifierProvider<PaymentState>(
+            create: (_) => PaymentState()),
         ChangeNotifierProxyProvider<LoginState, CustomDrawerState>(
           create: (context) => CustomDrawerState(
             loginState: context.read<LoginState>(),

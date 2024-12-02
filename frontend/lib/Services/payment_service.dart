@@ -61,4 +61,22 @@ class PaymentService {
       return null;
     }
   }
+
+  Future<void> deleteImpulse() async {
+    try {
+      await storage.delete(key: 'impulseDto');
+      print("Impulse deleted from local storage");
+    } catch (e) {
+      print("Error deleting impulse: $e");
+    }
+  }
+
+  Future<void> deleteReservation() async {
+    try {
+      await storage.delete(key: 'reservationDto');
+      print("Reservation deleted from local storage");
+    } catch (e) {
+      print("Error deleting reservation: $e");
+    }
+  }
 }
