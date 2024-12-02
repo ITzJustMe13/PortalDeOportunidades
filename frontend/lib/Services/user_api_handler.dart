@@ -9,10 +9,11 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class UserApiHandler {
   final String baseUri = "https://localhost:7235/api/User";
-  final http.Client client;
+  final http.Client? client;
   final storage = FlutterSecureStorage();
 
   UserApiHandler(this.client);
+  
 
   void logout() {
     storage.delete(key: 'accessToken');
@@ -24,7 +25,7 @@ class UserApiHandler {
     final uri = Uri.parse('$baseUri/login');
 
     try {
-      final response = await client.post(
+      final response = await client?.post(
         uri,
         headers: {
           'Content-Type': 'application/json',
@@ -35,7 +36,7 @@ class UserApiHandler {
         }),
       );
 
-      if (response.statusCode >= 200 && response.statusCode <= 299) {
+      if (response!.statusCode >= 200 && response.statusCode <= 299) {
         final data = jsonDecode(response.body);
         await storage.write(key: 'accessToken', value: data['token']);
         final authenticatedUser = User.fromJson(data['user']);
@@ -92,11 +93,11 @@ class UserApiHandler {
     }
 
     try {
-      final response = await client.get(uri, headers: {
+      final response = await client?.get(uri, headers: {
         'Authorization': 'Bearer $accessToken',
       });
 
-      if (response.statusCode >= 200 && response.statusCode <= 299) {
+      if (response!.statusCode >= 200 && response.statusCode <= 299) {
         final user = User.fromJson(jsonDecode(response.body));
         return user;
       } else if (response.statusCode == 404) {
@@ -117,7 +118,7 @@ class UserApiHandler {
     final uri = Uri.parse(baseUri);
 
     try {
-      final response = await client.post(
+      final response = await client?.post(
         uri,
         headers: {
           'Content-Type': 'application/json',
@@ -125,7 +126,7 @@ class UserApiHandler {
         body: jsonEncode(user.toJson()),
       );
 
-      if (response.statusCode >= 200 && response.statusCode <= 299) {
+      if (response!.statusCode >= 200 && response.statusCode <= 299) {
         final createdUser = User.fromJson(jsonDecode(response.body));
         return createdUser;
       } else {
@@ -149,14 +150,14 @@ class UserApiHandler {
     }
 
     try {
-      final response = await client.delete(
+      final response = await client?.delete(
         uri,
         headers: {
           'Authorization': 'Bearer $accessToken',
         },
       );
 
-      if (response.statusCode >= 200 && response.statusCode <= 299) {
+      if (response!.statusCode >= 200 && response.statusCode <= 299) {
         print('User deleted successfully.');
         return true;
       } else if (response.statusCode == 404) {
@@ -185,7 +186,7 @@ class UserApiHandler {
     try {
       final userJson = updatedUser.toJson();
 
-      final response = await client.put(
+      final response = await client?.put(
         uri,
         headers: {
           'Authorization': 'Bearer $accessToken',
@@ -194,7 +195,7 @@ class UserApiHandler {
         body: jsonEncode(userJson),
       );
 
-      if (response.statusCode >= 200 && response.statusCode <= 299) {
+      if (response!.statusCode >= 200 && response.statusCode <= 299) {
         print('User updated successfully.');
         return true;
       } else if (response.statusCode == 404) {
@@ -221,7 +222,7 @@ class UserApiHandler {
     }
 
     try {
-      final response = await client.post(
+      final response = await client?.post(
         uri,
         headers: {
           'Content-Type': 'application/json',
@@ -230,7 +231,7 @@ class UserApiHandler {
         body: jsonEncode(favorite.toJson()),
       );
 
-      if (response.statusCode >= 200 && response.statusCode <= 299) {
+      if (response!.statusCode >= 200 && response.statusCode <= 299) {
         final createdFavorite = Favorite.fromJson(jsonDecode(response.body));
         return createdFavorite;
       } else {
@@ -254,11 +255,11 @@ class UserApiHandler {
     }
 
     try {
-      final response = await client.get(uri, headers: {
+      final response = await client?.get(uri, headers: {
         'Authorization': 'Bearer $accessToken',
       });
 
-      if (response.statusCode >= 200 && response.statusCode <= 299) {
+      if (response!.statusCode >= 200 && response.statusCode <= 299) {
         final favorite = Favorite.fromJson(jsonDecode(response.body));
         return favorite;
       } else if (response.statusCode == 404) {
@@ -285,12 +286,12 @@ class UserApiHandler {
     }
 
     try {
-      final response = await client.get(uri, headers: {
+      final response = await client?.get(uri, headers: {
         'Authorization': 'Bearer $accessToken',
         'Content-Type': 'application/json',
       });
 
-      if (response.statusCode >= 200 && response.statusCode <= 299) {
+      if (response!.statusCode >= 200 && response.statusCode <= 299) {
         final List<dynamic> jsonList = jsonDecode(response.body);
         final favorites =
             jsonList.map((json) => Favorite.fromJson(json)).toList();
@@ -324,11 +325,11 @@ class UserApiHandler {
     }
 
     try {
-      final response = await client.delete(uri, headers: {
+      final response = await client?.delete(uri, headers: {
         'Authorization': 'Bearer $accessToken',
       });
 
-      if (response.statusCode >= 200 && response.statusCode <= 299) {
+      if (response!.statusCode >= 200 && response.statusCode <= 299) {
         print('Favorite deleted successfully.');
         return true;
       } else {
@@ -352,12 +353,12 @@ class UserApiHandler {
     }
 
     try {
-      final response = await client.get(uri, headers: {
+      final response = await client?.get(uri, headers: {
         'Authorization': 'Bearer $accessToken',
         'Content-Type': 'application/json',
       });
 
-      if (response.statusCode >= 200 && response.statusCode <= 299) {
+      if (response!.statusCode >= 200 && response.statusCode <= 299) {
         final createdImpulse = Impulse.fromJson(jsonDecode(response.body));
         return createdImpulse;
       } else {
@@ -380,12 +381,12 @@ class UserApiHandler {
       return null;
     }
     try {
-      final response = await client.get(uri, headers: {
+      final response = await client?.get(uri, headers: {
         'Authorization': 'Bearer $accessToken',
         'Content-Type': 'application/json',
       });
 
-      if (response.statusCode >= 200 && response.statusCode <= 299) {
+      if (response!.statusCode >= 200 && response.statusCode <= 299) {
         final List<dynamic> jsonList = jsonDecode(response.body);
         final Opportunities =
             jsonList.map((json) => Opportunity.fromJson(json)).toList();
@@ -407,11 +408,11 @@ class UserApiHandler {
     final uri = Uri.parse('$baseUri/activate?token=$token');
 
     try {
-      final response = await client.get(uri, headers: {
+      final response = await client?.get(uri, headers: {
         'Content-Type': 'application/json',
       });
 
-      if (response.statusCode >= 200 && response.statusCode <= 299) {
+      if (response!.statusCode >= 200 && response.statusCode <= 299) {
         final dynamic jsonResponse = response.body;
         if (jsonResponse == "Account activated successfully.") {
           return true;

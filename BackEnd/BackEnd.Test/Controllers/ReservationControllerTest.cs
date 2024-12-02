@@ -23,6 +23,7 @@ namespace BackEnd.Test
         private ReservationController _controller;
         private IReservationService _reservationService;
         private ApplicationDbContext _context;
+        private IEmailService _emailService;
 
         [SetUp]
         public void Setup()
@@ -39,7 +40,8 @@ namespace BackEnd.Test
         .Options;
 
             _context = new ApplicationDbContext(options);
-            _reservationService = new ReservationService(_context);
+            _emailService = new EmailService();
+            _reservationService = new ReservationService(_context, _emailService);
 
             _controller = new ReservationController(_reservationService, configuration);
 
@@ -126,7 +128,8 @@ namespace BackEnd.Test
         public async Task GetAllActiveReservationsByUserId_ReturnsNotFound_WhenDBContextMissing()
         {
             // Arrange
-            var reservationService = new ReservationService(null);
+            var  emailService = new EmailService();
+            var reservationService = new ReservationService(null, emailService);
             var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string>
             {
@@ -235,7 +238,8 @@ namespace BackEnd.Test
         public async Task GetAllReservationsByUserId_ReturnsNotFound_WhenDBContextMissing()
         {
             // Arrange
-            var reservationService = new ReservationService(null);
+            var emailService = new EmailService();
+            var reservationService = new ReservationService(null, emailService);
             var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string>
             {
@@ -355,7 +359,8 @@ namespace BackEnd.Test
         public async Task GetReservationById_ReturnsNotFound_WhenDBContextMissing()
         {
             // Arrange
-            var reservationService = new ReservationService(null);
+            var emailService = new EmailService();
+            var reservationService = new ReservationService(null, emailService);
             var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string>
             {
@@ -433,7 +438,8 @@ namespace BackEnd.Test
         public async Task CreateNewReservation_ReturnsNotFound_WhenDBContextMissing()
         {
             // Arrange
-            var reservationService = new ReservationService(null);
+            var emailService = new EmailService();
+            var reservationService = new ReservationService(null, emailService);
             var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string>
             {
@@ -665,7 +671,8 @@ namespace BackEnd.Test
         public async Task DeactivateReservationById_ReturnsNotFound_WhenDBContextMissing()
         {
             // Arrange
-            var reservationService = new ReservationService(null);
+            var emailService = new EmailService();
+            var reservationService = new ReservationService(null, emailService);
             var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string>
             {
@@ -793,7 +800,8 @@ namespace BackEnd.Test
         public async Task UpdateReservationById_ReturnsNotFound_WhenDBContextMissing()
         {
             // Arrange
-            var reservationService = new ReservationService(null);
+            var emailService = new EmailService();
+            var reservationService = new ReservationService(null, emailService);
             var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string>
             {
@@ -987,7 +995,8 @@ namespace BackEnd.Test
         public async Task DeleteReservation_ReturnsNotFound_WhenDBContextMissing()
         {
             // Arrange
-            var reservationService = new ReservationService(null);
+            var emailService = new EmailService();
+            var reservationService = new ReservationService(null, emailService);
             var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string>
             {
