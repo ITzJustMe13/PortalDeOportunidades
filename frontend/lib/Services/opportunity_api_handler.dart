@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/Enums/Location.dart';
 import 'package:frontend/Enums/OppCategory.dart';
+import 'package:frontend/Models/Review.dart';
 
 import 'package:http/http.dart' as http;
 import '../Models/Opportunity.dart';
@@ -154,6 +155,29 @@ class OpportunityApiHandler {
     } catch (e) {
       print('Exception occurred: $e');
       return [];
+    }
+  }
+
+  Future<List<Review>?> getReviewsByOppId(int oppId) async {
+    final uri = Uri.parse('$baseUri/Reviews/$oppId');
+
+    try {
+      final response = await client.get(uri).timeout(timeout);
+
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
+        final List<dynamic> jsonList = jsonDecode(response.body);
+        final reviews =
+            jsonList.map((json) => Review.fromJson(json)).toList();
+        return reviews;
+      } else if (response.statusCode == 404) {
+        return [];
+      } else {
+        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
+        return null;
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      return null;
     }
   }
 

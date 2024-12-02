@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/Models/Favorite.dart';
 import 'package:frontend/Models/User.dart';
 import 'package:frontend/Models/Review.dart';
+import 'package:frontend/Services/opportunity_api_handler.dart';
 import 'package:frontend/Services/user_api_handler.dart';
 import 'package:frontend/Services/payment_api_handler.dart';
 import 'package:frontend/Components/CustomAppBar.dart';
@@ -48,7 +49,6 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
     isOwner = false;
     _ownerFuture = Provider.of<UserApiHandler>(context, listen: false)
         .getUserByID(widget.opportunity.userId);
-    
     if(isOwner == false){
       _checkUserOwnership();
     }
@@ -447,12 +447,13 @@ await PaymentService().saveReservation(reservation);
     });
 
     try {
-      final List<Review>? fetchedReviews = await Provider.of<ReviewApiHandler>(
+      final List<Review>? fetchedReviews = await Provider.of<OpportunityApiHandler>(
         context,
         listen: false,
       ).getReviewsByOppId(widget.opportunity.opportunityId);
 
       setState(() {
+        print(fetchedReviews);
         reviews = fetchedReviews ?? []; // Assign an empty list if null.
         isLoading = false; // Stop loading after data fetch.
       });
