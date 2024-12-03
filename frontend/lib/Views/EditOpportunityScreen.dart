@@ -1,16 +1,11 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/Enums/OppCategory.dart';
 import 'package:frontend/Services/opportunity_api_handler.dart';
 import 'package:frontend/Views/OpportunityManager.dart';
-import 'package:intl/intl.dart';
 import 'package:frontend/Models/Opportunity.dart';
 import 'package:frontend/Components/CustomAppBar.dart';
 import 'package:frontend/Components/CustomDrawer.dart';
 import 'package:frontend/Enums/Location.dart';
-import 'package:image_picker/image_picker.dart';
-import 'dart:convert';
-import 'dart:typed_data';
 import 'package:frontend/Models/OpportunityImg.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend/Components/OpportunityTextField.dart';

@@ -6,10 +6,14 @@ import 'package:frontend/Services/opportunity_api_handler.dart';
 import 'package:http/http.dart' as http;
 
 class SearchState with ChangeNotifier {
-  final _opportunityApiHandler = OpportunityApiHandler(http.Client());
+  var _opportunityApiHandler = OpportunityApiHandler(http.Client());
 
   SearchState() {
     initializeOpportunitiesList();
+  }
+
+  set opportunityApiHandler(OpportunityApiHandler handler) {
+    _opportunityApiHandler = handler;
   }
 
   List<Opportunity> _opportunitiesList = [];

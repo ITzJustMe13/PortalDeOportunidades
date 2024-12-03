@@ -23,7 +23,6 @@ import 'package:frontend/Views/OpportunityManager.dart';
 import 'package:frontend/Views/FavoritesPage.dart';
 import 'package:frontend/Views/SearchPage.dart';
 import 'package:frontend/Views/PaymentScreen.dart';
-
 import 'Views/HomePage.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend/Services/payment_api_handler.dart';

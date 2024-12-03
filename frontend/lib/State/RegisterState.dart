@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import '../Services/user_api_handler.dart';
 
 class RegisterState with ChangeNotifier {
-  final _apiHandler = UserApiHandler(http.Client());
+  var _apiHandler = UserApiHandler(http.Client());
 
   String? _errorMessage;
   bool _isLoading = false;
@@ -13,6 +13,10 @@ class RegisterState with ChangeNotifier {
   String? get errorMessage => _errorMessage;
   bool get isLoading => _isLoading;
   bool get isActivationSuccess => _isActivationSuccess;
+
+  set userApiHandler(UserApiHandler handler) {
+    _apiHandler = handler;
+  }
 
   // Function to register
   Future<void> register(User user, BuildContext context) async {
