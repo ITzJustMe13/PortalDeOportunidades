@@ -13,9 +13,8 @@ class PaymentService {
       // Convert the Impulse DTO to a JSON string
       String impulseJson = jsonEncode(impulse.toJson());
       await storage.write(key: 'impulseDto', value: impulseJson);
-      print("Impulse saved locally!");
     } catch (e) {
-      print("Error saving impulse: $e");
+      return;
     }
   }
 
@@ -25,9 +24,8 @@ class PaymentService {
       // Convert the Reservation DTO to a JSON string
       String reservationJson = jsonEncode(reservation.toJson());
       await storage.write(key: 'reservationDto', value: reservationJson);
-      print("Reservation saved locally!");
     } catch (e) {
-      print("Error saving reservation: $e");
+      return;
     }
   }
 
@@ -41,7 +39,6 @@ class PaymentService {
       }
       return null; // Return null if no impulse is found
     } catch (e) {
-      print("Error retrieving impulse: $e");
       return null;
     }
   }
@@ -57,7 +54,6 @@ class PaymentService {
       }
       return null; // Return null if no reservation is found
     } catch (e) {
-      print("Error retrieving reservation: $e");
       return null;
     }
   }
@@ -65,18 +61,16 @@ class PaymentService {
   Future<void> deleteImpulse() async {
     try {
       await storage.delete(key: 'impulseDto');
-      print("Impulse deleted from local storage");
     } catch (e) {
-      print("Error deleting impulse: $e");
+      return;
     }
   }
 
   Future<void> deleteReservation() async {
     try {
       await storage.delete(key: 'reservationDto');
-      print("Reservation deleted from local storage");
     } catch (e) {
-      print("Error deleting reservation: $e");
+      return;
     }
   }
 }

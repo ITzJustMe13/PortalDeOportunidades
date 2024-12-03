@@ -46,10 +46,17 @@ class _PaymentScreenState extends State<PaymentScreen> {
       final paymentState = Provider.of<PaymentState>(context, listen: false);
       _isHandled = true; // Mark as handled
 
+      if (widget.isSuccess) {
+        if (widget.paymentType == "reservation") {
+          paymentState.handleReservation();
+        } else if (widget.paymentType == "impulse") {
+          paymentState.handleImpulse();
+        }
+      }
       if (widget.paymentType == "reservation") {
-        paymentState.handleReservation();
+        paymentState.deleteReservation();
       } else if (widget.paymentType == "impulse") {
-        paymentState.handleImpulse();
+        paymentState.deleteImpulse();
       }
     }
   }
@@ -101,10 +108,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
           const SizedBox(height: 8),
           Text(
             widget.isSuccess
-              ? (widget.paymentType.toLowerCase() == "reservation"
-                  ? "Pagamento de Reserva Bem-Sucedido"
-                  : "Pagamento de Impulso Bem-Sucedido")
-              : "O pagamento falhou. Por favor, tente novamente.",
+                ? (widget.paymentType.toLowerCase() == "reservation"
+                    ? "Pagamento de Reserva Bem-Sucedido"
+                    : "Pagamento de Impulso Bem-Sucedido")
+                : "O pagamento falhou. Por favor, tente novamente.",
             style: const TextStyle(fontSize: 16),
             textAlign: TextAlign.center,
           ),
@@ -152,10 +159,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   children: [
                     Text(
                       widget.isSuccess
-                        ? (widget.paymentType.toLowerCase() == "reservation"
-                            ? "Pagamento de Reserva Bem-Sucedido"
-                            : "Pagamento de Impulso Bem-Sucedido")
-                        : "O pagamento falhou. Por favor, tente novamente.",
+                          ? (widget.paymentType.toLowerCase() == "reservation"
+                              ? "Pagamento de Reserva Bem-Sucedido"
+                              : "Pagamento de Impulso Bem-Sucedido")
+                          : "O pagamento falhou. Por favor, tente novamente.",
                       style: TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
@@ -165,10 +172,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     const SizedBox(height: 16),
                     Text(
                       widget.isSuccess
-                        ? (widget.paymentType.toLowerCase() == "reservation"
-                            ? "Pagamento de Reserva Bem-Sucedido"
-                            : "Pagamento de Impulso Bem-Sucedido")
-                        : "O pagamento falhou. Por favor, tente novamente.",
+                          ? (widget.paymentType.toLowerCase() == "reservation"
+                              ? "Pagamento de Reserva Bem-Sucedido"
+                              : "Pagamento de Impulso Bem-Sucedido")
+                          : "O pagamento falhou. Por favor, tente novamente.",
                       style: TextStyle(fontSize: 18),
                     ),
                     const SizedBox(height: 24),
@@ -200,5 +207,4 @@ class _PaymentScreenState extends State<PaymentScreen> {
       ),
     );
   }
-
 }

@@ -33,7 +33,6 @@ class ActivationState with ChangeNotifier {
   // Function to login
   Future<void> activateAccount(String token) async {
 
-    print(token);
     if (token.isEmpty) {
       _errorMessage = 'Ocorreu um erro!';
       notifyListeners();
@@ -45,7 +44,6 @@ class ActivationState with ChangeNotifier {
 
     var response = await _apiHandler.activateAccount(token);
     _isLoading = false;
-    print(response);
 
     if (response == false) {
       _accountActivated = false;

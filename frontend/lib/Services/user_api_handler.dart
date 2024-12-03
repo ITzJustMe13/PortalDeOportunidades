@@ -47,7 +47,6 @@ class UserApiHandler {
         return null;
       }
     } catch (e) {
-      print('Error: ${e.toString()}');
       return null;
     }
   }
@@ -88,7 +87,6 @@ class UserApiHandler {
     final String? accessToken = await storage.read(key: 'accessToken');
 
     if (accessToken == null) {
-      print('Error: No access token found');
       return null;
     }
 
@@ -101,14 +99,11 @@ class UserApiHandler {
         final user = User.fromJson(jsonDecode(response.body));
         return user;
       } else if (response.statusCode == 404) {
-        print('User not found or DB context missing');
         return null;
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return null;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return null;
     }
   }
@@ -130,11 +125,9 @@ class UserApiHandler {
         final createdUser = User.fromJson(jsonDecode(response.body));
         return createdUser;
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return null;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return null;
     }
   }
@@ -145,7 +138,6 @@ class UserApiHandler {
     final String? accessToken = await storage.read(key: 'accessToken');
 
     if (accessToken == null) {
-      print('Error: No access token found');
       return false;
     }
 
@@ -158,17 +150,13 @@ class UserApiHandler {
       );
 
       if (response!.statusCode >= 200 && response.statusCode <= 299) {
-        print('User deleted successfully.');
         return true;
       } else if (response.statusCode == 404) {
-        print('Error: ${response.body}');
         return false;
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return false;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return false;
     }
   }
@@ -179,7 +167,6 @@ class UserApiHandler {
     final String? accessToken = await storage.read(key: 'accessToken');
 
     if (accessToken == null) {
-      print('Error: No access token found');
       return false;
     }
 
@@ -196,17 +183,13 @@ class UserApiHandler {
       );
 
       if (response!.statusCode >= 200 && response.statusCode <= 299) {
-        print('User updated successfully.');
         return true;
       } else if (response.statusCode == 404) {
-        print('Error: User not found');
         return false;
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return false;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return false;
     }
   }
@@ -217,7 +200,6 @@ class UserApiHandler {
     final String? accessToken = await storage.read(key: 'accessToken');
 
     if (accessToken == null) {
-      print('Error: No access token found');
       return null;
     }
 
@@ -235,11 +217,9 @@ class UserApiHandler {
         final createdFavorite = Favorite.fromJson(jsonDecode(response.body));
         return createdFavorite;
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return null;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return null;
     }
   }
@@ -250,7 +230,6 @@ class UserApiHandler {
     final String? accessToken = await storage.read(key: 'accessToken');
 
     if (accessToken == null) {
-      print('Error: No access token found');
       return null;
     }
 
@@ -263,14 +242,11 @@ class UserApiHandler {
         final favorite = Favorite.fromJson(jsonDecode(response.body));
         return favorite;
       } else if (response.statusCode == 404) {
-        print('User not found or DB context missing');
         return null;
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return null;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return null;
     }
   }
@@ -281,7 +257,6 @@ class UserApiHandler {
     final String? accessToken = await storage.read(key: 'accessToken');
 
     if (accessToken == null) {
-      print('Error: No access token found');
       return null;
     }
 
@@ -297,14 +272,11 @@ class UserApiHandler {
             jsonList.map((json) => Favorite.fromJson(json)).toList();
         return favorites;
       } else if (response.statusCode == 404) {
-        print('No favorites found!');
         return [];
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return null;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return null;
     }
   }
@@ -317,10 +289,8 @@ class UserApiHandler {
   Future<bool> deleteFavoriteById(int userId, int oppId) async{
     final uri = Uri.parse('$baseUri/favorite/$userId/$oppId/delete');
     final String? accessToken = await storage.read(key: 'accessToken');
-    print('Deleting favorite with URI: $uri');
     
     if (accessToken == null) {
-      print('Error: No access token found');
       return false;
     }
 
@@ -330,14 +300,11 @@ class UserApiHandler {
       });
 
       if (response!.statusCode >= 200 && response.statusCode <= 299) {
-        print('Favorite deleted successfully.');
         return true;
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return false;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return false;
     }
   }
@@ -348,7 +315,6 @@ class UserApiHandler {
     final String? accessToken = await storage.read(key: 'accessToken');
 
     if (accessToken == null) {
-      print('Error: No access token found');
       return null;
     }
 
@@ -363,11 +329,9 @@ class UserApiHandler {
         final createdImpulse = Impulse.fromJson(jsonDecode(response.body));
         return createdImpulse;
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return null;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return null;
     }
   }
@@ -378,7 +342,6 @@ class UserApiHandler {
     final String? accessToken = await storage.read(key: 'accessToken');
 
     if (accessToken == null) {
-      print('Error: No access token found');
       return null;
     }
     try {
@@ -393,14 +356,11 @@ class UserApiHandler {
             jsonList.map((json) => Opportunity.fromJson(json)).toList();
         return Opportunities;
       } else if (response.statusCode == 404) {
-        print('No Opportunities found!');
         return [];
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return null;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return null;
     }
   }

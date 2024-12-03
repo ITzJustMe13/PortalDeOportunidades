@@ -48,14 +48,12 @@ class ChooseImpulseState with ChangeNotifier {
       if (await canLaunch(checkoutUrl)) {
         await launch(checkoutUrl);
       } else {
-        print('Could not launch $checkoutUrl');
         _isLoading = false;
         _errorMessage = 'Erro ao abrir checkout';
         notifyListeners();
         return;
       }
     } else {
-      print('Failed to create checkout session');
       _errorMessage = 'Erro ao criar checkout session';
       _isLoading = false;
       notifyListeners();

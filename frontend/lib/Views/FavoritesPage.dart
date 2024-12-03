@@ -69,7 +69,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return Center(child: Text('No favorites found.'));
+          return Center(child: Text('Não foram encontrados favoritos.'));
         } else {
           List<Opportunity> opportunities = snapshot.data!;
           return ListView.builder(
@@ -107,7 +107,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return Center(child: Text('No favorites found.'));
+          return Center(child: Text('Não foram encontrados favoritos.'));
         } else {
           List<Opportunity> opportunities = snapshot.data!;
           return Padding(
@@ -151,7 +151,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return Center(child: Text('No favorites found.'));
+          return Center(child: Text('Não foram encontrados favoritos.'));
         } else {
           List<Opportunity> opportunities = snapshot.data!;
           return Padding(
@@ -207,7 +207,6 @@ class _FavoritesPageState extends State<FavoritesPage> {
             try {
               return await Provider.of<OpportunityApiHandler>(context, listen: false).getOpportunityByID(id);
             } catch (e) {
-              print("Error fetching opportunity with id $id: $e");
               return null;
             }
           }));

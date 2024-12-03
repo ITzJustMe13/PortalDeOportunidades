@@ -12,7 +12,7 @@ class CustomDrawerState with ChangeNotifier {
     if (route.isNotEmpty) {
       Navigator.pushNamed(context, route);
     } else {
-      print("Error: Route cannot be empty.");
+      return;
     }
   }
 

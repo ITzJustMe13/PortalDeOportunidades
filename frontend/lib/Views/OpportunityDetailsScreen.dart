@@ -296,7 +296,6 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
                       availableVacancies: widget.opportunity.vacancies,
                       onPressed: (numberOfPersons) {
                         createTempReservation(numberOfPersons);
-                        print('Reservation button pressed!');
                       },
                     ),
                 ],
@@ -362,12 +361,8 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
         // Use url_launcher to open the Stripe Checkout session
         if (await canLaunch(sessionUrl)) {
           await launch(sessionUrl);
-        } else {
-          print('Could not launch $sessionUrl');
         }
-      } else {
-        print('Failed to create checkout session');
-      }
+      } 
     }
   }
 
@@ -375,7 +370,6 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
     User? user = await UserServices.getCachedUser(context);
 
     if (user == null) {
-      print('No user found. Cannot create reservation.');
       return null;
     }
 
@@ -407,7 +401,6 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
       User? loggedInUser = await UserServices.getCachedUser(context);
       return loggedInUser?.userId == widget.opportunity.userId;
     } catch (e) {
-      print('Error checking user ownership: $e');
       return false;
     }
   }
@@ -461,7 +454,6 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
       ).getReviewsByOppId(widget.opportunity.opportunityId);
 
       setState(() {
-        print(fetchedReviews);
         reviews = fetchedReviews ?? []; // Assign an empty list if null.
         isLoading = false; // Stop loading after data fetch.
       });
@@ -470,8 +462,6 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
         isLoading = false; // Stop loading after error.
         reviews = []; // Clear reviews or handle errors more specifically.
       });
-      // Log or handle the error
-      print('Failed to load reviews: $error');
     }
   }
 

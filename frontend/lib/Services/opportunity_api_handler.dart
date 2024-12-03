@@ -4,12 +4,11 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/Enums/Location.dart';
 import 'package:frontend/Enums/OppCategory.dart';
 import 'package:frontend/Models/Review.dart';
-
-import 'package:http/http.dart' as http;
+import 'package:frontend/Services/handler.dart';import 'package:http/http.dart' as http;
 import '../Models/Opportunity.dart';
 
-class OpportunityApiHandler {
-  final String baseUri = "https://localhost:7235/api/Opportunity";
+class OpportunityApiHandler extends handler{
+  final String baseUri = "${handler.apiIP}/api/Opportunity";
 
   final http.Client client;
   final storage = FlutterSecureStorage();
@@ -32,11 +31,9 @@ class OpportunityApiHandler {
         final opportunity = Opportunity.fromJson(jsonDecode(response.body));
         return opportunity;
       } else {
-        print('Error: ${response.statusCode} ${response.reasonPhrase}');
         return null;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return null;
     }
   }
@@ -55,11 +52,9 @@ class OpportunityApiHandler {
       } else if (response.statusCode == 404) {
         return [];
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return null;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return null;
     }
   }
@@ -78,11 +73,9 @@ class OpportunityApiHandler {
       } else if (response.statusCode == 404) {
         return [];
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return null;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return null;
     }
   }
@@ -101,11 +94,9 @@ class OpportunityApiHandler {
       } else if (response.statusCode == 404) {
         return [];
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return null;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return null;
     }
   }
@@ -153,7 +144,6 @@ class OpportunityApiHandler {
         return [];
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return [];
     }
   }
@@ -172,11 +162,9 @@ class OpportunityApiHandler {
       } else if (response.statusCode == 404) {
         return [];
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return null;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return null;
     }
   }
@@ -186,7 +174,6 @@ class OpportunityApiHandler {
     final String? accessToken = await storage.read(key: 'accessToken');
 
     if (accessToken == null) {
-      print('Error: No access token found');
       return null;
     }
 
@@ -204,11 +191,9 @@ class OpportunityApiHandler {
         final Opp = Opportunity.fromJson(jsonDecode(response.body));
         return Opp;
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return null;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return null;
     }
   }
@@ -222,7 +207,6 @@ class OpportunityApiHandler {
     final String? accessToken = await storage.read(key: 'accessToken');
 
     if (accessToken == null) {
-      print('Error: No access token found');
       return false;
     }
 
@@ -234,11 +218,9 @@ class OpportunityApiHandler {
       if (response.statusCode >= 200 && response.statusCode <= 299) {
         return true;
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return false;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return false;
     }
   }
@@ -248,7 +230,6 @@ class OpportunityApiHandler {
     final String? accessToken = await storage.read(key: 'accessToken');
 
     if (accessToken == null) {
-      print('Error: No access token found');
       return false;
     }
 
@@ -260,11 +241,9 @@ class OpportunityApiHandler {
       if (response.statusCode >= 200 && response.statusCode <= 299) {
         return true;
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return false;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return false;
     }
   }
@@ -274,7 +253,6 @@ class OpportunityApiHandler {
     final String? accessToken = await storage.read(key: 'accessToken');
 
     if (accessToken == null) {
-      print('Error: No access token found');
       return false;
     }
 
@@ -286,11 +264,9 @@ class OpportunityApiHandler {
       if (response.statusCode >= 200 && response.statusCode <= 299) {
         return true;
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return false;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return false;
     }
   }
@@ -300,7 +276,6 @@ class OpportunityApiHandler {
     final String? accessToken = await storage.read(key: 'accessToken');
 
     if (accessToken == null) {
-      print('Error: No access token found');
       return false;
     }
 

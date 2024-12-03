@@ -17,7 +17,6 @@ class ReviewApiHandler {
     final String? accessToken = await storage.read(key: 'accessToken');
 
     if (accessToken == null) {
-      print('Error: No access token found');
       return null;
     }
 
@@ -31,11 +30,9 @@ class ReviewApiHandler {
         final review = Review.fromJson(jsonDecode(response.body));
         return review;
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return null;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return null;
     }
   }
@@ -45,7 +42,6 @@ class ReviewApiHandler {
     final String? accessToken = await storage.read(key: 'accessToken');
 
     if (accessToken == null) {
-      print('Error: No access token found');
       return [];
     }
 
@@ -61,11 +57,9 @@ class ReviewApiHandler {
             jsonList.map((json) => Review.fromJson(json)).toList();
         return userReviews;
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return [];
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return [];
     }
   }
@@ -75,7 +69,6 @@ class ReviewApiHandler {
     final String? accessToken = await storage.read(key: 'accessToken');
 
     if (accessToken == null) {
-      print('Error: No access token found');
       return null;
     }
 
@@ -91,11 +84,9 @@ class ReviewApiHandler {
         final createdReview = Review.fromJson(jsonDecode(response.body));
         return createdReview;
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return null;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return null;
     }
   }
@@ -105,7 +96,6 @@ class ReviewApiHandler {
     final String? accessToken = await storage.read(key: 'accessToken');
 
     if (accessToken == null) {
-      print('Error: No access token found');
       return false;
     }
 
@@ -115,14 +105,11 @@ class ReviewApiHandler {
       });
 
       if (response.statusCode >= 200 && response.statusCode <= 299) {
-        print('Review deleted successfully.');
         return true;
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return false;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return false;
     }
   }
@@ -132,7 +119,6 @@ class ReviewApiHandler {
     final String? accessToken = await storage.read(key: 'accessToken');
 
     if (accessToken == null) {
-      print('Error: No access token found');
       return false;
     }
 
@@ -142,14 +128,11 @@ class ReviewApiHandler {
       });
 
       if (response.statusCode >= 200 && response.statusCode <= 299) {
-        print('Review updated successfully.');
         return true;
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return false;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return false;
     }
   }

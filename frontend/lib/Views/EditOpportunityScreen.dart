@@ -69,13 +69,6 @@ class _EditOpportunityScreenState extends State<EditOpportunityScreen> {
   }
 
   void _saveOpportunity() async {
-    
-    if (_opportunityImgs.isEmpty) {
-      setState(() {
-        _errorMessage = 'A oportunidade deve conter imagens';
-      });
-      return null;
-    }
 
     if (_opportunityImgs.length > 5) {
       setState(() {

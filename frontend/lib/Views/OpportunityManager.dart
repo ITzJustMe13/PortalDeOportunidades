@@ -165,7 +165,6 @@ class _OpportunityManagerScreenState extends State<OpportunityManagerScreen> {
           .getStoredUser();
       return user;
     } catch (e) {
-      print('Error fetching user: $e');
       return null;
     }
   }

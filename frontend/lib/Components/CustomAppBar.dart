@@ -47,12 +47,7 @@ AppBar _buildMobileAppBar(BuildContext context, LoginState appBarState,
     centerTitle: true,
     actions: appBarState.isLoggedIn
         ? [
-            IconButton(
-              icon: const Icon(Icons.notifications),
-              onPressed: () {
-                print('Notifications clicked');
-              },
-            ),
+            
             IconButton(
               icon: const Icon(Icons.menu),
               onPressed: () {
