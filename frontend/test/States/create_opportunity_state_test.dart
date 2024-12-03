@@ -1,14 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:frontend/Enums/Gender.dart';
 import 'package:frontend/Enums/Location.dart';
 import 'package:frontend/Enums/OppCategory.dart';
 import 'package:frontend/Models/Opportunity.dart';
 import 'package:frontend/Models/OpportunityImg.dart';
-import 'package:frontend/Models/User.dart';
-import 'package:frontend/Services/payment_api_handler.dart';
-import 'package:frontend/Services/payment_service.dart';
-import 'package:frontend/Services/user_api_handler.dart';
-import 'package:frontend/State/ChooseImpulseState.dart';
 import 'package:frontend/State/CreateOpportunityState.dart';
 import 'package:mockito/mockito.dart';
 
