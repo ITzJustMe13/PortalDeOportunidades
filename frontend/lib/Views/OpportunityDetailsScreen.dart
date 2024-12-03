@@ -39,6 +39,7 @@ class OpportunityDetailsScreen extends StatefulWidget {
 class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
   final ScrollController verticalScrollController = ScrollController();
   final ScrollController horizontalScrollController = ScrollController();
+  double? priceWithTax;
   late Future<User?> _ownerFuture;
   List<Review> reviews = [];
   bool isLoading = true;
@@ -54,6 +55,7 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
       _checkUserOwnership();
     }
     fetchReviews();
+    priceWithTax = double.parse((widget.opportunity.price + (widget.opportunity.price * 0.1)).toStringAsFixed(2));
   }
 
   @override
@@ -64,31 +66,38 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
       body: FutureBuilder<User?>(
         future: _ownerFuture,
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          }
-          final opportunity = widget.opportunity;
-          final DateTime dateTime = opportunity.date;
-          final String formattedTime = DateFormat('HH:mm').format(dateTime);
+          if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+            //made to get the user 
+            final user = snapshot.data;
+            //this is made to separate date and time into 2 variables to show the user
+            final DateTime dateTime = widget.opportunity.date;
+            final String formattedTime = DateFormat('HH:mm').format(dateTime);
 
-          return LayoutBuilder(
-            builder: (context, constraints) {
-              if (constraints.maxWidth < 600) {
-                return _buildMobileLayout(opportunity, formattedTime);
-              } else if (constraints.maxWidth < 1200) {
-                return _buildTabletLayout(opportunity, formattedTime);
-              } else {
-                return _buildDesktopLayout(opportunity, formattedTime);
-              }
-            },
-          );
+            return LayoutBuilder(
+              builder: (context, constraints) {
+                if (constraints.maxWidth < 600) {
+                  return _buildMobileLayout(widget.opportunity, formattedTime, user!);
+                } else if (constraints.maxWidth < 1200) {
+                  return _buildTabletLayout(widget.opportunity, formattedTime, user!);
+                } else {
+                  return _buildDesktopLayout(widget.opportunity, formattedTime, user!);
+                }
+              },
+            );
+          } else if (snapshot.connectionState == ConnectionState.waiting) {
+            // Show loading indicator while waiting for user data
+            return Center(child: CircularProgressIndicator());
+          } else {
+            // Handle the error case or no data found
+            return Center(child: Text('Error loading user data'));
+          }
         },
       ),
     );
   }
 
   // Mobile layout (Vertical scroll)
-  Widget _buildMobileLayout(Opportunity opportunity, String time) {
+  Widget _buildMobileLayout(Opportunity opportunity, String time, User user) {
     return SingleChildScrollView(
       controller: verticalScrollController,
       padding: const EdgeInsets.all(20.0),
@@ -121,12 +130,12 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
             ),
           SizedBox(height: 20),
           OpportunityAdditionalInfo(
-            price: opportunity.price,
+            price: priceWithTax!,
             location: opportunity.location,
             address: opportunity.address,
             vacancies: opportunity.vacancies,
-            firstName: "",
-            lastName: "",
+            firstName: user.firstName,
+            lastName: user.lastName,
             time: time,
             date: opportunity.date,
           ),
@@ -160,7 +169,7 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
   }
 
   // Tablet layout (Vertical scroll with Scrollbar)
-  Widget _buildTabletLayout(Opportunity opportunity, String time) {
+  Widget _buildTabletLayout(Opportunity opportunity, String time, User user) {
     return Scrollbar(
       thumbVisibility: true,
       controller: verticalScrollController,
@@ -212,12 +221,12 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   OpportunityAdditionalInfo(
-                    price: opportunity.price,
+                    price: priceWithTax!,
                     location: opportunity.location,
                     address: opportunity.address,
                     vacancies: opportunity.vacancies,
-                    firstName: "teste",
-                    lastName: "teste",
+                    firstName: user.firstName,
+                    lastName: user.lastName,
                     time: time,
                     date: opportunity.date,
                   ),
@@ -255,7 +264,7 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
   }
 
   // Desktop layout (Both vertical and horizontal scroll with Scrollbar)
-  Widget _buildDesktopLayout(Opportunity opportunity, String time) {
+  Widget _buildDesktopLayout(Opportunity opportunity, String time, User user) {
     return Scrollbar(
       thumbVisibility: true,
       controller: verticalScrollController,
@@ -309,12 +318,12 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   OpportunityAdditionalInfo(
-                    price: opportunity.price,
+                    price: priceWithTax!,
                     location: opportunity.location,
                     address: opportunity.address,
                     vacancies: opportunity.vacancies,
-                    firstName: "teste",
-                    lastName: "teste",
+                    firstName: user.firstName,
+                    lastName: user.lastName,
                     time: time,
                     date: opportunity.date,
                   ),
@@ -384,7 +393,6 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
         fixedPrice:
             (widget.opportunity.price * 0.1) + widget.opportunity.price);
 
-    await PaymentService().saveReservation(reservation);
     await PaymentService().saveReservation(reservation);
     createCheckoutSessionReservation(reservation);
   }
@@ -463,22 +471,5 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
         reviews = []; // Clear reviews or handle errors more specifically.
       });
     }
-  }
-
-  List<Widget> buildStarRating(double rating) {
-    List<Widget> stars = [];
-    // Full stars
-    for (int i = 0; i < rating.floor(); i++) {
-      stars.add(const Icon(Icons.star, color: Colors.amber, size: 20));
-    }
-    // Half star if needed
-    if (rating - rating.floor() >= 0.5) {
-      stars.add(const Icon(Icons.star_half, color: Colors.amber, size: 20));
-    }
-    // Empty stars
-    while (stars.length < 5) {
-      stars.add(const Icon(Icons.star_border, color: Colors.amber, size: 20));
-    }
-    return stars;
   }
 }

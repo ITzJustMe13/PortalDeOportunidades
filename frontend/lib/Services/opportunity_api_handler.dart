@@ -7,14 +7,16 @@ import 'package:frontend/Models/Review.dart';
 import 'package:frontend/Services/handler.dart';import 'package:http/http.dart' as http;
 import '../Models/Opportunity.dart';
 
-class OpportunityApiHandler extends handler{
-  final String baseUri = "${handler.apiIP}/api/Opportunity";
-
-  final http.Client client;
+class OpportunityApiHandler extends Handler{
+  late final String baseUri;
   final storage = FlutterSecureStorage();
   final timeout = const Duration(seconds: 30);
 
-  OpportunityApiHandler(this.client);
+  OpportunityApiHandler({
+    String? baseUri,
+  }) {
+    this.baseUri = baseUri ?? "$apiIP/api/Opportunity";
+  }
 
   Future<Opportunity?> getOpportunityByID(int id) async {
     final uri = Uri.parse('$baseUri/$id');

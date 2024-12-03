@@ -1,16 +1,20 @@
 import 'dart:convert';
 //import 'dart:ffi';
 import 'package:frontend/Models/Review.dart';
+import 'package:frontend/Services/handler.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-class ReviewApiHandler {
-  final String baseUri = "https://localhost:7235/api/Review";
-  final http.Client client;
+class ReviewApiHandler extends Handler{
+  late final String baseUri;
   final storage = FlutterSecureStorage();
   final timeout = const Duration(seconds: 60);
 
-  ReviewApiHandler(this.client);
+  ReviewApiHandler({
+    String? baseUri,
+  }) {
+    this.baseUri = baseUri ?? "$apiIP/api/Review";
+  }
 
   Future<Review?> getReviewById(int reviewId) async {
     final uri = Uri.parse('$baseUri/$reviewId');

@@ -4,15 +4,18 @@ import 'package:frontend/Models/Favorite.dart';
 import 'package:frontend/Models/Impulse.dart';
 import 'package:frontend/Models/Opportunity.dart';
 import 'package:frontend/Models/User.dart';
-import 'package:http/http.dart' as http;
+import 'package:frontend/Services/handler.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-class UserApiHandler {
-  final String baseUri = "https://localhost:7235/api/User";
-  final http.Client client;
+class UserApiHandler extends Handler{
+  late final String baseUri;
   final storage = FlutterSecureStorage();
 
-  UserApiHandler(this.client);
+  UserApiHandler({
+    String? baseUri,
+  }) {
+    this.baseUri = baseUri ?? "$apiIP/api/User";
+  }
   
 
   void logout() {
@@ -95,7 +98,7 @@ class UserApiHandler {
         'Authorization': 'Bearer $accessToken',
       });
 
-      if (response!.statusCode >= 200 && response.statusCode <= 299) {
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
         final user = User.fromJson(jsonDecode(response.body));
         return user;
       } else if (response.statusCode == 404) {
@@ -149,7 +152,7 @@ class UserApiHandler {
         },
       );
 
-      if (response!.statusCode >= 200 && response.statusCode <= 299) {
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
         return true;
       } else if (response.statusCode == 404) {
         return false;
@@ -182,7 +185,7 @@ class UserApiHandler {
         body: jsonEncode(userJson),
       );
 
-      if (response!.statusCode >= 200 && response.statusCode <= 299) {
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
         return true;
       } else if (response.statusCode == 404) {
         return false;
@@ -299,7 +302,7 @@ class UserApiHandler {
         'Authorization': 'Bearer $accessToken',
       });
 
-      if (response!.statusCode >= 200 && response.statusCode <= 299) {
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
         return true;
       } else {
         return false;
@@ -319,15 +322,14 @@ class UserApiHandler {
     }
 
     try {
-      final response = await client?.post(uri, headers: {
+      final response = await client.post(uri, headers: {
         'Authorization': 'Bearer $accessToken',
         'Content-Type': 'application/json',
       },
       body: jsonEncode(impulse.toJson()));
 
       if (response.statusCode >= 200 && response.statusCode <= 299) {
-        final createdImpulse = Impulse.fromJson(jsonDecode(response.body));
-        return createdImpulse;
+        return Impulse.fromJson(jsonDecode(response.body));
       } else {
         return null;
       }

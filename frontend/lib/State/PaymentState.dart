@@ -9,9 +9,9 @@ class PaymentState with ChangeNotifier {
   bool _isLoading = false;
   String _errorMessage = "";
   final ReservationApiHandler _reservationApiHandler =
-      ReservationApiHandler(http.Client());
+      ReservationApiHandler();
 
-  final UserApiHandler _userApiHandler = UserApiHandler(http.Client());
+  final UserApiHandler _userApiHandler = UserApiHandler();
   final PaymentService paymentService = PaymentService();
   PaymentState();
 

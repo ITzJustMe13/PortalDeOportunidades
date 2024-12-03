@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import '../Services/user_api_handler.dart';
 
 class RegisterState with ChangeNotifier {
-  var _apiHandler = UserApiHandler(http.Client());
+  var _apiHandler = UserApiHandler();
 
   String? _errorMessage;
   bool _isLoading = false;

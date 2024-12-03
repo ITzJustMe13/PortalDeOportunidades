@@ -8,9 +8,9 @@ import 'package:frontend/Services/user_api_handler.dart';
 import 'package:http/http.dart' as http;
 
 class HistoryReservationState with ChangeNotifier {
-  var _reservationApiHandler = ReservationApiHandler(http.Client());
-  var _userApiHandler = UserApiHandler(http.Client());
-  var _opportunityApiHandler = OpportunityApiHandler(http.Client());
+  var _reservationApiHandler = ReservationApiHandler();
+  var _userApiHandler = UserApiHandler();
+  var _opportunityApiHandler = OpportunityApiHandler();
 
   List<Map<Reservation, Opportunity>> _reservationList = [];
   bool _isLoading = false;

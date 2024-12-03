@@ -6,12 +6,16 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class PaymentApiHandler extends handler{
-   String baseUri ;
-  final http.Client client;
-  final storage = FlutterSecureStorage();
+class PaymentApiHandler extends Handler{
+  late final String baseUri;
+  final FlutterSecureStorage storage = FlutterSecureStorage();
 
-  PaymentApiHandler(this.client, {baseUri="$this.apiIP/api/Payment"}):super();
+  PaymentApiHandler({
+    String? baseUri,
+  }) {
+    this.baseUri = baseUri ?? "$apiIP/api/Payment";
+  }
+
   
 
   Future<String?> createReservationCheckoutSession(

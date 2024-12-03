@@ -7,8 +7,8 @@ import 'package:http/http.dart' as http;
 
 
 class CreateOpportunityState with ChangeNotifier {
-  var _userApiHandler = UserApiHandler(http.Client());
-  var _opportunityApiHandler = OpportunityApiHandler(http.Client());
+  var _userApiHandler = UserApiHandler();
+  var _opportunityApiHandler = OpportunityApiHandler();
 
   String? _errorMessage;
   bool _isLoading = false;
@@ -19,8 +19,8 @@ class CreateOpportunityState with ChangeNotifier {
   CreateOpportunityState({
     UserApiHandler? userApiHandler,
     OpportunityApiHandler? opportunityApiHandler,
-  })  : _userApiHandler = userApiHandler ?? UserApiHandler(http.Client()),
-        _opportunityApiHandler = opportunityApiHandler ?? OpportunityApiHandler(http.Client());
+  })  : _userApiHandler = userApiHandler ?? UserApiHandler(),
+        _opportunityApiHandler = opportunityApiHandler ?? OpportunityApiHandler();
 
 // Setters para injeção das dependências nos testes
   set userApiHandler(UserApiHandler handler) {

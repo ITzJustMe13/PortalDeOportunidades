@@ -8,10 +8,10 @@ import 'package:frontend/Services/user_api_handler.dart';
 import 'package:http/http.dart' as http;
 
 class ReviewHistoryState with ChangeNotifier {
-  var _reservationApiHandler = ReservationApiHandler(http.Client());
-  var _userApiHandler = UserApiHandler(http.Client());
-  var _opportunityApiHandler = OpportunityApiHandler(http.Client());
-  var _reviewApiHandler = ReviewApiHandler(http.Client());
+  var _reservationApiHandler = ReservationApiHandler();
+  var _userApiHandler = UserApiHandler();
+  var _opportunityApiHandler = OpportunityApiHandler();
+  var _reviewApiHandler = ReviewApiHandler();
 
   List<ReviewOpportunityReservation> _reviewList = [];
   bool _isLoading = false;

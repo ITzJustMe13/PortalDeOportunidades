@@ -8,8 +8,8 @@ import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
 class ChooseImpulseState with ChangeNotifier {
-  var _apiHandler = UserApiHandler(http.Client());
-  var _paymentApiHandler = PaymentApiHandler(http.Client());
+  var _apiHandler = UserApiHandler();
+  var _paymentApiHandler = PaymentApiHandler();
   var _paymentService = PaymentService();
 
   String? _errorMessage;

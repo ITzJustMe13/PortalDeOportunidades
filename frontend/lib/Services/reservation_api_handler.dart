@@ -1,14 +1,18 @@
 import 'dart:convert';
 import 'package:frontend/Models/Reservation.dart';
+import 'package:frontend/Services/handler.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-class ReservationApiHandler {
-  final String baseUri = "https://localhost:7235/api/Reservation";
-  final http.Client client;
+class ReservationApiHandler extends Handler{
+  late final String baseUri;
   final storage = FlutterSecureStorage();
 
-  ReservationApiHandler(this.client);
+  ReservationApiHandler({
+    String? baseUri,
+  }) {
+    this.baseUri = baseUri ?? "$apiIP/api/Reservation";
+  }
 
   Future<List<Reservation>?> getAllActiveReservationsByUserId(
       int userId) async {

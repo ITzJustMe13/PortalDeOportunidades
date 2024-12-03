@@ -154,6 +154,8 @@ class _AddOpportunityScreenState extends State<CreateOpportunityScreen> {
                 },
               ),
               const SizedBox(height: 16),
+              _buildTextFields(),
+              const SizedBox(height: 16),
               _buildDropdowns(),
               const SizedBox(height: 16),
               _buildDateField(),
@@ -227,7 +229,7 @@ class _AddOpportunityScreenState extends State<CreateOpportunityScreen> {
           children: [
             Expanded(
               child: _buildTextField(
-                label: 'Preço:',
+                label: 'Preço:(+ 10% de taxa para a plataforma)',
                 keyboardType: TextInputType.numberWithOptions(decimal: true),
                 onChanged: (value) => _price = double.parse(value ?? ""),
                 validator: (value) {

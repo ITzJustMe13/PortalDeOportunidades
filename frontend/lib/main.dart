@@ -30,20 +30,22 @@ import 'package:frontend/Services/opportunity_api_handler.dart';
 import 'package:frontend/Services/user_api_handler.dart';
 import 'package:frontend/Services/reservation_api_handler.dart';
 import 'package:frontend/Services/review_api_handler.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() {
+  dotenv.load();
   runApp(
     MultiProvider(
       providers: [
         Provider<OpportunityApiHandler>(
-            create: (_) => OpportunityApiHandler(http.Client())),
-        Provider<UserApiHandler>(create: (_) => UserApiHandler(http.Client())),
+            create: (_) => OpportunityApiHandler()),
+        Provider<UserApiHandler>(create: (_) => UserApiHandler()),
         Provider<ReservationApiHandler>(
-            create: (_) => ReservationApiHandler(http.Client())),
+            create: (_) => ReservationApiHandler()),
         Provider<ReviewApiHandler>(
-            create: (_) => ReviewApiHandler(http.Client())),
+            create: (_) => ReviewApiHandler()),
         Provider<PaymentApiHandler>(
-            create: (_) => PaymentApiHandler(http.Client())),
+            create: (_) => PaymentApiHandler()),
         ChangeNotifierProvider<LoginState>(create: (_) => LoginState()),
         ChangeNotifierProvider<RegisterState>(create: (_) => RegisterState()),
         ChangeNotifierProvider<ActivationState>(
