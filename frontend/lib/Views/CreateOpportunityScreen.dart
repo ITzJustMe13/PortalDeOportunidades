@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/Components/CustomAppBar.dart';
 import 'package:frontend/Components/CustomDrawer.dart';
+import 'package:frontend/Components/OpportunityImagePicker.dart';
 import 'package:frontend/Enums/Location.dart';
 import 'package:frontend/Enums/OppCategory.dart';
 import 'package:frontend/Models/Opportunity.dart';
@@ -32,7 +33,7 @@ class _AddOpportunityScreenState extends State<CreateOpportunityScreen> {
   String _address = '';
   DateTime _date = DateTime.now();
   String _errorMessage = "";
-  final List<OpportunityImg> _opportunityImgs = [];
+  List<OpportunityImg> _opportunityImgs = [];
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +67,14 @@ class _AddOpportunityScreenState extends State<CreateOpportunityScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Center(
-              child: _buildImagesPicker(),
+              child: OpportunityImagePicker(
+                opportunityImgs: _opportunityImgs,
+                onImagesChanged: (newImages) {
+                  setState(() {
+                    _opportunityImgs = newImages;
+                  });
+                },
+              ),
             ),
             const SizedBox(height: 16),
             _buildTextFields(),
@@ -95,7 +103,17 @@ class _AddOpportunityScreenState extends State<CreateOpportunityScreen> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(flex: 1, child: _buildImagesPicker()),
+                Expanded(
+                  flex: 1,
+                  child: OpportunityImagePicker(
+                    opportunityImgs: _opportunityImgs,
+                    onImagesChanged: (newImages) {
+                      setState(() {
+                        _opportunityImgs = newImages;
+                      });
+                    },
+                  ),
+                ),
                 const SizedBox(width: 16),
                 Expanded(flex: 2, child: _buildTextFields()),
               ],
@@ -122,19 +140,18 @@ class _AddOpportunityScreenState extends State<CreateOpportunityScreen> {
     return Padding(
       padding: const EdgeInsets.only(left: 400, right: 400, top: 50),
       child: SingleChildScrollView(
-        // Adiciona o scroll
         child: Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildImagesPicker(),
-                  const SizedBox(width: 16),
-                  Expanded(child: _buildTextFields()),
-                ],
+              OpportunityImagePicker(
+                opportunityImgs: _opportunityImgs,
+                onImagesChanged: (newImages) {
+                  setState(() {
+                    _opportunityImgs = newImages;
+                  });
+                },
               ),
               const SizedBox(height: 16),
               _buildDropdowns(),
@@ -151,64 +168,25 @@ class _AddOpportunityScreenState extends State<CreateOpportunityScreen> {
     );
   }
 
-  Widget _buildImagesPicker() {
-    return Container(
-      width: 300,
-      height: 250,
-      color: Colors.grey[300],
-      child: Center(
-        child: Column(
-          children: [
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-              child: const Text('Escolher Fotos',
-                  style: TextStyle(color: Colors.white)),
-              onPressed: () async {
-                final List<XFile> pickedFiles = await ImagePicker()
-                    .pickMultiImage(); // Pick multiple images
-                if (pickedFiles != null && pickedFiles.isNotEmpty) {
-                  final List<String> base64Images = await Future.wait(
-                    pickedFiles.map((file) async {
-                      final Uint8List fileBytes = await file.readAsBytes();
-                      return base64Encode(fileBytes);
-                    }),
-                  );
-                  setState(() {
-                    _opportunityImgs.clear();
-                    for (var image in base64Images) {
-                      var oppImg = OpportunityImg(
-                          imgId: 0, opportunityId: 0, imageBase64: image);
-                      _opportunityImgs.add(oppImg);
-                    }
-                  });
-                }
-              },
-            ),
-            SizedBox(height: 16.0),
-            _opportunityImgs.isNotEmpty
-                ? GridView.builder(
-                    shrinkWrap: true, // Allow GridView to fit within a Column
-                    itemCount: _opportunityImgs.length,
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3, // Number of columns
-                      crossAxisSpacing: 8.0,
-                      mainAxisSpacing: 8.0,
-                    ),
-                    itemBuilder: (context, index) {
-                      final Uint8List imageBytes = Uint8List.fromList(
-                          base64Decode(_opportunityImgs[index].imageBase64));
-                      return Image.memory(
-                        imageBytes,
-                        width: 100,
-                        height: 100,
-                        fit: BoxFit.cover,
-                      );
-                    },
-                  )
-                : Center(child: Text('Nenhuma imagem selecionada')),
-          ],
-        ),
+  Widget _buildTextField({
+    required String label,
+    TextInputType keyboardType = TextInputType.text,
+    required FormFieldSetter<String> onChanged,
+    required FormFieldValidator<String> validator,
+    int? maxLines, // Adicionando o parâmetro
+  }) {
+    return TextFormField(
+      decoration: InputDecoration(
+        labelText: label,
+        alignLabelWithHint: true,
+        border: const OutlineInputBorder(),
       ),
+      keyboardType: keyboardType,
+      validator: validator,
+      onChanged: onChanged,
+      maxLines: maxLines,
+      textAlign: TextAlign
+          .start, // Usando maxLines para ajustar a altura do campo // Alinha o texto no topo da caixa
     );
   }
 
@@ -284,28 +262,6 @@ class _AddOpportunityScreenState extends State<CreateOpportunityScreen> {
           ],
         ),
       ],
-    );
-  }
-
-  Widget _buildTextField({
-    required String label,
-    TextInputType keyboardType = TextInputType.text,
-    required FormFieldSetter<String> onChanged,
-    required FormFieldValidator<String> validator,
-    int? maxLines, // Adicionando o parâmetro
-  }) {
-    return TextFormField(
-      decoration: InputDecoration(
-        labelText: label,
-        alignLabelWithHint: true,
-        border: const OutlineInputBorder(),
-      ),
-      keyboardType: keyboardType,
-      validator: validator,
-      onChanged: onChanged,
-      maxLines: maxLines,
-      textAlign: TextAlign
-          .start, // Usando maxLines para ajustar a altura do campo // Alinha o texto no topo da caixa
     );
   }
 
