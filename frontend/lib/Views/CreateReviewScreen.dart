@@ -9,6 +9,7 @@ import 'package:frontend/Services/review_api_handler.dart';
 import 'package:frontend/Components/CustomAppBar.dart';
 import 'package:frontend/Components/CustomDrawer.dart';
 import 'package:frontend/Components/DynamicTextField.dart';
+import 'package:frontend/Components/StarRatingSelector.dart';
 import 'package:flutter/services.dart';
 
 class CreateReviewScreen extends StatefulWidget {
@@ -23,7 +24,6 @@ class CreateReviewScreen extends StatefulWidget {
 class _CreateReviewScreenState extends State<CreateReviewScreen> {
   late ScrollController verticalScrollController;
   late TextEditingController descriptionController;
-  late TextEditingController ratingController;
   bool reviewExists = false;
   Review? review;
 
@@ -32,7 +32,6 @@ class _CreateReviewScreenState extends State<CreateReviewScreen> {
     super.initState();
     verticalScrollController = ScrollController();
     descriptionController = TextEditingController();
-    ratingController = TextEditingController();
     _initializeReview();
   }
 
@@ -40,7 +39,6 @@ class _CreateReviewScreenState extends State<CreateReviewScreen> {
   void dispose() {
     verticalScrollController.dispose();
     descriptionController.dispose();
-    ratingController.dispose();
     super.dispose();
   }
 
@@ -67,49 +65,73 @@ class _CreateReviewScreenState extends State<CreateReviewScreen> {
     return SingleChildScrollView(
       controller: verticalScrollController,
       padding: const EdgeInsets.all(20.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Dê a sua Opinião:",
-            style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 20),
-          DynamicTextField(
-            label: 'Descrição',
-            controller: descriptionController,
-            maxLines: 1,
-          ),
-          SizedBox(height: 20),
-          DynamicTextField(
-            label: 'Em quanto avalia a sua Oportundade? (0-5)',
-            controller: ratingController,
-            maxLines: 1,
-            inputType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-            ],
-          ),
-          SizedBox(height: 20),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Color(0xFF50C878),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: 500),
+          child: Card(
+            elevation: 4,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.0),
             ),
-            onPressed: () {
-              _saveReview();
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ReviewsHistoryScreen()
-                ),
-              );
-            },
-            child: Text(
-              'Guardar',
-              style: TextStyle(color: Colors.white), // Adjust text color if needed
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    "Dê a sua Opinião:",
+                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    "Classifique a sua oportunidade:",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  SizedBox(height: 10),
+                  StarRatingSelector(
+                    currentRating: review?.rating ?? 0,
+                    onRatingChanged: (rating) {
+                      setState(() {
+                        review = Review(
+                          reservationId: widget.reservation.reservationId!,
+                          rating: rating,
+                          description: review?.description,
+                        );
+                      });
+                    },
+                    iconSize: 40.0,
+                  ),
+                  SizedBox(height: 20),
+                  DynamicTextField(
+                    label: 'Descrição',
+                    controller: descriptionController,
+                    maxLines: 3,
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFF50C878),
+                    ),
+                    onPressed: () {
+                      _saveReview();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ReviewsHistoryScreen(),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      'Guardar',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-        ],
+        ),
       ),
     );
   }
@@ -130,7 +152,6 @@ class _CreateReviewScreenState extends State<CreateReviewScreen> {
 
         if (existingReview != null) {
           descriptionController.text = existingReview.description ?? '';
-          ratingController.text = existingReview.rating.toString();
           return existingReview;
         }
       } catch (e) {
@@ -141,23 +162,16 @@ class _CreateReviewScreenState extends State<CreateReviewScreen> {
   }
 
   Future<void> _saveReview() async {
-    final String ratingText = ratingController.text.replaceAll(',', '.');
-
-    if (ratingText.isEmpty) {
-      _showSnackBar('Por favor, insira uma classificação válida entre 0 e 5.', Colors.red);
+    if (review?.rating == null || review?.rating == 0) {
+      _showSnackBar('Por favor, insira uma classificação válida entre 1 e 5.', Colors.red);
       return;
     }
-
-    final double? rating = double.tryParse(ratingText);
-    if (rating == null || rating < 0 || rating > 5) {
-      _showSnackBar('Por favor, insira uma classificação válida entre 0 e 5.', Colors.red);
-      return;
-    }
-
+    final String description = descriptionController.text.trim();
+    
     final Review reviewToSave = Review(
       reservationId: widget.reservation.reservationId!,
-      rating: rating,
-      description: descriptionController.text.isNotEmpty ? descriptionController.text : null,
+      rating: review?.rating ?? 0,
+      description: description.isNotEmpty ? description : null,
     );
 
     bool success = false;
@@ -165,8 +179,6 @@ class _CreateReviewScreenState extends State<CreateReviewScreen> {
     try {
       if (reviewExists) {
         // Update existing review
-
-
         success = await Provider.of<ReviewApiHandler>(context, listen: false).editReview(
           widget.reservation.reservationId!,
           reviewToSave,
@@ -217,6 +229,11 @@ class _CreateReviewScreenState extends State<CreateReviewScreen> {
     } else {
       setState(() {
         reviewExists = false;
+        review = Review(
+        reservationId: widget.reservation.reservationId!,
+        rating: 0,
+        description: '',
+      );
       });
     }
   }
