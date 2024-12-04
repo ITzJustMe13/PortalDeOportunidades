@@ -1,10 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/Models/Favorite.dart';
 import 'package:frontend/Models/User.dart';
-import 'package:frontend/Models/Review.dart';
-import 'package:frontend/Services/opportunity_api_handler.dart';
-import 'package:frontend/Services/user_api_handler.dart';
-import 'package:frontend/Services/payment_api_handler.dart';
 import 'package:frontend/Components/CustomAppBar.dart';
 import 'package:frontend/Components/CustomDrawer.dart';
 import 'package:frontend/Components/OpportunityImages.dart';
@@ -12,15 +7,11 @@ import 'package:frontend/Components/OpportunityLocationMap.dart';
 import 'package:frontend/Components/OpportunityDetails.dart';
 import 'package:frontend/Components/OpportunityAdditionalInfo.dart';
 import 'package:frontend/Components/ReservationButton.dart';
+import 'package:frontend/State/DetailsState.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend/Models/Opportunity.dart';
-import 'package:frontend/Models/Reservation.dart';
 import 'package:intl/intl.dart';
-import 'package:frontend/Services/payment_service.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:frontend/Components/DynamicActionButton.dart';
-import 'package:frontend/Services/user_services.dart';
-import 'package:frontend/Services/review_api_handler.dart';
 import 'package:frontend/Components/ReviewCard.dart';
 import 'package:frontend/Components/StarRating.dart';
 
@@ -39,23 +30,25 @@ class OpportunityDetailsScreen extends StatefulWidget {
 class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
   final ScrollController verticalScrollController = ScrollController();
   final ScrollController horizontalScrollController = ScrollController();
-  double? priceWithTax;
-  late Future<User?> _ownerFuture;
-  List<Review> reviews = [];
-  bool isLoading = true;
-  late bool isOwner;
+
+  String formattedTime = "";
+  bool _isInitialized = false;
 
   @override
   void initState() {
     super.initState();
-    isOwner = false;
-    _ownerFuture = Provider.of<UserApiHandler>(context, listen: false)
-        .getUserByID(widget.opportunity.userId);
-    if (isOwner == false) {
-      _checkUserOwnership();
-    }
-    fetchReviews();
-    priceWithTax = double.parse((widget.opportunity.price + (widget.opportunity.price * 0.1)).toStringAsFixed(2));
+    // Perform initialization here
+    final DateTime dateTime = widget.opportunity.date;
+    formattedTime = DateFormat('HH:mm').format(dateTime);
+
+    // Use WidgetsBinding to access the context after the widget is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final detailsState = Provider.of<DetailsState>(context, listen: false);
+      if (!_isInitialized) {
+        detailsState.initialize(widget.opportunity);
+        _isInitialized = true;
+      }
+    });
   }
 
   @override
@@ -63,41 +56,30 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
     return Scaffold(
       appBar: CustomAppBar(),
       endDrawer: CustomDrawer(),
-      body: FutureBuilder<User?>(
-        future: _ownerFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
-            //made to get the user 
-            final user = snapshot.data;
-            //this is made to separate date and time into 2 variables to show the user
-            final DateTime dateTime = widget.opportunity.date;
-            final String formattedTime = DateFormat('HH:mm').format(dateTime);
-
-            return LayoutBuilder(
-              builder: (context, constraints) {
-                if (constraints.maxWidth < 600) {
-                  return _buildMobileLayout(widget.opportunity, formattedTime, user!);
-                } else if (constraints.maxWidth < 1200) {
-                  return _buildTabletLayout(widget.opportunity, formattedTime, user!);
-                } else {
-                  return _buildDesktopLayout(widget.opportunity, formattedTime, user!);
-                }
-              },
-            );
-          } else if (snapshot.connectionState == ConnectionState.waiting) {
-            // Show loading indicator while waiting for user data
-            return Center(child: CircularProgressIndicator());
-          } else {
-            // Handle the error case or no data found
-            return Center(child: Text('Error loading user data'));
-          }
+      body: Consumer<DetailsState>(
+        builder: (context, detailsState, child) {
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              if (constraints.maxWidth < 600) {
+                return _buildMobileLayout(widget.opportunity, formattedTime,
+                    detailsState.owner, detailsState);
+              } else if (constraints.maxWidth < 1200) {
+                return _buildTabletLayout(widget.opportunity, formattedTime,
+                    detailsState.owner, detailsState);
+              } else {
+                return _buildDesktopLayout(widget.opportunity, formattedTime,
+                    detailsState.owner, detailsState);
+              }
+            },
+          );
         },
       ),
     );
   }
 
   // Mobile layout (Vertical scroll)
-  Widget _buildMobileLayout(Opportunity opportunity, String time, User user) {
+  Widget _buildMobileLayout(Opportunity opportunity, String time, User? user,
+      DetailsState detailsState) {
     return SingleChildScrollView(
       controller: verticalScrollController,
       padding: const EdgeInsets.all(20.0),
@@ -117,25 +99,30 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
             color: Color(0xFF50C878),
             icon: Icons.star,
             onPressed: () {
-              addToFavorites(context, widget.opportunity.opportunityId);
+              detailsState.addToFavorites(
+                  context, widget.opportunity.opportunityId);
             },
           ),
           SizedBox(height: 20),
-          if (widget.isReservable && !isOwner && widget.opportunity.isActive)
+          if (widget.isReservable &&
+              !detailsState.isOwner &&
+              widget.opportunity.isActive &&
+              detailsState.priceWithTax != null)
             ReservationButton(
               availableVacancies: 2,
               onPressed: (numberOfPersons) {
-                createTempReservation(numberOfPersons);
+                detailsState.createTempReservation(
+                    context, numberOfPersons, opportunity);
               },
             ),
           SizedBox(height: 20),
           OpportunityAdditionalInfo(
-            price: priceWithTax!,
+            price: detailsState.priceWithTax,
             location: opportunity.location,
             address: opportunity.address,
             vacancies: opportunity.vacancies,
-            firstName: user.firstName,
-            lastName: user.lastName,
+            firstName: user?.firstName ?? "Anónimo",
+            lastName: user?.lastName ?? "Anónimo",
             time: time,
             date: opportunity.date,
           ),
@@ -143,7 +130,6 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
           OpportunityLocationMap(
             address: opportunity.address,
           ),
-          // REVIEWS
           SizedBox(height: 20),
           Text(
             'Opiniões',
@@ -151,12 +137,12 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
           ),
           SizedBox(height: 10),
           // Check if reviews are loading
-          isLoading
+          detailsState.isLoading
               ? Center(child: CircularProgressIndicator())
-              : reviews.isEmpty
+              : detailsState.reviews.isEmpty
                   ? Text('Nenhuma opinião disponível.')
                   : Column(
-                      children: reviews.map((review) {
+                      children: detailsState.reviews.map((review) {
                         return ReviewCard(
                           rating: review.rating,
                           description: review.description ?? '',
@@ -169,7 +155,8 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
   }
 
   // Tablet layout (Vertical scroll with Scrollbar)
-  Widget _buildTabletLayout(Opportunity opportunity, String time, User user) {
+  Widget _buildTabletLayout(Opportunity opportunity, String time, User? user,
+      DetailsState detailsState) {
     return Scrollbar(
       thumbVisibility: true,
       controller: verticalScrollController,
@@ -197,16 +184,18 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
                     color: Color(0xFF50C878),
                     icon: Icons.star,
                     onPressed: () {
-                      addToFavorites(context, widget.opportunity.opportunityId);
+                      detailsState.addToFavorites(
+                          context, widget.opportunity.opportunityId);
                     },
                   ),
                   if (widget.isReservable &&
-                      !isOwner &&
+                      !detailsState.isOwner &&
                       widget.opportunity.isActive)
                     ReservationButton(
                       availableVacancies: opportunity.vacancies,
                       onPressed: (numberOfPersons) {
-                        createTempReservation(numberOfPersons);
+                        detailsState.createTempReservation(
+                            context, numberOfPersons, opportunity);
                       },
                     ),
                 ],
@@ -221,12 +210,12 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   OpportunityAdditionalInfo(
-                    price: priceWithTax!,
+                    price: detailsState.priceWithTax,
                     location: opportunity.location,
                     address: opportunity.address,
                     vacancies: opportunity.vacancies,
-                    firstName: user.firstName,
-                    lastName: user.lastName,
+                    firstName: user?.firstName ?? "Anónimo",
+                    lastName: user?.lastName ?? "Anónimo",
                     time: time,
                     date: opportunity.date,
                   ),
@@ -242,12 +231,12 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
                   ),
                   SizedBox(height: 10),
                   // Check if reviews are loading
-                  isLoading
+                  detailsState.isLoading
                       ? Center(child: CircularProgressIndicator())
-                      : reviews.isEmpty
+                      : detailsState.reviews.isEmpty
                           ? Text('Nenhuma opinião disponível.')
                           : Column(
-                              children: reviews.map((review) {
+                              children: detailsState.reviews.map((review) {
                                 return ReviewCard(
                                   rating: review.rating,
                                   description: review.description ?? '',
@@ -264,7 +253,8 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
   }
 
   // Desktop layout (Both vertical and horizontal scroll with Scrollbar)
-  Widget _buildDesktopLayout(Opportunity opportunity, String time, User user) {
+  Widget _buildDesktopLayout(Opportunity opportunity, String time, User? user,
+      DetailsState detailsState) {
     return Scrollbar(
       thumbVisibility: true,
       controller: verticalScrollController,
@@ -294,17 +284,19 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
                     color: Color(0xFF50C878),
                     icon: Icons.star,
                     onPressed: () {
-                      addToFavorites(context, widget.opportunity.opportunityId);
+                      detailsState.addToFavorites(
+                          context, widget.opportunity.opportunityId);
                     },
                   ),
                   SizedBox(height: 20),
                   if (widget.isReservable &&
-                      !isOwner &&
+                      !detailsState.isOwner &&
                       widget.opportunity.isActive)
                     ReservationButton(
                       availableVacancies: widget.opportunity.vacancies,
                       onPressed: (numberOfPersons) {
-                        createTempReservation(numberOfPersons);
+                        detailsState.createTempReservation(
+                            context, numberOfPersons, opportunity);
                       },
                     ),
                 ],
@@ -318,12 +310,12 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   OpportunityAdditionalInfo(
-                    price: priceWithTax!,
+                    price: detailsState.priceWithTax,
                     location: opportunity.location,
                     address: opportunity.address,
                     vacancies: opportunity.vacancies,
-                    firstName: user.firstName,
-                    lastName: user.lastName,
+                    firstName: user?.firstName ?? "Anónimo",
+                    lastName: user?.lastName ?? "Anónimo",
                     time: time,
                     date: opportunity.date,
                   ),
@@ -331,20 +323,18 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
                   OpportunityLocationMap(
                     address: opportunity.address,
                   ),
-                  // REVIEWS
                   SizedBox(height: 20),
                   Text(
                     'Opiniões',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 10),
-                  // Check if reviews are loading
-                  isLoading
+                  detailsState.isLoading
                       ? Center(child: CircularProgressIndicator())
-                      : reviews.isEmpty
+                      : detailsState.reviews.isEmpty
                           ? Text('Nenhuma opinião disponível.')
                           : Column(
-                              children: reviews.map((review) {
+                              children: detailsState.reviews.map((review) {
                                 return ReviewCard(
                                   rating: review.rating,
                                   description: review.description ?? '',
@@ -358,118 +348,5 @@ class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
         ),
       ),
     );
-  }
-
-  Future<void> createCheckoutSessionReservation(Reservation reservation) async {
-    if (reservation != null) {
-      final sessionUrl =
-          await Provider.of<PaymentApiHandler>(context, listen: false)
-              .createReservationCheckoutSession(reservation);
-
-      if (sessionUrl != null) {
-        // Use url_launcher to open the Stripe Checkout session
-        if (await canLaunch(sessionUrl)) {
-          await launch(sessionUrl);
-        }
-      } 
-    }
-  }
-
-  Future<void> createTempReservation(int numberOfPersons) async {
-    User? user = await UserServices.getCachedUser(context);
-
-    if (user == null) {
-      return null;
-    }
-
-    // Create a reservation
-    final reservation = Reservation(
-        opportunityId: widget.opportunity.opportunityId,
-        userId: user.userId,
-        checkInDate: widget.opportunity.date,
-        numOfPeople: numberOfPersons,
-        reservationDate: DateTime.now(),
-        isActive: true,
-        fixedPrice:
-            (widget.opportunity.price * 0.1) + widget.opportunity.price);
-
-    await PaymentService().saveReservation(reservation);
-    createCheckoutSessionReservation(reservation);
-  }
-
-  Future<void> _checkUserOwnership() async {
-    bool owner = await _isUserOwner();
-    setState(() {
-      isOwner = owner;
-    });
-  }
-
-  Future<bool> _isUserOwner() async {
-    try {
-      User? loggedInUser = await UserServices.getCachedUser(context);
-      return loggedInUser?.userId == widget.opportunity.userId;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  /// Documentation for addToFavortites
-  /// @param: BuildContext context
-  /// @param: int oppId Opportunity id
-  /// This Function adds an Opportunity to a user's Favorites
-  static Future<void> addToFavorites(BuildContext context, int oppId) async {
-    User? user = await UserServices.getCachedUser(context);
-
-    if (!context.mounted) return; // Check if the context is still valid
-
-    if (user != null) {
-      final favorite = Favorite(userId: user.userId, opportunityId: oppId);
-      final Favorite? addedFavorite =
-          await Provider.of<UserApiHandler>(context, listen: false)
-              .addFavorite(favorite);
-
-      if (!context.mounted) return;
-
-      if (addedFavorite != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Oportunidade adicionada aos seus Favoritos!'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-                'Erro ao adicionar aos seus Favoritos, a Oportunidade já existe na sua lista ou tente novamente mais tarde.'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
-  }
-
-  Future<void> fetchReviews() async {
-    setState(() {
-      isLoading = true; // Ensure loading state is set before fetching.
-    });
-
-    try {
-      final List<Review>? fetchedReviews =
-          await Provider.of<OpportunityApiHandler>(
-        context,
-        listen: false,
-      ).getReviewsByOppId(widget.opportunity.opportunityId);
-
-      setState(() {
-        reviews = fetchedReviews ?? []; // Assign an empty list if null.
-        isLoading = false; // Stop loading after data fetch.
-      });
-    } catch (error) {
-      setState(() {
-        isLoading = false; // Stop loading after error.
-        reviews = []; // Clear reviews or handle errors more specifically.
-      });
-    }
   }
 }

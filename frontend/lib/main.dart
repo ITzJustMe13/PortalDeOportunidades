@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/State/ActivationState.dart';
 import 'package:frontend/State/ChooseImpulseState.dart';
 import 'package:frontend/State/CreateOpportunityState.dart';
+import 'package:frontend/State/DetailsState.dart';
 import 'package:frontend/State/DrawerState.dart';
 import 'package:frontend/State/HistoryReservationState.dart';
 import 'package:frontend/State/LoginState.dart';
@@ -37,15 +38,11 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        Provider<OpportunityApiHandler>(
-            create: (_) => OpportunityApiHandler()),
+        Provider<OpportunityApiHandler>(create: (_) => OpportunityApiHandler()),
         Provider<UserApiHandler>(create: (_) => UserApiHandler()),
-        Provider<ReservationApiHandler>(
-            create: (_) => ReservationApiHandler()),
-        Provider<ReviewApiHandler>(
-            create: (_) => ReviewApiHandler()),
-        Provider<PaymentApiHandler>(
-            create: (_) => PaymentApiHandler()),
+        Provider<ReservationApiHandler>(create: (_) => ReservationApiHandler()),
+        Provider<ReviewApiHandler>(create: (_) => ReviewApiHandler()),
+        Provider<PaymentApiHandler>(create: (_) => PaymentApiHandler()),
         ChangeNotifierProvider<LoginState>(create: (_) => LoginState()),
         ChangeNotifierProvider<RegisterState>(create: (_) => RegisterState()),
         ChangeNotifierProvider<ActivationState>(
@@ -59,8 +56,8 @@ void main() async {
             create: (_) => ReviewHistoryState()),
         ChangeNotifierProvider<ChooseImpulseState>(
             create: (_) => ChooseImpulseState()),
-            ChangeNotifierProvider<PaymentState>(
-            create: (_) => PaymentState()),
+        ChangeNotifierProvider<PaymentState>(create: (_) => PaymentState()),
+        ChangeNotifierProvider<DetailsState>(create: (_) => DetailsState()),
         ChangeNotifierProxyProvider<LoginState, CustomDrawerState>(
           create: (context) => CustomDrawerState(
             loginState: context.read<LoginState>(),

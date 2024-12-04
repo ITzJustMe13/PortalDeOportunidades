@@ -7,7 +7,7 @@ import 'package:frontend/Models/User.dart';
 import 'package:frontend/Services/handler.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-class UserApiHandler extends Handler{
+class UserApiHandler extends Handler {
   late final String baseUri;
   final storage = FlutterSecureStorage();
 
@@ -16,7 +16,6 @@ class UserApiHandler extends Handler{
   }) {
     this.baseUri = baseUri ?? "$apiIP/api/User";
   }
-  
 
   void logout() {
     storage.delete(key: 'accessToken');
@@ -87,16 +86,9 @@ class UserApiHandler extends Handler{
   /// Get user by ID
   Future<User?> getUserByID(int id) async {
     final uri = Uri.parse('$baseUri/$id');
-    final String? accessToken = await storage.read(key: 'accessToken');
-
-    if (accessToken == null) {
-      return null;
-    }
 
     try {
-      final response = await client.get(uri, headers: {
-        'Authorization': 'Bearer $accessToken',
-      });
+      final response = await client.get(uri);
 
       if (response.statusCode >= 200 && response.statusCode <= 299) {
         final user = User.fromJson(jsonDecode(response.body));
@@ -289,10 +281,10 @@ class UserApiHandler extends Handler{
   /// @param: userId : id of the user
   /// @param oppId : io of the opportunity
   /// @returns: true if it was delete sucessefully, false if not
-  Future<bool> deleteFavoriteById(int userId, int oppId) async{
+  Future<bool> deleteFavoriteById(int userId, int oppId) async {
     final uri = Uri.parse('$baseUri/favorite/$userId/$oppId/delete');
     final String? accessToken = await storage.read(key: 'accessToken');
-    
+
     if (accessToken == null) {
       return false;
     }
@@ -322,11 +314,12 @@ class UserApiHandler extends Handler{
     }
 
     try {
-      final response = await client.post(uri, headers: {
-        'Authorization': 'Bearer $accessToken',
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode(impulse.toJson()));
+      final response = await client.post(uri,
+          headers: {
+            'Authorization': 'Bearer $accessToken',
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode(impulse.toJson()));
 
       if (response.statusCode >= 200 && response.statusCode <= 299) {
         return Impulse.fromJson(jsonDecode(response.body));
