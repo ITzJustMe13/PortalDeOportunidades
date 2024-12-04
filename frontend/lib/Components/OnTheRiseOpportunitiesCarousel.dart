@@ -14,9 +14,11 @@ class OnTheRiseOpportunityCarousel extends StatelessWidget {
     final double screenWidth = MediaQuery.of(context).size.width;
     final bool isPhone = screenWidth < 600;
 
+    final double carouselHeight = isPhone ? 350 : ((150 * 3) + 8) * 1.125;
+
     return CarouselSlider(
       options: CarouselOptions(
-        height: isPhone ? 300 : 400,
+        height: carouselHeight,
         viewportFraction: isPhone ? 0.9 : 0.8,
         enlargeFactor: 0.125,
         enlargeCenterPage: true,
@@ -31,12 +33,10 @@ class OnTheRiseOpportunityCarousel extends StatelessWidget {
         return Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: chunkedOpportunities.map((opportunity) {
-            return Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: OnTheRiseOpportunityCard(
-                  opportunity: opportunity,
-                ),
+            return Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: OnTheRiseOpportunityCard(
+                opportunity: opportunity,
               ),
             );
           }).toList(),
