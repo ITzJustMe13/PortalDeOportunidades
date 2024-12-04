@@ -158,8 +158,10 @@ class _OpportunityManageCardState extends State<OpportunityManageCard> {
                 SizedBox(height: 12),
 
                 // Action Buttons
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                Wrap(
+                  alignment: WrapAlignment.spaceBetween,
+                  spacing: 8,
+                  runSpacing: 8,
                   children: [
                     // Details Button
                     DynamicActionButton(

@@ -16,7 +16,6 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-
   User? _cachedUser; // Cache for the user
   late Future<User?> _userFuture; // Declare _userFuture as late
 
@@ -72,7 +71,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
-  
 
   Widget _buildMobileLayout(User user) {
     return Padding(
@@ -96,7 +94,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildTabletLayout(User user) {
     return Padding(
-      padding: EdgeInsets.only(left: 100.0, right: 25),
+      padding: EdgeInsets.only(left: 100.0, right: 25, top: 100),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
