@@ -32,8 +32,8 @@ import 'package:frontend/Services/reservation_api_handler.dart';
 import 'package:frontend/Services/review_api_handler.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
-  dotenv.load();
+void main() async {
+  await dotenv.load();
   runApp(
     MultiProvider(
       providers: [
