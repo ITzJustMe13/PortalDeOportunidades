@@ -95,7 +95,7 @@ class _PaginatedOpportunityGalleryState
           padding: const EdgeInsets.all(8.0),
           child: Row(
             children: [
-              Text('Items per page:'),
+              Text('Itens por página:'),
               SizedBox(width: 10),
               DropdownButton<int>(
                 value: _itemsPerPage,

@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart'; // Required for TextInputFormatter
 
-// Reusable widget for text fields
-class OpportunityTextField extends StatelessWidget {
+class DynamicTextField extends StatelessWidget {
   final String label;
   final TextEditingController controller;
   final int maxLines;
   final TextInputType? inputType;
+  final List<TextInputFormatter>? inputFormatters; // New optional parameter
 
-  const OpportunityTextField({super.key, 
+  const DynamicTextField({
+    super.key,
     required this.label,
     required this.controller,
     this.maxLines = 1,
     this.inputType,
+    this.inputFormatters,
   });
 
   @override
@@ -24,6 +27,7 @@ class OpportunityTextField extends StatelessWidget {
       controller: controller,
       maxLines: maxLines,
       keyboardType: inputType,
+      inputFormatters: inputFormatters, // Apply inputFormatters
     );
   }
 }

@@ -229,7 +229,7 @@ class _AddOpportunityScreenState extends State<CreateOpportunityScreen> {
           children: [
             Expanded(
               child: _buildTextField(
-                label: 'Preço:(+ 10% de taxa para a plataforma)',
+                label: 'Preço:(irá ser imposta posteriormente a taxa da plataforma)',
                 keyboardType: TextInputType.numberWithOptions(decimal: true),
                 onChanged: (value) => _price = double.parse(value ?? ""),
                 validator: (value) {

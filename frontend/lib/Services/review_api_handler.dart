@@ -118,8 +118,8 @@ class ReviewApiHandler extends Handler{
     }
   }
 
-  Future<bool> editReview(int id, double score, String? desc) async {
-    final uri = Uri.parse('$baseUri/$id/Edit?score=$score&desc=$desc');
+  Future<bool> editReview(int id, Review review) async {
+    final uri = Uri.parse('$baseUri/$id/Edit');
     final String? accessToken = await storage.read(key: 'accessToken');
 
     if (accessToken == null) {
@@ -127,9 +127,13 @@ class ReviewApiHandler extends Handler{
     }
 
     try {
+      final reviewJson = review.toJson();
+
       final response = await client.put(uri, headers: {
-        'Authorization': 'Bearer $accessToken',
-      });
+            'Authorization': 'Bearer $accessToken',
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode(reviewJson));
 
       if (response.statusCode >= 200 && response.statusCode <= 299) {
         return true;

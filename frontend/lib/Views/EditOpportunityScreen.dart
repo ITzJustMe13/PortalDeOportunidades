@@ -8,7 +8,7 @@ import 'package:frontend/Components/CustomDrawer.dart';
 import 'package:frontend/Enums/Location.dart';
 import 'package:frontend/Models/OpportunityImg.dart';
 import 'package:provider/provider.dart';
-import 'package:frontend/Components/OpportunityTextField.dart';
+import 'package:frontend/Components/DynamicTextField.dart';
 import 'package:frontend/Components/OpportunityImagePicker.dart';
 import 'package:frontend/Views/OpportunityDetailsScreen.dart';
 import 'package:frontend/Components/OpportunityDateTimePicker.dart';
@@ -63,7 +63,7 @@ class _EditOpportunityScreenState extends State<EditOpportunityScreen> {
     super.dispose();
   }
 
-  void _saveOpportunity() async {
+  Future<void> _saveOpportunity() async {
 
     if (_opportunityImgs.length > 5) {
       setState(() {
@@ -99,7 +99,7 @@ class _EditOpportunityScreenState extends State<EditOpportunityScreen> {
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Alterações gravadas com sucesso!'),
+          content: Text('Alterações guardadas com sucesso!'),
           backgroundColor: Colors.green,
         ),
       );
@@ -150,18 +150,18 @@ class _EditOpportunityScreenState extends State<EditOpportunityScreen> {
             style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 20),
-          OpportunityTextField(
+          DynamicTextField(
             label: 'Nome',
             controller: nameController,
           ),
           SizedBox(height: 20),
-          OpportunityTextField(
+          DynamicTextField(
             label: 'Descrição',
             controller: descriptionController,
             maxLines: 3,
           ),
           SizedBox(height: 20),
-          OpportunityTextField(
+          DynamicTextField(
             label: 'Endereço',
             controller: addressController,
           ),
@@ -208,9 +208,16 @@ class _EditOpportunityScreenState extends State<EditOpportunityScreen> {
             }).toList(),
           ),
           SizedBox(height: 20),
-          OpportunityTextField(
+          DynamicTextField(
             label: 'Vagas',
             controller: vacanciesController,
+            maxLines: 1,
+            inputType: TextInputType.number, // For numeric input
+          ),
+          SizedBox(height: 20),
+          DynamicTextField(
+            label: 'Preço (irá ser imposta posteriormente a taxa da plataforma)',
+            controller: priceController,
             maxLines: 1,
             inputType: TextInputType.number, // For numeric input
           ),
@@ -253,7 +260,7 @@ class _EditOpportunityScreenState extends State<EditOpportunityScreen> {
               );
             },
             child: Text(
-              'Salvar',
+              'Guardar',
               style: TextStyle(color: Colors.white), // Adjust text color if needed
             ),
           ),
