@@ -16,8 +16,6 @@ class PaymentApiHandler extends Handler{
     this.baseUri = baseUri ?? "$apiIP/api/Payment";
   }
 
-  
-
   Future<String?> createReservationCheckoutSession(
       Reservation reservation) async {
     final uri = Uri.parse('$baseUri/Checkout-Reservation');

@@ -29,6 +29,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   TextEditingController emailController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
+  TextEditingController ibanController = TextEditingController();
   final ImagePicker _picker = ImagePicker();
   String? _updatedImageBase64;
 
@@ -37,12 +38,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     super.initState();
     emailController.text = widget.user.email;
     phoneController.text = widget.user.cellPhoneNumber.toString();
+    if (ibanController.text.isEmpty && widget.user.iban != null) {
+      ibanController.text = widget.user.iban!;
+    }
   }
 
   @override
   void dispose() {
     emailController.dispose();
     phoneController.dispose();
+    ibanController.dispose();
     super.dispose();
   }
 
@@ -78,6 +83,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           const SizedBox(height: 16),
           _buildPhoneField(),
           const SizedBox(height: 16),
+          _buildIbanField(),
+          const SizedBox(height: 16),
           _buildSaveButton(),
         ],
       ),
@@ -100,6 +107,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 _buildEmailField(),
                 const Divider(height: 32),
                 _buildPhoneField(),
+                const SizedBox(height: 16),
+                _buildIbanField(),
                 const SizedBox(height: 16),
                 _buildSaveButton(),
               ],
@@ -134,7 +143,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   ],
                 ),
                 const Divider(height: 32, thickness: 1), // Divisor
-                _buildPhoneField(), // Campo de telefone
+                _buildPhoneField(),// Campo de telefone
+                const SizedBox(height: 16),
+                _buildIbanField(),
               ],
             ),
           ),
@@ -210,7 +221,7 @@ Widget _buildImage(String image) {
   }
 }
 
-  /// Widget para o campo de email
+  /// Widget para o campo de iban
   Widget _buildEmailField() {
     return Row(
       children: [
@@ -219,6 +230,24 @@ Widget _buildImage(String image) {
         Expanded(
           child: TextField(
             controller: emailController,
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              isDense: true,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildIbanField(){
+    return Row(
+      children: [
+        const Text("Iban:"),
+        const SizedBox(width: 8),
+        Expanded(
+          child: TextField(
+            controller: ibanController,
             decoration: const InputDecoration(
               border: OutlineInputBorder(),
               isDense: true,
@@ -286,6 +315,18 @@ Widget _buildImage(String image) {
       return;
     }
 
+    // Validate IBAN if provided
+    String iban = ibanController.text.replaceAll(' ', '');
+    if (iban.isNotEmpty && !RegExp(r'^[A-Z]{2}[0-9]{2}[A-Z0-9]{4,30}$').hasMatch(iban)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Iban inválido!'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
     // Create updated user object
     User updatedUser = User(
       userId: widget.user.userId,
@@ -298,6 +339,7 @@ Widget _buildImage(String image) {
       cellPhoneNumber: phoneNumber,
       gender: widget.user.gender,
       image: _updatedImageBase64.toString(),
+      iban: ibanController.text.isEmpty ? null : iban
     );
 
     final success = await Provider.of<UserApiHandler>(context, listen: false)

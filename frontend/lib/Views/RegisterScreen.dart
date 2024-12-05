@@ -26,7 +26,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   DateTime? _birthDateController;
   final _cellPhoneNumberController = TextEditingController();
   Gender? _genderController;
-  final _IBANController = TextEditingController();
+  final _ibanController = TextEditingController();
   String? _imageBase64;
   final _formKey = GlobalKey<FormState>();
 
@@ -43,7 +43,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _birthDateController = null;
     _cellPhoneNumberController.dispose();
     _genderController = null;
-    _IBANController.dispose();
+    _ibanController.dispose();
     super.dispose();
   }
 
@@ -157,7 +157,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           },
         ),
         TextFormField(
-          controller: _IBANController,
+          controller: _ibanController,
           decoration: InputDecoration(
             labelText: 'IBAN',
             suffixText: '(Opcional)',
@@ -322,7 +322,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final birthDate = _birthDateController;
     final cellPhoneNumber = _cellPhoneNumberController.text;
     final gender = _genderController;
-    final IBAN = _IBANController.text;
+    final iban = _ibanController.text;
     final image = _imageBase64;
 
     if (image == null || image.isEmpty) {
@@ -348,7 +348,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           email: email,
           cellPhoneNumber: int.parse(cellPhoneNumber),
           gender: gender ?? Gender.values.first,
-          IBAN: IBAN,
+          iban: iban,
           image: image);
 
       registerState.register(user, context);

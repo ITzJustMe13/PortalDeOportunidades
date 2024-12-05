@@ -1,4 +1,5 @@
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 abstract class Handler {
   final String apiIP;
@@ -6,7 +7,7 @@ abstract class Handler {
 
   Handler({
     http.Client? client,
-    //this.apiIP = "https://portalodeportunidadesapi-emfdgkakb0fqchas.westeurope-01.azurewebsites.net/",
-    this.apiIP = "https://localhost:7235",
-  }) : client = client ?? http.Client();
+    String? apiIP,
+  })  : apiIP = 'https://localhost:7235',//apiIP ?? dotenv.env['API_KEY'] ?? 'https://localhost:7235',
+        client = client ?? http.Client();
 }
