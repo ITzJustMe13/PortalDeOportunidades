@@ -122,7 +122,6 @@ class _OpportunityManageCardState extends State<OpportunityManageCard> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Title
                 Text(
                   widget.opportunity.name,
                   style: TextStyle(
@@ -142,7 +141,7 @@ class _OpportunityManageCardState extends State<OpportunityManageCard> {
                   overflow: TextOverflow.ellipsis,
                 ),
                 Text(
-                  '${widget.opportunity.price}€ / Pessoa',
+                  '${widget.opportunity.price}€ / Pessoa + taxa da plataforma',
                   style: TextStyle(fontSize: 14, color: Colors.grey[700]),
                 ),
                 Text(
@@ -158,8 +157,10 @@ class _OpportunityManageCardState extends State<OpportunityManageCard> {
                 SizedBox(height: 12),
 
                 // Action Buttons
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                Wrap(
+                  alignment: WrapAlignment.spaceBetween,
+                  spacing: 8,
+                  runSpacing: 8,
                   children: [
                     // Details Button
                     DynamicActionButton(

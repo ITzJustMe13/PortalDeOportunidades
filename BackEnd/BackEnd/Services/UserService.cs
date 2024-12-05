@@ -328,6 +328,10 @@ namespace BackEnd.Services
                 existingUser.BirthDate = updatedUser.birthDate;
                 existingUser.Gender = updatedUser.gender;
                 existingUser.Image = updatedUser.image;
+                if(updatedUser.IBAN != null)
+                {
+                    existingUser.IBAN = updatedUser.IBAN;
+                }
 
                 if (!string.IsNullOrEmpty(updatedUser.password))
                 {

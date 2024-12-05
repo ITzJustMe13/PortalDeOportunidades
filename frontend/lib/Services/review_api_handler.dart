@@ -1,23 +1,26 @@
 import 'dart:convert';
 //import 'dart:ffi';
 import 'package:frontend/Models/Review.dart';
+import 'package:frontend/Services/handler.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-class ReviewApiHandler {
-  final String baseUri = "https://localhost:7235/api/Review";
-  final http.Client client;
+class ReviewApiHandler extends Handler{
+  late final String baseUri;
   final storage = FlutterSecureStorage();
   final timeout = const Duration(seconds: 60);
 
-  ReviewApiHandler(this.client);
+  ReviewApiHandler({
+    String? baseUri,
+  }) {
+    this.baseUri = baseUri ?? "$apiIP/api/Review";
+  }
 
   Future<Review?> getReviewById(int reviewId) async {
     final uri = Uri.parse('$baseUri/$reviewId');
     final String? accessToken = await storage.read(key: 'accessToken');
 
     if (accessToken == null) {
-      print('Error: No access token found');
       return null;
     }
 
@@ -31,11 +34,9 @@ class ReviewApiHandler {
         final review = Review.fromJson(jsonDecode(response.body));
         return review;
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return null;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return null;
     }
   }
@@ -45,7 +46,6 @@ class ReviewApiHandler {
     final String? accessToken = await storage.read(key: 'accessToken');
 
     if (accessToken == null) {
-      print('Error: No access token found');
       return [];
     }
 
@@ -61,11 +61,9 @@ class ReviewApiHandler {
             jsonList.map((json) => Review.fromJson(json)).toList();
         return userReviews;
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return [];
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return [];
     }
   }
@@ -75,7 +73,6 @@ class ReviewApiHandler {
     final String? accessToken = await storage.read(key: 'accessToken');
 
     if (accessToken == null) {
-      print('Error: No access token found');
       return null;
     }
 
@@ -91,11 +88,9 @@ class ReviewApiHandler {
         final createdReview = Review.fromJson(jsonDecode(response.body));
         return createdReview;
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return null;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return null;
     }
   }
@@ -105,7 +100,6 @@ class ReviewApiHandler {
     final String? accessToken = await storage.read(key: 'accessToken');
 
     if (accessToken == null) {
-      print('Error: No access token found');
       return false;
     }
 
@@ -115,41 +109,38 @@ class ReviewApiHandler {
       });
 
       if (response.statusCode >= 200 && response.statusCode <= 299) {
-        print('Review deleted successfully.');
         return true;
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return false;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return false;
     }
   }
 
-  Future<bool> editReview(int id, double score, String? desc) async {
-    final uri = Uri.parse('$baseUri/$id/Edit?score=$score&desc=$desc');
+  Future<bool> editReview(int id, Review review) async {
+    final uri = Uri.parse('$baseUri/$id/Edit');
     final String? accessToken = await storage.read(key: 'accessToken');
 
     if (accessToken == null) {
-      print('Error: No access token found');
       return false;
     }
 
     try {
+      final reviewJson = review.toJson();
+
       final response = await client.put(uri, headers: {
-        'Authorization': 'Bearer $accessToken',
-      });
+            'Authorization': 'Bearer $accessToken',
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode(reviewJson));
 
       if (response.statusCode >= 200 && response.statusCode <= 299) {
-        print('Review updated successfully.');
         return true;
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return false;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return false;
     }
   }

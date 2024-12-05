@@ -4,16 +4,18 @@ import 'package:frontend/Models/Favorite.dart';
 import 'package:frontend/Models/Impulse.dart';
 import 'package:frontend/Models/Opportunity.dart';
 import 'package:frontend/Models/User.dart';
-import 'package:http/http.dart' as http;
+import 'package:frontend/Services/handler.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-class UserApiHandler {
-  final String baseUri = "https://localhost:7235/api/User";
-  final http.Client? client;
+class UserApiHandler extends Handler {
+  late final String baseUri;
   final storage = FlutterSecureStorage();
 
-  UserApiHandler(this.client);
-  
+  UserApiHandler({
+    String? baseUri,
+  }) {
+    this.baseUri = baseUri ?? "$apiIP/api/User";
+  }
 
   void logout() {
     storage.delete(key: 'accessToken');
@@ -25,7 +27,7 @@ class UserApiHandler {
     final uri = Uri.parse('$baseUri/login');
 
     try {
-      final response = await client?.post(
+      final response = await client.post(
         uri,
         headers: {
           'Content-Type': 'application/json',
@@ -36,7 +38,7 @@ class UserApiHandler {
         }),
       );
 
-      if (response!.statusCode >= 200 && response.statusCode <= 299) {
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
         final data = jsonDecode(response.body);
         await storage.write(key: 'accessToken', value: data['token']);
         final authenticatedUser = User.fromJson(data['user']);
@@ -47,7 +49,6 @@ class UserApiHandler {
         return null;
       }
     } catch (e) {
-      print('Error: ${e.toString()}');
       return null;
     }
   }
@@ -85,30 +86,19 @@ class UserApiHandler {
   /// Get user by ID
   Future<User?> getUserByID(int id) async {
     final uri = Uri.parse('$baseUri/$id');
-    final String? accessToken = await storage.read(key: 'accessToken');
-
-    if (accessToken == null) {
-      print('Error: No access token found');
-      return null;
-    }
 
     try {
-      final response = await client?.get(uri, headers: {
-        'Authorization': 'Bearer $accessToken',
-      });
+      final response = await client.get(uri);
 
-      if (response!.statusCode >= 200 && response.statusCode <= 299) {
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
         final user = User.fromJson(jsonDecode(response.body));
         return user;
       } else if (response.statusCode == 404) {
-        print('User not found or DB context missing');
         return null;
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return null;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return null;
     }
   }
@@ -118,7 +108,7 @@ class UserApiHandler {
     final uri = Uri.parse(baseUri);
 
     try {
-      final response = await client?.post(
+      final response = await client.post(
         uri,
         headers: {
           'Content-Type': 'application/json',
@@ -126,15 +116,13 @@ class UserApiHandler {
         body: jsonEncode(user.toJson()),
       );
 
-      if (response!.statusCode >= 200 && response.statusCode <= 299) {
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
         final createdUser = User.fromJson(jsonDecode(response.body));
         return createdUser;
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return null;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return null;
     }
   }
@@ -145,30 +133,25 @@ class UserApiHandler {
     final String? accessToken = await storage.read(key: 'accessToken');
 
     if (accessToken == null) {
-      print('Error: No access token found');
       return false;
     }
 
     try {
-      final response = await client?.delete(
+      final response = await client.delete(
         uri,
         headers: {
           'Authorization': 'Bearer $accessToken',
         },
       );
 
-      if (response!.statusCode >= 200 && response.statusCode <= 299) {
-        print('User deleted successfully.');
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
         return true;
       } else if (response.statusCode == 404) {
-        print('Error: ${response.body}');
         return false;
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return false;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return false;
     }
   }
@@ -179,14 +162,13 @@ class UserApiHandler {
     final String? accessToken = await storage.read(key: 'accessToken');
 
     if (accessToken == null) {
-      print('Error: No access token found');
       return false;
     }
 
     try {
       final userJson = updatedUser.toJson();
 
-      final response = await client?.put(
+      final response = await client.put(
         uri,
         headers: {
           'Authorization': 'Bearer $accessToken',
@@ -195,18 +177,14 @@ class UserApiHandler {
         body: jsonEncode(userJson),
       );
 
-      if (response!.statusCode >= 200 && response.statusCode <= 299) {
-        print('User updated successfully.');
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
         return true;
       } else if (response.statusCode == 404) {
-        print('Error: User not found');
         return false;
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return false;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return false;
     }
   }
@@ -217,12 +195,11 @@ class UserApiHandler {
     final String? accessToken = await storage.read(key: 'accessToken');
 
     if (accessToken == null) {
-      print('Error: No access token found');
       return null;
     }
 
     try {
-      final response = await client?.post(
+      final response = await client.post(
         uri,
         headers: {
           'Content-Type': 'application/json',
@@ -231,15 +208,13 @@ class UserApiHandler {
         body: jsonEncode(favorite.toJson()),
       );
 
-      if (response!.statusCode >= 200 && response.statusCode <= 299) {
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
         final createdFavorite = Favorite.fromJson(jsonDecode(response.body));
         return createdFavorite;
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return null;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return null;
     }
   }
@@ -250,27 +225,23 @@ class UserApiHandler {
     final String? accessToken = await storage.read(key: 'accessToken');
 
     if (accessToken == null) {
-      print('Error: No access token found');
       return null;
     }
 
     try {
-      final response = await client?.get(uri, headers: {
+      final response = await client.get(uri, headers: {
         'Authorization': 'Bearer $accessToken',
       });
 
-      if (response!.statusCode >= 200 && response.statusCode <= 299) {
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
         final favorite = Favorite.fromJson(jsonDecode(response.body));
         return favorite;
       } else if (response.statusCode == 404) {
-        print('User not found or DB context missing');
         return null;
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return null;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return null;
     }
   }
@@ -281,30 +252,26 @@ class UserApiHandler {
     final String? accessToken = await storage.read(key: 'accessToken');
 
     if (accessToken == null) {
-      print('Error: No access token found');
       return null;
     }
 
     try {
-      final response = await client?.get(uri, headers: {
+      final response = await client.get(uri, headers: {
         'Authorization': 'Bearer $accessToken',
         'Content-Type': 'application/json',
       });
 
-      if (response!.statusCode >= 200 && response.statusCode <= 299) {
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
         final List<dynamic> jsonList = jsonDecode(response.body);
         final favorites =
             jsonList.map((json) => Favorite.fromJson(json)).toList();
         return favorites;
       } else if (response.statusCode == 404) {
-        print('No favorites found!');
         return [];
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return null;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return null;
     }
   }
@@ -314,30 +281,25 @@ class UserApiHandler {
   /// @param: userId : id of the user
   /// @param oppId : io of the opportunity
   /// @returns: true if it was delete sucessefully, false if not
-  Future<bool> deleteFavoriteById(int userId, int oppId) async{
+  Future<bool> deleteFavoriteById(int userId, int oppId) async {
     final uri = Uri.parse('$baseUri/favorite/$userId/$oppId/delete');
     final String? accessToken = await storage.read(key: 'accessToken');
-    print('Deleting favorite with URI: $uri');
-    
+
     if (accessToken == null) {
-      print('Error: No access token found');
       return false;
     }
 
     try {
-      final response = await client?.delete(uri, headers: {
+      final response = await client.delete(uri, headers: {
         'Authorization': 'Bearer $accessToken',
       });
 
-      if (response!.statusCode >= 200 && response.statusCode <= 299) {
-        print('Favorite deleted successfully.');
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
         return true;
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return false;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return false;
     }
   }
@@ -348,26 +310,23 @@ class UserApiHandler {
     final String? accessToken = await storage.read(key: 'accessToken');
 
     if (accessToken == null) {
-      print('Error: No access token found');
       return null;
     }
 
     try {
-      final response = await client?.post(uri, headers: {
-        'Authorization': 'Bearer $accessToken',
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode(impulse.toJson()));
+      final response = await client.post(uri,
+          headers: {
+            'Authorization': 'Bearer $accessToken',
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode(impulse.toJson()));
 
-      if (response!.statusCode >= 200 && response.statusCode <= 299) {
-        final createdImpulse = Impulse.fromJson(jsonDecode(response.body));
-        return createdImpulse;
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
+        return Impulse.fromJson(jsonDecode(response.body));
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return null;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return null;
     }
   }
@@ -378,29 +337,25 @@ class UserApiHandler {
     final String? accessToken = await storage.read(key: 'accessToken');
 
     if (accessToken == null) {
-      print('Error: No access token found');
       return null;
     }
     try {
-      final response = await client?.get(uri, headers: {
+      final response = await client.get(uri, headers: {
         'Authorization': 'Bearer $accessToken',
         'Content-Type': 'application/json',
       });
 
-      if (response!.statusCode >= 200 && response.statusCode <= 299) {
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
         final List<dynamic> jsonList = jsonDecode(response.body);
         final Opportunities =
             jsonList.map((json) => Opportunity.fromJson(json)).toList();
         return Opportunities;
       } else if (response.statusCode == 404) {
-        print('No Opportunities found!');
         return [];
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return null;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return null;
     }
   }
@@ -409,11 +364,11 @@ class UserApiHandler {
     final uri = Uri.parse('$baseUri/activate?token=$token');
 
     try {
-      final response = await client?.get(uri, headers: {
+      final response = await client.get(uri, headers: {
         'Content-Type': 'application/json',
       });
 
-      if (response!.statusCode >= 200 && response.statusCode <= 299) {
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
         final dynamic jsonResponse = response.body;
         if (jsonResponse == "Account activated successfully.") {
           return true;

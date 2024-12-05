@@ -9,6 +9,7 @@ import 'package:frontend/Components/DynamicActionButton.dart';
 import 'package:frontend/Models/Opportunity.dart';
 import 'package:frontend/Models/Reservation.dart';
 import 'package:frontend/State/HistoryReservationState.dart';
+import 'package:frontend/Views/CreateReviewScreen.dart';
 import 'package:frontend/Views/OpportunityDetailsScreen.dart';
 import 'package:provider/provider.dart';
 
@@ -303,13 +304,32 @@ class HistoryReservationScreen extends StatelessWidget {
                     ],
                   ),
                   SizedBox(height: 8),
-                  _buildCancelButton(state, reservation, context),
+                  if (!reservation.isActive)
+                        _buildReviewButton(context, reservation),
+                  if (reservation.isActive) 
+                    _buildCancelButton(state, reservation, context),           
                 ],
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildReviewButton(BuildContext context, Reservation reservation){
+    return DynamicActionButton(
+      text: "Dê a sua Opinião", 
+      icon: Icons.reviews, 
+      color: Colors.green,
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CreateReviewScreen(reservation: reservation),
+          ),
+        );
+      }
     );
   }
 

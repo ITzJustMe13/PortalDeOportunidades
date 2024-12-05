@@ -31,7 +31,6 @@ namespace BackEnd.Controllers
         /// <param name="id"></param>
         /// <returns>Returns NotFound() if is not sucessefully or OK() with the User Dto if it is</returns>
         [HttpGet("{id}")]
-        [Authorize]
         public override async Task<IActionResult> GetEntityById(int id)
         {
             var serviceResponse = await _userService.GetUserByIDAsync(id);

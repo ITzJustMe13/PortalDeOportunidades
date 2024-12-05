@@ -91,8 +91,8 @@ namespace BackEnd.Services
                 },
             },
                     Mode = "payment",
-                    SuccessUrl = $"http://localhost:50394/#/payment/success?paymentType=reservation",
-                    CancelUrl = $"http://localhost:50394/#/payment/cancel?paymentType=reservation",
+                    SuccessUrl = $"http://localhost:49618/#/payment/success?paymentType=reservation",
+                    CancelUrl = $"http://localhost:49618/#/payment/cancel?paymentType=reservation",
                     CustomerEmail = user.Email, // For sending the receipt to the user
                 };
 

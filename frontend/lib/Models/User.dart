@@ -11,7 +11,7 @@ class User {
   final DateTime birthDate;
   final Gender gender;
   final String image;
-  final String? IBAN;
+  final String? iban;
 
   const User(
       {required this.userId,
@@ -23,7 +23,7 @@ class User {
       required this.email,
       required this.cellPhoneNumber,
       required this.gender,
-      this.IBAN,
+      this.iban,
       required this.image});
 
   factory User.fromJson(Map<String, dynamic> json) => User(
@@ -36,7 +36,7 @@ class User {
         email: json["email"] ?? '', // Default to empty string if null
         cellPhoneNumber: json["cellPhoneNumber"],
         gender: genderFromInt(json["gender"]),
-        IBAN: json["IBAN"],
+        iban: json["IBAN"],
         image: json["image"] ?? '', // Default to empty string if null
       );
 
@@ -50,7 +50,7 @@ class User {
         "email": email,
         "cellPhoneNumber": cellPhoneNumber,
         "gender": genderToInt(gender),
-        "IBAN": IBAN,
+        "IBAN": iban,
         "image": image
       };
 }

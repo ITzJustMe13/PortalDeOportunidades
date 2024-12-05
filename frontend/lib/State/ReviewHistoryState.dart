@@ -8,10 +8,10 @@ import 'package:frontend/Services/user_api_handler.dart';
 import 'package:http/http.dart' as http;
 
 class ReviewHistoryState with ChangeNotifier {
-  final _reservationApiHandler = ReservationApiHandler(http.Client());
-  final _userApiHandler = UserApiHandler(http.Client());
-  final _opportunityApiHandler = OpportunityApiHandler(http.Client());
-  final _reviewApiHandler = ReviewApiHandler(http.Client());
+  var _reservationApiHandler = ReservationApiHandler();
+  var _userApiHandler = UserApiHandler();
+  var _opportunityApiHandler = OpportunityApiHandler();
+  var _reviewApiHandler = ReviewApiHandler();
 
   List<ReviewOpportunityReservation> _reviewList = [];
   bool _isLoading = false;
@@ -22,6 +22,21 @@ class ReviewHistoryState with ChangeNotifier {
     getReviewList();
   }
 
+  set reservationApiHandler(ReservationApiHandler handler) {
+    _reservationApiHandler = handler;
+  }
+
+  set userApiHandler(UserApiHandler handler) {
+    _userApiHandler = handler;
+  }
+  
+  set opportunityApiHandler(OpportunityApiHandler handler) {
+    _opportunityApiHandler = handler;
+  }
+
+  set reviewApiHandler(ReviewApiHandler handler) {
+    _reviewApiHandler = handler;
+  }
   List<ReviewOpportunityReservation> get reviewList => _reviewList;
   bool get isLoading => _isLoading;
   String get error => _err;

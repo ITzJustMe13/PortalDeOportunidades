@@ -1,3 +1,4 @@
+import 'package:dynamic_height_grid_view/dynamic_height_grid_view.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/Models/Opportunity.dart';
 import 'package:frontend/Models/User.dart';
@@ -98,40 +99,7 @@ class _OpportunityManagerScreenState extends State<OpportunityManagerScreen> {
 
   Widget _buildTabletLayout(List<Opportunity> opportunities) {
     return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Text(
-              "As suas Oportunidades",
-              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-            ),
-          ),
-          SizedBox(height: 20),
-          Expanded(
-            child: GridView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 20,
-                childAspectRatio: 1.5,
-              ),
-              itemCount: opportunities.length,
-              itemBuilder: (context, index) {
-                return OpportunityManageCard(opportunity: opportunities[index]);
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDesktopLayout(List<Opportunity> opportunities) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(20.0),
+      padding: const EdgeInsets.symmetric(horizontal: 60.0, vertical: 20.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -140,17 +108,78 @@ class _OpportunityManagerScreenState extends State<OpportunityManagerScreen> {
             style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 20),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              crossAxisSpacing: 20.0,
-              mainAxisSpacing: 20.0,
-            ),
-            itemCount: opportunities.length,
-            itemBuilder: (context, index) {
-              return OpportunityManageCard(opportunity: opportunities[index]);
+          LayoutBuilder(
+            builder: (context, constraints) {
+              // Define the minimum width for each card
+              const double minCardWidth = 350;
+
+              // Calculate the number of items that can fit based on the available width
+              int itemsPerRow =
+                  (constraints.maxWidth / minCardWidth).floor().clamp(1, 5);
+
+              return ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: opportunities.length /
+                      itemsPerRow *
+                      1500, // Approximate height
+                ),
+                child: DynamicHeightGridView(
+                  crossAxisCount: itemsPerRow,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 20,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: opportunities.length,
+                  builder: (context, index) {
+                    return OpportunityManageCard(
+                        opportunity: opportunities[index]);
+                  },
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDesktopLayout(List<Opportunity> opportunities) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(60.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "As suas Oportunidades",
+            style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 20),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              // Define the minimum width for each card
+              const double minCardWidth = 400;
+
+              // Calculate the number of items that can fit based on the available width
+              int itemsPerRow =
+                  (constraints.maxWidth / minCardWidth).floor().clamp(1, 5);
+
+              return ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: opportunities.length /
+                      itemsPerRow *
+                      1500, // Approximate height
+                ),
+                child: DynamicHeightGridView(
+                  crossAxisCount: itemsPerRow,
+                  crossAxisSpacing: 20,
+                  mainAxisSpacing: 30,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: opportunities.length,
+                  builder: (context, index) {
+                    return OpportunityManageCard(
+                        opportunity: opportunities[index]);
+                  },
+                ),
+              );
             },
           ),
         ],
@@ -165,7 +194,6 @@ class _OpportunityManagerScreenState extends State<OpportunityManagerScreen> {
           .getStoredUser();
       return user;
     } catch (e) {
-      print('Error fetching user: $e');
       return null;
     }
   }

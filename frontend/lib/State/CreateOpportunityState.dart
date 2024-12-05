@@ -5,15 +5,32 @@ import 'package:frontend/Services/opportunity_api_handler.dart';
 import 'package:frontend/Services/user_api_handler.dart';
 import 'package:http/http.dart' as http;
 
+
 class CreateOpportunityState with ChangeNotifier {
-  final _userApiHandler = UserApiHandler(http.Client());
-  final _opportunityApiHandler = OpportunityApiHandler(http.Client());
+  var _userApiHandler = UserApiHandler();
+  var _opportunityApiHandler = OpportunityApiHandler();
 
   String? _errorMessage;
   bool _isLoading = false;
 
   String? get errorMessage => _errorMessage;
   bool get isLoading => _isLoading;
+
+  CreateOpportunityState({
+    UserApiHandler? userApiHandler,
+    OpportunityApiHandler? opportunityApiHandler,
+  })  : _userApiHandler = userApiHandler ?? UserApiHandler(),
+        _opportunityApiHandler = opportunityApiHandler ?? OpportunityApiHandler();
+
+// Setters para injeção das dependências nos testes
+  set userApiHandler(UserApiHandler handler) {
+    _userApiHandler = handler;
+  }
+
+  set opportunityApiHandler(OpportunityApiHandler handler) {
+    _opportunityApiHandler = handler;
+  }
+
 
   Future<int> getCurrentUserId() async {
     return await _userApiHandler.getStoredUserID();

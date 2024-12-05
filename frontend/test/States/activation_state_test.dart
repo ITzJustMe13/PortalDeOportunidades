@@ -1,34 +1,18 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:frontend/State/ActivationState.dart';
-import 'package:frontend/Services/user_api_handler.dart'; // Certifique-se de que este caminho está correto.
-import 'package:http/http.dart' as http;
+import 'package:mockito/mockito.dart';
 
-
-// Implementação em memória do UserApiHandler
-class InMemoryUserApiHandler extends UserApiHandler {
-  final Map<String, bool> _responses = {};
-
-  InMemoryUserApiHandler() : super(http.Client());
-
-  void addResponse(String token, bool success) {
-    _responses[token] = success;
-  }
-
-  @override
-  Future<bool> activateAccount(String token) async {
-    return _responses[token] ?? false;
-  }
-}
+import '../mocks.mocks.dart';
 
 void main() {
   group('ActivationState Tests', () {
-    late InMemoryUserApiHandler apiHandler;
+    late MockUserApiHandler apiHandler;
     late ActivationState activationState;
 
     setUp(() {
-      apiHandler = InMemoryUserApiHandler();
+      apiHandler = MockUserApiHandler();
       activationState = ActivationState();
-      activationState.setApiHandler(apiHandler); // Sem cast explícito
+      activationState.setApiHandler(apiHandler); // Usando setter para injeção de dependência
     });
 
     test('Deve iniciar com valores padrão', () {
@@ -45,7 +29,9 @@ void main() {
     });
 
     test('Deve ativar a conta com um token válido', () async {
-      apiHandler.addResponse('valid-token', true);
+      // Simulando sucesso com um token válido
+      when(apiHandler.activateAccount('valid-token')).thenAnswer((_) async => true);
+
       await activationState.activateAccount('valid-token');
       expect(activationState.accountActivated, isTrue);
       expect(activationState.errorMessage, isNull);
@@ -53,7 +39,9 @@ void main() {
     });
 
     test('Deve definir errorMessage quando a ativação falhar', () async {
-      apiHandler.addResponse('invalid-token', false);
+      // Simulando falha com um token inválido
+      when(apiHandler.activateAccount('invalid-token')).thenAnswer((_) async => false);
+
       await activationState.activateAccount('invalid-token');
       expect(activationState.accountActivated, isFalse);
       expect(activationState.errorMessage, 'Ocorreu um erro!');
@@ -61,7 +49,9 @@ void main() {
     });
 
     test('Deve atualizar isLoading corretamente durante o processo de ativação', () async {
-      apiHandler.addResponse('valid-token', true);
+      // Simulando sucesso com um token válido
+      when(apiHandler.activateAccount('valid-token')).thenAnswer((_) async => true);
+
       final activationFuture = activationState.activateAccount('valid-token');
       expect(activationState.isLoading, isTrue);
       await activationFuture;

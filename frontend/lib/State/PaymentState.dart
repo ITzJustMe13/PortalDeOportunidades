@@ -9,10 +9,10 @@ class PaymentState with ChangeNotifier {
   bool _isLoading = false;
   String _errorMessage = "";
   final ReservationApiHandler _reservationApiHandler =
-      ReservationApiHandler(http.Client());
+      ReservationApiHandler();
 
-  final UserApiHandler _userApiHandler = UserApiHandler(http.Client());
-
+  final UserApiHandler _userApiHandler = UserApiHandler();
+  final PaymentService paymentService = PaymentService();
   PaymentState();
 
   String get errorMessage => _errorMessage;
@@ -40,7 +40,6 @@ class PaymentState with ChangeNotifier {
       return;
     }
 
-    PaymentService().deleteReservation();
     _errorMessage = "";
     notifyListeners();
   }
@@ -64,8 +63,15 @@ class PaymentState with ChangeNotifier {
       return;
     }
 
-    PaymentService().deleteImpulse();
+    deleteImpulse();
     _errorMessage = "";
     notifyListeners();
+  }
+
+  Future<void> deleteImpulse() async {
+    paymentService.deleteImpulse();
+  }
+  Future<void> deleteReservation() async {
+    paymentService.deleteReservation();
   }
 }

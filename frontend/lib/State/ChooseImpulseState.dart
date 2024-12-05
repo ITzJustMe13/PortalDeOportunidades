@@ -8,15 +8,41 @@ import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
 class ChooseImpulseState with ChangeNotifier {
-  final _apiHandler = UserApiHandler(http.Client());
-  final _paymentApiHandler = PaymentApiHandler(http.Client());
-  final _paymentService = PaymentService();
+  var _apiHandler = UserApiHandler();
+  var _paymentApiHandler = PaymentApiHandler();
+  var _paymentService = PaymentService();
 
   String? _errorMessage;
   bool _isLoading = false;
 
+  // Funções que podem ser injetadas para testes
+  Future<bool> Function(String) canLaunch = (url) async => true; // Mockable
+  Future<void> Function(String) launch = (url) async {}; // Mockable
+
   String? get errorMessage => _errorMessage;
   bool get isLoading => _isLoading;
+
+  set isLoading(bool value) {
+    _isLoading = value;
+    notifyListeners(); // Notifica os ouvintes para atualizar a interface
+  }
+
+  set errorMessage(String? value) {
+    _errorMessage = value;
+    notifyListeners(); // Notifica os ouvintes sobre a mudança
+  }
+
+  set apiHandler(UserApiHandler handler) {
+    _apiHandler = handler;
+  }
+
+  set paymentService(PaymentService service) {
+    _paymentService = service;
+  }
+
+  set paymentApiHandler(PaymentApiHandler handler) {
+    _paymentApiHandler = handler;
+  }
 
   ChooseImpulseState();
 
@@ -48,14 +74,12 @@ class ChooseImpulseState with ChangeNotifier {
       if (await canLaunch(checkoutUrl)) {
         await launch(checkoutUrl);
       } else {
-        print('Could not launch $checkoutUrl');
         _isLoading = false;
         _errorMessage = 'Erro ao abrir checkout';
         notifyListeners();
         return;
       }
     } else {
-      print('Failed to create checkout session');
       _errorMessage = 'Erro ao criar checkout session';
       _isLoading = false;
       notifyListeners();

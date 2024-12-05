@@ -1,14 +1,18 @@
 import 'dart:convert';
 import 'package:frontend/Models/Reservation.dart';
+import 'package:frontend/Services/handler.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-class ReservationApiHandler {
-  final String baseUri = "https://localhost:7235/api/Reservation";
-  final http.Client client;
+class ReservationApiHandler extends Handler{
+  late final String baseUri;
   final storage = FlutterSecureStorage();
 
-  ReservationApiHandler(this.client);
+  ReservationApiHandler({
+    String? baseUri,
+  }) {
+    this.baseUri = baseUri ?? "$apiIP/api/Reservation";
+  }
 
   Future<List<Reservation>?> getAllActiveReservationsByUserId(
       int userId) async {
@@ -16,7 +20,6 @@ class ReservationApiHandler {
     final String? accessToken = await storage.read(key: 'accessToken');
 
     if (accessToken == null) {
-      print('Error: No access token found');
       return null;
     }
 
@@ -32,11 +35,9 @@ class ReservationApiHandler {
             jsonList.map((json) => Reservation.fromJson(json)).toList();
         return activeReservations;
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return null;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return null;
     }
   }
@@ -46,7 +47,6 @@ class ReservationApiHandler {
     final String? accessToken = await storage.read(key: 'accessToken');
 
     if (accessToken == null) {
-      print('Error: No access token found');
       return null;
     }
 
@@ -57,18 +57,14 @@ class ReservationApiHandler {
       });
 
       if (response.statusCode >= 200 && response.statusCode <= 299) {
-        print(response.body);
         final List<dynamic> jsonList = jsonDecode(response.body);
         final reservations =
             jsonList.map((json) => Reservation.fromJson(json)).toList();
-            print(reservations.length);
         return reservations;
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return null;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return null;
     }
   }
@@ -78,7 +74,6 @@ class ReservationApiHandler {
     final String? accessToken = await storage.read(key: 'accessToken');
 
     if (accessToken == null) {
-      print('Error: No access token found');
       return null;
     }
 
@@ -92,11 +87,9 @@ class ReservationApiHandler {
         final reservation = Reservation.fromJson(jsonDecode(response.body));
         return reservation;
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return null;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return null;
     }
   }
@@ -106,7 +99,6 @@ class ReservationApiHandler {
     final String? accessToken = await storage.read(key: 'accessToken');
 
     if (accessToken == null) {
-      print('Error: No access token found');
       return null;
     }
 
@@ -123,11 +115,9 @@ class ReservationApiHandler {
             Reservation.fromJson(jsonDecode(response.body));
         return createdReservation;
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return null;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return null;
     }
   }
@@ -137,7 +127,6 @@ class ReservationApiHandler {
     final String? accessToken = await storage.read(key: 'accessToken');
 
     if (accessToken == null) {
-      print('Error: No access token found');
       return false;
     }
 
@@ -147,14 +136,11 @@ class ReservationApiHandler {
       });
 
       if (response.statusCode >= 200 && response.statusCode <= 299) {
-        print('Reservation deactivated successfully');
         return true;
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return false;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return false;
     }
   }
@@ -165,7 +151,6 @@ class ReservationApiHandler {
     final String? accessToken = await storage.read(key: 'accessToken');
 
     if (accessToken == null) {
-      print('Error: No access token found');
       return false;
     }
 
@@ -180,14 +165,11 @@ class ReservationApiHandler {
           body: jsonEncode(resJson));
 
       if (response.statusCode >= 200 && response.statusCode <= 299) {
-        print('Reservation updated successfully');
         return true;
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return false;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return false;
     }
   }
@@ -197,7 +179,6 @@ class ReservationApiHandler {
     final String? accessToken = await storage.read(key: 'accessToken');
 
     if (accessToken == null) {
-      print('Error: No access token found');
       return false;
     }
 
@@ -207,14 +188,11 @@ class ReservationApiHandler {
       });
 
       if (response.statusCode >= 200 && response.statusCode <= 299) {
-        print('Reservation deleted successfully.');
         return true;
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return false;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return false;
     }
   }

@@ -1,16 +1,20 @@
 import 'dart:convert';
 import 'package:frontend/Models/Impulse.dart';
 import 'package:frontend/Models/Reservation.dart';
+import 'package:frontend/Services/handler.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class PaymentApiHandler {
-  final String baseUri = "https://localhost:7235/api/Payment";
-  final http.Client client;
-  final storage = FlutterSecureStorage();
+class PaymentApiHandler extends Handler{
+  late final String baseUri;
+  final FlutterSecureStorage storage = FlutterSecureStorage();
 
-  PaymentApiHandler(this.client);
+  PaymentApiHandler({
+    String? baseUri,
+  }) {
+    this.baseUri = baseUri ?? "$apiIP/api/Payment";
+  }
 
   Future<String?> createReservationCheckoutSession(
       Reservation reservation) async {
@@ -26,20 +30,15 @@ class PaymentApiHandler {
       if (response.statusCode >= 200 && response.statusCode <= 299) {
         return response.body;  // The response is now just the session URL string
       } else {
-        print('Error: ${response.statusCode} - ${response.body}');
         return null;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return null;
     }
   }
 
   Future<String?> createImpulseCheckoutSession(Impulse impulse) async {
     final uri = Uri.parse('$baseUri/Checkout-Impulse');
-
-    print(impulse.toJson());
-
     try {
       final response = await client.post(uri,
           headers: {
@@ -50,11 +49,9 @@ class PaymentApiHandler {
       if (response.statusCode >= 200 && response.statusCode <= 299) {
         return response.body;
       } else {
-        print('Error: ${response.statusCode} - ${response.reasonPhrase}');
         return null;
       }
     } catch (e) {
-      print('Exception occurred: $e');
       return null;
     }
   }

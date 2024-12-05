@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/Enums/Location.dart'; // Import the enum for location
 
 class OpportunityAdditionalInfo extends StatelessWidget {
-  final double price;
+  final double? price;
   final int vacancies;
   final String firstName;
   final String lastName;
@@ -49,7 +49,7 @@ class OpportunityAdditionalInfo extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Preço: $price € / Pessoa',
+              'Preço: ${price??"????"} € / Pessoa',
               style: TextStyle(fontSize: 16, color: Colors.green),
             ),
             Text(

@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import '../Services/user_api_handler.dart';
 
 class ActivationState with ChangeNotifier {
-  var _apiHandler = UserApiHandler(http.Client());
+  var _apiHandler = UserApiHandler();
 
   void setApiHandler(UserApiHandler apiHandler) {
     _apiHandler = apiHandler;
@@ -18,7 +18,7 @@ class ActivationState with ChangeNotifier {
   bool get accountActivated => _accountActivated;
 
   ActivationState({UserApiHandler? apiHandler}) {
-    _apiHandler = apiHandler ?? UserApiHandler(http.Client());
+    _apiHandler = apiHandler ?? UserApiHandler();
   }
   // Funções para configuração em testes
   void setAccountActivated(bool value) {
@@ -33,7 +33,6 @@ class ActivationState with ChangeNotifier {
   // Function to login
   Future<void> activateAccount(String token) async {
 
-    print(token);
     if (token.isEmpty) {
       _errorMessage = 'Ocorreu um erro!';
       notifyListeners();
@@ -45,7 +44,6 @@ class ActivationState with ChangeNotifier {
 
     var response = await _apiHandler.activateAccount(token);
     _isLoading = false;
-    print(response);
 
     if (response == false) {
       _accountActivated = false;

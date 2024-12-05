@@ -21,10 +21,12 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _opportunitiesFuture = Provider.of<OpportunityApiHandler>(context, listen: false)
-        .getAllOpportunities();
-    _impulsedOpportunitiesFuture = Provider.of<OpportunityApiHandler>(context, listen: false)
-        .getAllImpulsedOpportunities();
+    _opportunitiesFuture =
+        Provider.of<OpportunityApiHandler>(context, listen: false)
+            .getAllOpportunities();
+    _impulsedOpportunitiesFuture =
+        Provider.of<OpportunityApiHandler>(context, listen: false)
+            .getAllImpulsedOpportunities();
   }
 
   @override
@@ -56,35 +58,44 @@ class _HomePageState extends State<HomePage> {
                         FutureBuilder<List<Opportunity>?>(
                           future: _impulsedOpportunitiesFuture,
                           builder: (context, snapshot) {
-                            if (snapshot.connectionState == ConnectionState.waiting) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
                               return const CircularProgressIndicator();
                             } else if (snapshot.hasError) {
                               return Text('Error: ${snapshot.error}');
-                            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                              return const Text('Sem Oportunidades em Destaque');
+                            } else if (!snapshot.hasData ||
+                                snapshot.data!.isEmpty) {
+                              return const Text(
+                                  'Sem Oportunidades em Destaque');
                             } else {
-                              List<Opportunity> opportunitiesOnTheRiseList = snapshot.data!;
+                              List<Opportunity> opportunitiesOnTheRiseList =
+                                  snapshot.data!;
                               return OnTheRiseOpportunityCarousel(
-                                  opportunitiesOnTheRiseList: opportunitiesOnTheRiseList);
+                                  opportunitiesOnTheRiseList:
+                                      opportunitiesOnTheRiseList);
                             }
                           },
                         ),
                         SizedBox(height: padding),
                         Divider(thickness: 1, color: Colors.black),
                         SizedBox(height: padding),
-                        
+
                         // FutureBuilder for 'all opportunities'
                         FutureBuilder<List<Opportunity>?>(
                           future: _opportunitiesFuture,
                           builder: (context, snapshot) {
-                            if (snapshot.connectionState == ConnectionState.waiting) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
                               return const CircularProgressIndicator();
                             } else if (snapshot.hasError) {
                               return Text('Error: ${snapshot.error}');
-                            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                              return const Text('Sem Oportunidades Disponiveis');
+                            } else if (!snapshot.hasData ||
+                                snapshot.data!.isEmpty) {
+                              return const Text(
+                                  'Sem Oportunidades Disponiveis');
                             } else {
-                              List<Opportunity> opportunitiesList = snapshot.data!;
+                              List<Opportunity> opportunitiesList =
+                                  snapshot.data!;
                               return PaginatedOpportunityGallery(
                                 allOpportunities: opportunitiesList,
                               );
