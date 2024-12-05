@@ -265,7 +265,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
             icon: Icons.account_circle,
             color: Color(0xFF50C878),
             onPressed: () async {
-              await _registerUser(registerState);
+              if (_formKey.currentState!.validate()) {
+                await _registerUser(registerState);
+              }
             },
           ),
         SizedBox(height: 16.0),

@@ -84,8 +84,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                                 obscureText: true,
                                 validator: (value) {
-                                  if (value!.length < 8) {
-                                    return 'Password must be at least 8 characters long';
+                                  if (value == null) {
+                                    return 'Please enter your password';
                                   }
                                   return null;
                                 },

@@ -23,11 +23,11 @@ class OpportunityDetailsScreen extends StatefulWidget {
       {super.key, required this.opportunity, this.isReservable = true});
 
   @override
-  _OpportunityManagerScreenState createState() =>
-      _OpportunityManagerScreenState();
+  _OpportunityDetailScreenState createState() =>
+      _OpportunityDetailScreenState();
 }
 
-class _OpportunityManagerScreenState extends State<OpportunityDetailsScreen> {
+class _OpportunityDetailScreenState extends State<OpportunityDetailsScreen> {
   final ScrollController verticalScrollController = ScrollController();
   final ScrollController horizontalScrollController = ScrollController();
 
