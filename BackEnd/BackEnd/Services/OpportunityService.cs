@@ -1,6 +1,6 @@
 ﻿using BackEnd.Controllers.Data;
 using BackEnd.Enums;
-using BackEnd.GenericClasses;
+using BackEnd.ServiceResponses;
 using BackEnd.Interfaces;
 using BackEnd.Models.BackEndModels;
 using BackEnd.Models.FrontEndModels;
@@ -8,6 +8,7 @@ using BackEnd.Models.Mappers;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.Extensions.WebEncoders.Testing;
 
 namespace BackEnd.Services
 {
@@ -19,6 +20,8 @@ namespace BackEnd.Services
     public class OpportunityService : IOpportunityService
     {
         private readonly ApplicationDbContext dbContext;
+
+
 
         public OpportunityService(ApplicationDbContext context)
         {
@@ -84,6 +87,11 @@ namespace BackEnd.Services
             return response;
         }
 
+        /// <summary>
+        /// Function that gets all the Opportunities that are Impulsed
+        /// </summary>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true and gets all the Dtos Impulsed Opportunities</returns>
         public async Task<ServiceResponse<IEnumerable<Opportunity>>> GetAllImpulsedOpportunitiesAsync()
         {
             var response = new ServiceResponse<IEnumerable<Opportunity>>();
@@ -134,6 +142,12 @@ namespace BackEnd.Services
             return response;
         }
 
+        /// <summary>
+        /// Function that gets an Opportunity by its id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true and sends the Opportunity Dto</returns>
         public async Task<ServiceResponse<Opportunity>> GetOpportunityByIdAsync(int id)
         {
             var response = new ServiceResponse<Opportunity>();
@@ -249,6 +263,88 @@ namespace BackEnd.Services
             return response;
         }
 
+        public async Task<ServiceResponse<List<Review>>> GetAllReviewsByOpportunityIdAsync(int opportunityId)
+        {
+            var response = new ServiceResponse<List<Review>>();
+
+            try
+            {
+                if (dbContext == null)
+                {
+                    response.Success = false;
+                    response.Message = "DB context is missing.";
+                    response.Type = "NotFound";
+                    return response;
+                }
+
+                if (opportunityId <= 0)
+                {
+                    response.Success = false;
+                    response.Message = "Given userId is invalid, it should be greater than 0.";
+                    response.Type = "BadRequest";
+                    return response;
+                }
+
+                var opportunity = await dbContext.Opportunities
+                    .Include(o => o.OpportunityImgs)
+                    .FirstOrDefaultAsync(o => o.OpportunityId == opportunityId);
+
+                if (opportunity == null)
+                {
+                    response.Success = false;
+                    response.Message = $"Opportunities with userId {opportunityId} not found.";
+                    response.Type = "NotFound";
+                    return response;
+                }
+
+                // Obter as Reviews associadas às Reservations da Opportunity
+                var reviews = await dbContext.Reservations
+                    .Where(r => r.opportunityID == opportunityId) // Filtra as Reservations da Opportunity
+                    .Select(r => r.review) // Obtem a Review associada a cada Reservation
+                    .ToListAsync();
+
+                // Verifica se existem reviews
+                if (!reviews.Any())
+                {
+                    response.Success = false;
+                    response.Message = $"No reviews found for Opportunity with ID {opportunityId}.";
+                    response.Type = "NotFound";
+                    return response;
+                }
+
+                var reviewDtos = reviews.Select(ReviewMapper.MapToDto).ToList();
+                response.Data = reviewDtos;
+                response.Success = true;
+                response.Message = "Reviews retrieved successfully.";
+                response.Type = "Ok";
+            }
+            catch (ValidationException ex)
+            {
+                response.Success = false;
+                response.Message = "Validation error occurred.";
+                response.Type = "BadRequest";
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = "An unexpected error occurred.";
+                response.Type = "InternalServerError";
+            }
+
+            return response;
+        }
+
+        /// <summary>
+        /// Function that searches Opportunities in the DB by certain filters
+        /// </summary>
+        /// <param name="keyword"></param>
+        /// <param name="vacancies"></param>
+        /// <param name="minPrice"></param>
+        /// <param name="maxPrice"></param>
+        /// <param name="category"></param>
+        /// <param name="location"></param>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true and returns the search results</returns>
         public async Task<ServiceResponse<List<Opportunity>>> SearchOpportunitiesAsync(
             string? keyword,
             int? vacancies,
@@ -328,6 +424,13 @@ namespace BackEnd.Services
             return response;
         }
 
+        /// <summary>
+        /// Function thate creates a Opportunity
+        /// </summary>
+        /// <param name="opportunityDto">Opportunity Dto</param>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true, creates the Opportunity and 
+        /// returns the new Dto</returns>
         public async Task<ServiceResponse<Opportunity>> CreateOpportunityAsync(Opportunity opportunityDto)
         {
             var response = new ServiceResponse<Opportunity>();
@@ -343,17 +446,7 @@ namespace BackEnd.Services
                 }
 
                 // Validate input parameters
-                var errors = ValidateOpportunityParameters(
-                    opportunityDto.name,
-                    opportunityDto.description,
-                    opportunityDto.price,
-                    opportunityDto.vacancies,
-                    opportunityDto.category,
-                    opportunityDto.location,
-                    opportunityDto.address,
-                    opportunityDto.date,
-                    true // This is a creation request
-                );
+                var errors = ValidateOpportunityParameters(opportunityDto);
 
                 if (errors.Any())
                 {
@@ -413,6 +506,12 @@ namespace BackEnd.Services
             return response;
         }
 
+        /// <summary>
+        /// Function that deletes the opportunity by its id
+        /// </summary>
+        /// <param name="id">Id of the opportunity</param>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true and deletes the opportunity</returns>
         public async Task<ServiceResponse<bool>> DeleteOpportunityByIdAsync(int id)
         {
             var response = new ServiceResponse<bool>();
@@ -446,7 +545,7 @@ namespace BackEnd.Services
                 }
 
                 bool hasActiveReservations = await dbContext.Reservations
-                    .AnyAsync(r => r.opportunityID == id && r.isActive);
+                    .AnyAsync(r => r.opportunityID == id && r.IsActive);
 
                 if (hasActiveReservations)
                 {
@@ -475,6 +574,12 @@ namespace BackEnd.Services
             return response;
         }
 
+        /// <summary>
+        /// Function that activates the opportunity by its id
+        /// </summary>
+        /// <param name="id">Id of the opportunity</param>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true and activates the opportunity</returns>
         public async Task<ServiceResponse<bool>> ActivateOpportunityByIdAsync(int id)
         {
             var response = new ServiceResponse<bool>();
@@ -533,6 +638,12 @@ namespace BackEnd.Services
             return response;
         }
 
+        /// <summary>
+        /// Function that deactivates the opportunity by its id
+        /// </summary>
+        /// <param name="id">Id of the opportunity</param>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true and deactivates the opportunity</returns>
         public async Task<ServiceResponse<bool>> DeactivateOpportunityByIdAsync(int id)
         {
             var response = new ServiceResponse<bool>();
@@ -590,18 +701,16 @@ namespace BackEnd.Services
 
             return response;
         }
-
+        /// <summary>
+        /// Function that edits the Opportunity by its id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="updatedOpportunity"></param>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true and the updated Opportunity Dto</returns>
         public async Task<ServiceResponse<Opportunity>> EditOpportunityByIdAsync(
             int id,
-            string? name,
-            string? description,
-            decimal? price,
-            int? vacancies,
-            Category? category,
-            Location? location,
-            string? address,
-            DateTime? date,
-            List<byte[]>? newImageUrls
+            Opportunity updatedOpportunity
         )
         {
             var response = new ServiceResponse<Opportunity>();
@@ -637,17 +746,7 @@ namespace BackEnd.Services
                 }
 
                 // Validate the provided parameters for editing
-                var errors = ValidateOpportunityParameters(
-                    name,
-                    description,
-                    price,
-                    vacancies,
-                    category,
-                    location,
-                    address,
-                    date,
-                    false // Indicating this is an edit request
-                );
+                var errors = ValidateOpportunityParameters(updatedOpportunity);
 
                 if (errors.Any())
                 {
@@ -658,30 +757,32 @@ namespace BackEnd.Services
                 }
 
                 // Update fields only if they have valid values
-                if (!string.IsNullOrEmpty(name)) opportunityModel.Name = name;
-                if (!string.IsNullOrEmpty(description)) opportunityModel.Description = description;
-                if (price.HasValue) opportunityModel.Price = price.Value;
-                if (vacancies.HasValue) opportunityModel.Vacancies = vacancies.Value;
-                if (category.HasValue) opportunityModel.Category = category.Value;
-                if (location.HasValue) opportunityModel.Location = location.Value;
-                if (!string.IsNullOrEmpty(address)) opportunityModel.Address = address;
-                if (date.HasValue) opportunityModel.Date = date.Value;
+                opportunityModel.Name = updatedOpportunity.name;
+                opportunityModel.Description = updatedOpportunity.description;
+                opportunityModel.Price = updatedOpportunity.price;
+                opportunityModel.Vacancies = updatedOpportunity.vacancies;
+                opportunityModel.Category = updatedOpportunity.category;
+                opportunityModel.Location = updatedOpportunity.location;
+                opportunityModel.Address = updatedOpportunity.address;
+                opportunityModel.Date = (DateTime)updatedOpportunity.date;
 
-                if (newImageUrls != null)
+
+                if (updatedOpportunity.OpportunityImgs != null)
                 {
                     // Remove existing images
                     dbContext.OpportunityImgs.RemoveRange(opportunityModel.OpportunityImgs);
 
                     // Add new images
-                    var newImages = newImageUrls.Select(url => new OpportunityImgModel
+                    var newImages = updatedOpportunity.OpportunityImgs.Select(url => new OpportunityImgModel
                     {
-                        Image = url,
+                        Image = url.image,
                         OpportunityId = opportunityModel.OpportunityId
                     }).ToList();
 
                     await dbContext.OpportunityImgs.AddRangeAsync(newImages);
                 }
 
+                dbContext.Opportunities.Update(opportunityModel);
                 await dbContext.SaveChangesAsync();
 
                 // Map to DTO to return
@@ -701,7 +802,15 @@ namespace BackEnd.Services
             return response;
         }
 
-
+        /// <summary>
+        /// Function to validate opportunity search parameters
+        /// </summary>
+        /// <param name="vacancies"></param>
+        /// <param name="minPrice"></param>
+        /// <param name="maxPrice"></param>
+        /// <param name="category"></param>
+        /// <param name="location"></param>
+        /// <returns>A list of error messages. If the list is empty, the validation passed.</returns>
         public List<string> ValidateSearchParameters(int? vacancies, decimal? minPrice, decimal? maxPrice, Category? category, Location? location)
         {
             var errors = new List<string>();
@@ -733,65 +842,72 @@ namespace BackEnd.Services
         }
 
         /// <summary>
-        /// Function that validates the Opportunity parameters for creating or editing an Opportunity
+        /// Validates the parameters of an Opportunity for creating or editing.
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="description"></param>
-        /// <param name="price"></param>
-        /// <param name="vacancies"></param>
-        /// <param name="category"></param>
-        /// <param name="location"></param>
-        /// <param name="address"></param>
-        /// <param name="date"></param>
-        /// <param name="isCreation"></param>
-        /// <returns>Returns a List of Strings (errors) or a empty List based 
-        /// of the validation of the parameters </returns>
-        public List<string> ValidateOpportunityParameters(
-           string? name,
-           string? description,
-           decimal? price,
-           int? vacancies,
-           Category? category,
-           Location? location,
-           string? address,
-           DateTime? date,
-           bool isCreation // Indicate if this validation is for creating the Opp
-)
+        /// <param name="opportunity">The Opportunity object to validate.</param>
+        /// <returns>A list of error messages. If the list is empty, the validation passed.</returns>
+        public List<string> ValidateOpportunityParameters(Opportunity opportunity)
         {
             var errors = new List<string>();
 
-            if (isCreation)
+            // Validate name
+            if (string.IsNullOrWhiteSpace(opportunity.name))
             {
-                if (string.IsNullOrWhiteSpace(name))
-                    errors.Add("Name cannot be empty.");
-                else if (name.Length > 100)
-                    errors.Add("Name should be 100 characters or less.");
-
-                if (string.IsNullOrWhiteSpace(description))
-                    errors.Add("Description cannot be empty.");
-                else if (description.Length > 1000)
-                    errors.Add("Description should be 1000 characters or less.");
+                errors.Add("Name cannot be empty.");
+            }
+            else if (opportunity.name.Length > 100)
+            {
+                errors.Add("Name should be 100 characters or less.");
             }
 
-            if (price.HasValue && price <= 0.00M)
+            // Validate description
+            if (string.IsNullOrWhiteSpace(opportunity.description))
+            {
+                errors.Add("Description cannot be empty.");
+            }
+            else if (opportunity.description.Length > 1000)
+            {
+                errors.Add("Description should be 1000 characters or less.");
+            }
+
+            // Validate price
+            if (opportunity.price == null || opportunity.price <= 0.00M)
+            {
                 errors.Add("Price should be at least 0.01.");
+            }
 
-            if (vacancies.HasValue && vacancies <= 0)
+            // Validate vacancies
+            if (opportunity.vacancies == null || opportunity.vacancies <= 0)
+            {
                 errors.Add("Vacancies should be at least one.");
+            }
 
-            if (category.HasValue && !Enum.IsDefined(typeof(Category), category.Value))
+            // Validate category
+            if (opportunity.category == null || !Enum.IsDefined(typeof(Category), opportunity.category))
+            {
                 errors.Add("Category is not valid.");
+            }
 
-            if (location.HasValue && !Enum.IsDefined(typeof(Location), location.Value))
+            // Validate location
+            if (opportunity.location == null || !Enum.IsDefined(typeof(Location), opportunity.location))
+            {
                 errors.Add("Location is not valid.");
+            }
 
-            if (!string.IsNullOrWhiteSpace(address) && address.Length > 200)
+            // Validate address
+            if (!string.IsNullOrWhiteSpace(opportunity.address) && opportunity.address.Length > 200)
+            {
                 errors.Add("Address should be 200 characters or less.");
+            }
 
-            if (date.HasValue && date <= DateTime.Today)
+            // Validate date
+            if (opportunity.date == null || opportunity.date <= DateTime.Today)
+            {
                 errors.Add("Date must be in the future.");
+            }
 
             return errors;
         }
+
     }
 }

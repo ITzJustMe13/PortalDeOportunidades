@@ -1,4 +1,4 @@
-﻿using BackEnd.GenericClasses;
+﻿using BackEnd.ServiceResponses;
 using BackEnd.Interfaces;
 using BackEnd.Models.FrontEndModels;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +8,11 @@ using BackEnd.Controllers.Data;
 
 namespace BackEnd.Services
 {
+    /// <summary>
+    /// This class is responsible for the Payment logic of the program
+    /// and implements the IPaymentService Interface
+    /// Has a constructor that receives a DBContext
+    /// </summary>
     public class PaymentService : IPaymentService
     {
         private readonly ApplicationDbContext dbContext;
@@ -17,6 +22,13 @@ namespace BackEnd.Services
         {
             this.dbContext = dbContext;
         }
+
+        /// <summary>
+        /// Function responsible for creating a Checkout Session for a User Reservation
+        /// </summary>
+        /// <param name="reservation">Reservation dto</param>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true with the checkout session id</returns>
         public async Task<ServiceResponse<string>> CreateReservationCheckoutSessionAsync(Reservation reservation)
         {
             var response = new ServiceResponse<string>();
@@ -79,8 +91,8 @@ namespace BackEnd.Services
                 },
             },
                     Mode = "payment",
-                    SuccessUrl = "https://localhost:7235/success", // UPDATE WITH FRONTEND
-                    CancelUrl = "https://localhost:7235/cancel", // UPDATE WITH FRONTEND
+                    SuccessUrl = $"http://localhost:49618/#/payment/success?paymentType=reservation",
+                    CancelUrl = $"http://localhost:49618/#/payment/cancel?paymentType=reservation",
                     CustomerEmail = user.Email, // For sending the receipt to the user
                 };
 
@@ -88,7 +100,7 @@ namespace BackEnd.Services
                 Session session = await service.CreateAsync(options);
 
                 response.Success = true;
-                response.Data = session.Id; // Returning the session ID
+                response.Data = session.Url;
                 response.Message = "Checkout session created successfully.";
                 response.Type = "Ok";
             }
@@ -108,9 +120,16 @@ namespace BackEnd.Services
             return response;
         }
 
+        /// <summary>
+        /// Function responsible for creating a Checkout Session for a Impulse Opportunity payment
+        /// </summary>
+        /// <param name="impulse">Impulse dto</param>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true with the checkout session id</returns>
         public async Task<ServiceResponse<string>> CreateImpulseCheckoutSessionAsync(Impulse impulse)
         {
             var response = new ServiceResponse<string>();
+
 
             try
             {
@@ -170,21 +189,22 @@ namespace BackEnd.Services
                 },
             },
                     Mode = "payment",
-                    SuccessUrl = "https://localhost:7235/success", // UPDATE WITH FRONTEND
-                    CancelUrl = "https://localhost:7235/cancel",  // UPDATE WITH FRONTEND
+                    SuccessUrl = $"http://localhost:50394/#/payment/success?paymentType=impulse",
+                    CancelUrl = $"http://localhost:50394/#/payment/cancel?paymentType=impulse",
                     CustomerEmail = user.Email, // For sending the receipt to the user
                 };
 
                 var service = new SessionService();
                 Session session = await service.CreateAsync(options); // Create the session for checkout
 
-                response.Data = session.Id;
+                response.Data = session.Url;
                 response.Success = true;
                 response.Message = "Stripe session created successfully.";
                 response.Type = "Ok";
             }
             catch (StripeException ex)
             {
+                Console.WriteLine("Stripe"+ex.Message);
                 response.Success = false;
                 response.Message = $"Stripe error: {ex.Message}";
                 response.Type = "BadRequest";

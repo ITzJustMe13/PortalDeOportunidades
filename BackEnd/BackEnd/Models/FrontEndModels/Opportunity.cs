@@ -1,4 +1,5 @@
 ﻿using BackEnd.Enums;
+using BackEnd.Interfaces;
 
 namespace BackEnd.Models.FrontEndModels
 {
@@ -29,6 +30,6 @@ namespace BackEnd.Models.FrontEndModels
 
         public required bool isImpulsed { get; set;}
 
-        public required ICollection<OpportunityImg> OpportunityImgs { get; set; }
+        public ICollection<OpportunityImg?> OpportunityImgs { get; set; }
     }
 }

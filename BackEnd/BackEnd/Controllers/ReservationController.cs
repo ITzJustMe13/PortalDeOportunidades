@@ -11,158 +11,116 @@ namespace BackEnd.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ReservationController : ControllerBase
+    public class ReservationController : BaseCrudController<Reservation>
     {
         private readonly IReservationService _reservationService;
-        public ReservationController(IReservationService reservationService)
+        public ReservationController(IReservationService reservationService, IConfiguration configuration) : base(configuration)
         {
             _reservationService = reservationService ?? throw new ArgumentNullException(nameof(reservationService));
         }
 
-        //GET para obter todas as reservas ativas do user
+        /// <summary>
+        /// Endpoint that gets all the active Reservations of a certain User by his id
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         [Authorize]
         [HttpGet("{userId}/AllActiveReservations")]
-        public async Task<ActionResult> GetAllActiveReservationsByUserId(int userId)
+        public async Task<IActionResult> GetAllActiveReservationsByUserId(int userId)
         {
             var serviceResponse = await _reservationService.GetAllActiveReservationsByUserIdAsync(userId);
 
-            if (!serviceResponse.Success)
-            {
-                return serviceResponse.Type switch
-                {
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "BadRequest" => BadRequest(serviceResponse.Message),
-                    "InternalServerError" => StatusCode(500, serviceResponse.Message),
-                    _ => StatusCode(500, serviceResponse.Message)
-                };
-            }
-
-            return Ok(serviceResponse.Data);
+            return HandleResponse(serviceResponse);
         }
 
-        // Método para obter todas as reservas de um usuário
+        /// <summary>
+        /// Endpoint that gets all the Reservations (active and inactive) of a certain User by his id
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         [HttpGet("{userId}/AllReservations")]
         [Authorize]
-        public async Task<ActionResult> GetAllReservationByUserId(int userId)
+        public async Task<IActionResult> GetAllReservationByUserId(int userId)
         {
             var serviceResponse = await _reservationService.GetAllReservationsByUserIdAsync(userId);
 
-            if (!serviceResponse.Success)
-            {
-                return serviceResponse.Type switch
-                {
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "BadRequest" => BadRequest(serviceResponse.Message),
-                    "InternalServerError" => StatusCode(500,  serviceResponse.Message),
-                    _ => StatusCode(500, "Unknown error.")
-                };
-            }
-
-            return Ok(serviceResponse.Data);
+            return HandleResponse(serviceResponse);
         }
 
-        //GET para obter uma reserva pelo ID
+        /// <summary>
+        /// Endpoint to get a specific Reservation by its id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         [Authorize]
-        public async Task<ActionResult> GetReservationById(int id)
+        public override async Task<IActionResult> GetEntityById(int id)
         {
             var serviceResponse = await _reservationService.GetReservationByIdAsync(id);
 
-            if (!serviceResponse.Success)
-            {
-                return serviceResponse.Type switch
-                {
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "BadRequest" => BadRequest(serviceResponse.Message),
-                    "InternalServerError" => StatusCode(500,  serviceResponse.Message),
-                    _ => StatusCode(500, serviceResponse.Message)
-                };
-            }
-
-            return Ok(serviceResponse.Data);
+            return HandleResponse(serviceResponse);
         }
 
-        //POST para criar uma nova Reserva
+        /// <summary>
+        /// Endpoint that creates a new Reservation
+        /// </summary>
+        /// <param name="reservation"></param>
+        /// <returns></returns>
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult> CreateNewReservation(Reservation reservation)
+        public override async Task<IActionResult> CreateEntity(Reservation reservation)
         {
             var serviceResponse = await _reservationService.CreateNewReservationAsync(reservation);
 
             if (!serviceResponse.Success)
             {
-                return serviceResponse.Type switch
-                {
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "BadRequest" => BadRequest(serviceResponse.Message),
-                    "InternalServerError" => StatusCode(500, serviceResponse.Message),
-                    _ => StatusCode(500, serviceResponse.Message)
-                };
+                return HandleResponse(serviceResponse);
             }
 
-            return CreatedAtAction(nameof(CreateNewReservation), new { id = serviceResponse.Data.reservationId }, serviceResponse.Data);
+            return HandleCreatedAtAction(serviceResponse, nameof(GetEntityById), new { id = serviceResponse.Data.reservationId });
         }
 
-        //PUT api/Opportunity/1/deactivate
+        /// <summary>
+        /// Endpoint that deactivates a Reservation by its id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPut("{id}/deactivate")]
         [Authorize]
-        public async Task<ActionResult<Reservation>> DeactivateReservationById(int id)
+        public async Task<IActionResult> DeactivateReservationById(int id)
         {
             var serviceResponse = await _reservationService.DeactivateReservationByIdAsync(id);
 
-            if (!serviceResponse.Success)
-            {
-                return serviceResponse.Type switch
-                {
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "BadRequest" => BadRequest(serviceResponse.Message),
-                    "InternalServerError" => StatusCode(500, serviceResponse.Message),
-                    _ => StatusCode(500, serviceResponse.Message)
-                };
-            }
-
-            return Ok(serviceResponse.Message);
+            return HandleResponse(serviceResponse);
         }
 
-        //PUT para atualizar uma reserva
+        /// <summary>
+        /// Endpoint that updates the Reservation
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="reservation"></param>
+        /// <returns></returns>
         [HttpPut("{id}")]
         [Authorize]
-        public async Task<ActionResult<Reservation>> UpdateReservation(int id, Reservation reservation)
+        public override async Task<IActionResult> UpdateEntity(int id, Reservation reservation)
         {
             var serviceResponse = await _reservationService.UpdateReservationAsync(id, reservation);
 
-            if (!serviceResponse.Success)
-            {
-                return serviceResponse.Type switch
-                {
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "BadRequest" => BadRequest(serviceResponse.Message),
-                    "InternalServerError" => StatusCode(500, serviceResponse.Message),
-                    _ => StatusCode(500, serviceResponse.Message)
-                };
-            }
-
-            return Ok(serviceResponse.Message);
+            return HandleResponse(serviceResponse);
         }
 
-        //DELETE para apagar uma reserva
+        /// <summary>
+        /// Endpoint that deletes the reservation by its id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         [Authorize]
-        public async Task<ActionResult> DeleteReservation(int id)
+        public override async Task<IActionResult> DeleteEntity(int id)
         {
             var serviceResponse = await _reservationService.DeleteReservationAsync(id);
 
-            if (!serviceResponse.Success)
-            {
-                return serviceResponse.Type switch
-                {
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "InternalServerError" => StatusCode(500, serviceResponse.Message),
-                    _ => StatusCode(500, serviceResponse.Message)
-                };
-            }
-
-            return Ok(serviceResponse.Message);
+            return HandleResponse(serviceResponse);
         }
     }
 }

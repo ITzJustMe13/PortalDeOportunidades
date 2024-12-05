@@ -1,5 +1,7 @@
-﻿using BackEnd.GenericClasses;
+﻿
 using BackEnd.Models.FrontEndModels;
+using BackEnd.Responses;
+using BackEnd.ServiceResponses;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 
@@ -84,6 +86,8 @@ namespace BackEnd.Interfaces
         /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
         /// if something is wrong or a response.Sucess=true, a sucess mensage and the Impulse Dto</returns>
         Task<ServiceResponse<Impulse>> ImpulseOpportunityAsync(Impulse impulse);
+
+        Task<ServiceResponse<string>> GoogleSignInAsync(string idToken);
 
     }
 }

@@ -8,57 +8,47 @@ using BackEnd.Services;
 
 namespace BackEnd.Controllers
 {
+    /// <summary>
+    /// Controller Responsible for Payments
+    /// Has a constructor that receives an IPaymentService
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    public class PaymentController : ControllerBase
+    public class PaymentController : ResponseController
     {
         private readonly IPaymentService _paymentService;
 
 
-        public PaymentController(IPaymentService paymentService)
+        public PaymentController(IPaymentService paymentService, IConfiguration configuration) : base(configuration)
         {
             _paymentService = paymentService ?? throw new ArgumentNullException(nameof(paymentService));
         }
 
-
+        /// <summary>
+        /// Endpoint that creates a Checkout Session for a User Reservation
+        /// </summary>
+        /// <param name="reservation"></param>
+        /// <returns></returns>
         [HttpPost("Checkout-Reservation")]
         public async Task<IActionResult> CreateReservationCheckoutSession([FromBody] Reservation reservation)
         {
             var serviceResponse = await _paymentService.CreateReservationCheckoutSessionAsync(reservation);
 
-            if (!serviceResponse.Success)
-            {
-                return serviceResponse.Type switch
-                {
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "BadRequest" => BadRequest(serviceResponse.Message),
-                    "InternalServerError" => StatusCode(500, serviceResponse.Message),
-                    _ => StatusCode(500, serviceResponse.Message)
-                };
-            }
-
-            return Ok(new { sessionId = serviceResponse.Data }); // Return the session ID
+            return HandleResponse(serviceResponse);
         }
 
 
-        // POST api/payment/Checkout-Impulse
+        /// <summary>
+        /// Endpoint that creates a Checkout Session for a Opportunity Impulse payment
+        /// </summary>
+        /// <param name="impulse"></param>
+        /// <returns></returns>
         [HttpPost("Checkout-Impulse")]
         public async Task<IActionResult> CreateImpulseCheckoutSession([FromBody] Impulse impulse)
         {
             var serviceResponse = await _paymentService.CreateImpulseCheckoutSessionAsync(impulse);
 
-            if (!serviceResponse.Success)
-            {
-                return serviceResponse.Type switch
-                {
-                    "BadRequest" => BadRequest(serviceResponse.Message),
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "InternalServerError" => StatusCode(500, serviceResponse.Message),
-                    _ => StatusCode(500, "Unknown error.")
-                };
-            }
-
-            return Ok(new { sessionId = serviceResponse.Data });
+            return HandleResponse(serviceResponse);
         }
 
     }

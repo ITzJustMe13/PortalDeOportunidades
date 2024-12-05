@@ -19,7 +19,6 @@ namespace BackEnd.Models.Mappers
             if (opportunityImgModel == null)
                 return null;
 
-            ValidateModel(opportunityImgModel);
 
             return new OpportunityImg
             {

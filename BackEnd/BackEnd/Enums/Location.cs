@@ -5,7 +5,7 @@
         VIANA_DO_CASTELO,
         BRAGA,
         VILA_REAL,
-        BRAGANÇA,
+        BRAGANCA,
         PORTO,
         AVEIRO,
         VISEU,

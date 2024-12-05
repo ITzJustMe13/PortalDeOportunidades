@@ -13,6 +13,7 @@ using BackEnd.Models.BackEndModels;
 using Azure;
 using BackEnd.Interfaces;
 using BackEnd.Services;
+using Microsoft.Extensions.Configuration;
 
 
 namespace BackEnd.Test
@@ -22,19 +23,27 @@ namespace BackEnd.Test
         private ReservationController _controller;
         private IReservationService _reservationService;
         private ApplicationDbContext _context;
+        private IEmailService _emailService;
 
         [SetUp]
         public void Setup()
         {
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
 
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
         .UseInMemoryDatabase("TestDatabase")
         .Options;
 
             _context = new ApplicationDbContext(options);
-            _reservationService = new ReservationService(_context);
+            _emailService = new EmailService();
+            _reservationService = new ReservationService(_context, _emailService);
 
-            _controller = new ReservationController(_reservationService);
+            _controller = new ReservationController(_reservationService, configuration);
 
         }
 
@@ -82,7 +91,7 @@ namespace BackEnd.Test
                 opportunityId = opportunity.OpportunityId,
                 userId = user2.UserId,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
                 isActive = true,
                 fixedPrice = 100
@@ -92,13 +101,13 @@ namespace BackEnd.Test
                 opportunityId = opportunity2.OpportunityId,
                 userId = user2.UserId,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
                 isActive = true,
                 fixedPrice = 100
             };
-            await _controller.CreateNewReservation(reservation);
-            await _controller.CreateNewReservation(reservation2);
+            await _controller.CreateEntity(reservation);
+            await _controller.CreateEntity(reservation2);
 
             // Act
 
@@ -119,9 +128,15 @@ namespace BackEnd.Test
         public async Task GetAllActiveReservationsByUserId_ReturnsNotFound_WhenDBContextMissing()
         {
             // Arrange
-            var reservationService = new ReservationService(null);
-
-            var controller = new ReservationController(reservationService);
+            var  emailService = new EmailService();
+            var reservationService = new ReservationService(null, emailService);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+            var controller = new ReservationController(reservationService, configuration);
 
             var opportunity = new OpportunityModel { OpportunityId = 1, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "a description", Date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
             var opportunity2 = new OpportunityModel { OpportunityId = 2, Price = 100, Address = "outro sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "a description", Date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
@@ -138,7 +153,7 @@ namespace BackEnd.Test
                 opportunityId = opportunity.OpportunityId,
                 userId = user2.UserId,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
                 isActive = true,
                 fixedPrice = 100
@@ -148,13 +163,13 @@ namespace BackEnd.Test
                 opportunityId = opportunity2.OpportunityId,
                 userId = user2.UserId,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
                 isActive = true,
                 fixedPrice = 100
             };
-            await _controller.CreateNewReservation(reservation);
-            await _controller.CreateNewReservation(reservation2);
+            await _controller.CreateEntity(reservation);
+            await _controller.CreateEntity(reservation2);
 
             // Act
 
@@ -187,7 +202,7 @@ namespace BackEnd.Test
                 opportunityId = opportunity.OpportunityId,
                 userId = user2.UserId,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
                 isActive = true,
                 fixedPrice = 100
@@ -197,13 +212,13 @@ namespace BackEnd.Test
                 opportunityId = opportunity2.OpportunityId,
                 userId = user2.UserId,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
                 isActive = false,
                 fixedPrice = 100
             };
-            await _controller.CreateNewReservation(reservation);
-            await _controller.CreateNewReservation(reservation2);
+            await _controller.CreateEntity(reservation);
+            await _controller.CreateEntity(reservation2);
 
             // Act
 
@@ -223,9 +238,15 @@ namespace BackEnd.Test
         public async Task GetAllReservationsByUserId_ReturnsNotFound_WhenDBContextMissing()
         {
             // Arrange
-            var reservationService = new ReservationService(null);
-
-            var controller = new ReservationController(reservationService);
+            var emailService = new EmailService();
+            var reservationService = new ReservationService(null, emailService);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+            var controller = new ReservationController(reservationService, configuration);
 
             var opportunity = new OpportunityModel { OpportunityId = 1, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "a description", Date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
             var opportunity2 = new OpportunityModel { OpportunityId = 2, Price = 100, Address = "outro sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "a description", Date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
@@ -242,7 +263,7 @@ namespace BackEnd.Test
                 opportunityId = opportunity.OpportunityId,
                 userId = user2.UserId,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
                 isActive = true,
                 fixedPrice = 100
@@ -252,13 +273,13 @@ namespace BackEnd.Test
                 opportunityId = opportunity2.OpportunityId,
                 userId = user2.UserId,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
                 isActive = false,
                 fixedPrice = 100
             };
-            await _controller.CreateNewReservation(reservation);
-            await _controller.CreateNewReservation(reservation2);
+            await _controller.CreateEntity(reservation);
+            await _controller.CreateEntity(reservation2);
 
             // Act
 
@@ -294,7 +315,7 @@ namespace BackEnd.Test
             int ReservationID = 1;
 
             // Act
-            var result = await _controller.GetReservationById(ReservationID);
+            var result = await _controller.GetEntityById(ReservationID);
 
             // Assert
             Assert.That(result, Is.TypeOf<NotFoundObjectResult>());
@@ -314,15 +335,15 @@ namespace BackEnd.Test
                 opportunityID = 1,
                 userID = 1,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                Date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
-                isActive = true,
+                IsActive = true,
                 fixedPrice = 100
             };
             _context.Reservations.Add(reservation);
 
             // Act
-            var result = await _controller.GetReservationById(reservation.reservationID);
+            var result = await _controller.GetEntityById(reservation.reservationID);
 
             // Assert
             Assert.That(result, Is.TypeOf<OkObjectResult>());
@@ -338,9 +359,15 @@ namespace BackEnd.Test
         public async Task GetReservationById_ReturnsNotFound_WhenDBContextMissing()
         {
             // Arrange
-            var reservationService = new ReservationService(null);
-
-            var controller = new ReservationController(reservationService);
+            var emailService = new EmailService();
+            var reservationService = new ReservationService(null, emailService);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+            var controller = new ReservationController(reservationService, configuration);
 
             var reservation = new ReservationModel
             {
@@ -348,15 +375,15 @@ namespace BackEnd.Test
                 opportunityID = 1,
                 userID = 1,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                Date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
-                isActive = true,
+                IsActive = true,
                 fixedPrice = 100
             };
             _context.Reservations.Add(reservation);
 
             // Act
-            var result = await controller.GetReservationById(reservation.reservationID);
+            var result = await controller.GetEntityById(reservation.reservationID);
 
             // Assert
             Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
@@ -381,14 +408,14 @@ namespace BackEnd.Test
                 opportunityId = opportunity.OpportunityId,
                 userId = user.UserId,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
                 isActive = true,
                 fixedPrice = 100
             };
 
             // Act
-            var result = await _controller.CreateNewReservation(reservation);
+            var result = await _controller.CreateEntity(reservation);
 
             // Assert
             Assert.That(result, Is.TypeOf<CreatedAtActionResult>());
@@ -400,7 +427,7 @@ namespace BackEnd.Test
             Assert.That(createdReservation.opportunityId, Is.EqualTo(reservation.opportunityId));
             Assert.That(createdReservation.userId, Is.EqualTo(reservation.userId));
             Assert.That(createdReservation.reservationDate, Is.EqualTo(reservation.reservationDate));
-            Assert.That(createdReservation.checkInDate, Is.EqualTo(reservation.checkInDate));
+            Assert.That(createdReservation.date, Is.EqualTo(reservation.date));
             Assert.That(createdReservation.numOfPeople, Is.EqualTo(reservation.numOfPeople));
             Assert.That(createdReservation.isActive, Is.EqualTo(reservation.isActive));
             Assert.That(createdReservation.fixedPrice, Is.EqualTo(reservation.fixedPrice));
@@ -411,9 +438,15 @@ namespace BackEnd.Test
         public async Task CreateNewReservation_ReturnsNotFound_WhenDBContextMissing()
         {
             // Arrange
-            var reservationService = new ReservationService(null);
-
-            var controller = new ReservationController(reservationService);
+            var emailService = new EmailService();
+            var reservationService = new ReservationService(null, emailService);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+            var controller = new ReservationController(reservationService, configuration);
 
             var opportunity = new OpportunityModel { OpportunityId = 1, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "a description", Date = DateTime.Now.AddDays(30), Vacancies = 2, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
             var user = new UserModel { UserId = 1, FirstName = "John", LastName = "Doe", BirthDate = DateTime.Now.AddYears(-30), CellPhoneNum = 919919919, Email = "example@email.com", Gender = Enums.Gender.MASCULINO, Image = new byte[] { 0xFF, 0xD8, 0xFF, 0xE0 } };
@@ -427,14 +460,14 @@ namespace BackEnd.Test
                 opportunityId = opportunity.OpportunityId,
                 userId = user.UserId,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
                 isActive = true,
                 fixedPrice = 100
             };
 
             // Act
-            var result = await controller.CreateNewReservation(reservation);
+            var result = await controller.CreateEntity(reservation);
 
             // Assert
             Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
@@ -459,14 +492,14 @@ namespace BackEnd.Test
                 opportunityId = 0,
                 userId = 0,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
                 isActive = true,
                 fixedPrice = 100
             };
 
             // Act
-            var result = await _controller.CreateNewReservation(reservation);
+            var result = await _controller.CreateEntity(reservation);
 
             // Assert
             Assert.That(result, Is.TypeOf<BadRequestObjectResult>());
@@ -491,14 +524,14 @@ namespace BackEnd.Test
                 opportunityId = 2,
                 userId = user.UserId,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
                 isActive = true,
                 fixedPrice = 100
             };
 
             // Act
-            var result = await _controller.CreateNewReservation(reservation);
+            var result = await _controller.CreateEntity(reservation);
 
             // Assert
             Assert.That(result, Is.TypeOf<NotFoundObjectResult>());
@@ -523,14 +556,14 @@ namespace BackEnd.Test
                 opportunityId = opportunity.OpportunityId,
                 userId = 4,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
                 isActive = true,
                 fixedPrice = 100
             };
 
             // Act
-            var result = await _controller.CreateNewReservation(reservation);
+            var result = await _controller.CreateEntity(reservation);
 
             // Assert
             Assert.That(result, Is.TypeOf<NotFoundObjectResult>());
@@ -556,14 +589,14 @@ namespace BackEnd.Test
                 opportunityId = opportunity.OpportunityId,
                 userId = user.UserId,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = -1,
                 isActive = true,
                 fixedPrice = 100
             };
 
             // Act
-            var result = await _controller.CreateNewReservation(reservation);
+            var result = await _controller.CreateEntity(reservation);
 
             // Assert
             Assert.That(result, Is.TypeOf<BadRequestObjectResult>());
@@ -588,14 +621,14 @@ namespace BackEnd.Test
                 opportunityId = opportunity.OpportunityId,
                 userId = user.UserId,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 3,
                 isActive = true,
                 fixedPrice = 100
             };
 
             // Act
-            var result = await _controller.CreateNewReservation(reservation);
+            var result = await _controller.CreateEntity(reservation);
 
             // Assert
             Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
@@ -615,9 +648,9 @@ namespace BackEnd.Test
                 opportunityID = 1,
                 userID = 1,
                 reservationDate = DateTime.Now.AddDays(-10),
-                checkInDate = DateTime.Now.AddMonths(2),
+                Date = DateTime.Now.AddMonths(2),
                 numOfPeople = 1,
-                isActive = true,
+                IsActive = true,
                 fixedPrice = 100
             };
             await _context.Reservations.AddAsync(reservation);
@@ -627,8 +660,8 @@ namespace BackEnd.Test
             var result = await _controller.DeactivateReservationById(reservation.reservationID);
 
             // Assert
-            Assert.That(result.Result, Is.TypeOf<OkObjectResult>());
-            var okResult = result.Result as OkObjectResult;
+            Assert.That(result, Is.TypeOf<OkObjectResult>());
+            var okResult = result as OkObjectResult;
             Assert.That(okResult, Is.Not.Null);
 
         }
@@ -638,9 +671,15 @@ namespace BackEnd.Test
         public async Task DeactivateReservationById_ReturnsNotFound_WhenDBContextMissing()
         {
             // Arrange
-            var reservationService = new ReservationService(null);
-
-            var controller = new ReservationController(reservationService);
+            var emailService = new EmailService();
+            var reservationService = new ReservationService(null, emailService);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+            var controller = new ReservationController(reservationService, configuration);
 
             var reservation = new ReservationModel
             {
@@ -648,9 +687,9 @@ namespace BackEnd.Test
                 opportunityID = 1,
                 userID = 1,
                 reservationDate = DateTime.Now.AddDays(-10),
-                checkInDate = DateTime.Now.AddMonths(2),
+                Date = DateTime.Now.AddMonths(2),
                 numOfPeople = 1,
-                isActive = true,
+                IsActive = true,
                 fixedPrice = 100
             };
             await _context.Reservations.AddAsync(reservation);
@@ -660,8 +699,8 @@ namespace BackEnd.Test
             var result = await controller.DeactivateReservationById(reservation.reservationID);
 
             // Assert
-            Assert.That(result.Result, Is.InstanceOf<NotFoundObjectResult>());
-            var notFoundResult = result.Result as NotFoundObjectResult;
+            Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = result as NotFoundObjectResult;
             Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing."));
 
         }
@@ -680,8 +719,8 @@ namespace BackEnd.Test
             var result = await _controller.DeactivateReservationById(reservationID);
 
             // Assert
-            Assert.That(result.Result, Is.TypeOf<NotFoundObjectResult>());
-            var notFoundResult = result.Result as NotFoundObjectResult;
+            Assert.That(result, Is.TypeOf<NotFoundObjectResult>());
+            var notFoundResult = result as NotFoundObjectResult;
             Assert.That(notFoundResult.Value, Is.EqualTo($"Reservation with id {reservationID} not found."));
 
         }
@@ -698,9 +737,9 @@ namespace BackEnd.Test
                 opportunityID = 1,
                 userID = 1,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                Date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
-                isActive = false,
+                IsActive = false,
                 fixedPrice = 100
             };
             _context.Reservations.Add(reservation);
@@ -709,8 +748,8 @@ namespace BackEnd.Test
             var result = await _controller.DeactivateReservationById(reservation.reservationID);
 
             // Assert
-            Assert.That(result.Result, Is.TypeOf<BadRequestObjectResult>());
-            var BadResult = result.Result as BadRequestObjectResult;
+            Assert.That(result, Is.TypeOf<BadRequestObjectResult>());
+            var BadResult = result as BadRequestObjectResult;
             Assert.That(BadResult.Value, Is.EqualTo("Reservation is impossible to deactivate"));
 
         }
@@ -730,9 +769,9 @@ namespace BackEnd.Test
                 opportunityID = 1,
                 userID = 1,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                Date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
-                isActive = false,
+                IsActive = false,
                 fixedPrice = 100
             };
             _context.Reservations.Add(reservation);
@@ -741,7 +780,7 @@ namespace BackEnd.Test
                 opportunityId = 1,
                 userId = 1,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 3,
                 isActive = false,
                 fixedPrice = 150
@@ -749,10 +788,10 @@ namespace BackEnd.Test
             await _context.SaveChangesAsync();
 
             // Act
-            var result = await _controller.UpdateReservation(reservation.reservationID, reservationDTO);
+            var result = await _controller.UpdateEntity(reservation.reservationID, reservationDTO);
 
             // Assert
-            Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
+            Assert.That(result, Is.InstanceOf<OkObjectResult>());
             
         }
 
@@ -761,9 +800,15 @@ namespace BackEnd.Test
         public async Task UpdateReservationById_ReturnsNotFound_WhenDBContextMissing()
         {
             // Arrange
-            var reservationService = new ReservationService(null);
-
-            var controller = new ReservationController(reservationService);
+            var emailService = new EmailService();
+            var reservationService = new ReservationService(null, emailService);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+            var controller = new ReservationController(reservationService, configuration);
 
             var opportunity = new OpportunityModel { OpportunityId = 1, Price = 100, Address = "um sitio", Category = Enums.Category.AGRICULTURA, UserID = 1, Name = "name", Description = "a description", Date = DateTime.Now.AddDays(30), Vacancies = 5, IsActive = true, Location = Enums.Location.LISBOA, Score = 0, IsImpulsed = false };
             _context.Opportunities.Add(opportunity);
@@ -775,9 +820,9 @@ namespace BackEnd.Test
                 opportunityID = 1,
                 userID = 1,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                Date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
-                isActive = false,
+                IsActive = false,
                 fixedPrice = 100
             };
             _context.Reservations.Add(reservation);
@@ -786,7 +831,7 @@ namespace BackEnd.Test
                 opportunityId = 1,
                 userId = 1,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 3,
                 isActive = false,
                 fixedPrice = 150
@@ -794,11 +839,11 @@ namespace BackEnd.Test
             await _context.SaveChangesAsync();
 
             // Act
-            var result = await controller.UpdateReservation(reservation.reservationID, reservationDTO);
+            var result = await controller.UpdateEntity(reservation.reservationID, reservationDTO);
 
             // Assert
-            Assert.That(result.Result, Is.InstanceOf<NotFoundObjectResult>());
-            var notFoundResult = result.Result as NotFoundObjectResult;
+            Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = result as NotFoundObjectResult;
             Assert.That(notFoundResult?.Value, Is.EqualTo("DB context missing."));
         }
 
@@ -815,18 +860,18 @@ namespace BackEnd.Test
                 opportunityId = 1,
                 userId = 1,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 3,
                 isActive = false,
                 fixedPrice = 150
             };
 
             // Act
-            var result = await _controller.UpdateReservation(reservationid, reservationDTO);
+            var result = await _controller.UpdateEntity(reservationid, reservationDTO);
 
             // Assert
-            Assert.That(result.Result, Is.InstanceOf<NotFoundObjectResult>());
-            var NotFoundResult = result.Result as NotFoundObjectResult;
+            Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
+            var NotFoundResult = result as NotFoundObjectResult;
             Assert.That(NotFoundResult.Value, Is.EqualTo("Reservation not found."));
 
         }
@@ -846,9 +891,9 @@ namespace BackEnd.Test
                 opportunityID = 1,
                 userID = 1,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                Date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
-                isActive = false,
+                IsActive = false,
                 fixedPrice = 100
             };
             _context.Reservations.Add(reservation);
@@ -857,7 +902,7 @@ namespace BackEnd.Test
                 opportunityId = 1,
                 userId = 1,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = -3,
                 isActive = false,
                 fixedPrice = 150
@@ -865,11 +910,11 @@ namespace BackEnd.Test
             await _context.SaveChangesAsync();
 
             // Act
-            var result = await _controller.UpdateReservation(reservation.reservationID, reservationDTO);
+            var result = await _controller.UpdateEntity(reservation.reservationID, reservationDTO);
 
             // Assert
-            Assert.That(result.Result, Is.TypeOf<BadRequestObjectResult>());
-            var BadResult = result.Result as BadRequestObjectResult;
+            Assert.That(result, Is.TypeOf<BadRequestObjectResult>());
+            var BadResult = result as BadRequestObjectResult;
             Assert.That(BadResult.Value, Is.EqualTo("The value Number Of People must be valid."));
 
 
@@ -890,9 +935,9 @@ namespace BackEnd.Test
                 opportunityID = 1,
                 userID = 1,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                Date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
-                isActive = false,
+                IsActive = false,
                 fixedPrice = 100
             };
             _context.Reservations.Add(reservation);
@@ -901,7 +946,7 @@ namespace BackEnd.Test
                 opportunityId = 1,
                 userId = 1,
                 reservationDate = DateTime.Now.Date,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 7,
                 isActive = false,
                 fixedPrice = 150
@@ -909,11 +954,11 @@ namespace BackEnd.Test
             await _context.SaveChangesAsync();
 
             // Act
-            var result = await _controller.UpdateReservation(reservation.reservationID, reservationDTO);
+            var result = await _controller.UpdateEntity(reservation.reservationID, reservationDTO);
 
             // Assert
-            Assert.That(result.Result, Is.TypeOf<BadRequestObjectResult>());
-            var BadResult = result.Result as BadRequestObjectResult;
+            Assert.That(result, Is.TypeOf<BadRequestObjectResult>());
+            var BadResult = result as BadRequestObjectResult;
             Assert.That(BadResult.Value, Is.EqualTo("The numberOfPeople is bigger than number of vacancies."));
 
 
@@ -929,16 +974,16 @@ namespace BackEnd.Test
                 reservationID = 1,
                 opportunityID = 1,
                 userID = 1,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                Date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
                 fixedPrice = 100,
-                isActive = true
+                IsActive = true
             };
             _context.Reservations.Add(reservation);
             await _context.SaveChangesAsync();
 
             // Act
-            var result = await _controller.DeleteReservation(reservation.reservationID);
+            var result = await _controller.DeleteEntity(reservation.reservationID);
 
             // Assert
             Assert.That(result, Is.TypeOf<OkObjectResult>());
@@ -950,25 +995,31 @@ namespace BackEnd.Test
         public async Task DeleteReservation_ReturnsNotFound_WhenDBContextMissing()
         {
             // Arrange
-            var reservationService = new ReservationService(null);
-
-            var controller = new ReservationController(reservationService);
+            var emailService = new EmailService();
+            var reservationService = new ReservationService(null, emailService);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+            var controller = new ReservationController(reservationService, configuration);
 
             var reservation = new ReservationModel
             {
                 reservationID = 1,
                 opportunityID = 1,
                 userID = 1,
-                checkInDate = DateTime.Now.Date.AddDays(1),
+                Date = DateTime.Now.Date.AddDays(1),
                 numOfPeople = 1,
                 fixedPrice = 100,
-                isActive = true
+                IsActive = true
             };
             _context.Reservations.Add(reservation);
             await _context.SaveChangesAsync();
 
             // Act
-            var result = await controller.DeleteReservation(reservation.reservationID);
+            var result = await controller.DeleteEntity(reservation.reservationID);
 
             // Assert
             Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
@@ -986,7 +1037,7 @@ namespace BackEnd.Test
   
 
             // Act
-            var result = await _controller.DeleteReservation(reservationid);
+            var result = await _controller.DeleteEntity(reservationid);
 
             // Assert
             Assert.That(result, Is.TypeOf<NotFoundObjectResult>());

@@ -1,9 +1,10 @@
 ﻿using BackEnd.Controllers.Data;
-using BackEnd.GenericClasses;
+using BackEnd.ServiceResponses;
 using BackEnd.Interfaces;
 using BackEnd.Models.FrontEndModels;
 using BackEnd.Models.Mappers;
 using Microsoft.EntityFrameworkCore;
+using BackEnd.Models.BackEndModels;
 
 namespace BackEnd.Services
 {
@@ -131,6 +132,7 @@ namespace BackEnd.Services
                 response.Data = favoriteDTO;
                 response.Success = true;
                 response.Message = "Favorite retrieved successfully.";
+                response.Type = "Ok";
             }
             catch (Exception ex)
             {
@@ -194,6 +196,7 @@ namespace BackEnd.Services
                 response.Data = favoriteDTOs;
                 response.Success = true;
                 response.Message = "Favorites retrieved successfully.";
+                response.Type = "Ok";
             }
             catch (Exception ex)
             {
@@ -253,12 +256,68 @@ namespace BackEnd.Services
                 response.Data = opportunitiesDTOs;
                 response.Success = true;
                 response.Message = "Opportunities retrieved successfully.";
+                response.Type = "Ok";
             }
             catch (Exception ex)
             {
                 response.Success = false;
                 response.Message = "An error occurred while fetching opportunities.";
                 response.Type = "BadRequest";
+            }
+
+            return response;
+        }
+
+        /// <summary>
+        /// Function that deletes a Favorite by its user id and opportunity id
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="oppId"></param>
+        /// <returns>Returns a ServiceResponse with a response.Sucess=false and a message 
+        /// if something is wrong or a response.Sucess=true if deleted sucessefully</returns>
+        public async Task<ServiceResponse<bool>> DeleteFavoriteByIdAsync(int userId, int oppId)
+        {
+            var response = new ServiceResponse<bool>();
+
+            try
+            {
+                if (dbContext == null)
+                {
+                    response.Success = false;
+                    response.Message = "DB context is missing.";
+                    response.Type = "NotFound";
+                    return response;
+                }
+
+                if (userId <= 0 || oppId <= 0)
+                {
+                    response.Success = false;
+                    response.Message = "Given userId or opportunityId is invalid, it should be greater than 0.";
+                    response.Type = "BadRequest";
+                    return response;
+                }
+                var favoriteModel = await dbContext.Favorites.FindAsync(userId, oppId);
+                if (favoriteModel == null)
+                {
+                    response.Success = false;
+                    response.Message = $"Favorite was not found.";
+                    response.Type = "NotFound";
+                    return response;
+                }
+
+                dbContext.Favorites.Remove(favoriteModel);
+                await dbContext.SaveChangesAsync();
+
+                response.Data = true; // Successfully deleted
+                response.Success = true;
+                response.Message = "Favorite deleted successfully.";
+                response.Type = "NoContent";
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = "An unexpected error occurred while deleting the opportunity.";
+                response.Type = "InternalServerError";
             }
 
             return response;

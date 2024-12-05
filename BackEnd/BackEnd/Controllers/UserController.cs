@@ -1,17 +1,10 @@
-using BackEnd.Controllers.Data;
-using BackEnd.Enums;
-using BackEnd.Models.BackEndModels;
 using BackEnd.Models.FrontEndModels;
-using BackEnd.Models.Mappers;
-using BackEnd.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
-using BackEnd.Services;
 using BackEnd.Interfaces;
-using BackEnd.GenericClasses;
+using BackEnd.ServiceResponses;
+using BackEnd.Services;
 
 namespace BackEnd.Controllers
 {
@@ -21,11 +14,11 @@ namespace BackEnd.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class UserController : BaseCrudController<User>
     {
         private readonly IUserService _userService;
         private readonly IFavoritesService _favoritesService;
-        public UserController(IUserService userService, IFavoritesService favoritesService)
+        public UserController(IUserService userService, IFavoritesService favoritesService, IConfiguration configuration) : base(configuration)
         {
             _userService = userService ?? throw new ArgumentNullException(nameof(userService));
             _favoritesService = favoritesService ?? throw new ArgumentNullException(nameof(favoritesService));
@@ -38,15 +31,11 @@ namespace BackEnd.Controllers
         /// <param name="id"></param>
         /// <returns>Returns NotFound() if is not sucessefully or OK() with the User Dto if it is</returns>
         [HttpGet("{id}")]
-        [Authorize]
-        public async Task<IActionResult> GetUserByID(int id)
+        public override async Task<IActionResult> GetEntityById(int id)
         {
-            var response = await _userService.GetUserByIDAsync(id);
+            var serviceResponse = await _userService.GetUserByIDAsync(id);
 
-            if (!response.Success)
-                return NotFound(response.Message);
-
-            return Ok(response.Data);
+            return HandleResponse(serviceResponse);
         }
 
         /// <summary>
@@ -57,23 +46,17 @@ namespace BackEnd.Controllers
         /// NotFound() if userService responds "NotFound", or CreatedAtAction()
         /// with the path for the newly created user</returns>
         [HttpPost]
-        public async Task<IActionResult> CreateNewUser(User user)
+        public override async Task<IActionResult> CreateEntity(User user)
         {
             var serviceResponse = await _userService.CreateNewUserAsync(user);
 
             if (!serviceResponse.Success)
             {
-                return serviceResponse.Type switch
-                {
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "BadRequest" => BadRequest(serviceResponse.Message),
-                    _ => StatusCode(500, serviceResponse.Message) // InternalServerError
-                };
+                return HandleResponse(serviceResponse);
             }
 
-            return CreatedAtAction(nameof(GetUserByID), new { id = serviceResponse.Data.userId }, serviceResponse.Data);
+            return HandleCreatedAtAction(serviceResponse, nameof(GetEntityById), new { id = serviceResponse.Data.userId });
         }
-
 
         /// <summary>
         /// Endpoint that deletes the User by his id
@@ -84,26 +67,14 @@ namespace BackEnd.Controllers
         /// user is correctly deleted from the system</returns>
         [HttpDelete("{id}")]
         [Authorize]
-        public async Task<IActionResult> DeleteUser(int id)
+        public override async Task<IActionResult> DeleteEntity(int id)
         {
             {
                 var serviceResponse = await _userService.DeleteUserAsync(id);
 
-                if (!serviceResponse.Success)
-                {
-                    return serviceResponse.Type switch
-                    {
-                        "NotFound" => NotFound(serviceResponse.Message),
-                        "BadRequest" => BadRequest(serviceResponse.Message),
-                        _ => StatusCode(500, serviceResponse.Message) // InternalServerError
-                    };
-                }
-
-                return NoContent();
+                return HandleResponse(serviceResponse);
             }
         }
-
-
 
         /// <summary>
         /// Endpoint that edits the user based on an updated dto that it receives by his id
@@ -115,21 +86,11 @@ namespace BackEnd.Controllers
         /// updated User dto if updated correctly</returns>
         [HttpPut("{id}")]
         [Authorize]
-        public async Task<IActionResult> EditUser(int id, User updatedUser)
+        public override async Task<IActionResult> UpdateEntity(int id, User updatedUser)
         {
             var serviceResponse = await _userService.EditUserAsync(id, updatedUser);
 
-            if (!serviceResponse.Success)
-            {
-                return serviceResponse.Type switch
-                {
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "BadRequest" => BadRequest(serviceResponse.Message),
-                    _ => StatusCode(500, serviceResponse.Message) // InternalServerError
-                };
-            }
-
-            return Ok(serviceResponse.Data);
+            return HandleResponse(serviceResponse);
         }
 
         /// <summary>
@@ -148,16 +109,10 @@ namespace BackEnd.Controllers
 
             if (!serviceResponse.Success)
             {
-                return serviceResponse.Type switch
-                {
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "BadRequest" => BadRequest(serviceResponse.Message),
-                    "Conflict" => Conflict(serviceResponse.Message),
-                    _ => StatusCode(500, serviceResponse.Message) // InternalServerError
-                };
+                return HandleResponse(serviceResponse);
             }
 
-            return CreatedAtAction(nameof(GetFavoriteById), new { userId = favorite.userId, opportunityId = favorite.opportunityId }, serviceResponse.Data);
+            return HandleCreatedAtAction(serviceResponse, nameof(GetFavoriteById), new { userId = favorite.userId, opportunityId = favorite.opportunityId });
         }
 
         /// <summary>
@@ -174,17 +129,7 @@ namespace BackEnd.Controllers
         {
             var serviceResponse = await _favoritesService.GetFavoriteByIdAsync(userId, opportunityId);
 
-            if (!serviceResponse.Success)
-            {
-                return serviceResponse.Type switch
-                {
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "BadRequest" => BadRequest(serviceResponse.Message),
-                    _ => StatusCode(500, serviceResponse.Message) // InternalServerError
-                };
-            }
-
-            return Ok(serviceResponse.Data);
+            return HandleResponse(serviceResponse);
         }
 
         /// <summary>
@@ -200,18 +145,24 @@ namespace BackEnd.Controllers
         {
             var serviceResponse = await _favoritesService.GetFavoritesAsync(userId);
 
-            if (!serviceResponse.Success)
-            {
-                return serviceResponse.Type switch
-                {
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "BadRequest" => BadRequest(serviceResponse.Message),
-                    _ => StatusCode(500, serviceResponse.Message) // InternalServerError
-                };
-            }
+            return HandleResponse(serviceResponse);
+        }
 
+        /// <summary>
+        /// Endpoint that deletes a Favorite by the user id and the opportunity id
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="opportunityId"></param>
+        /// <returns>Returns BadRequest() if userService responds "BadRequest", 
+        /// NotFound() if userService responds "NotFound", or NoContent() if
+        /// the Favorite is deleted sucessefully</returns>
+        [Authorize]
+        [HttpDelete("favorite/{userId}/{opportunityId}/delete")]
+        public async Task<IActionResult> DeleteFavoriteById(int userId, int opportunityId)
+        {
+            var serviceResponse = await _favoritesService.DeleteFavoriteByIdAsync(userId, opportunityId);
 
-            return Ok(serviceResponse.Data);
+            return HandleResponse(serviceResponse);
         }
 
         /// <summary>
@@ -229,19 +180,14 @@ namespace BackEnd.Controllers
 
             if (!serviceResponse.Success)
             {
-                return serviceResponse.Type switch
-                {
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "BadRequest" => BadRequest(serviceResponse.Message),
-                    _ => StatusCode(500, serviceResponse.Message) // InternalServerError
-                };
+                return HandleResponse(serviceResponse);
             }
 
-            return CreatedAtAction(nameof(ImpulseOportunity), new
+            return HandleCreatedAtAction(serviceResponse, nameof(ImpulseOportunity), new
             {
                 serviceResponse.Data.userId,
                 serviceResponse.Data.opportunityId
-            }, serviceResponse.Data);
+            });
         }
 
         /// <summary>
@@ -257,17 +203,7 @@ namespace BackEnd.Controllers
         {
             var serviceResponse = await _favoritesService.GetCreatedOpportunitiesAsync(userId);
 
-            if (!serviceResponse.Success)
-            {
-                return serviceResponse.Type switch
-                {
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "BadRequest" => BadRequest(serviceResponse.Message),
-                    _ => StatusCode(500, serviceResponse.Message) // InternalServerError
-                };
-            }
-
-            return Ok(serviceResponse.Data);
+            return HandleResponse(serviceResponse);
         }
 
         /// <summary>
@@ -283,18 +219,7 @@ namespace BackEnd.Controllers
         {
            var serviceResponse = await _userService.LoginAsync(request);
 
-            if (!serviceResponse.Success)
-            {
-                return serviceResponse.Type switch
-                {
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "BadRequest" => BadRequest(serviceResponse.Message),
-                    "Unauthorized" => Unauthorized(serviceResponse.Message),
-                    _ => StatusCode(500, serviceResponse.Message) // InternalServerError
-                };
-            }
-
-            return Ok(serviceResponse.Data);
+            return HandleResponse(serviceResponse);
         }
 
         /// <summary>
@@ -309,17 +234,7 @@ namespace BackEnd.Controllers
         {
             var serviceResponse = await _userService.CheckEmailAvailabilityAsync(email);
 
-            if (!serviceResponse.Success)
-            {
-                return serviceResponse.Type switch
-                {
-                    "NotFound" => NotFound(serviceResponse.Message),
-                    "BadRequest" => BadRequest(serviceResponse.Message),
-                    _ => StatusCode(500, serviceResponse.Message) // InternalServerError
-                };
-            }
-
-            return Ok(serviceResponse.Data);
+            return HandleResponse(serviceResponse);
         }
 
         /// <summary>
@@ -333,13 +248,7 @@ namespace BackEnd.Controllers
         {
             var serviceResponse = await _userService.ActivateAccountAsync(token);
 
-            if (!serviceResponse.Success)
-            {
-
-                return BadRequest(serviceResponse.Message);
-            }
-
-            return Ok(serviceResponse.Data);
+            return HandleResponse(serviceResponse);
         }
 
         /// <summary>
@@ -348,12 +257,17 @@ namespace BackEnd.Controllers
         /// <param name="googleToken"></param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        [HttpPost("auth/google")]
-        public async Task<IActionResult> GoogleLogin([FromBody] string googleToken)
+        [HttpPost("google-sign-in")]
+        public async Task<IActionResult> GoogleSignIn([FromBody] GoogleSignInRequest request)
         {
-            //Irá ser implementado quando tivermos front-end
+            var response = await _userService.GoogleSignInAsync(request.IdToken);
 
-            throw new NotImplementedException();
+            if (response.Success)
+            {
+                return Ok(response);
+            }
+
+            return Unauthorized(response);
         }
 
     }

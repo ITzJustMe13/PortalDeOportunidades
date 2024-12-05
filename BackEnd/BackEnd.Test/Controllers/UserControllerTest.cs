@@ -15,6 +15,7 @@ using NUnit.Framework;
 using System;
 using Stripe;
 using BackEnd.Models.Mappers;
+using Microsoft.Extensions.Configuration;
 
 namespace BackEnd.Test
 {
@@ -31,6 +32,12 @@ namespace BackEnd.Test
         [SetUp]
         public void Setup()
         {
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
 
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
         .UseInMemoryDatabase("TestDatabase")
@@ -42,7 +49,7 @@ namespace BackEnd.Test
 
             _favoritesService = new FavoritesService(_context);
 
-            _controller = new UserController(_userService, _favoritesService);
+            _controller = new UserController(_userService, _favoritesService, configuration);
 
 
             // Carregar o arquivo .env, se necessário
@@ -98,7 +105,7 @@ namespace BackEnd.Test
             await _context.SaveChangesAsync();
 
             // Act
-            var response = await _controller.GetUserByID(userId);
+            var response = await _controller.GetEntityById(userId);
 
             // Assert
             Assert.That(response, Is.TypeOf<OkObjectResult>());
@@ -142,7 +149,7 @@ namespace BackEnd.Test
             await _context.SaveChangesAsync();
 
             // Act
-            var response = await _controller.GetUserByID(userId);
+            var response = await _controller.GetEntityById(userId);
 
             // Assert
             Assert.That(response, Is.TypeOf<NotFoundObjectResult>());
@@ -159,10 +166,17 @@ namespace BackEnd.Test
 
             var favoritesService = new FavoritesService(null);
 
-            var controller = new UserController(userService, favoritesService);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+
+            var controller = new UserController(userService, favoritesService, configuration);
 
             // Act
-            var response = await controller.GetUserByID(1);
+            var response = await controller.GetEntityById(1);
 
             // Assert
             Assert.That(response, Is.InstanceOf<NotFoundObjectResult>());
@@ -190,7 +204,7 @@ namespace BackEnd.Test
             };
 
             // Act
-            var response = await _controller.CreateNewUser(user);
+            var response = await _controller.CreateEntity(user);
 
             // Assert
             Assert.That(response, Is.TypeOf<CreatedAtActionResult>());
@@ -208,7 +222,14 @@ namespace BackEnd.Test
 
             var favoritesService = new FavoritesService(null);
 
-            var controller = new UserController(userService, favoritesService);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+
+            var controller = new UserController(userService, favoritesService, configuration);
 
             byte[] byteArray = new byte[] { 72, 101, 108, 108, 111 };
             var user = new User
@@ -225,7 +246,7 @@ namespace BackEnd.Test
             };
 
             // Act
-            var response = await controller.CreateNewUser(user);
+            var response = await controller.CreateEntity(user);
 
             // Assert
             Assert.That(response, Is.TypeOf<NotFoundObjectResult>());
@@ -269,7 +290,7 @@ namespace BackEnd.Test
             };
 
             // Act
-            var response = await _controller.CreateNewUser(user);
+            var response = await _controller.CreateEntity(user);
 
             // Assert
             Assert.That(response, Is.InstanceOf<BadRequestObjectResult>());
@@ -297,7 +318,7 @@ namespace BackEnd.Test
             };
 
             // Act
-            var response = await _controller.CreateNewUser(user);
+            var response = await _controller.CreateEntity(user);
 
             // Assert
             Assert.That(response, Is.InstanceOf<BadRequestObjectResult>());
@@ -324,7 +345,7 @@ namespace BackEnd.Test
 
             };
             // Act
-            var response = await _controller.CreateNewUser(user);
+            var response = await _controller.CreateEntity(user);
 
             // Assert
             Assert.That(response, Is.InstanceOf<BadRequestObjectResult>());
@@ -352,7 +373,7 @@ namespace BackEnd.Test
             };
 
             // Act
-            var response = await _controller.CreateNewUser(user);
+            var response = await _controller.CreateEntity(user);
 
             // Assert
             Assert.That(response, Is.InstanceOf<BadRequestObjectResult>());
@@ -381,7 +402,7 @@ namespace BackEnd.Test
             };
 
             // Act
-            var response = await _controller.CreateNewUser(user);
+            var response = await _controller.CreateEntity(user);
 
             // Assert
             Assert.That(response, Is.TypeOf<BadRequestObjectResult>());
@@ -397,7 +418,7 @@ namespace BackEnd.Test
             var userid = 1;
 
             // Act
-            var result = await _controller.DeleteUser(userid);
+            var result = await _controller.DeleteEntity(userid);
 
             // Assert
             Assert.That(result, Is.TypeOf<NotFoundObjectResult>());
@@ -430,7 +451,7 @@ namespace BackEnd.Test
             await _context.SaveChangesAsync();
 
             // Act
-            var response = await _controller.DeleteUser(userId);
+            var response = await _controller.DeleteEntity(userId);
 
             // Assert
             Assert.That(response, Is.TypeOf<NoContentResult>());
@@ -446,9 +467,16 @@ namespace BackEnd.Test
 
             var favoritesService = new FavoritesService(null);
 
-            var controller = new UserController(userService, favoritesService);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+
+            var controller = new UserController(userService, favoritesService, configuration);
             // Act
-            var response = await controller.DeleteUser(1);
+            var response = await controller.DeleteEntity(1);
 
             // Assert
             Assert.That(response, Is.InstanceOf<NotFoundObjectResult>());
@@ -492,7 +520,7 @@ namespace BackEnd.Test
             await _context.SaveChangesAsync();
 
             // Act
-            var response = await _controller.EditUser(userId, updatedUser);
+            var response = await _controller.UpdateEntity(userId, updatedUser);
 
             // Assert
             Assert.That(response, Is.TypeOf<OkObjectResult>());
@@ -527,7 +555,7 @@ namespace BackEnd.Test
             await _context.SaveChangesAsync();
 
             // Act
-            var response = await _controller.EditUser(userId, updatedUser);
+            var response = await _controller.UpdateEntity(userId, updatedUser);
 
             // Assert
             Assert.That(response, Is.TypeOf<NotFoundObjectResult>());
@@ -585,7 +613,7 @@ namespace BackEnd.Test
             await _context.SaveChangesAsync();
 
             // Act
-            var response = await _controller.EditUser(userId, updatedUser);
+            var response = await _controller.UpdateEntity(userId, updatedUser);
 
             // Assert
             Assert.That(response, Is.TypeOf<BadRequestObjectResult>());
@@ -629,7 +657,7 @@ namespace BackEnd.Test
             await _context.SaveChangesAsync();
 
             // Act
-            var response = await _controller.EditUser(userId, updatedUser);
+            var response = await _controller.UpdateEntity(userId, updatedUser);
 
             // Assert
             Assert.That(response, Is.InstanceOf<BadRequestObjectResult>());
@@ -673,7 +701,7 @@ namespace BackEnd.Test
             await _context.SaveChangesAsync();
 
             // Act
-            var response = await _controller.EditUser(userId, updatedUser);
+            var response = await _controller.UpdateEntity(userId, updatedUser);
 
             // Assert
             Assert.That(response, Is.InstanceOf<BadRequestObjectResult>());
@@ -690,7 +718,14 @@ namespace BackEnd.Test
 
             var favoritesService = new FavoritesService(null);
 
-            var controller = new UserController(userService, favoritesService);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+
+            var controller = new UserController(userService, favoritesService, configuration);
 
             int userId = 1;
             byte[] byteArray = new byte[] { 72, 101, 108, 108, 111 };
@@ -708,7 +743,7 @@ namespace BackEnd.Test
             };
 
             // Act
-            var response = await controller.EditUser(userId, updatedUser);
+            var response = await controller.UpdateEntity(userId, updatedUser);
 
             // Assert
             Assert.That(response, Is.InstanceOf<NotFoundObjectResult>());
@@ -753,7 +788,7 @@ namespace BackEnd.Test
             await _context.SaveChangesAsync();
 
             // Act
-            var response = await _controller.EditUser(userId, updatedUser);
+            var response = await _controller.UpdateEntity(userId, updatedUser);
 
             // Assert
             Assert.That(response, Is.TypeOf<BadRequestObjectResult>());
@@ -867,7 +902,14 @@ namespace BackEnd.Test
 
             var favoritesService = new FavoritesService(null);
 
-            var controller = new UserController(userService, favoritesService); ;
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+
+            var controller = new UserController(userService, favoritesService, configuration);
 
             var favorite = new Favorite
             {
@@ -979,7 +1021,14 @@ namespace BackEnd.Test
 
             var favoritesService = new FavoritesService(null);
 
-            var controller = new UserController(userService, favoritesService);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+
+            var controller = new UserController(userService, favoritesService, configuration);
 
             // Act
             var response = await controller.GetFavoriteById(1, 1);
@@ -1064,7 +1113,14 @@ namespace BackEnd.Test
 
             var favoritesService = new FavoritesService(null);
 
-            var controller = new UserController(userService, favoritesService);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+
+            var controller = new UserController(userService, favoritesService, configuration);
 
             // Act
             var response = await controller.GetFavorites(1);
@@ -1084,7 +1140,14 @@ namespace BackEnd.Test
 
             var favoritesService = new FavoritesService(null);
 
-            var controller = new UserController(userService, favoritesService);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+
+            var controller = new UserController(userService, favoritesService, configuration);
 
             var impulse = new Impulse
             {
@@ -1282,7 +1345,14 @@ namespace BackEnd.Test
 
             var favoritesService = new FavoritesService(null);
 
-            var controller = new UserController(userService, favoritesService);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+
+            var controller = new UserController(userService, favoritesService, configuration);
 
             // Act
             var response = await controller.GetCreatedOpportunities(1);
@@ -1487,7 +1557,14 @@ namespace BackEnd.Test
 
             var favoritesService = new FavoritesService(null);
 
-            var controller = new UserController(userService, favoritesService);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+
+            var controller = new UserController(userService, favoritesService, configuration);
 
             byte[] byteArray = new byte[] { 72, 101, 108, 108, 111 };
             var user = new UserModel
@@ -1628,7 +1705,14 @@ namespace BackEnd.Test
 
             var favoritesService = new FavoritesService(null);
 
-            var controller = new UserController(userService, favoritesService);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+
+            var controller = new UserController(userService, favoritesService, configuration);
 
             // Act
             var response = await controller.GetEmailAvailability("email@example.pt");
@@ -1740,14 +1824,21 @@ namespace BackEnd.Test
 
             var favoritesService = new FavoritesService(null);
 
-            var controller = new UserController(userService, favoritesService);
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "MessageMode", "Development" }  // ou "Production"
+            })
+            .Build();
+
+            var controller = new UserController(userService, favoritesService, configuration);
 
             // Act
             var response = await controller.ActivateAccount("token");
 
             // Assert
-            Assert.That(response, Is.InstanceOf<BadRequestObjectResult>());
-            var notFoundResult = response as BadRequestObjectResult;
+            Assert.That(response, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = response as NotFoundObjectResult;
             Assert.That(notFoundResult?.Value, Is.EqualTo("DB context is missing."));
         }
 

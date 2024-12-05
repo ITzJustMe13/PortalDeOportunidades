@@ -11,6 +11,21 @@ using BackEnd.Interfaces;
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
 DotNetEnv.Env.Load();
+
+var specificOrgins = "AppOrigins";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: specificOrgins,
+        policy =>
+        {
+            policy.SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost")
+                  .AllowAnyMethod()
+                  .AllowAnyHeader()
+                  .AllowCredentials();
+        });
+});
+
 builder.Services
     .AddAuthentication(x =>
     {
@@ -28,6 +43,8 @@ builder.Services
             ValidateAudience = false
         };
     });
+
+
 builder.Services.AddAuthorization();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -36,6 +53,12 @@ builder.Services.AddScoped<IIBanService, IBANService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IFavoritesService, FavoritesService>();
 builder.Services.AddScoped<IOpportunityService, OpportunityService>();
+builder.Services.AddScoped<IReviewService, BackEnd.Services.ReviewService>();
+builder.Services.AddScoped<IReservationService, ReservationService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<DateValidationService>();
+builder.Services.AddHostedService<ExpirationBackgroundService>();
+builder.Services.AddHostedService<ImpulseExpirationBackgroundService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("PortalOportunidadesDB"))
@@ -96,6 +119,12 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+var messageMode = "Production"; // Define manualmente para teste.
+builder.Configuration.AddInMemoryCollection(new Dictionary<string, string>
+{
+    { "MessageMode", messageMode }
+});
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -107,10 +136,14 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+app.UseCors("AppOrigins");
+
 app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+
 
 app.MapControllerRoute(
     name: "default",

@@ -20,7 +20,6 @@ namespace BackEnd.Models.Mappers
             if (opportunityModel == null)
                 return null;
 
-            ValidateModel(opportunityModel);
 
             return new Opportunity
             {
@@ -63,14 +62,14 @@ namespace BackEnd.Models.Mappers
                 Name = opportunity.name,
                 Price = opportunity.price,
                 Vacancies = opportunity.vacancies,
-                IsActive = opportunity.isActive,
+                IsActive = (bool)opportunity.isActive,
                 Category = opportunity.category,
                 Description = opportunity.description,
                 Location = opportunity.location,
                 Address = opportunity.address,
                 UserID = opportunity.userId,
                 Score = opportunity.reviewScore,
-                Date = opportunity.date,
+                Date = (DateTime)opportunity.date,
                 IsImpulsed = opportunity.isImpulsed,
                 OpportunityImgs = opportunity.OpportunityImgs?
                     .Select(OpportunityImgMapper.MapToModel)

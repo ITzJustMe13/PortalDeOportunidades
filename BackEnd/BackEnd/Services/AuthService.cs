@@ -2,9 +2,15 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using BackEnd.Controllers.Data;
+using BackEnd.Enums;
 using BackEnd.Interfaces;
 using BackEnd.Models.BackEndModels;
 using BackEnd.Models.FrontEndModels;
+using BackEnd.ServiceResponses;
+using Google.Apis.Auth;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace BackEnd.Services;
@@ -44,6 +50,8 @@ public class AuthService : IAuthService
         var token = handler.CreateToken(tokenDescriptor);
         return handler.WriteToken(token);
     }
+
+
 }
 
 
