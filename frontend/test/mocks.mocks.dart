@@ -9,24 +9,24 @@ import 'dart:ui' as _i24;
 import 'package:flutter/material.dart' as _i5;
 import 'package:flutter/src/foundation/assertions.dart' as _i25;
 import 'package:flutter/src/foundation/diagnostics.dart' as _i6;
-import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i3;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i2;
 import 'package:frontend/Enums/Location.dart' as _i18;
 import 'package:frontend/Enums/OppCategory.dart' as _i17;
 import 'package:frontend/Models/Favorite.dart' as _i11;
 import 'package:frontend/Models/Impulse.dart' as _i12;
 import 'package:frontend/Models/Opportunity.dart' as _i13;
 import 'package:frontend/Models/Reservation.dart' as _i15;
-import 'package:frontend/Models/Review.dart' as _i21;
+import 'package:frontend/Models/Review.dart' as _i19;
 import 'package:frontend/Models/User.dart' as _i10;
 import 'package:frontend/Services/auth_Service.dart' as _i4;
 import 'package:frontend/Services/opportunity_api_handler.dart' as _i16;
-import 'package:frontend/Services/payment_api_handler.dart' as _i19;
+import 'package:frontend/Services/payment_api_handler.dart' as _i20;
 import 'package:frontend/Services/payment_service.dart' as _i22;
 import 'package:frontend/Services/reservation_api_handler.dart' as _i14;
-import 'package:frontend/Services/review_api_handler.dart' as _i20;
+import 'package:frontend/Services/review_api_handler.dart' as _i21;
 import 'package:frontend/Services/user_api_handler.dart' as _i7;
 import 'package:frontend/State/LoginState.dart' as _i23;
-import 'package:http/http.dart' as _i2;
+import 'package:http/http.dart' as _i3;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i8;
 
@@ -43,8 +43,9 @@ import 'package:mockito/src/dummies.dart' as _i8;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeClient_0 extends _i1.SmartFake implements _i2.Client {
-  _FakeClient_0(
+class _FakeFlutterSecureStorage_0 extends _i1.SmartFake
+    implements _i2.FlutterSecureStorage {
+  _FakeFlutterSecureStorage_0(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -53,9 +54,8 @@ class _FakeClient_0 extends _i1.SmartFake implements _i2.Client {
         );
 }
 
-class _FakeFlutterSecureStorage_1 extends _i1.SmartFake
-    implements _i3.FlutterSecureStorage {
-  _FakeFlutterSecureStorage_1(
+class _FakeClient_1 extends _i1.SmartFake implements _i3.Client {
+  _FakeClient_1(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -149,22 +149,31 @@ class MockUserApiHandler extends _i1.Mock implements _i7.UserApiHandler {
       ) as String);
 
   @override
-  _i2.Client get client => (super.noSuchMethod(
-        Invocation.getter(#client),
-        returnValue: _FakeClient_0(
-          this,
-          Invocation.getter(#client),
+  set baseUri(String? _baseUri) => super.noSuchMethod(
+        Invocation.setter(
+          #baseUri,
+          _baseUri,
         ),
-      ) as _i2.Client);
+        returnValueForMissingStub: null,
+      );
 
   @override
-  _i3.FlutterSecureStorage get storage => (super.noSuchMethod(
+  _i2.FlutterSecureStorage get storage => (super.noSuchMethod(
         Invocation.getter(#storage),
-        returnValue: _FakeFlutterSecureStorage_1(
+        returnValue: _FakeFlutterSecureStorage_0(
           this,
           Invocation.getter(#storage),
         ),
-      ) as _i3.FlutterSecureStorage);
+      ) as _i2.FlutterSecureStorage);
+
+  @override
+  _i3.Client get client => (super.noSuchMethod(
+        Invocation.getter(#client),
+        returnValue: _FakeClient_1(
+          this,
+          Invocation.getter(#client),
+        ),
+      ) as _i3.Client);
 
   @override
   void logout() => super.noSuchMethod(
@@ -353,22 +362,31 @@ class MockReservationApiHandler extends _i1.Mock
       ) as String);
 
   @override
-  _i2.Client get client => (super.noSuchMethod(
-        Invocation.getter(#client),
-        returnValue: _FakeClient_0(
-          this,
-          Invocation.getter(#client),
+  set baseUri(String? _baseUri) => super.noSuchMethod(
+        Invocation.setter(
+          #baseUri,
+          _baseUri,
         ),
-      ) as _i2.Client);
+        returnValueForMissingStub: null,
+      );
 
   @override
-  _i3.FlutterSecureStorage get storage => (super.noSuchMethod(
+  _i2.FlutterSecureStorage get storage => (super.noSuchMethod(
         Invocation.getter(#storage),
-        returnValue: _FakeFlutterSecureStorage_1(
+        returnValue: _FakeFlutterSecureStorage_0(
           this,
           Invocation.getter(#storage),
         ),
-      ) as _i3.FlutterSecureStorage);
+      ) as _i2.FlutterSecureStorage);
+
+  @override
+  _i3.Client get client => (super.noSuchMethod(
+        Invocation.getter(#client),
+        returnValue: _FakeClient_1(
+          this,
+          Invocation.getter(#client),
+        ),
+      ) as _i3.Client);
 
   @override
   _i9.Future<List<_i15.Reservation>?> getAllActiveReservationsByUserId(
@@ -467,22 +485,22 @@ class MockOpportunityApiHandler extends _i1.Mock
       ) as String);
 
   @override
-  _i2.Client get client => (super.noSuchMethod(
-        Invocation.getter(#client),
-        returnValue: _FakeClient_0(
-          this,
-          Invocation.getter(#client),
+  set baseUri(String? _baseUri) => super.noSuchMethod(
+        Invocation.setter(
+          #baseUri,
+          _baseUri,
         ),
-      ) as _i2.Client);
+        returnValueForMissingStub: null,
+      );
 
   @override
-  _i3.FlutterSecureStorage get storage => (super.noSuchMethod(
+  _i2.FlutterSecureStorage get storage => (super.noSuchMethod(
         Invocation.getter(#storage),
-        returnValue: _FakeFlutterSecureStorage_1(
+        returnValue: _FakeFlutterSecureStorage_0(
           this,
           Invocation.getter(#storage),
         ),
-      ) as _i3.FlutterSecureStorage);
+      ) as _i2.FlutterSecureStorage);
 
   @override
   Duration get timeout => (super.noSuchMethod(
@@ -492,6 +510,15 @@ class MockOpportunityApiHandler extends _i1.Mock
           Invocation.getter(#timeout),
         ),
       ) as Duration);
+
+  @override
+  _i3.Client get client => (super.noSuchMethod(
+        Invocation.getter(#client),
+        returnValue: _FakeClient_1(
+          this,
+          Invocation.getter(#client),
+        ),
+      ) as _i3.Client);
 
   @override
   _i9.Future<_i13.Opportunity?> getOpportunityByID(int? id) =>
@@ -560,6 +587,16 @@ class MockOpportunityApiHandler extends _i1.Mock
       ) as _i9.Future<List<_i13.Opportunity>>);
 
   @override
+  _i9.Future<List<_i19.Review>?> getReviewsByOppId(int? oppId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getReviewsByOppId,
+          [oppId],
+        ),
+        returnValue: _i9.Future<List<_i19.Review>?>.value(),
+      ) as _i9.Future<List<_i19.Review>?>);
+
+  @override
   _i9.Future<_i13.Opportunity?> createOpportunity(
           _i13.Opportunity? opportunity) =>
       (super.noSuchMethod(
@@ -617,7 +654,7 @@ class MockOpportunityApiHandler extends _i1.Mock
 /// A class which mocks [PaymentApiHandler].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockPaymentApiHandler extends _i1.Mock implements _i19.PaymentApiHandler {
+class MockPaymentApiHandler extends _i1.Mock implements _i20.PaymentApiHandler {
   MockPaymentApiHandler() {
     _i1.throwOnMissingStub(this);
   }
@@ -632,22 +669,31 @@ class MockPaymentApiHandler extends _i1.Mock implements _i19.PaymentApiHandler {
       ) as String);
 
   @override
-  _i2.Client get client => (super.noSuchMethod(
-        Invocation.getter(#client),
-        returnValue: _FakeClient_0(
-          this,
-          Invocation.getter(#client),
+  set baseUri(String? _baseUri) => super.noSuchMethod(
+        Invocation.setter(
+          #baseUri,
+          _baseUri,
         ),
-      ) as _i2.Client);
+        returnValueForMissingStub: null,
+      );
 
   @override
-  _i3.FlutterSecureStorage get storage => (super.noSuchMethod(
+  _i2.FlutterSecureStorage get storage => (super.noSuchMethod(
         Invocation.getter(#storage),
-        returnValue: _FakeFlutterSecureStorage_1(
+        returnValue: _FakeFlutterSecureStorage_0(
           this,
           Invocation.getter(#storage),
         ),
-      ) as _i3.FlutterSecureStorage);
+      ) as _i2.FlutterSecureStorage);
+
+  @override
+  _i3.Client get client => (super.noSuchMethod(
+        Invocation.getter(#client),
+        returnValue: _FakeClient_1(
+          this,
+          Invocation.getter(#client),
+        ),
+      ) as _i3.Client);
 
   @override
   _i9.Future<String?> createReservationCheckoutSession(
@@ -674,7 +720,7 @@ class MockPaymentApiHandler extends _i1.Mock implements _i19.PaymentApiHandler {
 /// A class which mocks [ReviewApiHandler].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockReviewApiHandler extends _i1.Mock implements _i20.ReviewApiHandler {
+class MockReviewApiHandler extends _i1.Mock implements _i21.ReviewApiHandler {
   MockReviewApiHandler() {
     _i1.throwOnMissingStub(this);
   }
@@ -689,22 +735,22 @@ class MockReviewApiHandler extends _i1.Mock implements _i20.ReviewApiHandler {
       ) as String);
 
   @override
-  _i2.Client get client => (super.noSuchMethod(
-        Invocation.getter(#client),
-        returnValue: _FakeClient_0(
-          this,
-          Invocation.getter(#client),
+  set baseUri(String? _baseUri) => super.noSuchMethod(
+        Invocation.setter(
+          #baseUri,
+          _baseUri,
         ),
-      ) as _i2.Client);
+        returnValueForMissingStub: null,
+      );
 
   @override
-  _i3.FlutterSecureStorage get storage => (super.noSuchMethod(
+  _i2.FlutterSecureStorage get storage => (super.noSuchMethod(
         Invocation.getter(#storage),
-        returnValue: _FakeFlutterSecureStorage_1(
+        returnValue: _FakeFlutterSecureStorage_0(
           this,
           Invocation.getter(#storage),
         ),
-      ) as _i3.FlutterSecureStorage);
+      ) as _i2.FlutterSecureStorage);
 
   @override
   Duration get timeout => (super.noSuchMethod(
@@ -716,43 +762,42 @@ class MockReviewApiHandler extends _i1.Mock implements _i20.ReviewApiHandler {
       ) as Duration);
 
   @override
-  _i9.Future<_i21.Review?> getReviewById(int? reviewId) => (super.noSuchMethod(
+  _i3.Client get client => (super.noSuchMethod(
+        Invocation.getter(#client),
+        returnValue: _FakeClient_1(
+          this,
+          Invocation.getter(#client),
+        ),
+      ) as _i3.Client);
+
+  @override
+  _i9.Future<_i19.Review?> getReviewById(int? reviewId) => (super.noSuchMethod(
         Invocation.method(
           #getReviewById,
           [reviewId],
         ),
-        returnValue: _i9.Future<_i21.Review?>.value(),
-      ) as _i9.Future<_i21.Review?>);
+        returnValue: _i9.Future<_i19.Review?>.value(),
+      ) as _i9.Future<_i19.Review?>);
 
   @override
-  _i9.Future<List<_i21.Review>?> getReviewsByOppId(int? oppId) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #getReviewsByOppId,
-          [oppId],
-        ),
-        returnValue: _i9.Future<List<_i21.Review>?>.value(),
-      ) as _i9.Future<List<_i21.Review>?>);
-
-  @override
-  _i9.Future<List<_i21.Review>> getReviewsByUserId(int? userId) =>
+  _i9.Future<List<_i19.Review>> getReviewsByUserId(int? userId) =>
       (super.noSuchMethod(
         Invocation.method(
           #getReviewsByUserId,
           [userId],
         ),
-        returnValue: _i9.Future<List<_i21.Review>>.value(<_i21.Review>[]),
-      ) as _i9.Future<List<_i21.Review>>);
+        returnValue: _i9.Future<List<_i19.Review>>.value(<_i19.Review>[]),
+      ) as _i9.Future<List<_i19.Review>>);
 
   @override
-  _i9.Future<_i21.Review?> createReview(_i21.Review? review) =>
+  _i9.Future<_i19.Review?> createReview(_i19.Review? review) =>
       (super.noSuchMethod(
         Invocation.method(
           #createReview,
           [review],
         ),
-        returnValue: _i9.Future<_i21.Review?>.value(),
-      ) as _i9.Future<_i21.Review?>);
+        returnValue: _i9.Future<_i19.Review?>.value(),
+      ) as _i9.Future<_i19.Review?>);
 
   @override
   _i9.Future<bool> deleteReview(int? reviewId) => (super.noSuchMethod(
@@ -766,16 +811,14 @@ class MockReviewApiHandler extends _i1.Mock implements _i20.ReviewApiHandler {
   @override
   _i9.Future<bool> editReview(
     int? id,
-    double? score,
-    String? desc,
+    _i19.Review? review,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
           #editReview,
           [
             id,
-            score,
-            desc,
+            review,
           ],
         ),
         returnValue: _i9.Future<bool>.value(false),
@@ -791,13 +834,13 @@ class MockPaymentService extends _i1.Mock implements _i22.PaymentService {
   }
 
   @override
-  _i3.FlutterSecureStorage get storage => (super.noSuchMethod(
+  _i2.FlutterSecureStorage get storage => (super.noSuchMethod(
         Invocation.getter(#storage),
-        returnValue: _FakeFlutterSecureStorage_1(
+        returnValue: _FakeFlutterSecureStorage_0(
           this,
           Invocation.getter(#storage),
         ),
-      ) as _i3.FlutterSecureStorage);
+      ) as _i2.FlutterSecureStorage);
 
   @override
   _i9.Future<void> saveImpulse(_i12.Impulse? impulse) => (super.noSuchMethod(
@@ -837,6 +880,26 @@ class MockPaymentService extends _i1.Mock implements _i22.PaymentService {
         ),
         returnValue: _i9.Future<_i15.Reservation?>.value(),
       ) as _i9.Future<_i15.Reservation?>);
+
+  @override
+  _i9.Future<void> deleteImpulse() => (super.noSuchMethod(
+        Invocation.method(
+          #deleteImpulse,
+          [],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+
+  @override
+  _i9.Future<void> deleteReservation() => (super.noSuchMethod(
+        Invocation.method(
+          #deleteReservation,
+          [],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
 }
 
 /// A class which mocks [LoginState].

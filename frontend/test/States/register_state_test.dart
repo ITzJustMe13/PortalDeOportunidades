@@ -12,7 +12,8 @@ void main() {
   setUp(() {
     mockUserApiHandler = MockUserApiHandler();
     registerState = RegisterState();
-    registerState.userApiHandler = mockUserApiHandler; // Usar o setter para injetar o mock
+    registerState.userApiHandler =
+        mockUserApiHandler; // Usar o setter para injetar o mock
   });
 
   test('Deve registrar um usuário com sucesso', () async {
@@ -27,7 +28,7 @@ void main() {
       cellPhoneNumber: 123456789,
       gender: Gender.MASCULINO,
       image: 'image_path',
-      IBAN: 'IBAN12345',
+      iban: 'IBAN12345',
     );
 
     // Configura o mock para retornar o usuário corretamente
@@ -54,7 +55,7 @@ void main() {
       cellPhoneNumber: 0,
       gender: Gender.MASCULINO,
       image: '',
-      IBAN: '',
+      iban: '',
     );
 
     // Configura o mock para retornar null (falha ao criar o usuário)

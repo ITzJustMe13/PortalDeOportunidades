@@ -15,7 +15,7 @@ void main() {
     userApiHandler = MockUserApiHandler();
     paymentApiHandler = MockPaymentApiHandler();
     paymentService = MockPaymentService();
-    
+
     // Usando os mocks para injeção de dependências
     state = ChooseImpulseState()
       ..apiHandler = userApiHandler
@@ -36,7 +36,7 @@ void main() {
       birthDate: DateTime(1990, 1, 1),
       gender: Gender.MASCULINO,
       image: 'https://example.com/image.jpg',
-      IBAN: 'GB33BUKB20201555555555',
+      iban: 'GB33BUKB20201555555555',
     );
   }
 
@@ -57,10 +57,12 @@ void main() {
 
   test('Erro ao criar sessão de checkout', () async {
     // Criando usuário de teste
-    when(userApiHandler.getStoredUser()).thenAnswer((_) async => createTestUser());
-    
+    when(userApiHandler.getStoredUser())
+        .thenAnswer((_) async => createTestUser());
+
     // Simulando falha na criação da sessão de checkout
-    when(paymentApiHandler.createImpulseCheckoutSession(any)).thenAnswer((_) async => null);
+    when(paymentApiHandler.createImpulseCheckoutSession(any))
+        .thenAnswer((_) async => null);
 
     await state.impulse(7, 10.0, 123);
 
@@ -69,8 +71,10 @@ void main() {
   });
 
   test('Erro ao abrir a URL de checkout', () async {
-    when(userApiHandler.getStoredUser()).thenAnswer((_) async => createTestUser());
-    when(paymentApiHandler.createImpulseCheckoutSession(any)).thenAnswer((_) async => 'checkout_id');
+    when(userApiHandler.getStoredUser())
+        .thenAnswer((_) async => createTestUser());
+    when(paymentApiHandler.createImpulseCheckoutSession(any))
+        .thenAnswer((_) async => 'checkout_id');
 
     // Simulando falha ao abrir a URL de checkout
     state.canLaunch = (_) async => false;
@@ -82,8 +86,10 @@ void main() {
   });
 
   test('Impulso bem-sucedido', () async {
-    when(userApiHandler.getStoredUser()).thenAnswer((_) async => createTestUser());
-    when(paymentApiHandler.createImpulseCheckoutSession(any)).thenAnswer((_) async => 'checkout_id');
+    when(userApiHandler.getStoredUser())
+        .thenAnswer((_) async => createTestUser());
+    when(paymentApiHandler.createImpulseCheckoutSession(any))
+        .thenAnswer((_) async => 'checkout_id');
 
     // Simulando sucesso ao abrir a URL de checkout
     state.canLaunch = (_) async => true;
