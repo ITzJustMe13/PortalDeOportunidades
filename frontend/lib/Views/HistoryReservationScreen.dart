@@ -77,7 +77,7 @@ class HistoryReservationScreen extends StatelessWidget {
               itemBuilder: (context, index) {
                 return Padding(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 75.0, vertical: 10.0),
+                      horizontal: 35.0, vertical: 10.0),
                   child: _buildReservationCard(
                       historyReservationState,
                       historyReservationState.reservationList[index].keys.first,
@@ -236,7 +236,7 @@ class HistoryReservationScreen extends StatelessWidget {
       Reservation reservation, Opportunity opportunity, context) {
     return ConstrainedBox(
       constraints: BoxConstraints(
-        maxHeight: 500, // Limita a largura do card
+        maxHeight: 600,
       ),
       child: Card(
         elevation: 4,
@@ -250,30 +250,32 @@ class HistoryReservationScreen extends StatelessWidget {
               children: [
                 _buildCardImage(opportunity.opportunityImgs.isNotEmpty
                     ? opportunity.opportunityImgs[0].imageBase64
-                    : null), // Imagem sem padding.
+                    : null),
                 Positioned(
                   top: 8,
                   left: 8,
                   child: _buildCategoryTag(
                     opportunity.category.toString().split('.').last,
-                  ), // TaTag sobre a imagem.
+                  ),
                 ),
               ],
             ),
             Padding(
               padding: const EdgeInsets.symmetric(
                   horizontal: 20.0,
-                  vertical: 10.0), // Adiciona padding aos lados
+                  vertical: 10.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  Wrap(
+                    alignment: WrapAlignment.spaceBetween,
+                    spacing: 8,
+                    runSpacing: 8,
                     children: [
                       ConstrainedBox(
                         constraints: BoxConstraints(
-                            maxWidth: 250), // Limita a largura a 250px
+                            maxWidth: 250),
                         child: _buildTitle(
                           opportunity.name,
                         ),

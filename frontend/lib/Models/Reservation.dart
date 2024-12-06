@@ -26,7 +26,7 @@ class Reservation {
       checkInDate: DateTime.parse(json["date"]),
       numOfPeople: json["numOfPeople"],
       isActive: json["isActive"],
-      fixedPrice: json["fixedPrice"]);
+      fixedPrice: (json["fixedPrice"] as num).toDouble());
 
   Map<String, dynamic> toJson() => {
         "opportunityId": opportunityId,
