@@ -18,10 +18,7 @@ namespace BackEnd.Services
         /// <param name="user"></param>
         public void SendActivationEmail(UserModel user)
         {
-            //var fromPassword = Environment.GetEnvironmentVariable("GMAIL_APP_PASSWORD");
-            var activationLink = $"https://localhost:7235/api/User/activate?token={user.Token}";
-            //var fromAddress = new MailAddress("portaldeoportunidades2024@gmail.com", "Mail");
-            //var toAddress = new MailAddress(user.Email);
+            var activationLink = $"https://portaldeoportunidades-5ddcb.web.app/#/activate-account?token={user.Token}";
             string userEmail = user.Email;
             const string subject = "Activate Your Account";
             string body = $"Olá {user.FirstName} {user.LastName},\n\nPor Favor clica no link abaixo para ativares a tua conta:\n{activationLink}\n\nObrigado!";

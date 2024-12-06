@@ -19,7 +19,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: specificOrgins,
         policy =>
         {
-            policy.SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost")
+            policy.SetIsOriginAllowed(origin => new Uri(origin).Host == "https://portaldeoportunidades-5ddcb.web.app/")
                   .AllowAnyMethod()
                   .AllowAnyHeader()
                   .AllowCredentials();
