@@ -10,7 +10,7 @@ import '../Models/Opportunity.dart';
 class OpportunityApiHandler extends Handler{
   late final String baseUri;
   final storage = FlutterSecureStorage();
-  final timeout = const Duration(seconds: 30);
+  final timeout = const Duration(seconds: 150);
 
   OpportunityApiHandler({
     String? baseUri,
@@ -49,8 +49,10 @@ class OpportunityApiHandler extends Handler{
       if (response.statusCode >= 200 && response.statusCode <= 299) {
         final List<dynamic> jsonList = jsonDecode(response.body);
 
+
         final opportunities =
             jsonList.map((json) => Opportunity.fromJson(json)).toList();
+
         return opportunities;
       } else if (response.statusCode == 404) {
         return [];
@@ -93,6 +95,7 @@ class OpportunityApiHandler extends Handler{
         final List<dynamic> jsonList = jsonDecode(response.body);
         final userOpp =
             jsonList.map((json) => Opportunity.fromJson(json)).toList();
+
         return userOpp;
       } else if (response.statusCode == 404) {
         return [];
