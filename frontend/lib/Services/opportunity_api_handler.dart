@@ -48,6 +48,7 @@ class OpportunityApiHandler extends Handler{
 
       if (response.statusCode >= 200 && response.statusCode <= 299) {
         final List<dynamic> jsonList = jsonDecode(response.body);
+
         final opportunities =
             jsonList.map((json) => Opportunity.fromJson(json)).toList();
         return opportunities;

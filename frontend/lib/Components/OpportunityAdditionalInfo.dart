@@ -45,8 +45,10 @@ class OpportunityAdditionalInfo extends StatelessWidget {
           style: TextStyle(fontSize: 16, color: Colors.black87),
         ),
         SizedBox(height: 10),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        Wrap(
+          alignment: WrapAlignment.spaceBetween,
+          spacing: 8,
+          runSpacing: 8,
           children: [
             Text(
               'Preço: ${price??"????"} € / Pessoa',

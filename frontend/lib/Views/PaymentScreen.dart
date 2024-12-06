@@ -94,8 +94,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
           const SizedBox(height: 16),
           Text(
             widget.isSuccess
-                ? "${widget.paymentType} Pagamento Bem-Sucedido!"
-                : "${widget.paymentType} Pagamento Falhou!",
+                ? (widget.paymentType.toLowerCase() == "reservation"
+                ? "Pagamento de Reserva Bem-Sucedido"
+                : "Pagamento de Impulso Bem-Sucedido")
+                : "O pagamento falhou. Por favor, tente novamente.",
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,

@@ -6,14 +6,15 @@ import 'package:frontend/Services/user_api_handler.dart';
 class PaymentState with ChangeNotifier {
   bool _isLoading = false;
   String _errorMessage = "";
-  final ReservationApiHandler _reservationApiHandler =
-      ReservationApiHandler();
+  final ReservationApiHandler _reservationApiHandler = ReservationApiHandler();
 
   final UserApiHandler _userApiHandler = UserApiHandler();
   final PaymentService paymentService = PaymentService();
+
   PaymentState();
 
   String get errorMessage => _errorMessage;
+
   bool get isLoading => _isLoading;
 
   // Handle Reservation
@@ -50,6 +51,7 @@ class PaymentState with ChangeNotifier {
     final impulse = await PaymentService().getStoredImpulse();
     if (impulse == null) {
       _errorMessage = 'Nenhum impulso encontrado';
+      _isLoading = false;
       notifyListeners();
       return;
     }
@@ -69,6 +71,7 @@ class PaymentState with ChangeNotifier {
   Future<void> deleteImpulse() async {
     paymentService.deleteImpulse();
   }
+
   Future<void> deleteReservation() async {
     paymentService.deleteReservation();
   }
