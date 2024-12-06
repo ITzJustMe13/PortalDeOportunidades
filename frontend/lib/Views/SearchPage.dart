@@ -92,7 +92,7 @@ class SearchPage extends StatelessWidget {
               DynamicActionButton(
                 onPressed: () => searchState.toggleTopChecked(),
                 icon: Icons.list,
-                text: searchState.isTopChecked ? "TOP" : "All",
+                text: searchState.isTopChecked ? "TOP" : "TODAS",
                 color: Color(0xFF50C878),
               ),
               SizedBox(width: 24),
@@ -101,7 +101,7 @@ class SearchPage extends StatelessWidget {
                   constraints: BoxConstraints(maxWidth: 300), // Set max width
                   child: DropdownButton<String>(
                     value: searchState.selectedSort,
-                    hint: Text('Escolhe o tipo de ordenação'),
+                    hint: Text('Ordenar por'),
                     isExpanded: true,
                     onChanged: (String? newValue) async {
                       searchState.setSelectedSort(newValue);

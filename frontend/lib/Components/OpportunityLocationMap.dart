@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geocode/geocode.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class OpportunityLocationMap extends StatefulWidget {
   final String address;
@@ -26,7 +25,7 @@ class _OpportunityLocationMapState extends State<OpportunityLocationMap> {
 
   // Method to get coordinates from the address
   Future<void> _getCoordinates() async {
-    final String? geocodeApiKey = dotenv.env["GEOCODE_API_KEY"];
+    final String? geocodeApiKey = "71779414495299352043x43019";
 
     if (geocodeApiKey == null || geocodeApiKey.isEmpty) {
       setState(() {

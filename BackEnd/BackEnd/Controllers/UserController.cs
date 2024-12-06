@@ -251,24 +251,5 @@ namespace BackEnd.Controllers
             return HandleResponse(serviceResponse);
         }
 
-        /// <summary>
-        /// Endpoint that lets the User use Google Auth to autenticate in the plataform
-        /// </summary>
-        /// <param name="googleToken"></param>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
-        [HttpPost("google-sign-in")]
-        public async Task<IActionResult> GoogleSignIn([FromBody] GoogleSignInRequest request)
-        {
-            var response = await _userService.GoogleSignInAsync(request.IdToken);
-
-            if (response.Success)
-            {
-                return Ok(response);
-            }
-
-            return Unauthorized(response);
-        }
-
     }
 }

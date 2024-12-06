@@ -13,7 +13,7 @@ class Impulse {
   factory Impulse.fromJson(Map<String, dynamic> json) => Impulse(
       userId: json["userId"],
       opportunityId: json["opportunityId"],
-      value: json["value"],
+      value: (json["value"] as num).toDouble(),
       expireDate: DateTime.parse(json["expireDate"]));
 
   Map<String, dynamic> toJson() => {

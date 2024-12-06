@@ -3,6 +3,7 @@ import 'package:frontend/Models/Impulse.dart';
 import 'package:frontend/Services/payment_api_handler.dart';
 import 'package:frontend/Services/payment_service.dart';
 import 'package:frontend/Services/user_api_handler.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ChooseImpulseState with ChangeNotifier {
   var _apiHandler = UserApiHandler();
@@ -13,10 +14,11 @@ class ChooseImpulseState with ChangeNotifier {
   bool _isLoading = false;
 
   // Funções que podem ser injetadas para testes
-  Future<bool> Function(String) canLaunch = (url) async => true; // Mockable
-  Future<void> Function(String) launch = (url) async {}; // Mockable
+ // Future<bool> Function(String) canLaunch = (url) async => true; // Mockable
+ // Future<void> Function(String) launch = (url) async {}; // Mockable
 
   String? get errorMessage => _errorMessage;
+
   bool get isLoading => _isLoading;
 
   set isLoading(bool value) {

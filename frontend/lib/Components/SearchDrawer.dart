@@ -26,14 +26,14 @@ class SearchDrawer extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Search & Filter",
+                    "Procurar & Filtrar",
                     style: TextStyle(fontSize: 20),
                   ),
                   Divider(),
                   TextField(
                     controller: searchState.keywordController,
                     decoration: InputDecoration(
-                      labelText: 'Keyword',
+                      labelText: 'Palavra-Chave',
                       border: OutlineInputBorder(),
                     ),
                     onChanged: (text) {
@@ -48,7 +48,7 @@ class SearchDrawer extends StatelessWidget {
                       FilteringTextInputFormatter.digitsOnly,
                     ],
                     decoration: InputDecoration(
-                      labelText: 'Vacancies',
+                      labelText: 'Vagas',
                       border: OutlineInputBorder(),
                     ),
                     onChanged: (text) {
@@ -67,7 +67,7 @@ class SearchDrawer extends StatelessWidget {
                             FilteringTextInputFormatter.digitsOnly,
                           ],
                           decoration: InputDecoration(
-                            labelText: 'Min Price',
+                            labelText: 'Preço Min',
                             border: OutlineInputBorder(),
                           ),
                           onChanged: (text) {
@@ -84,7 +84,7 @@ class SearchDrawer extends StatelessWidget {
                             FilteringTextInputFormatter.digitsOnly,
                           ],
                           decoration: InputDecoration(
-                            labelText: 'Max Price',
+                            labelText: 'Preço Max',
                             border: OutlineInputBorder(),
                           ),
                           onChanged: (text) {
@@ -97,7 +97,7 @@ class SearchDrawer extends StatelessWidget {
                   SizedBox(height: 8),
                   DropdownButton<OppCategory>(
                     value: searchState.category,
-                    hint: Text("Select Category"),
+                    hint: Text("Selecionar Categoria"),
                     onChanged: (OppCategory? newValue) {
                       searchState.updateCategory(newValue);
                     },
@@ -130,7 +130,7 @@ class SearchDrawer extends StatelessWidget {
                   SizedBox(height: 8),
                   DropdownButton<Location>(
                     value:searchState.location,
-                    hint: Text("Select Location"),
+                    hint: Text("Selecionar Localização"),
                     onChanged: (Location? newValue) {
                       searchState.updateLocation(newValue);
                     },

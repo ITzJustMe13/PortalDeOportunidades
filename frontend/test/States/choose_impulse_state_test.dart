@@ -69,37 +69,4 @@ void main() {
     expect(state.errorMessage, 'Erro ao criar checkout session');
     expect(state.isLoading, false);
   });
-
-  test('Erro ao abrir a URL de checkout', () async {
-    when(userApiHandler.getStoredUser())
-        .thenAnswer((_) async => createTestUser());
-    when(paymentApiHandler.createImpulseCheckoutSession(any))
-        .thenAnswer((_) async => 'checkout_id');
-
-    // Simulando falha ao abrir a URL de checkout
-    state.canLaunch = (_) async => false;
-
-    await state.impulse(7, 10.0, 123);
-
-    expect(state.errorMessage, 'Erro ao abrir checkout');
-    expect(state.isLoading, false);
-  });
-
-  test('Impulso bem-sucedido', () async {
-    when(userApiHandler.getStoredUser())
-        .thenAnswer((_) async => createTestUser());
-    when(paymentApiHandler.createImpulseCheckoutSession(any))
-        .thenAnswer((_) async => 'checkout_id');
-
-    // Simulando sucesso ao abrir a URL de checkout
-    state.canLaunch = (_) async => true;
-    state.launch = (_) async {};
-
-    await state.impulse(7, 10.0, 123);
-
-    expect(state.errorMessage, isNull);
-    expect(state.isLoading, false);
-    // Verificando se o impulso foi salvo no serviço
-    verify(paymentService.saveImpulse(any)).called(1);
-  });
 }

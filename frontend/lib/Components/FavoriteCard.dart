@@ -4,7 +4,6 @@ import 'package:frontend/Models/Opportunity.dart';
 import 'package:frontend/Components/DynamicActionButton.dart';
 import 'package:frontend/Views/OpportunityDetailsScreen.dart';
 import 'package:frontend/Components/ConfirmationDialog.dart';
-import 'package:frontend/Components/DynamicActionButton.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend/Views/FavoritesPage.dart';
 import 'package:frontend/Services/user_api_handler.dart';

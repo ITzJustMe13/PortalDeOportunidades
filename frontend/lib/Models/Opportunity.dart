@@ -38,7 +38,7 @@ class Opportunity {
   factory Opportunity.fromJson(Map<String, dynamic> json) => Opportunity(
       opportunityId: json["opportunityId"],
       name: json["name"],
-      price: json["price"],
+      price: (json["price"] as num).toDouble(),
       vacancies: json["vacancies"],
       isActive: json["isActive"],
       category: categoryFromInt(json["category"]),
@@ -46,7 +46,7 @@ class Opportunity {
       location: locationFromInt(json["location"]),
       address: json["address"],
       userId: json["userId"],
-      reviewScore: json["reviewScore"],
+      reviewScore: (json["reviewScore"] as num).toDouble(),
       date: DateTime.parse(json["date"]),
       isImpulsed: json["isImpulsed"],
       opportunityImgs: (json["opportunityImgs"] as List<dynamic>)

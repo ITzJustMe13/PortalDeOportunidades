@@ -7,7 +7,7 @@ class Review {
 
   factory Review.fromJson(Map<String, dynamic> json) => Review(
       reservationId: json["reservationId"],
-      rating: json["rating"],
+      rating: (json["rating"] as num).toDouble(),
       description: json["desc"]);
 
   Map<String, dynamic> toJson() =>

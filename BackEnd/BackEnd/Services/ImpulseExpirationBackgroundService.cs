@@ -45,7 +45,7 @@ namespace BackEnd.Services
                             var hasActiveImpulses = await context.Impulses
                                 .AnyAsync(i => i.OpportunityId == opportunity.OpportunityId && i.ExpireDate > DateTime.Now, stoppingToken);
 
-                            // Se não houver mais impulsos ativos, desabilita a Opportunity
+                            // Se não houver mais impulsos ativos, desativa a Opportunity
                             if (!hasActiveImpulses)
                             {
                                 opportunity.IsImpulsed = false;
