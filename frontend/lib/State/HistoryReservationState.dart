@@ -5,7 +5,6 @@ import 'package:frontend/Models/Reservation.dart';
 import 'package:frontend/Services/opportunity_api_handler.dart';
 import 'package:frontend/Services/reservation_api_handler.dart';
 import 'package:frontend/Services/user_api_handler.dart';
-import 'package:http/http.dart' as http;
 
 class HistoryReservationState with ChangeNotifier {
   var _reservationApiHandler = ReservationApiHandler();

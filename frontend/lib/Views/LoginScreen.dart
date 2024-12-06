@@ -70,7 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 keyboardType: TextInputType.emailAddress,
                                 validator: (value) {
                                   if (value!.isEmpty || !value.contains('@')) {
-                                    return 'Please enter a valid email';
+                                    return 'Por favor introduza o email';
                                   }
                                   return null;
                                 },
@@ -85,7 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 obscureText: true,
                                 validator: (value) {
                                   if (value == null) {
-                                    return 'Please enter your password';
+                                    return 'Por favor introduza a password';
                                   }
                                   return null;
                                 },
@@ -104,9 +104,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                       if (!isLoggedIn) {
                                         setState(() {
                                           _emailError =
-                                              'Invalid email or password';
+                                              'Email ou Password inválida';
                                           _passwordError =
-                                              'Invalid email or password';
+                                              'Email ou Password inválida';
                                         });
                                       }
                                     }
@@ -120,14 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 Text(
                                   loginState.errorMessage!,
                                   style: TextStyle(color: Colors.red),
-                                ),
-                              DynamicActionButton(
-                                  onPressed: () async {
-                                    loginState.loginWithGoogle();
-                                  },
-                                  text: "Login com Google",
-                                  icon: Icons.abc,
-                                  color: Color(0xFF4285F4))
+                                )
                             ],
                           ),
                         ),

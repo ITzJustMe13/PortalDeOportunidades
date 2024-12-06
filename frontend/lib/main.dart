@@ -13,10 +13,8 @@ import 'package:frontend/State/SearchState.dart';
 import 'package:frontend/Views/ActivationSucessScreen.dart';
 import 'package:frontend/Views/LoginScreen.dart';
 import 'package:frontend/Views/RegisterScreen.dart';
-import 'package:http/http.dart' as http;
 
 import 'package:frontend/Views/HistoryReservationScreen.dart';
-import 'package:frontend/Views/EditProfileScreen.dart';
 import 'package:frontend/Views/ProfileScreen.dart';
 import 'package:frontend/Views/ReviewsHistoryScreen.dart';
 import 'package:frontend/Views/CreateOpportunityScreen.dart';

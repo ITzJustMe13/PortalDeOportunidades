@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:frontend/Models/Reservation.dart';
 import 'package:frontend/Services/handler.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class ReservationApiHandler extends Handler{

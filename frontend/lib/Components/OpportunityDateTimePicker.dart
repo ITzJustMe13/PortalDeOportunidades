@@ -6,13 +6,13 @@ class OpportunityDateAndTimePicker extends StatelessWidget {
   final ValueChanged<DateTime> onDateTimeSelected;
   final ValueChanged<TimeOfDay> onTimeSelected;
 
-  OpportunityDateAndTimePicker({
-    Key? key,
+  const OpportunityDateAndTimePicker({
+    super.key,
     this.initialDate,
     this.initialTime,
     required this.onDateTimeSelected,
     required this.onTimeSelected,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

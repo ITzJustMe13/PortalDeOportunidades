@@ -3,7 +3,6 @@ import 'package:frontend/Enums/Location.dart';
 import 'package:frontend/Enums/OppCategory.dart';
 import 'package:frontend/Models/Opportunity.dart';
 import 'package:frontend/Services/opportunity_api_handler.dart';
-import 'package:http/http.dart' as http;
 
 class SearchState with ChangeNotifier {
   var _opportunityApiHandler = OpportunityApiHandler();
@@ -80,10 +79,10 @@ class SearchState with ChangeNotifier {
   }
 
   final Map<String, Future<void> Function(SearchState)> _sortOptions = {
-    'Classificação Descendente': (SearchState searchState) =>
+    'Classificação por ordem Decrescente': (SearchState searchState) =>
         searchState.sortByScore(),
-    'Preço Descendente': (SearchState searchState) => searchState.sortByPrice(),
-    'Vacancies Descendente': (SearchState searchState) =>
+    'Preço por ordem Decrescente': (SearchState searchState) => searchState.sortByPrice(),
+    'Vagas por ordem Decrescente': (SearchState searchState) =>
         searchState.sortByVacancies(),
   };
 

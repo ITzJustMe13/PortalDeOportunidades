@@ -3,32 +3,31 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i9;
-import 'dart:ui' as _i24;
+import 'dart:async' as _i8;
+import 'dart:ui' as _i23;
 
-import 'package:flutter/material.dart' as _i5;
-import 'package:flutter/src/foundation/assertions.dart' as _i25;
-import 'package:flutter/src/foundation/diagnostics.dart' as _i6;
+import 'package:flutter/material.dart' as _i4;
+import 'package:flutter/src/foundation/assertions.dart' as _i24;
+import 'package:flutter/src/foundation/diagnostics.dart' as _i5;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i2;
-import 'package:frontend/Enums/Location.dart' as _i18;
-import 'package:frontend/Enums/OppCategory.dart' as _i17;
-import 'package:frontend/Models/Favorite.dart' as _i11;
-import 'package:frontend/Models/Impulse.dart' as _i12;
-import 'package:frontend/Models/Opportunity.dart' as _i13;
-import 'package:frontend/Models/Reservation.dart' as _i15;
-import 'package:frontend/Models/Review.dart' as _i19;
-import 'package:frontend/Models/User.dart' as _i10;
-import 'package:frontend/Services/auth_Service.dart' as _i4;
-import 'package:frontend/Services/opportunity_api_handler.dart' as _i16;
-import 'package:frontend/Services/payment_api_handler.dart' as _i20;
-import 'package:frontend/Services/payment_service.dart' as _i22;
-import 'package:frontend/Services/reservation_api_handler.dart' as _i14;
-import 'package:frontend/Services/review_api_handler.dart' as _i21;
-import 'package:frontend/Services/user_api_handler.dart' as _i7;
-import 'package:frontend/State/LoginState.dart' as _i23;
+import 'package:frontend/Enums/Location.dart' as _i17;
+import 'package:frontend/Enums/OppCategory.dart' as _i16;
+import 'package:frontend/Models/Favorite.dart' as _i10;
+import 'package:frontend/Models/Impulse.dart' as _i11;
+import 'package:frontend/Models/Opportunity.dart' as _i12;
+import 'package:frontend/Models/Reservation.dart' as _i14;
+import 'package:frontend/Models/Review.dart' as _i18;
+import 'package:frontend/Models/User.dart' as _i9;
+import 'package:frontend/Services/opportunity_api_handler.dart' as _i15;
+import 'package:frontend/Services/payment_api_handler.dart' as _i19;
+import 'package:frontend/Services/payment_service.dart' as _i21;
+import 'package:frontend/Services/reservation_api_handler.dart' as _i13;
+import 'package:frontend/Services/review_api_handler.dart' as _i20;
+import 'package:frontend/Services/user_api_handler.dart' as _i6;
+import 'package:frontend/State/LoginState.dart' as _i22;
 import 'package:http/http.dart' as _i3;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i8;
+import 'package:mockito/src/dummies.dart' as _i7;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -74,18 +73,8 @@ class _FakeDuration_2 extends _i1.SmartFake implements Duration {
         );
 }
 
-class _FakeAuthService_3 extends _i1.SmartFake implements _i4.AuthService {
-  _FakeAuthService_3(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
-class _FakeWidget_4 extends _i1.SmartFake implements _i5.Widget {
-  _FakeWidget_4(
+class _FakeWidget_3 extends _i1.SmartFake implements _i4.Widget {
+  _FakeWidget_3(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -94,13 +83,13 @@ class _FakeWidget_4 extends _i1.SmartFake implements _i5.Widget {
         );
 
   @override
-  String toString({_i5.DiagnosticLevel? minLevel = _i5.DiagnosticLevel.info}) =>
+  String toString({_i4.DiagnosticLevel? minLevel = _i4.DiagnosticLevel.info}) =>
       super.toString();
 }
 
-class _FakeInheritedWidget_5 extends _i1.SmartFake
-    implements _i5.InheritedWidget {
-  _FakeInheritedWidget_5(
+class _FakeInheritedWidget_4 extends _i1.SmartFake
+    implements _i4.InheritedWidget {
+  _FakeInheritedWidget_4(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -109,13 +98,13 @@ class _FakeInheritedWidget_5 extends _i1.SmartFake
         );
 
   @override
-  String toString({_i5.DiagnosticLevel? minLevel = _i5.DiagnosticLevel.info}) =>
+  String toString({_i4.DiagnosticLevel? minLevel = _i4.DiagnosticLevel.info}) =>
       super.toString();
 }
 
-class _FakeDiagnosticsNode_6 extends _i1.SmartFake
-    implements _i5.DiagnosticsNode {
-  _FakeDiagnosticsNode_6(
+class _FakeDiagnosticsNode_5 extends _i1.SmartFake
+    implements _i4.DiagnosticsNode {
+  _FakeDiagnosticsNode_5(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -125,8 +114,8 @@ class _FakeDiagnosticsNode_6 extends _i1.SmartFake
 
   @override
   String toString({
-    _i6.TextTreeConfiguration? parentConfiguration,
-    _i5.DiagnosticLevel? minLevel = _i5.DiagnosticLevel.info,
+    _i5.TextTreeConfiguration? parentConfiguration,
+    _i4.DiagnosticLevel? minLevel = _i4.DiagnosticLevel.info,
   }) =>
       super.toString();
 }
@@ -134,7 +123,7 @@ class _FakeDiagnosticsNode_6 extends _i1.SmartFake
 /// A class which mocks [UserApiHandler].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockUserApiHandler extends _i1.Mock implements _i7.UserApiHandler {
+class MockUserApiHandler extends _i1.Mock implements _i6.UserApiHandler {
   MockUserApiHandler() {
     _i1.throwOnMissingStub(this);
   }
@@ -142,7 +131,7 @@ class MockUserApiHandler extends _i1.Mock implements _i7.UserApiHandler {
   @override
   String get baseUri => (super.noSuchMethod(
         Invocation.getter(#baseUri),
-        returnValue: _i8.dummyValue<String>(
+        returnValue: _i7.dummyValue<String>(
           this,
           Invocation.getter(#baseUri),
         ),
@@ -185,7 +174,7 @@ class MockUserApiHandler extends _i1.Mock implements _i7.UserApiHandler {
       );
 
   @override
-  _i9.Future<_i10.User?> login(
+  _i8.Future<_i9.User?> login(
     String? email,
     String? password,
   ) =>
@@ -197,58 +186,58 @@ class MockUserApiHandler extends _i1.Mock implements _i7.UserApiHandler {
             password,
           ],
         ),
-        returnValue: _i9.Future<_i10.User?>.value(),
-      ) as _i9.Future<_i10.User?>);
+        returnValue: _i8.Future<_i9.User?>.value(),
+      ) as _i8.Future<_i9.User?>);
 
   @override
-  _i9.Future<_i10.User?> getStoredUser() => (super.noSuchMethod(
+  _i8.Future<_i9.User?> getStoredUser() => (super.noSuchMethod(
         Invocation.method(
           #getStoredUser,
           [],
         ),
-        returnValue: _i9.Future<_i10.User?>.value(),
-      ) as _i9.Future<_i10.User?>);
+        returnValue: _i8.Future<_i9.User?>.value(),
+      ) as _i8.Future<_i9.User?>);
 
   @override
-  _i9.Future<int> getStoredUserID() => (super.noSuchMethod(
+  _i8.Future<int> getStoredUserID() => (super.noSuchMethod(
         Invocation.method(
           #getStoredUserID,
           [],
         ),
-        returnValue: _i9.Future<int>.value(0),
-      ) as _i9.Future<int>);
+        returnValue: _i8.Future<int>.value(0),
+      ) as _i8.Future<int>);
 
   @override
-  _i9.Future<_i10.User?> getUserByID(int? id) => (super.noSuchMethod(
+  _i8.Future<_i9.User?> getUserByID(int? id) => (super.noSuchMethod(
         Invocation.method(
           #getUserByID,
           [id],
         ),
-        returnValue: _i9.Future<_i10.User?>.value(),
-      ) as _i9.Future<_i10.User?>);
+        returnValue: _i8.Future<_i9.User?>.value(),
+      ) as _i8.Future<_i9.User?>);
 
   @override
-  _i9.Future<_i10.User?> createUser(_i10.User? user) => (super.noSuchMethod(
+  _i8.Future<_i9.User?> createUser(_i9.User? user) => (super.noSuchMethod(
         Invocation.method(
           #createUser,
           [user],
         ),
-        returnValue: _i9.Future<_i10.User?>.value(),
-      ) as _i9.Future<_i10.User?>);
+        returnValue: _i8.Future<_i9.User?>.value(),
+      ) as _i8.Future<_i9.User?>);
 
   @override
-  _i9.Future<bool> deleteUser(int? id) => (super.noSuchMethod(
+  _i8.Future<bool> deleteUser(int? id) => (super.noSuchMethod(
         Invocation.method(
           #deleteUser,
           [id],
         ),
-        returnValue: _i9.Future<bool>.value(false),
-      ) as _i9.Future<bool>);
+        returnValue: _i8.Future<bool>.value(false),
+      ) as _i8.Future<bool>);
 
   @override
-  _i9.Future<bool> editUser(
+  _i8.Future<bool> editUser(
     int? id,
-    _i10.User? updatedUser,
+    _i9.User? updatedUser,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -258,21 +247,21 @@ class MockUserApiHandler extends _i1.Mock implements _i7.UserApiHandler {
             updatedUser,
           ],
         ),
-        returnValue: _i9.Future<bool>.value(false),
-      ) as _i9.Future<bool>);
+        returnValue: _i8.Future<bool>.value(false),
+      ) as _i8.Future<bool>);
 
   @override
-  _i9.Future<_i11.Favorite?> addFavorite(_i11.Favorite? favorite) =>
+  _i8.Future<_i10.Favorite?> addFavorite(_i10.Favorite? favorite) =>
       (super.noSuchMethod(
         Invocation.method(
           #addFavorite,
           [favorite],
         ),
-        returnValue: _i9.Future<_i11.Favorite?>.value(),
-      ) as _i9.Future<_i11.Favorite?>);
+        returnValue: _i8.Future<_i10.Favorite?>.value(),
+      ) as _i8.Future<_i10.Favorite?>);
 
   @override
-  _i9.Future<_i11.Favorite?> getFavoriteByID(
+  _i8.Future<_i10.Favorite?> getFavoriteByID(
     int? userId,
     int? opportunityId,
   ) =>
@@ -284,21 +273,21 @@ class MockUserApiHandler extends _i1.Mock implements _i7.UserApiHandler {
             opportunityId,
           ],
         ),
-        returnValue: _i9.Future<_i11.Favorite?>.value(),
-      ) as _i9.Future<_i11.Favorite?>);
+        returnValue: _i8.Future<_i10.Favorite?>.value(),
+      ) as _i8.Future<_i10.Favorite?>);
 
   @override
-  _i9.Future<List<_i11.Favorite>?> getFavorites(int? userId) =>
+  _i8.Future<List<_i10.Favorite>?> getFavorites(int? userId) =>
       (super.noSuchMethod(
         Invocation.method(
           #getFavorites,
           [userId],
         ),
-        returnValue: _i9.Future<List<_i11.Favorite>?>.value(),
-      ) as _i9.Future<List<_i11.Favorite>?>);
+        returnValue: _i8.Future<List<_i10.Favorite>?>.value(),
+      ) as _i8.Future<List<_i10.Favorite>?>);
 
   @override
-  _i9.Future<bool> deleteFavoriteById(
+  _i8.Future<bool> deleteFavoriteById(
     int? userId,
     int? oppId,
   ) =>
@@ -310,44 +299,44 @@ class MockUserApiHandler extends _i1.Mock implements _i7.UserApiHandler {
             oppId,
           ],
         ),
-        returnValue: _i9.Future<bool>.value(false),
-      ) as _i9.Future<bool>);
+        returnValue: _i8.Future<bool>.value(false),
+      ) as _i8.Future<bool>);
 
   @override
-  _i9.Future<_i12.Impulse?> impulseOpportunity(_i12.Impulse? impulse) =>
+  _i8.Future<_i11.Impulse?> impulseOpportunity(_i11.Impulse? impulse) =>
       (super.noSuchMethod(
         Invocation.method(
           #impulseOpportunity,
           [impulse],
         ),
-        returnValue: _i9.Future<_i12.Impulse?>.value(),
-      ) as _i9.Future<_i12.Impulse?>);
+        returnValue: _i8.Future<_i11.Impulse?>.value(),
+      ) as _i8.Future<_i11.Impulse?>);
 
   @override
-  _i9.Future<List<_i13.Opportunity>?> getCreatedOpportunities(int? userId) =>
+  _i8.Future<List<_i12.Opportunity>?> getCreatedOpportunities(int? userId) =>
       (super.noSuchMethod(
         Invocation.method(
           #getCreatedOpportunities,
           [userId],
         ),
-        returnValue: _i9.Future<List<_i13.Opportunity>?>.value(),
-      ) as _i9.Future<List<_i13.Opportunity>?>);
+        returnValue: _i8.Future<List<_i12.Opportunity>?>.value(),
+      ) as _i8.Future<List<_i12.Opportunity>?>);
 
   @override
-  _i9.Future<bool> activateAccount(String? token) => (super.noSuchMethod(
+  _i8.Future<bool> activateAccount(String? token) => (super.noSuchMethod(
         Invocation.method(
           #activateAccount,
           [token],
         ),
-        returnValue: _i9.Future<bool>.value(false),
-      ) as _i9.Future<bool>);
+        returnValue: _i8.Future<bool>.value(false),
+      ) as _i8.Future<bool>);
 }
 
 /// A class which mocks [ReservationApiHandler].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockReservationApiHandler extends _i1.Mock
-    implements _i14.ReservationApiHandler {
+    implements _i13.ReservationApiHandler {
   MockReservationApiHandler() {
     _i1.throwOnMissingStub(this);
   }
@@ -355,7 +344,7 @@ class MockReservationApiHandler extends _i1.Mock
   @override
   String get baseUri => (super.noSuchMethod(
         Invocation.getter(#baseUri),
-        returnValue: _i8.dummyValue<String>(
+        returnValue: _i7.dummyValue<String>(
           this,
           Invocation.getter(#baseUri),
         ),
@@ -389,61 +378,61 @@ class MockReservationApiHandler extends _i1.Mock
       ) as _i3.Client);
 
   @override
-  _i9.Future<List<_i15.Reservation>?> getAllActiveReservationsByUserId(
+  _i8.Future<List<_i14.Reservation>?> getAllActiveReservationsByUserId(
           int? userId) =>
       (super.noSuchMethod(
         Invocation.method(
           #getAllActiveReservationsByUserId,
           [userId],
         ),
-        returnValue: _i9.Future<List<_i15.Reservation>?>.value(),
-      ) as _i9.Future<List<_i15.Reservation>?>);
+        returnValue: _i8.Future<List<_i14.Reservation>?>.value(),
+      ) as _i8.Future<List<_i14.Reservation>?>);
 
   @override
-  _i9.Future<List<_i15.Reservation>?> getAllReservationsByUserId(int? userId) =>
+  _i8.Future<List<_i14.Reservation>?> getAllReservationsByUserId(int? userId) =>
       (super.noSuchMethod(
         Invocation.method(
           #getAllReservationsByUserId,
           [userId],
         ),
-        returnValue: _i9.Future<List<_i15.Reservation>?>.value(),
-      ) as _i9.Future<List<_i15.Reservation>?>);
+        returnValue: _i8.Future<List<_i14.Reservation>?>.value(),
+      ) as _i8.Future<List<_i14.Reservation>?>);
 
   @override
-  _i9.Future<_i15.Reservation?> getReservationById(int? reservationId) =>
+  _i8.Future<_i14.Reservation?> getReservationById(int? reservationId) =>
       (super.noSuchMethod(
         Invocation.method(
           #getReservationById,
           [reservationId],
         ),
-        returnValue: _i9.Future<_i15.Reservation?>.value(),
-      ) as _i9.Future<_i15.Reservation?>);
+        returnValue: _i8.Future<_i14.Reservation?>.value(),
+      ) as _i8.Future<_i14.Reservation?>);
 
   @override
-  _i9.Future<_i15.Reservation?> createReservation(
-          _i15.Reservation? reservation) =>
+  _i8.Future<_i14.Reservation?> createReservation(
+          _i14.Reservation? reservation) =>
       (super.noSuchMethod(
         Invocation.method(
           #createReservation,
           [reservation],
         ),
-        returnValue: _i9.Future<_i15.Reservation?>.value(),
-      ) as _i9.Future<_i15.Reservation?>);
+        returnValue: _i8.Future<_i14.Reservation?>.value(),
+      ) as _i8.Future<_i14.Reservation?>);
 
   @override
-  _i9.Future<bool> deactivateReservation(int? reservationId) =>
+  _i8.Future<bool> deactivateReservation(int? reservationId) =>
       (super.noSuchMethod(
         Invocation.method(
           #deactivateReservation,
           [reservationId],
         ),
-        returnValue: _i9.Future<bool>.value(false),
-      ) as _i9.Future<bool>);
+        returnValue: _i8.Future<bool>.value(false),
+      ) as _i8.Future<bool>);
 
   @override
-  _i9.Future<bool> editReservation(
+  _i8.Future<bool> editReservation(
     int? reservationId,
-    _i15.Reservation? reservation,
+    _i14.Reservation? reservation,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -453,24 +442,24 @@ class MockReservationApiHandler extends _i1.Mock
             reservation,
           ],
         ),
-        returnValue: _i9.Future<bool>.value(false),
-      ) as _i9.Future<bool>);
+        returnValue: _i8.Future<bool>.value(false),
+      ) as _i8.Future<bool>);
 
   @override
-  _i9.Future<bool> deleteReservation(int? reservationId) => (super.noSuchMethod(
+  _i8.Future<bool> deleteReservation(int? reservationId) => (super.noSuchMethod(
         Invocation.method(
           #deleteReservation,
           [reservationId],
         ),
-        returnValue: _i9.Future<bool>.value(false),
-      ) as _i9.Future<bool>);
+        returnValue: _i8.Future<bool>.value(false),
+      ) as _i8.Future<bool>);
 }
 
 /// A class which mocks [OpportunityApiHandler].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockOpportunityApiHandler extends _i1.Mock
-    implements _i16.OpportunityApiHandler {
+    implements _i15.OpportunityApiHandler {
   MockOpportunityApiHandler() {
     _i1.throwOnMissingStub(this);
   }
@@ -478,7 +467,7 @@ class MockOpportunityApiHandler extends _i1.Mock
   @override
   String get baseUri => (super.noSuchMethod(
         Invocation.getter(#baseUri),
-        returnValue: _i8.dummyValue<String>(
+        returnValue: _i7.dummyValue<String>(
           this,
           Invocation.getter(#baseUri),
         ),
@@ -521,54 +510,54 @@ class MockOpportunityApiHandler extends _i1.Mock
       ) as _i3.Client);
 
   @override
-  _i9.Future<_i13.Opportunity?> getOpportunityByID(int? id) =>
+  _i8.Future<_i12.Opportunity?> getOpportunityByID(int? id) =>
       (super.noSuchMethod(
         Invocation.method(
           #getOpportunityByID,
           [id],
         ),
-        returnValue: _i9.Future<_i13.Opportunity?>.value(),
-      ) as _i9.Future<_i13.Opportunity?>);
+        returnValue: _i8.Future<_i12.Opportunity?>.value(),
+      ) as _i8.Future<_i12.Opportunity?>);
 
   @override
-  _i9.Future<List<_i13.Opportunity>?> getAllOpportunities() =>
+  _i8.Future<List<_i12.Opportunity>?> getAllOpportunities() =>
       (super.noSuchMethod(
         Invocation.method(
           #getAllOpportunities,
           [],
         ),
-        returnValue: _i9.Future<List<_i13.Opportunity>?>.value(),
-      ) as _i9.Future<List<_i13.Opportunity>?>);
+        returnValue: _i8.Future<List<_i12.Opportunity>?>.value(),
+      ) as _i8.Future<List<_i12.Opportunity>?>);
 
   @override
-  _i9.Future<List<_i13.Opportunity>?> getAllImpulsedOpportunities() =>
+  _i8.Future<List<_i12.Opportunity>?> getAllImpulsedOpportunities() =>
       (super.noSuchMethod(
         Invocation.method(
           #getAllImpulsedOpportunities,
           [],
         ),
-        returnValue: _i9.Future<List<_i13.Opportunity>?>.value(),
-      ) as _i9.Future<List<_i13.Opportunity>?>);
+        returnValue: _i8.Future<List<_i12.Opportunity>?>.value(),
+      ) as _i8.Future<List<_i12.Opportunity>?>);
 
   @override
-  _i9.Future<List<_i13.Opportunity>?> getAllOpportunitiesByUserId(
+  _i8.Future<List<_i12.Opportunity>?> getAllOpportunitiesByUserId(
           int? userId) =>
       (super.noSuchMethod(
         Invocation.method(
           #getAllOpportunitiesByUserId,
           [userId],
         ),
-        returnValue: _i9.Future<List<_i13.Opportunity>?>.value(),
-      ) as _i9.Future<List<_i13.Opportunity>?>);
+        returnValue: _i8.Future<List<_i12.Opportunity>?>.value(),
+      ) as _i8.Future<List<_i12.Opportunity>?>);
 
   @override
-  _i9.Future<List<_i13.Opportunity>> searchOpportunities(
+  _i8.Future<List<_i12.Opportunity>> searchOpportunities(
     String? keyword,
     int? vacancies,
     double? minPrice,
     double? maxPrice,
-    _i17.OppCategory? category,
-    _i18.Location? location,
+    _i16.OppCategory? category,
+    _i17.Location? location,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -583,61 +572,61 @@ class MockOpportunityApiHandler extends _i1.Mock
           ],
         ),
         returnValue:
-            _i9.Future<List<_i13.Opportunity>>.value(<_i13.Opportunity>[]),
-      ) as _i9.Future<List<_i13.Opportunity>>);
+            _i8.Future<List<_i12.Opportunity>>.value(<_i12.Opportunity>[]),
+      ) as _i8.Future<List<_i12.Opportunity>>);
 
   @override
-  _i9.Future<List<_i19.Review>?> getReviewsByOppId(int? oppId) =>
+  _i8.Future<List<_i18.Review>?> getReviewsByOppId(int? oppId) =>
       (super.noSuchMethod(
         Invocation.method(
           #getReviewsByOppId,
           [oppId],
         ),
-        returnValue: _i9.Future<List<_i19.Review>?>.value(),
-      ) as _i9.Future<List<_i19.Review>?>);
+        returnValue: _i8.Future<List<_i18.Review>?>.value(),
+      ) as _i8.Future<List<_i18.Review>?>);
 
   @override
-  _i9.Future<_i13.Opportunity?> createOpportunity(
-          _i13.Opportunity? opportunity) =>
+  _i8.Future<_i12.Opportunity?> createOpportunity(
+          _i12.Opportunity? opportunity) =>
       (super.noSuchMethod(
         Invocation.method(
           #createOpportunity,
           [opportunity],
         ),
-        returnValue: _i9.Future<_i13.Opportunity?>.value(),
-      ) as _i9.Future<_i13.Opportunity?>);
+        returnValue: _i8.Future<_i12.Opportunity?>.value(),
+      ) as _i8.Future<_i12.Opportunity?>);
 
   @override
-  _i9.Future<bool> deleteOpportunity(int? oppId) => (super.noSuchMethod(
+  _i8.Future<bool> deleteOpportunity(int? oppId) => (super.noSuchMethod(
         Invocation.method(
           #deleteOpportunity,
           [oppId],
         ),
-        returnValue: _i9.Future<bool>.value(false),
-      ) as _i9.Future<bool>);
+        returnValue: _i8.Future<bool>.value(false),
+      ) as _i8.Future<bool>);
 
   @override
-  _i9.Future<bool> activateOpportunity(int? oppId) => (super.noSuchMethod(
+  _i8.Future<bool> activateOpportunity(int? oppId) => (super.noSuchMethod(
         Invocation.method(
           #activateOpportunity,
           [oppId],
         ),
-        returnValue: _i9.Future<bool>.value(false),
-      ) as _i9.Future<bool>);
+        returnValue: _i8.Future<bool>.value(false),
+      ) as _i8.Future<bool>);
 
   @override
-  _i9.Future<bool> deactivateOpportunity(int? oppId) => (super.noSuchMethod(
+  _i8.Future<bool> deactivateOpportunity(int? oppId) => (super.noSuchMethod(
         Invocation.method(
           #deactivateOpportunity,
           [oppId],
         ),
-        returnValue: _i9.Future<bool>.value(false),
-      ) as _i9.Future<bool>);
+        returnValue: _i8.Future<bool>.value(false),
+      ) as _i8.Future<bool>);
 
   @override
-  _i9.Future<bool> editOpportunity(
+  _i8.Future<bool> editOpportunity(
     int? oppId,
-    _i13.Opportunity? opportunity,
+    _i12.Opportunity? opportunity,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -647,14 +636,14 @@ class MockOpportunityApiHandler extends _i1.Mock
             opportunity,
           ],
         ),
-        returnValue: _i9.Future<bool>.value(false),
-      ) as _i9.Future<bool>);
+        returnValue: _i8.Future<bool>.value(false),
+      ) as _i8.Future<bool>);
 }
 
 /// A class which mocks [PaymentApiHandler].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockPaymentApiHandler extends _i1.Mock implements _i20.PaymentApiHandler {
+class MockPaymentApiHandler extends _i1.Mock implements _i19.PaymentApiHandler {
   MockPaymentApiHandler() {
     _i1.throwOnMissingStub(this);
   }
@@ -662,7 +651,7 @@ class MockPaymentApiHandler extends _i1.Mock implements _i20.PaymentApiHandler {
   @override
   String get baseUri => (super.noSuchMethod(
         Invocation.getter(#baseUri),
-        returnValue: _i8.dummyValue<String>(
+        returnValue: _i7.dummyValue<String>(
           this,
           Invocation.getter(#baseUri),
         ),
@@ -696,31 +685,31 @@ class MockPaymentApiHandler extends _i1.Mock implements _i20.PaymentApiHandler {
       ) as _i3.Client);
 
   @override
-  _i9.Future<String?> createReservationCheckoutSession(
-          _i15.Reservation? reservation) =>
+  _i8.Future<String?> createReservationCheckoutSession(
+          _i14.Reservation? reservation) =>
       (super.noSuchMethod(
         Invocation.method(
           #createReservationCheckoutSession,
           [reservation],
         ),
-        returnValue: _i9.Future<String?>.value(),
-      ) as _i9.Future<String?>);
+        returnValue: _i8.Future<String?>.value(),
+      ) as _i8.Future<String?>);
 
   @override
-  _i9.Future<String?> createImpulseCheckoutSession(_i12.Impulse? impulse) =>
+  _i8.Future<String?> createImpulseCheckoutSession(_i11.Impulse? impulse) =>
       (super.noSuchMethod(
         Invocation.method(
           #createImpulseCheckoutSession,
           [impulse],
         ),
-        returnValue: _i9.Future<String?>.value(),
-      ) as _i9.Future<String?>);
+        returnValue: _i8.Future<String?>.value(),
+      ) as _i8.Future<String?>);
 }
 
 /// A class which mocks [ReviewApiHandler].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockReviewApiHandler extends _i1.Mock implements _i21.ReviewApiHandler {
+class MockReviewApiHandler extends _i1.Mock implements _i20.ReviewApiHandler {
   MockReviewApiHandler() {
     _i1.throwOnMissingStub(this);
   }
@@ -728,7 +717,7 @@ class MockReviewApiHandler extends _i1.Mock implements _i21.ReviewApiHandler {
   @override
   String get baseUri => (super.noSuchMethod(
         Invocation.getter(#baseUri),
-        returnValue: _i8.dummyValue<String>(
+        returnValue: _i7.dummyValue<String>(
           this,
           Invocation.getter(#baseUri),
         ),
@@ -771,47 +760,47 @@ class MockReviewApiHandler extends _i1.Mock implements _i21.ReviewApiHandler {
       ) as _i3.Client);
 
   @override
-  _i9.Future<_i19.Review?> getReviewById(int? reviewId) => (super.noSuchMethod(
+  _i8.Future<_i18.Review?> getReviewById(int? reviewId) => (super.noSuchMethod(
         Invocation.method(
           #getReviewById,
           [reviewId],
         ),
-        returnValue: _i9.Future<_i19.Review?>.value(),
-      ) as _i9.Future<_i19.Review?>);
+        returnValue: _i8.Future<_i18.Review?>.value(),
+      ) as _i8.Future<_i18.Review?>);
 
   @override
-  _i9.Future<List<_i19.Review>> getReviewsByUserId(int? userId) =>
+  _i8.Future<List<_i18.Review>> getReviewsByUserId(int? userId) =>
       (super.noSuchMethod(
         Invocation.method(
           #getReviewsByUserId,
           [userId],
         ),
-        returnValue: _i9.Future<List<_i19.Review>>.value(<_i19.Review>[]),
-      ) as _i9.Future<List<_i19.Review>>);
+        returnValue: _i8.Future<List<_i18.Review>>.value(<_i18.Review>[]),
+      ) as _i8.Future<List<_i18.Review>>);
 
   @override
-  _i9.Future<_i19.Review?> createReview(_i19.Review? review) =>
+  _i8.Future<_i18.Review?> createReview(_i18.Review? review) =>
       (super.noSuchMethod(
         Invocation.method(
           #createReview,
           [review],
         ),
-        returnValue: _i9.Future<_i19.Review?>.value(),
-      ) as _i9.Future<_i19.Review?>);
+        returnValue: _i8.Future<_i18.Review?>.value(),
+      ) as _i8.Future<_i18.Review?>);
 
   @override
-  _i9.Future<bool> deleteReview(int? reviewId) => (super.noSuchMethod(
+  _i8.Future<bool> deleteReview(int? reviewId) => (super.noSuchMethod(
         Invocation.method(
           #deleteReview,
           [reviewId],
         ),
-        returnValue: _i9.Future<bool>.value(false),
-      ) as _i9.Future<bool>);
+        returnValue: _i8.Future<bool>.value(false),
+      ) as _i8.Future<bool>);
 
   @override
-  _i9.Future<bool> editReview(
+  _i8.Future<bool> editReview(
     int? id,
-    _i19.Review? review,
+    _i18.Review? review,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -821,14 +810,14 @@ class MockReviewApiHandler extends _i1.Mock implements _i21.ReviewApiHandler {
             review,
           ],
         ),
-        returnValue: _i9.Future<bool>.value(false),
-      ) as _i9.Future<bool>);
+        returnValue: _i8.Future<bool>.value(false),
+      ) as _i8.Future<bool>);
 }
 
 /// A class which mocks [PaymentService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockPaymentService extends _i1.Mock implements _i22.PaymentService {
+class MockPaymentService extends _i1.Mock implements _i21.PaymentService {
   MockPaymentService() {
     _i1.throwOnMissingStub(this);
   }
@@ -843,81 +832,72 @@ class MockPaymentService extends _i1.Mock implements _i22.PaymentService {
       ) as _i2.FlutterSecureStorage);
 
   @override
-  _i9.Future<void> saveImpulse(_i12.Impulse? impulse) => (super.noSuchMethod(
+  _i8.Future<void> saveImpulse(_i11.Impulse? impulse) => (super.noSuchMethod(
         Invocation.method(
           #saveImpulse,
           [impulse],
         ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
 
   @override
-  _i9.Future<void> saveReservation(_i15.Reservation? reservation) =>
+  _i8.Future<void> saveReservation(_i14.Reservation? reservation) =>
       (super.noSuchMethod(
         Invocation.method(
           #saveReservation,
           [reservation],
         ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
 
   @override
-  _i9.Future<_i12.Impulse?> getStoredImpulse() => (super.noSuchMethod(
+  _i8.Future<_i11.Impulse?> getStoredImpulse() => (super.noSuchMethod(
         Invocation.method(
           #getStoredImpulse,
           [],
         ),
-        returnValue: _i9.Future<_i12.Impulse?>.value(),
-      ) as _i9.Future<_i12.Impulse?>);
+        returnValue: _i8.Future<_i11.Impulse?>.value(),
+      ) as _i8.Future<_i11.Impulse?>);
 
   @override
-  _i9.Future<_i15.Reservation?> getStoredReservation() => (super.noSuchMethod(
+  _i8.Future<_i14.Reservation?> getStoredReservation() => (super.noSuchMethod(
         Invocation.method(
           #getStoredReservation,
           [],
         ),
-        returnValue: _i9.Future<_i15.Reservation?>.value(),
-      ) as _i9.Future<_i15.Reservation?>);
+        returnValue: _i8.Future<_i14.Reservation?>.value(),
+      ) as _i8.Future<_i14.Reservation?>);
 
   @override
-  _i9.Future<void> deleteImpulse() => (super.noSuchMethod(
+  _i8.Future<void> deleteImpulse() => (super.noSuchMethod(
         Invocation.method(
           #deleteImpulse,
           [],
         ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
 
   @override
-  _i9.Future<void> deleteReservation() => (super.noSuchMethod(
+  _i8.Future<void> deleteReservation() => (super.noSuchMethod(
         Invocation.method(
           #deleteReservation,
           [],
         ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
 }
 
 /// A class which mocks [LoginState].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockLoginState extends _i1.Mock implements _i23.LoginState {
+class MockLoginState extends _i1.Mock implements _i22.LoginState {
   MockLoginState() {
     _i1.throwOnMissingStub(this);
   }
-
-  @override
-  _i4.AuthService get auth_Service => (super.noSuchMethod(
-        Invocation.getter(#auth_Service),
-        returnValue: _FakeAuthService_3(
-          this,
-          Invocation.getter(#auth_Service),
-        ),
-      ) as _i4.AuthService);
 
   @override
   bool get isLoading => (super.noSuchMethod(
@@ -934,7 +914,7 @@ class MockLoginState extends _i1.Mock implements _i23.LoginState {
   @override
   String get username => (super.noSuchMethod(
         Invocation.getter(#username),
-        returnValue: _i8.dummyValue<String>(
+        returnValue: _i7.dummyValue<String>(
           this,
           Invocation.getter(#username),
         ),
@@ -947,20 +927,20 @@ class MockLoginState extends _i1.Mock implements _i23.LoginState {
       ) as bool);
 
   @override
-  _i9.Future<void> checkToken() => (super.noSuchMethod(
+  _i8.Future<void> checkToken() => (super.noSuchMethod(
         Invocation.method(
           #checkToken,
           [],
         ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
 
   @override
-  _i9.Future<bool> login(
+  _i8.Future<bool> login(
     String? email,
     String? password,
-    _i5.BuildContext? context,
+    _i4.BuildContext? context,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -971,30 +951,21 @@ class MockLoginState extends _i1.Mock implements _i23.LoginState {
             context,
           ],
         ),
-        returnValue: _i9.Future<bool>.value(false),
-      ) as _i9.Future<bool>);
+        returnValue: _i8.Future<bool>.value(false),
+      ) as _i8.Future<bool>);
 
   @override
-  _i9.Future<void> logout() => (super.noSuchMethod(
+  _i8.Future<void> logout() => (super.noSuchMethod(
         Invocation.method(
           #logout,
           [],
         ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
 
   @override
-  _i9.Future<bool> loginWithGoogle() => (super.noSuchMethod(
-        Invocation.method(
-          #loginWithGoogle,
-          [],
-        ),
-        returnValue: _i9.Future<bool>.value(false),
-      ) as _i9.Future<bool>);
-
-  @override
-  void addListener(_i24.VoidCallback? listener) => super.noSuchMethod(
+  void addListener(_i23.VoidCallback? listener) => super.noSuchMethod(
         Invocation.method(
           #addListener,
           [listener],
@@ -1003,7 +974,7 @@ class MockLoginState extends _i1.Mock implements _i23.LoginState {
       );
 
   @override
-  void removeListener(_i24.VoidCallback? listener) => super.noSuchMethod(
+  void removeListener(_i23.VoidCallback? listener) => super.noSuchMethod(
         Invocation.method(
           #removeListener,
           [listener],
@@ -1030,49 +1001,22 @@ class MockLoginState extends _i1.Mock implements _i23.LoginState {
       );
 }
 
-/// A class which mocks [AuthService].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockAuthService extends _i1.Mock implements _i4.AuthService {
-  MockAuthService() {
-    _i1.throwOnMissingStub(this);
-  }
-
-  @override
-  _i9.Future<bool> signInWithGoogle() => (super.noSuchMethod(
-        Invocation.method(
-          #signInWithGoogle,
-          [],
-        ),
-        returnValue: _i9.Future<bool>.value(false),
-      ) as _i9.Future<bool>);
-
-  @override
-  _i9.Future<bool> sendIdTokenToBackend(String? idToken) => (super.noSuchMethod(
-        Invocation.method(
-          #sendIdTokenToBackend,
-          [idToken],
-        ),
-        returnValue: _i9.Future<bool>.value(false),
-      ) as _i9.Future<bool>);
-}
-
 /// A class which mocks [BuildContext].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockBuildContext extends _i1.Mock implements _i5.BuildContext {
+class MockBuildContext extends _i1.Mock implements _i4.BuildContext {
   MockBuildContext() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i5.Widget get widget => (super.noSuchMethod(
+  _i4.Widget get widget => (super.noSuchMethod(
         Invocation.getter(#widget),
-        returnValue: _FakeWidget_4(
+        returnValue: _FakeWidget_3(
           this,
           Invocation.getter(#widget),
         ),
-      ) as _i5.Widget);
+      ) as _i4.Widget);
 
   @override
   bool get mounted => (super.noSuchMethod(
@@ -1087,8 +1031,8 @@ class MockBuildContext extends _i1.Mock implements _i5.BuildContext {
       ) as bool);
 
   @override
-  _i5.InheritedWidget dependOnInheritedElement(
-    _i5.InheritedElement? ancestor, {
+  _i4.InheritedWidget dependOnInheritedElement(
+    _i4.InheritedElement? ancestor, {
     Object? aspect,
   }) =>
       (super.noSuchMethod(
@@ -1097,7 +1041,7 @@ class MockBuildContext extends _i1.Mock implements _i5.BuildContext {
           [ancestor],
           {#aspect: aspect},
         ),
-        returnValue: _FakeInheritedWidget_5(
+        returnValue: _FakeInheritedWidget_4(
           this,
           Invocation.method(
             #dependOnInheritedElement,
@@ -1105,10 +1049,10 @@ class MockBuildContext extends _i1.Mock implements _i5.BuildContext {
             {#aspect: aspect},
           ),
         ),
-      ) as _i5.InheritedWidget);
+      ) as _i4.InheritedWidget);
 
   @override
-  void visitAncestorElements(_i5.ConditionalElementVisitor? visitor) =>
+  void visitAncestorElements(_i4.ConditionalElementVisitor? visitor) =>
       super.noSuchMethod(
         Invocation.method(
           #visitAncestorElements,
@@ -1118,7 +1062,7 @@ class MockBuildContext extends _i1.Mock implements _i5.BuildContext {
       );
 
   @override
-  void visitChildElements(_i5.ElementVisitor? visitor) => super.noSuchMethod(
+  void visitChildElements(_i4.ElementVisitor? visitor) => super.noSuchMethod(
         Invocation.method(
           #visitChildElements,
           [visitor],
@@ -1127,7 +1071,7 @@ class MockBuildContext extends _i1.Mock implements _i5.BuildContext {
       );
 
   @override
-  void dispatchNotification(_i5.Notification? notification) =>
+  void dispatchNotification(_i4.Notification? notification) =>
       super.noSuchMethod(
         Invocation.method(
           #dispatchNotification,
@@ -1137,9 +1081,9 @@ class MockBuildContext extends _i1.Mock implements _i5.BuildContext {
       );
 
   @override
-  _i5.DiagnosticsNode describeElement(
+  _i4.DiagnosticsNode describeElement(
     String? name, {
-    _i25.DiagnosticsTreeStyle? style = _i25.DiagnosticsTreeStyle.errorProperty,
+    _i24.DiagnosticsTreeStyle? style = _i24.DiagnosticsTreeStyle.errorProperty,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -1147,7 +1091,7 @@ class MockBuildContext extends _i1.Mock implements _i5.BuildContext {
           [name],
           {#style: style},
         ),
-        returnValue: _FakeDiagnosticsNode_6(
+        returnValue: _FakeDiagnosticsNode_5(
           this,
           Invocation.method(
             #describeElement,
@@ -1155,12 +1099,12 @@ class MockBuildContext extends _i1.Mock implements _i5.BuildContext {
             {#style: style},
           ),
         ),
-      ) as _i5.DiagnosticsNode);
+      ) as _i4.DiagnosticsNode);
 
   @override
-  _i5.DiagnosticsNode describeWidget(
+  _i4.DiagnosticsNode describeWidget(
     String? name, {
-    _i25.DiagnosticsTreeStyle? style = _i25.DiagnosticsTreeStyle.errorProperty,
+    _i24.DiagnosticsTreeStyle? style = _i24.DiagnosticsTreeStyle.errorProperty,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -1168,7 +1112,7 @@ class MockBuildContext extends _i1.Mock implements _i5.BuildContext {
           [name],
           {#style: style},
         ),
-        returnValue: _FakeDiagnosticsNode_6(
+        returnValue: _FakeDiagnosticsNode_5(
           this,
           Invocation.method(
             #describeWidget,
@@ -1176,10 +1120,10 @@ class MockBuildContext extends _i1.Mock implements _i5.BuildContext {
             {#style: style},
           ),
         ),
-      ) as _i5.DiagnosticsNode);
+      ) as _i4.DiagnosticsNode);
 
   @override
-  List<_i5.DiagnosticsNode> describeMissingAncestor(
+  List<_i4.DiagnosticsNode> describeMissingAncestor(
           {required Type? expectedAncestorType}) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -1187,38 +1131,38 @@ class MockBuildContext extends _i1.Mock implements _i5.BuildContext {
           [],
           {#expectedAncestorType: expectedAncestorType},
         ),
-        returnValue: <_i5.DiagnosticsNode>[],
-      ) as List<_i5.DiagnosticsNode>);
+        returnValue: <_i4.DiagnosticsNode>[],
+      ) as List<_i4.DiagnosticsNode>);
 
   @override
-  _i5.DiagnosticsNode describeOwnershipChain(String? name) =>
+  _i4.DiagnosticsNode describeOwnershipChain(String? name) =>
       (super.noSuchMethod(
         Invocation.method(
           #describeOwnershipChain,
           [name],
         ),
-        returnValue: _FakeDiagnosticsNode_6(
+        returnValue: _FakeDiagnosticsNode_5(
           this,
           Invocation.method(
             #describeOwnershipChain,
             [name],
           ),
         ),
-      ) as _i5.DiagnosticsNode);
+      ) as _i4.DiagnosticsNode);
 }
 
 /// A class which mocks [NavigatorObserver].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockNavigatorObserver extends _i1.Mock implements _i5.NavigatorObserver {
+class MockNavigatorObserver extends _i1.Mock implements _i4.NavigatorObserver {
   MockNavigatorObserver() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
   void didPush(
-    _i5.Route<dynamic>? route,
-    _i5.Route<dynamic>? previousRoute,
+    _i4.Route<dynamic>? route,
+    _i4.Route<dynamic>? previousRoute,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -1233,8 +1177,8 @@ class MockNavigatorObserver extends _i1.Mock implements _i5.NavigatorObserver {
 
   @override
   void didPop(
-    _i5.Route<dynamic>? route,
-    _i5.Route<dynamic>? previousRoute,
+    _i4.Route<dynamic>? route,
+    _i4.Route<dynamic>? previousRoute,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -1249,8 +1193,8 @@ class MockNavigatorObserver extends _i1.Mock implements _i5.NavigatorObserver {
 
   @override
   void didRemove(
-    _i5.Route<dynamic>? route,
-    _i5.Route<dynamic>? previousRoute,
+    _i4.Route<dynamic>? route,
+    _i4.Route<dynamic>? previousRoute,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -1265,8 +1209,8 @@ class MockNavigatorObserver extends _i1.Mock implements _i5.NavigatorObserver {
 
   @override
   void didReplace({
-    _i5.Route<dynamic>? newRoute,
-    _i5.Route<dynamic>? oldRoute,
+    _i4.Route<dynamic>? newRoute,
+    _i4.Route<dynamic>? oldRoute,
   }) =>
       super.noSuchMethod(
         Invocation.method(
@@ -1282,8 +1226,8 @@ class MockNavigatorObserver extends _i1.Mock implements _i5.NavigatorObserver {
 
   @override
   void didStartUserGesture(
-    _i5.Route<dynamic>? route,
-    _i5.Route<dynamic>? previousRoute,
+    _i4.Route<dynamic>? route,
+    _i4.Route<dynamic>? previousRoute,
   ) =>
       super.noSuchMethod(
         Invocation.method(

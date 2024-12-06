@@ -6,11 +6,11 @@ class ConfirmationDialog extends StatelessWidget {
   final Future<bool> Function() onConfirm;
 
   const ConfirmationDialog({
-    Key? key,
+    super.key,
     required this.action,
     required this.onConfirm,
     required this.message,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

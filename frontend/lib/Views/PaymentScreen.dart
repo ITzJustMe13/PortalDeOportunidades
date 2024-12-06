@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/Components/CustomAppBar.dart';
 import 'package:frontend/Components/CustomDrawer.dart';
-import 'package:frontend/Services/payment_service.dart';
-import 'package:frontend/Services/reservation_api_handler.dart';
 import 'package:frontend/State/PaymentState.dart';
 import 'package:provider/provider.dart';
 

@@ -9,10 +9,10 @@ class OpportunityImagePicker extends StatefulWidget {
   final ValueChanged<List<OpportunityImg>> onImagesChanged;
 
   const OpportunityImagePicker({
-    Key? key,
+    super.key,
     required this.opportunityImgs,
     required this.onImagesChanged,
-  }) : super(key: key);
+  });
 
   @override
   _OpportunityImagePickerState createState() => _OpportunityImagePickerState();
@@ -21,7 +21,7 @@ class OpportunityImagePicker extends StatefulWidget {
 class _OpportunityImagePickerState extends State<OpportunityImagePicker> {
   void _pickImages() async {
     final List<XFile> pickedFiles = await ImagePicker().pickMultiImage(); // Pick multiple images
-    if (pickedFiles != null && pickedFiles.isNotEmpty) {
+    if (pickedFiles.isNotEmpty) {
       if (widget.opportunityImgs.length + pickedFiles.length <= 5) { // Check if we are within the image limit
         final List<String> base64Images = await Future.wait(
           pickedFiles.map((file) async {
@@ -58,8 +58,8 @@ class _OpportunityImagePickerState extends State<OpportunityImagePicker> {
         children: [
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-            child: const Text('Escolher Fotos', style: TextStyle(color: Colors.white)),
             onPressed: _pickImages,
+            child: const Text('Escolher Fotos', style: TextStyle(color: Colors.white)),
           ),
           SizedBox(height: 16.0),
           // Use a SingleChildScrollView to avoid overflow when images are too many

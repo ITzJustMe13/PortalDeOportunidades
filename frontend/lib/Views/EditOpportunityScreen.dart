@@ -69,7 +69,7 @@ class _EditOpportunityScreenState extends State<EditOpportunityScreen> {
       setState(() {
         _errorMessage = 'Não é permitido adicionar mais de 5 imagens';
       });
-      return null;
+      return;
     }
 
     final List<OpportunityImg> finalImages = _opportunityImgs.isNotEmpty
