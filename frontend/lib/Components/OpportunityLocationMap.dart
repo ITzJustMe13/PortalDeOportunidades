@@ -26,7 +26,7 @@ class _OpportunityLocationMapState extends State<OpportunityLocationMap> {
 
   // Method to get coordinates from the address
   Future<void> _getCoordinates() async {
-    final String? geocodeApiKey = dotenv.env["GEOCODE_API_KEY"];
+    final String? geocodeApiKey = "71779414495299352043x43019";
 
     if (geocodeApiKey == null || geocodeApiKey.isEmpty) {
       setState(() {

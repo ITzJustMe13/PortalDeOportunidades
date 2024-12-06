@@ -6,6 +6,7 @@ abstract class Handler {
   final http.Client client;
 
   Handler({http.Client? client})
-      : apiIP = dotenv.env["API_IP"],
+      : apiIP =
+            "https://portalodeportunidadesapi-emfdgkakb0fqchas.westeurope-01.azurewebsites.net",
         client = client ?? http.Client();
 }
