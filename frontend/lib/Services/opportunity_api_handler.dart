@@ -4,7 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/Enums/Location.dart';
 import 'package:frontend/Enums/OppCategory.dart';
 import 'package:frontend/Models/Review.dart';
-import 'package:frontend/Services/handler.dart';import 'package:http/http.dart' as http;
+import 'package:frontend/Services/handler.dart';
 import '../Models/Opportunity.dart';
 
 class OpportunityApiHandler extends Handler{

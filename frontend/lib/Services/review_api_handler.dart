@@ -2,7 +2,6 @@ import 'dart:convert';
 //import 'dart:ffi';
 import 'package:frontend/Models/Review.dart';
 import 'package:frontend/Services/handler.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class ReviewApiHandler extends Handler{

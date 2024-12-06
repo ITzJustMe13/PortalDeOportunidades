@@ -2,9 +2,7 @@ import 'dart:convert';
 import 'package:frontend/Models/Impulse.dart';
 import 'package:frontend/Models/Reservation.dart';
 import 'package:frontend/Services/handler.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class PaymentApiHandler extends Handler{
   late final String baseUri;

@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/Models/Impulse.dart';
 import 'package:frontend/Services/payment_service.dart';
 import 'package:frontend/Services/reservation_api_handler.dart';
 import 'package:frontend/Services/user_api_handler.dart';
-import 'package:http/http.dart' as http;
 
 class PaymentState with ChangeNotifier {
   bool _isLoading = false;

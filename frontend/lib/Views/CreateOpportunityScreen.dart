@@ -1,6 +1,4 @@
-import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/Components/CustomAppBar.dart';
 import 'package:frontend/Components/CustomDrawer.dart';
@@ -11,7 +9,6 @@ import 'package:frontend/Models/Opportunity.dart';
 import 'package:frontend/Models/OpportunityImg.dart';
 import 'package:frontend/State/CreateOpportunityState.dart';
 import 'package:frontend/Views/OpportunityDetailsScreen.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 

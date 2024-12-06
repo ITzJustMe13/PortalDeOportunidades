@@ -1,12 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:frontend/Enums/Gender.dart';
 import 'package:frontend/Enums/Location.dart';
 import 'package:frontend/Enums/OppCategory.dart';
 import 'package:frontend/Models/Opportunity.dart';
 import 'package:frontend/Models/OpportunityImg.dart';
 import 'package:frontend/Models/Reservation.dart';
 import 'package:frontend/Models/Review.dart';
-import 'package:frontend/Models/User.dart';
 import 'package:frontend/State/ReviewHistoryState.dart';
 import 'package:mockito/mockito.dart';
 import '../mocks.mocks.dart';

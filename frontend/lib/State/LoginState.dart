@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:frontend/Services/auth_Service.dart';
-import 'package:http/http.dart' as http;
 import '../Services/user_api_handler.dart';
 
 class LoginState with ChangeNotifier {
   final _storage = FlutterSecureStorage();
   final _apiHandler = UserApiHandler();
-  final auth_Service = AuthService();
 
   String? _token;
   String? _errorMessage;
@@ -79,18 +76,5 @@ class LoginState with ChangeNotifier {
     _username = "Convidado";
 
     notifyListeners();
-  }
-
-  Future<bool> loginWithGoogle() async {
-    _isLoading = true;
-    notifyListeners();
-    bool isLoggedIn = await auth_Service.signInWithGoogle();
-    _isLoading = false;
-    if (!isLoggedIn) {
-      _errorMessage = 'Falha ao fazer login com Google';
-    }
-
-    notifyListeners();
-    return isLoggedIn;
   }
 }

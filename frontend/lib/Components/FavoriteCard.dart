@@ -14,10 +14,10 @@ class FavoriteCard extends StatelessWidget {
   final dynamic user; // Replace with your User type if available
 
   const FavoriteCard({
-    Key? key,
+    super.key,
     required this.opportunity,
     required this.user,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:frontend/Models/Reservation.dart';
 import 'package:frontend/Models/Review.dart';
 import 'package:frontend/Views/HistoryReservationScreen.dart';
@@ -10,7 +9,6 @@ import 'package:frontend/Components/CustomAppBar.dart';
 import 'package:frontend/Components/CustomDrawer.dart';
 import 'package:frontend/Components/DynamicTextField.dart';
 import 'package:frontend/Components/StarRatingSelector.dart';
-import 'package:flutter/services.dart';
 
 class CreateReviewScreen extends StatefulWidget {
   final Reservation reservation;

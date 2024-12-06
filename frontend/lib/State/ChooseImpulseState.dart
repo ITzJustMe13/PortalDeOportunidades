@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/Models/Impulse.dart';
-import 'package:frontend/Models/Opportunity.dart';
 import 'package:frontend/Services/payment_api_handler.dart';
 import 'package:frontend/Services/payment_service.dart';
 import 'package:frontend/Services/user_api_handler.dart';
-import 'package:http/http.dart' as http;
-import 'package:url_launcher/url_launcher.dart';
 
 class ChooseImpulseState with ChangeNotifier {
   var _apiHandler = UserApiHandler();

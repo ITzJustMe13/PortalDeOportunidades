@@ -3,7 +3,6 @@ import 'package:frontend/Models/Opportunity.dart';
 import 'package:frontend/Models/OpportunityImg.dart';
 import 'package:frontend/Services/opportunity_api_handler.dart';
 import 'package:frontend/Services/user_api_handler.dart';
-import 'package:http/http.dart' as http;
 
 
 class CreateOpportunityState with ChangeNotifier {

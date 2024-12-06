@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import '../Services/user_api_handler.dart';
 
 class ActivationState with ChangeNotifier {
