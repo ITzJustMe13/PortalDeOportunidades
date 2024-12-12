@@ -5,7 +5,7 @@ abstract class Handler {
   final http.Client client;
 
   Handler({http.Client? client})
-      : apiIP =
-            "https://portalodeportunidadesapi-emfdgkakb0fqchas.westeurope-01.azurewebsites.net",
+      : apiIP = "https://localhost:7235",
+           // "https://portalodeportunidadesapi-emfdgkakb0fqchas.westeurope-01.azurewebsites.net",
         client = client ?? http.Client();
 }
