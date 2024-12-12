@@ -2,6 +2,6 @@
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ActiveDebugProfile>https</ActiveDebugProfile>
-    <NameOfLastUsedPublishProfile>C:\Users\win11\source\repos\PortalDeOportunidades\BackEnd\BackEnd\Properties\PublishProfiles\portalodeportunidadesapi - Web Deploy.pubxml</NameOfLastUsedPublishProfile>
+    <NameOfLastUsedPublishProfile>C:\Users\Leona\Desktop\Universidade\3-ano\-------- 1 Semestre ---------\LDS\PortalDeOportunidades\BackEnd\BackEnd\Properties\PublishProfiles\PortalOportunidades - Web Deploy.pubxml</NameOfLastUsedPublishProfile>
   </PropertyGroup>
 </Project>
